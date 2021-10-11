@@ -1,0 +1,10 @@
+{
+  "access_token": "TestAuthToken",
+  "expires_in": 3600,
+  "refresh_expires_in": 31557600,
+  "refresh_token": "TestRefreshToken",
+  "token_type": "Bearer",
+  "not-before-policy": 0,
+  "session_state": "94356338-3033-41bf-a67d-0be9c62d398f",
+  "scope": "profile email"
+}
