@@ -15,10 +15,10 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation('org.wololo:jts2geojson:0.16.1')
+    implementation('org.springdoc:springdoc-openapi-ui:1.5.11')
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation('commons-io:commons-io:2.11.0')
     testImplementation 'org.hamcrest:hamcrest:2.2'
-
 }
 
 test {

@@ -1,6 +1,5 @@
 package io.kontur.disasterninja.dto.eventapi;
 
-import io.kontur.disasterninja.dto.EventType;
 import io.kontur.disasterninja.dto.Severity;
 import org.wololo.geojson.FeatureCollection;
 
@@ -112,23 +111,6 @@ public class FeedEpisode {
 
     public void setEpisodeDetails(Map<String, Object> episodeDetails) {
         this.episodeDetails = episodeDetails;
-    }
-
-    @Override
-    public String toString() {
-        return "FeedEpisode{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", type=" + type +
-                ", active=" + active +
-                ", severity=" + severity +
-                ", startedAt=" + startedAt +
-                ", endedAt=" + endedAt +
-                ", updatedAt=" + updatedAt +
-                ", sourceUpdatedAt=" + sourceUpdatedAt +
-                ", geometries=" + geometries +
-                ", episodeDetails=" + episodeDetails +
-                '}';
     }
 
     public Set<UUID> getObservations() {
