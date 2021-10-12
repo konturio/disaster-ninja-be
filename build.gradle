@@ -4,6 +4,10 @@ plugins {
     id 'java'
 }
 
+jar {
+    enabled = false
+}
+
 group = 'io.kontur'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '16'
