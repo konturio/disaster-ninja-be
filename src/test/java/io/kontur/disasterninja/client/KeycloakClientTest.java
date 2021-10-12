@@ -9,6 +9,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
 
@@ -29,10 +31,15 @@ class KeycloakClientTest {
     @Test
     public void testGetAccessToken() throws IOException {
         //given
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("client_id", "event-api");
+        formData.add("username", "testUsername");
+        formData.add("password", "testPassword");
+        formData.add("grant_type", "password");
+
         server.expect(ExpectedCount.once(), requestTo("/realms/testRealm/protocol/openid-connect/token"))
                 .andExpect(method(HttpMethod.POST))
-                .andExpect(content().json(
-                        "{\"client_id\":\"event-api\",\"username\":\"testUsername\",\"password\":\"testPassword\",\"grant_type\":\"password\"}"))
+                .andExpect(content().formData(formData))
                 .andRespond(withSuccess(readFile(this, "KeycloakClientTest.testGetAccessToken.response.json"),
                         MediaType.APPLICATION_JSON));
 

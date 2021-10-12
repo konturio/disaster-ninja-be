@@ -5,6 +5,7 @@ import io.kontur.disasterninja.dto.eventapi.EventDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -41,8 +42,8 @@ public class EventApiClient {
 
         String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed, then);
 
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Authorization", "Bearer " + jwtToken);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(jwtToken);
 
         ResponseEntity<EventApiEventDto> response = restTemplate
                 .exchange(uri, HttpMethod.GET, new HttpEntity<>(null, headers), new ParameterizedTypeReference<>() {
