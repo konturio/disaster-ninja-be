@@ -13,11 +13,7 @@ public class OpenApiConfiguration {
 
     @Bean
     public OpenAPI customOpenAPI() {
-        Server server = new Server();
-        server.setUrl("/api");
-
         return new OpenAPI().info(new Info()
-                        .title("Disaster Ninja"))
-                .servers(Collections.singletonList(server));
+                        .title("Disaster Ninja"));
     }
 }
