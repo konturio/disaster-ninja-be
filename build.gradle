@@ -13,11 +13,22 @@ repositories {
 }
 
 dependencies {
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation('org.wololo:jts2geojson:0.16.1')
+//    implementation('org.projectlombok:lombok:1.18.20')
+    implementation('io.swagger.core.v3:swagger-annotations:2.1.10')
+    implementation('com.google.code.gson:gson:2.8.6')
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
     testImplementation('commons-io:commons-io:2.11.0')
     testImplementation 'org.hamcrest:hamcrest:2.2'
+
+
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+    testCompileOnly 'org.projectlombok:lombok:1.18.22'
 
 }
 
