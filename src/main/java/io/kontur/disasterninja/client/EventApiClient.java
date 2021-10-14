@@ -20,7 +20,8 @@ import java.util.List;
 @Component
 public class EventApiClient {
 
-    private static final String EVENT_API_EVENT_LIST_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&after=%s&episodeFilterType=LATEST&limit=1000&sortOrder=ASC";
+//    private static final String EVENT_API_EVENT_LIST_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&after=%s&episodeFilterType=LATEST&limit=1000&sortOrder=ASC";
+    private static final String EVENT_API_EVENT_LIST_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&episodeFilterType=LATEST&limit=100&sortOrder=DESC";
 
     private final RestTemplate restTemplate;
 
@@ -38,7 +39,8 @@ public class EventApiClient {
                 .atZoneSameInstant(ZoneOffset.UTC)
                 .toString();
 
-        String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed, then);
+        String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed);
+//        String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed, then);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(jwtToken);
