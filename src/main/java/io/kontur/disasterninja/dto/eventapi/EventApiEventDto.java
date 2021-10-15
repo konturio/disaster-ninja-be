@@ -5,7 +5,7 @@ import org.wololo.geojson.FeatureCollection;
 import java.time.OffsetDateTime;
 import java.util.*;
 
-public class EventDto {
+public class EventApiEventDto {
 
     private UUID eventId;
     private Long version;

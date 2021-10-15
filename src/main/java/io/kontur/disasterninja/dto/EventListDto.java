@@ -3,7 +3,7 @@ package io.kontur.disasterninja.dto;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-public class EventListEventDto {
+public class EventListDto {
 
     private UUID eventId;
     private String eventName;
