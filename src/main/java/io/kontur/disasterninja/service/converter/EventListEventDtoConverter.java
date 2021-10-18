@@ -1,13 +1,13 @@
 package io.kontur.disasterninja.service.converter;
 
-import io.kontur.disasterninja.dto.EventListEventDto;
+import io.kontur.disasterninja.dto.EventListDto;
 import io.kontur.disasterninja.dto.EventType;
-import io.kontur.disasterninja.dto.eventapi.EventDto;
+import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 
 public class EventListEventDtoConverter {
 
-    public static EventListEventDto convert(EventDto event) {
-        EventListEventDto dto = new EventListEventDto();
+    public static EventListDto convert(EventApiEventDto event) {
+        EventListDto dto = new EventListDto();
         dto.setEventId(event.getEventId());
 
         EventType eventType;

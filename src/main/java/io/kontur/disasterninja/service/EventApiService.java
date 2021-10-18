@@ -1,14 +1,19 @@
 package io.kontur.disasterninja.service;
 
 import io.kontur.disasterninja.client.EventApiClient;
-import io.kontur.disasterninja.dto.EventListEventDto;
-import io.kontur.disasterninja.dto.eventapi.EventDto;
+import io.kontur.disasterninja.dto.EventDto;
+import io.kontur.disasterninja.dto.EventListDto;
+import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
+import io.kontur.disasterninja.resource.exception.WebApplicationException;
+import io.kontur.disasterninja.service.converter.EventDtoConverter;
 import io.kontur.disasterninja.service.converter.EventListEventDtoConverter;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class EventApiService {
@@ -22,16 +27,25 @@ public class EventApiService {
         this.authorizationService = authorizationService;
     }
 
-    public List<EventListEventDto> getEvents() {
+    public List<EventListDto> getEvents() {
         String accessToken = authorizationService.getAccessToken();
-        List<EventDto> events = client.getEvents(accessToken);
-        List<EventListEventDto> eventList = convert(events);
+        List<EventApiEventDto> events = client.getEvents(accessToken);
+        List<EventListDto> eventList = convertListOfEvents(events);
         sort(eventList);
         return eventList;
     }
 
-    private List<EventListEventDto> convert(List<EventDto> events) {
-        List<EventListEventDto> result = new ArrayList<>(events.size());
+    public EventDto getEvent(UUID eventId) {
+        String accessToken = authorizationService.getAccessToken();
+        EventApiEventDto event = client.getEvent(eventId, accessToken);
+        if (event == null) {
+            throw new WebApplicationException("Event is not found", HttpStatus.NOT_FOUND);
+        }
+        return EventDtoConverter.convert(event);
+    }
+
+    private List<EventListDto> convertListOfEvents(List<EventApiEventDto> events) {
+        List<EventListDto> result = new ArrayList<>(events.size());
         events.forEach(event -> result.add(EventListEventDtoConverter.convert(event)));
         return result;
     }
@@ -41,9 +55,9 @@ public class EventApiService {
      * -with humanitarian impact from events from high to low exposed ppl number
      * -for events with no humanitarian impact: by the last updates time
      */
-    private void sort(List<EventListEventDto> eventList) {
-        eventList.sort(Comparator.comparing(EventListEventDto::getAffectedPopulation)
-                .thenComparing(EventListEventDto::getUpdatedAt).reversed());
+    private void sort(List<EventListDto> eventList) {
+        eventList.sort(Comparator.comparing(EventListDto::getAffectedPopulation)
+                .thenComparing(EventListDto::getUpdatedAt).reversed());
     }
 }
 
