@@ -1,15 +1,18 @@
 package io.kontur.disasterninja.client;
 
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -25,15 +28,23 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+@Import(TestConfig.class)
 @RestClientTest(EventApiClient.class)
-@AutoConfigureWebClient(registerRestTemplate = true)
+@AutoConfigureWebClient
 class EventApiClientTest {
 
     @Autowired
+    @Qualifier("eventApiRestTemplate")
+    private RestTemplate restTemplate;
+    @Autowired
     private EventApiClient client;
     @Autowired
-    @Qualifier("eventApiRestTemplate")
     private MockRestServiceServer server;
+
+    @BeforeEach
+    void setUp () {
+        server = MockRestServiceServer.bindTo(restTemplate).build();
+    }
 
     @Test
     public void testGetEvents() throws IOException {

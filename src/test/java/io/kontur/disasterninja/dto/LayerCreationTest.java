@@ -19,24 +19,24 @@ public class LayerCreationTest {
     @Test
     public void fromOsmLayersTest() throws IOException {
         List<FeatureGeoJSON> features = objectMapper.readValue(
-            new File("src/test/resources/layers/osmlayer.json"), FeatureCollectionGeoJSON.class)
+            new File("src/test/resources/io/kontur/disasterninja/client/layers/osmlayer.json"),
+                FeatureCollectionGeoJSON.class)
             .getFeatures();
         List<Layer> result = Layer.fromOsmLayers(features);
         //todo other fields
-        Layer layer1 = result.stream().filter(it -> "Aargau-AGIS-2014".equals(it.getId())).findAny().get();
-        Assertions.assertEquals("Aargau-AGIS-2014", layer1.getId());
-        Assertions.assertEquals("Kanton Aargau 25cm (AGIS 2014)", layer1.getName());
-        Assertions.assertEquals("This imagery is provided via a proxy operated by https://sosm.ch/",
-            layer1.getDescription());
-        Assertions.assertEquals("https://wiki.openstreetmap.org/wiki/Switzerland/AGIS", layer1.getCopyright());
-        Assertions.assertEquals(19, layer1.getMaxZoom());
-        Assertions.assertEquals(8, layer1.getMinZoom());
+        Layer layer1 = result.stream().filter(it -> "Bing".equals(it.getId())).findAny().get();
+        Assertions.assertEquals("Bing aerial imagery", layer1.getName());
+        Assertions.assertEquals("Satellite and aerial imagery.", layer1.getDescription());
+        Assertions.assertEquals("https://wiki.openstreetmap.org/wiki/Bing_Maps", layer1.getCopyright());
+        Assertions.assertEquals(22, layer1.getMaxZoom());
+        Assertions.assertEquals(1, layer1.getMinZoom());
     }
 
     @Test
     public void fromHotProjectLayersTest() throws IOException {
         List<FeatureGeoJSON> features = objectMapper.readValue(
-            new File("src/test/resources/layers/hotProjects.json"), FeatureCollectionGeoJSON.class)
+            new File("src/test/resources/io/kontur/disasterninja/client/layers/hotProjects.json"),
+                FeatureCollectionGeoJSON.class)
             .getFeatures();
         Layer result = Layer.fromHotProjectLayers(features);
         Assertions.assertEquals("hotProjects", result.getId());
@@ -48,7 +48,8 @@ public class LayerCreationTest {
     @Test
     public void fromUrbanCodeAndPeripheryLayerTest() throws IOException {
         FeatureCollection featureCollection = objectMapper.readValue(
-            new File("src/test/resources/layers/population.json"), FeatureCollection.class);
+            new File("src/test/resources/io/kontur/disasterninja/client/layers/population.json"),
+            FeatureCollection.class);
         List<Layer> result = Layer.fromUrbanCodeAndPeripheryLayer(featureCollection);
         Assertions.assertEquals(2, result.size());
 

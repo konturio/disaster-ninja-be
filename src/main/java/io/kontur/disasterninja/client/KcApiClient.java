@@ -31,14 +31,14 @@ public class KcApiClient {
     private static final Logger LOG = LoggerFactory.getLogger(KcApiClient.class);
     private static final String HOT_PROJECTS = "hotProjects";
     private static final String OSM_LAYERS = "osmlayer";
-    @Value("${kontur.platform.kcApi.pageSize}")
-    private int pageSize;
     @Autowired
     @Qualifier("kcApiRestTemplate")
     RestTemplate restTemplate;
     @Autowired
     ObjectMapper objectMapper;
     GeoJSONReader reader = new GeoJSONReader();
+    @Value("${kontur.platform.kcApi.pageSize}")
+    private int pageSize;
 
     public List<FeatureGeoJSON> getOsmLayers(GeometryGeoJSON geoJSON) {
         return getCollectionItemsByGeometry(geoJSON, OSM_LAYERS);
@@ -49,19 +49,33 @@ public class KcApiClient {
     }
 
     public List<FeatureGeoJSON> getCollectionItemsByGeometry(GeometryGeoJSON geoJson, String collectionId) {
+        Geometry geoJsonGeometry = getGeometry(geoJson);
+
+        //1 get items by bbox
+        FeatureCollectionGeoJSON featureCollectionGeoJSON = getCollectionItemsForBbox(geoJsonGeometry, collectionId);
+
+        //2 filter items by geoJson Geometry
+        return featureCollectionGeoJSON == null ? null : featureCollectionGeoJSON.getFeatures().stream()
+            .filter(json -> {
+                Geometry geom = null;
+                try {
+                    if (json.getGeometry() != null) {
+                        geom = reader.read(objectMapper.writeValueAsString(json.getGeometry()));
+                    }
+                } catch (JsonProcessingException e) {
+                    LOG.warn("Can't deserialize geometry from feature json, ignoring: {}", json);
+                }
+                return geom == null || //include items without geometry ("global" ones)
+                    geoJsonGeometry.intersects(geom);
+            })
+            .collect(Collectors.toList());
+    }
+
+    private FeatureCollectionGeoJSON getCollectionItemsForBbox(Geometry geometry, String collectionId) {
+        Envelope env = geometry.getEnvelopeInternal(); //Z axis not taken into account
+
         String uri = "/collections/" + collectionId + "/items?bbox={bbox}&limit={limit}"; //todo pagination/offset
 
-        //////prepare bounding box
-        Geometry geoJsonGeometry;
-        try {
-            geoJsonGeometry = reader.read(objectMapper.writeValueAsString(geoJson));
-        } catch (JsonProcessingException e) {
-            LOG.error("Caught exception while serializing geoJson: {}", e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
-        Envelope env = geoJsonGeometry.getEnvelopeInternal(); //Z axis not taken into account
-
-        ///////1 get items by bbox
         Bbox bbox = new Bbox(Stream.of(env.getMinX(), env.getMinY(), env.getMaxX(), env.getMaxY())
             .map(String::valueOf).reduce((a, b) -> a + "," + b).get());
         LOG.info("Getting features of collection {} with bbox {}", collectionId, bbox);
@@ -74,22 +88,15 @@ public class KcApiClient {
             LOG.info("Empty response returned for collection {} and bbox {}", collectionId, bbox);
             return null;
         }
-        FeatureCollectionGeoJSON itemsByBbox = response.getBody();
+        return response.getBody();
+    }
 
-        //////2 filter items by geoJsonGeometry
-        List<FeatureGeoJSON> features = itemsByBbox.getFeatures().stream()
-            .filter(json -> {
-                Geometry geom = null;
-                try {
-                    if (json.getGeometry() != null) {
-                        geom = reader.read(objectMapper.writeValueAsString(json.getGeometry()));
-                    }
-                } catch (JsonProcessingException e) {
-                    LOG.warn("Can't deserialize geometry from feature json, ignoring: {}", json);
-                }
-                return geom == null || geoJsonGeometry.intersects(geom); //also include layers without geometry ("global" ones)
-            })
-            .collect(Collectors.toList());
-        return features;
+    private Geometry getGeometry(GeometryGeoJSON geoJson) {
+        try {
+            return reader.read(objectMapper.writeValueAsString(geoJson));
+        } catch (JsonProcessingException e) {
+            LOG.error("Caught exception while serializing geoJson: {}", e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
     }
 }
