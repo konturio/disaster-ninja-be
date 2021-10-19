@@ -77,7 +77,7 @@ class EventApiServiceTest {
 
         PodamFactory factory = new PodamFactoryImpl();
         EventApiEventDto event = factory.manufacturePojo(EventApiEventDto.class);
-        event.getEpisodes().get(0).setGeometries(new FeatureCollection(new Feature[0]));
+        event.getEpisodes().forEach(e -> e.setGeometries(new FeatureCollection(new Feature[0])));
 
         UUID eventId = UUID.randomUUID();
         when(client.getEvent(eventId, "testToken")).thenReturn(event);
