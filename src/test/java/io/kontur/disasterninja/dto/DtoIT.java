@@ -10,6 +10,8 @@ import io.kontur.disasterninja.dto.layer.LayerSummaryDto;
 import io.kontur.disasterninja.dto.layer.LayerSummaryInputDto;
 import io.kontur.disasterninja.dto.layer.LegendItemDto;
 import io.kontur.disasterninja.service.LayerService;
+import k2layers.api.model.GeometryGeoJSON;
+import k2layers.api.model.PointGeoJSON;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,9 +20,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.wololo.geojson.GeoJSON;
-import org.wololo.geojson.Point;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,16 +40,18 @@ public class DtoIT {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void test() {
+    public void serializeDeserializeTest() {
         String url = "http://localhost:" + port + "/api/layers/";
 
         String id = "123";
-        double[] coords = new double[]{1d, 2d};
-        GeoJSON geoJSON = new Point(coords);
+        List<BigDecimal> coords = new ArrayList<>();
+        coords.add(BigDecimal.ONE);
+        coords.add(BigDecimal.ZERO);
+        GeometryGeoJSON geoJSON = new PointGeoJSON().coordinates(coords);
         ArrayList<Layer> layers = new ArrayList<>();
         Layer layer = testLayer(id, geoJSON);
         layers.add(layer);
-        Mockito.when(layerService.getList(any(), any())).thenReturn(layers);
+        Mockito.when(layerService.getList(any())).thenReturn(layers);
 
         LayerSummaryInputDto input = new LayerSummaryInputDto("event id", geoJSON);
         List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(url, input, LayerSummaryDto[].class).getBody());
@@ -63,12 +66,12 @@ public class DtoIT {
             .map(LegendItemDto::toLegendItem).collect(Collectors.toList()));
     }
 
-    private Layer testLayer(String id, GeoJSON geoJSON) {
+    private Layer testLayer(String id, GeometryGeoJSON geoJSON) {
         LayerSource source = new LayerSource(LayerSourceType.RASTER, "url-com.com", 2d, geoJSON);
         List<LegendItem> legend = new ArrayList<>();
         legend.add(new LegendItem(LegendItemType.SIMPLE, "param name", "param value",
             "icon.png", "some name", "#ffffff", "#dddddd", "#cccccc"));
         return new Layer(id, "test name", "test desciption", LayerCategory.BASE, "tset group",
-            legend, "copyright text", 10d, 0.1d, source);
+            legend, "copyright text", 10, 1, source);
     }
 }

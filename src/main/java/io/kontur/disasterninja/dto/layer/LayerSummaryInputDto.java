@@ -1,10 +1,10 @@
 package io.kontur.disasterninja.dto.layer;
 
+import k2layers.api.model.GeometryGeoJSON;
 import lombok.Data;
-import org.wololo.geojson.GeoJSON;
 
 @Data
 public class LayerSummaryInputDto {
-    private final String id; //event id
-    private final GeoJSON geoJSON;
+    private final String id; //event id //todo not used
+    private final GeometryGeoJSON geoJSON;
 }

@@ -3,6 +3,7 @@ package io.kontur.disasterninja.client;
 import io.kontur.disasterninja.dto.eventapi.EventDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.HttpMethod;
@@ -29,6 +30,7 @@ class EventApiClientTest {
     @Autowired
     private EventApiClient client;
     @Autowired
+    @Qualifier("eventApiRestTemplate")
     private MockRestServiceServer server;
 
     @Test

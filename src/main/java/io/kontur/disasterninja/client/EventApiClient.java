@@ -2,6 +2,7 @@ package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.kontur.disasterninja.dto.eventapi.EventDto;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -27,16 +28,16 @@ public class EventApiClient {
     @Value("${kontur.platform.event-api.feed}")
     private String eventApiFeed;
 
-    public EventApiClient(RestTemplate eventApiRestTemplate) {
+    public EventApiClient(@Qualifier("eventApiRestTemplate") RestTemplate eventApiRestTemplate) {
         this.restTemplate = eventApiRestTemplate;
     }
 
     public List<EventDto> getEvents(String jwtToken) {
         String then = OffsetDateTime.now()
-                .minusDays(4)
-                .truncatedTo(ChronoUnit.SECONDS)
-                .atZoneSameInstant(ZoneOffset.UTC)
-                .toString();
+            .minusDays(4)
+            .truncatedTo(ChronoUnit.SECONDS)
+            .atZoneSameInstant(ZoneOffset.UTC)
+            .toString();
 
         String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed, then);
 
@@ -44,8 +45,8 @@ public class EventApiClient {
         headers.setBearerAuth(jwtToken);
 
         ResponseEntity<EventApiEventDto> response = restTemplate
-                .exchange(uri, HttpMethod.GET, new HttpEntity<>(null, headers), new ParameterizedTypeReference<>() {
-                });
+            .exchange(uri, HttpMethod.GET, new HttpEntity<>(null, headers), new ParameterizedTypeReference<>() {
+            });
 
         if (response.getBody() == null) {
             return Collections.emptyList();
