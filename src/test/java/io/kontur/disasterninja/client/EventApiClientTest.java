@@ -1,6 +1,6 @@
 package io.kontur.disasterninja.client;
 
-import io.kontur.disasterninja.dto.eventapi.EventDto;
+import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -8,19 +8,21 @@ import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebCl
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import static io.kontur.disasterninja.util.TestUtil.readFile;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesRegex;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest(EventApiClient.class)
@@ -49,9 +51,26 @@ class EventApiClientTest {
                         MediaType.APPLICATION_JSON));
 
         //when
-        List<EventDto> events = client.getEvents("JwtTestToken");
+        List<EventApiEventDto> events = client.getEvents("JwtTestToken");
 
         //then
         assertEquals(2, events.size());
+    }
+
+    @Test
+    public void testGetEvent() throws IOException {
+        //given
+        server.expect(ExpectedCount.once(), requestTo("/v1/event?feed=testFeedName&eventId=1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(header("Authorization", "Bearer JwtTestToken"))
+                .andRespond(withSuccess(readFile(this, "EventApiClientTest.testGetEvent.response.json"),
+                        MediaType.APPLICATION_JSON));
+        //when
+        EventApiEventDto event = client.getEvent(UUID.fromString("1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"),
+                "JwtTestToken");
+
+        //then
+        assertNotNull(event);
+        assertEquals(UUID.fromString("1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"), event.getEventId());
     }
 }
