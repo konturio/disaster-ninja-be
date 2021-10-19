@@ -12,6 +12,7 @@ import org.wololo.jts2geojson.GeoJSONReader;
 import org.wololo.jts2geojson.GeoJSONWriter;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -26,7 +27,9 @@ public class EventDtoConverter {
         EventDto dto = new EventDto();
         dto.setEventId(event.getEventId());
 
-        FeedEpisode latestEpisode = event.getEpisodes().get(0);
+        List<FeedEpisode> episodes = event.getEpisodes();
+        episodes.sort(Comparator.comparing(FeedEpisode::getUpdatedAt).reversed());
+        FeedEpisode latestEpisode = episodes.get(0);
         EventType eventType;
         try {
             eventType = EventType.valueOf(latestEpisode.getType());
