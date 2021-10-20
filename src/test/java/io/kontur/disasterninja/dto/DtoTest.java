@@ -2,13 +2,13 @@ package io.kontur.disasterninja.dto;
 
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
-import io.kontur.disasterninja.domain.LegendItem;
+import io.kontur.disasterninja.domain.Legend;
+import io.kontur.disasterninja.domain.LegendStep;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LayerSourceType;
-import io.kontur.disasterninja.domain.enums.LegendItemType;
+import io.kontur.disasterninja.domain.enums.LegendType;
 import io.kontur.disasterninja.dto.layer.LayerSummaryDto;
 import io.kontur.disasterninja.dto.layer.LayerSummaryInputDto;
-import io.kontur.disasterninja.dto.layer.LegendItemDto;
 import io.kontur.disasterninja.service.LayerService;
 import k2layers.api.model.GeometryGeoJSON;
 import k2layers.api.model.PointGeoJSON;
@@ -25,12 +25,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class DtoIT {
+public class DtoTest {
 
     @MockBean
     LayerService layerService;
@@ -62,15 +61,15 @@ public class DtoIT {
         Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
         Assertions.assertEquals(layer.getCopyright(), response.get(0).getCopyright());
-        Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().stream()
-            .map(LegendItemDto::toLegendItem).collect(Collectors.toList()));
+        Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().toLegend());
     }
 
     private Layer testLayer(String id, GeometryGeoJSON geoJSON) {
         LayerSource source = new LayerSource(LayerSourceType.RASTER, "url-com.com", 2d, geoJSON);
-        List<LegendItem> legend = new ArrayList<>();
-        legend.add(new LegendItem(LegendItemType.SIMPLE, "param name", "param value",
-            "icon.png", "some name", "#ffffff", "#dddddd", "#cccccc"));
+        Legend legend = new Legend("some legend", LegendType.SIMPLE, new ArrayList<>());
+        legend.getSteps().add(new LegendStep("param name", "param value", "icon", "name",
+            "style {}"));
+
         return new Layer(id, "test name", "test desciption", LayerCategory.BASE, "tset group",
             legend, "copyright text", 10, 1, source);
     }

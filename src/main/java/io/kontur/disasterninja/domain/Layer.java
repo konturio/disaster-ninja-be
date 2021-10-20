@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
+import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
 
 @Data
@@ -24,7 +25,7 @@ public class Layer {
     private final String description;
     private final LayerCategory category;
     private final String group;
-    private final List<LegendItem> legend;
+    private final Legend legend;
     private final String copyright;
     //layer details
     private final Integer maxZoom;
@@ -37,43 +38,18 @@ public class Layer {
         }
         return dto.stream().map(f ->
                 new Layer(f.getId(), //id
-                    (String) ((Map) f.getProperties()).get(NAME), //name //todo getProperties cast
-                    (String) ((Map) f.getProperties()).get(DESCRIPTION), //description
-                    OVERLAY, //category //todo field mapping
-                    "",//group //todo field mapping
+                    getProperty(f, NAME, String.class), //name
+                    getProperty(f, DESCRIPTION, String.class), //description
+                    layerCategory(f), //category
+                    caseFormat(getProperty(f, CATEGORY, String.class)),//group
                     null,//legend //todo field mapping
-                    (String) ((Map) f.getProperties()).get(LICENSE_URL) ,//copyright //todo field mapping - check
-                    (Integer) ((Map) f.getProperties()).get(MAX_ZOOM),//maxZoom
-                    (Integer) ((Map) f.getProperties()).get(MIN_ZOOM),//minZoom
-                    null//source //todo field mapping
+                    getMapValueFromProperty(f, ATTRIBUTION, TEXT, String.class),
+                    getProperty(f, MAX_ZOOM, Integer.class),//maxZoom
+                    getProperty(f, MIN_ZOOM, Integer.class),//minZoom
+                    null//source
                 )
-
-                //"best": false,
-                //                "category": "photo",
-                //                "country_code": "CH",
-                //                "description": "This imagery is provided via a proxy operated by https://sosm.ch/",
-                //                "end_date": "2014", --todo do we take this into account anyhow?
-                //                "start_date": "2014",
-                //                "id": "Aargau-AGIS-2014",
-                //                "license_url": "https://wiki.openstreetmap.org/wiki/Switzerland/AGIS",
-                //                "max_zoom": 19,
-                //                "min_zoom": 8,
-                //                "name": "Kanton Aargau 25cm (AGIS 2014)",
-                //                "privacy_policy_url": "https://sosm.ch/about/terms-of-service/",
-                //                "type": "tms",
-                //                "url": "https://mapproxy.osm.ch/tiles/AGIS2014/EPSG900913/{zoom}/{x}/{y}.png?origin=nw"
             )
             .collect(Collectors.toList());
-        //public Layer(String id,
-        //             String name,
-        //             String description,
-        //             LayerCategory category,
-        //             String group,
-        //             List<LegendItem> legend,
-        //             String copyright,
-        //             Double maxZoom,
-        //             Double minZoom,
-        //             LayerSource source)
     }
 
     public static Layer fromHotProjectLayers(List<FeatureGeoJSON> dto) {
@@ -90,7 +66,7 @@ public class Layer {
             "", //todo field mapping
             null, //todo field mapping
             null, //todo field mapping
-            null); //todo field mapping
+            null); //source
     }
 
     public static List<Layer> fromUrbanCodeAndPeripheryLayer(org.wololo.geojson.FeatureCollection dto) {
@@ -107,7 +83,7 @@ public class Layer {
                 "", //todo field mapping
                 null, //todo field mapping
                 null, //todo field mapping
-                null) //todo field mapping
+                null) //source
         ).collect(Collectors.toList());
 
         //{
@@ -147,5 +123,24 @@ public class Layer {
         //        "areaKm2": 139417.01
         //      }
         //    },
+    }
+
+    private static <T> T getProperty(FeatureGeoJSON f, String propertyName, Class<T> clazz) {
+        Object value = f.getProperties() == null ? null : ((Map) f.getProperties()).get(propertyName);
+        return value == null ? null : clazz.cast(value);
+    }
+
+    private static <T> T getMapValueFromProperty(FeatureGeoJSON f, String propertyName, Object mapKey, Class<T> clazz) {
+        Map map = getProperty(f, propertyName, Map.class);
+        return map == null ? null : map.get(mapKey) == null ? null : clazz.cast(map.get(mapKey));
+    }
+
+    private static LayerCategory layerCategory(FeatureGeoJSON f) {
+        Boolean isOverlay = getProperty(f, DtoFeatureProperties.OVERLAY, Boolean.class);
+        return (isOverlay != null && isOverlay) ? OVERLAY : BASE;
+    }
+
+    private static String caseFormat(String input) {
+        return input == null ? null : input.toLowerCase().replace(input.substring(0, 1), input.substring(0, 1).toUpperCase());
     }
 }

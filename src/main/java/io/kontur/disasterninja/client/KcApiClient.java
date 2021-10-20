@@ -103,6 +103,7 @@ public class KcApiClient {
             result.addAll(response.getBody().getFeatures());
         }
 
+        LOG.info("{} features loaded for collection {} with bbox {}", result.size(), collectionId, bbox);
         return result;
     }
 

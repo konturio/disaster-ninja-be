@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class LayerSummaryInputDto {
-    private final String id; //event id //todo not used
+    private final String id; //event id
     private final GeometryGeoJSON geoJSON;
 }

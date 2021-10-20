@@ -10,9 +10,12 @@ public class DtoFeatureProperties {
     public static final String CATEGORY = "category";
     public static final String COUNTRY_CODE = "country_code";
     public static final String DESCRIPTION = "description";
+    public static final String OVERLAY = "overlay";
     public static final String END_DATE = "end_date";
 
     public static final String LICENSE_URL = "license_url";
+    public static final String ATTRIBUTION = "attribution";
+    public static final String TEXT = "text";
     public static final String MIN_ZOOM = "min_zoom";
     public static final String MAX_ZOOM = "max_zoom";
 
@@ -20,7 +23,6 @@ public class DtoFeatureProperties {
     public static final String START_DATE = "start_date";
     public static final String TYPE = "type";
     public static final String URL = "url";
-// todo   public final OsmAttribution attribution;
 
     //insights-api
     public static final String TOTAL_POPULATION = "totalPopulation";
