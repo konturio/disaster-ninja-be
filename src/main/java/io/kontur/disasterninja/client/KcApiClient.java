@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.wololo.jts2geojson.GeoJSONReader;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -52,10 +53,10 @@ public class KcApiClient {
         Geometry geoJsonGeometry = getGeometry(geoJson);
 
         //1 get items by bbox
-        FeatureCollectionGeoJSON featureCollectionGeoJSON = getCollectionItemsForBbox(geoJsonGeometry, collectionId);
+        List<FeatureGeoJSON> featureGeoJsons = getCollectionItemsForBbox(geoJsonGeometry, collectionId);
 
         //2 filter items by geoJson Geometry
-        return featureCollectionGeoJSON == null ? null : featureCollectionGeoJSON.getFeatures().stream()
+        return featureGeoJsons.stream()
             .filter(json -> {
                 Geometry geom = null;
                 try {
@@ -71,24 +72,38 @@ public class KcApiClient {
             .collect(Collectors.toList());
     }
 
-    private FeatureCollectionGeoJSON getCollectionItemsForBbox(Geometry geometry, String collectionId) {
+    private List<FeatureGeoJSON> getCollectionItemsForBbox(Geometry geometry, String collectionId) {
         Envelope env = geometry.getEnvelopeInternal(); //Z axis not taken into account
 
-        String uri = "/collections/" + collectionId + "/items?bbox={bbox}&limit={limit}"; //todo pagination/offset
+        String uri = "/collections/" + collectionId + "/items?bbox={bbox}&limit={limit}&offset={offset}";
+        int i = 0;
 
         Bbox bbox = new Bbox(Stream.of(env.getMinX(), env.getMinY(), env.getMaxX(), env.getMaxY())
             .map(String::valueOf).reduce((a, b) -> a + "," + b).get());
         LOG.info("Getting features of collection {} with bbox {}", collectionId, bbox);
-        ResponseEntity<FeatureCollectionGeoJSON> response = restTemplate
-            .exchange(uri, HttpMethod.GET, new HttpEntity<>(null,
-                null), new ParameterizedTypeReference<>() {
-            }, bbox, pageSize);
+        List<FeatureGeoJSON> result = new ArrayList<>();
 
-        if (response.getBody() == null) {
-            LOG.info("Empty response returned for collection {} and bbox {}", collectionId, bbox);
-            return null;
+        while (true) {
+            int offset = i++ * pageSize;
+
+            ResponseEntity<FeatureCollectionGeoJSON> response = restTemplate
+                .exchange(uri, HttpMethod.GET, new HttpEntity<>(null,
+                    null), new ParameterizedTypeReference<>() {
+                }, bbox, pageSize, offset);
+
+            if (response.getBody() == null) {
+                LOG.info("Empty response returned for collection {} and bbox {}", collectionId, bbox);
+                break;
+            }
+            if (response.getBody().getFeatures() == null || response.getBody().getFeatures().isEmpty()
+                || response.getBody().getFeatures().size() < pageSize) {
+                break;
+            }
+
+            result.addAll(response.getBody().getFeatures());
         }
-        return response.getBody();
+
+        return result;
     }
 
     private Geometry getGeometry(GeometryGeoJSON geoJson) {

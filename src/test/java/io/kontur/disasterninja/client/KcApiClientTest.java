@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,9 +21,10 @@ import java.util.List;
 
 import static io.kontur.disasterninja.util.TestUtil.readFile;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @Import(TestConfig.class)
@@ -50,11 +52,22 @@ class KcApiClientTest {
             "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
 
         //given
-        server.expect(r -> assertThat(r.getURI().toString(), equalTo(
-                "/collections/osmlayer/items?bbox=1.83975,6.2578,2.5494,7.11427&limit=10")))
+        server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(), containsString(
+                "/collections/osmlayer/items?bbox=1.83975,6.2578,2.5494,7.11427&limit=10&offset=")))
             .andExpect(method(HttpMethod.GET))
-            .andRespond(withSuccess(readFile(this, "layers/osmlayer.json"),
-                MediaType.APPLICATION_JSON));
+            .andRespond(request -> {
+                    //first page request
+                    if (request.getURI().toString().contains("offset=0")) {
+                        return withSuccess(readFile(this, "layers/osmlayer.json"),
+                            MediaType.APPLICATION_JSON).createResponse(request);
+                    }
+                    //second page request
+                    if (!request.getURI().toString().contains("offset=10")) {
+                        throw new RuntimeException("incorrect request uri!");
+                    }
+                    return withNoContent().createResponse(request);
+                }
+            );
 
         //when
         List<FeatureGeoJSON> events = client.getCollectionItemsByGeometry(objectMapper.readValue(json,
