@@ -21,6 +21,10 @@ dependencies {
     implementation 'org.wololo:jts2geojson:0.16.1'
     implementation 'org.springdoc:springdoc-openapi-ui:1.5.11'
 
+    //health
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.7.4'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'commons-io:commons-io:2.11.0'
     testImplementation 'org.hamcrest:hamcrest:2.2'
