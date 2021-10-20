@@ -3,6 +3,7 @@ package io.kontur.disasterninja.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.service.layers.LayerFactory;
 import k2layers.api.model.FeatureGeoJSON;
 import k2layers.api.model.GeometryGeoJSON;
 import org.junit.jupiter.api.Assertions;
@@ -20,13 +21,16 @@ public class KcApiClientIT {
     @Autowired
     KcApiClient kcApiClient;
 
+    @Autowired
+    LayerFactory layerFactory;
+
     @Test
     public void kcOsmTest() throws JsonProcessingException {
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
             "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
         List<FeatureGeoJSON> features = kcApiClient.getOsmLayers(new ObjectMapper().readValue(json,
             GeometryGeoJSON.class));
-        List<Layer> layers = Layer.fromOsmLayers(features);
+        List<Layer> layers = layerFactory.fromOsmLayers(features);
         Assertions.assertFalse(layers.isEmpty());
     }
 
@@ -38,7 +42,7 @@ public class KcApiClientIT {
             "[-10.654764175,6.276395795]]]]}";
         List<FeatureGeoJSON> features = kcApiClient.getHotProjectLayer(new ObjectMapper().readValue(json,
             GeometryGeoJSON.class));
-        Layer layer = Layer.fromHotProjectLayers(features);
+        Layer layer = layerFactory.fromHotProjectLayers(features);
         Assertions.assertNotNull(layer);
     }
 }

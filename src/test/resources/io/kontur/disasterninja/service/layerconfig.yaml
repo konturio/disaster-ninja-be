@@ -1,0 +1,40 @@
+- id: 'urbanCore'
+  description: 'Kontur Urban Core highlights most populated region affected. For this event {{population}} people reside on {{areaKm2}}km² (out of total {{totalPopulation}} people on {{totalAreaKm2}}km²). This area should have higher priority in humanitarian activities.'
+  group: 'Layers in selected area'
+  legend:
+    type: 'simple'
+    steps:
+      - stepShape: 'hex'
+        style:
+          color: '#FF7B00'
+          width: 3
+          offset: 4
+          casing-offset: 2
+          casing-color: '#FF7B00'
+          casing-width: 3
+          casing-opacity: 0.5
+- id: 'settledPeriphery'
+  description: 'Kontur Settled Periphery is complimentary to Kontur Urban Core and shows a spread-out part of the population in the region. For this event it adds {{population}} people on {{areaKm2}}km² on top of Kontur Urban Core.'
+  group: 'Layers in selected area'
+  legend:
+    type: 'simple'
+    steps:
+      - stepShape: 'hex'
+        style:
+          color: '#2AD72A'
+          width: 3
+          casing-offset: 2
+          casing-color: '#2AD72A'
+          casing-width: 3
+          casing-opacity: 0.5
+- id: 'hotProjects'
+  name: 'HOT Projects'
+  description: 'Projects on HOT Tasking Manager, ongoing and historical'
+  category: 'overlay'
+  group: 'Kontur'
+  legend:
+    type: 'simple'
+    steps:
+      - stepName: 'Active'
+        style:
+          icon: 'link_to_icon'

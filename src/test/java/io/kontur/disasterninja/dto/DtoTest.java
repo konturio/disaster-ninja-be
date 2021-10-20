@@ -9,7 +9,7 @@ import io.kontur.disasterninja.domain.enums.LayerSourceType;
 import io.kontur.disasterninja.domain.enums.LegendType;
 import io.kontur.disasterninja.dto.layer.LayerSummaryDto;
 import io.kontur.disasterninja.dto.layer.LayerSummaryInputDto;
-import io.kontur.disasterninja.service.LayerService;
+import io.kontur.disasterninja.service.layers.LayerService;
 import k2layers.api.model.GeometryGeoJSON;
 import k2layers.api.model.PointGeoJSON;
 import org.junit.jupiter.api.Assertions;
@@ -22,10 +22,9 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
+import static io.kontur.disasterninja.domain.enums.LayerStepShape.HEX;
 import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -67,8 +66,10 @@ public class DtoTest {
     private Layer testLayer(String id, GeometryGeoJSON geoJSON) {
         LayerSource source = new LayerSource(LayerSourceType.RASTER, "url-com.com", 2d, geoJSON);
         Legend legend = new Legend("some legend", LegendType.SIMPLE, new ArrayList<>());
-        legend.getSteps().add(new LegendStep("param name", "param value", "icon", "name",
-            "style {}"));
+        Map<String, String> map = new HashMap<>();
+        map.put("prop", "value");
+        legend.getSteps().add(new LegendStep("param name", "param value", "step name",
+            HEX, map));
 
         return new Layer(id, "test name", "test desciption", LayerCategory.BASE, "tset group",
             legend, "copyright text", 10, 1, source);

@@ -1,4 +1,4 @@
-package io.kontur.disasterninja.service;
+package io.kontur.disasterninja.service.layers;
 
 import io.kontur.disasterninja.client.InsightsApiClient;
 import io.kontur.disasterninja.client.KcApiClient;
@@ -17,6 +17,8 @@ public class LayerService {
     KcApiClient kcApiClient;
     @Autowired
     InsightsApiClient insightsApiClient;
+    @Autowired
+    LayerFactory layerFactory;
 
     public ArrayList<Layer> getList(GeometryGeoJSON geoJSON) {
         ArrayList<Layer> all = new ArrayList<>();
@@ -28,17 +30,17 @@ public class LayerService {
 
     private List<Layer> getOsmLayers(GeometryGeoJSON geoJSON) {
         List<FeatureGeoJSON> osmLayers = kcApiClient.getOsmLayers(geoJSON);
-        return Layer.fromOsmLayers(osmLayers);
+        return layerFactory.fromOsmLayers(osmLayers);
     }
 
     private Layer getHotProjectLayer(GeometryGeoJSON geoJSON) {
         List<FeatureGeoJSON> hotProjectLayers = kcApiClient.getHotProjectLayer(geoJSON);
-        return Layer.fromHotProjectLayers(hotProjectLayers);
+        return layerFactory.fromHotProjectLayers(hotProjectLayers);
     }
 
     private List<Layer> getUrbanCodeAndPeripheryLayers(GeometryGeoJSON geoJSON) {
         org.wololo.geojson.FeatureCollection urbanCoreAndSettledPeripheryLayers = insightsApiClient
             .getUrbanCoreAndSettledPeripheryLayers(geoJSON);
-        return Layer.fromUrbanCodeAndPeripheryLayer(urbanCoreAndSettledPeripheryLayers);
+        return layerFactory.fromUrbanCodeAndPeripheryLayer(urbanCoreAndSettledPeripheryLayers);
     }
 }

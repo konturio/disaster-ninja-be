@@ -3,7 +3,7 @@ package io.kontur.disasterninja.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.dto.layer.LayerSummaryDto;
 import io.kontur.disasterninja.dto.layer.LayerSummaryInputDto;
-import io.kontur.disasterninja.service.LayerService;
+import io.kontur.disasterninja.service.layers.LayerService;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
