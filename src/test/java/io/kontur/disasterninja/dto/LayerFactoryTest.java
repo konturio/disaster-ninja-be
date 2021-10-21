@@ -1,12 +1,10 @@
 package io.kontur.disasterninja.dto;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.service.layers.LayerFactory;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +63,7 @@ public class LayerFactoryTest {
     @Test
     public void fromHotProjectLayersTest() throws IOException {
         List<Feature> features = List.of(objectMapper.readValue(
-                new File("src/test/resources/io/kontur/disasterninja/client/layers/hotProjects.json"),
+                new File("src/test/resources/io/kontur/disasterninja/client/layers/hotprojects.json"),
                 FeatureCollection.class)
             .getFeatures());
         Layer result = layerFactory.fromHotProjectLayers(features);

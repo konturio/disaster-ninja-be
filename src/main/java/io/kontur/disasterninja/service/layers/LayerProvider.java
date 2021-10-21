@@ -1,4 +1,4 @@
-package io.kontur.disasterninja.client;
+package io.kontur.disasterninja.service.layers;
 
 import io.kontur.disasterninja.domain.Layer;
 import org.wololo.geojson.GeoJSON;

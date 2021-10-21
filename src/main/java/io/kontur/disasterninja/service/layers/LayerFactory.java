@@ -25,7 +25,7 @@ public class LayerFactory {
     LayerPrototypeService prototypeService;
 
     private static <T> T getProperty(Feature f, String propertyName, Class<T> clazz) {
-        Object value = f.getProperties() == null ? null : ((Map) f.getProperties()).get(propertyName);
+        Object value = f.getProperties() == null ? null : (f.getProperties()).get(propertyName);
         return value == null ? null : clazz.cast(value);
     }
 

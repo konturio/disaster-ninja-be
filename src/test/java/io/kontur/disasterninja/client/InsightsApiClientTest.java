@@ -49,7 +49,7 @@ class InsightsApiClientTest {
 
         //given
         server.expect(r -> assertThat(r.getURI().toString(),
-                equalTo("https://test-apps02.konturlabs.com/insights-api/population/humanitarian_impact")))
+                equalTo("/population/humanitarian_impact")))
             .andExpect(method(HttpMethod.POST))
             .andExpect(r -> assertThat(r.getBody().toString(), equalTo(json)))
             .andRespond(withSuccess(readFile(this, "layers/population.json"),
