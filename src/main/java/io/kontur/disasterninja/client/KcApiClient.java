@@ -86,8 +86,7 @@ public class KcApiClient {
                 LOG.info("Empty response returned for collection {} and bbox {}", collectionId, bbox);
                 break;
             }
-            if (response.getBody().getFeatures() == null || response.getBody().getFeatures() == null //todo test (== null/isEmpty)
-                || response.getBody().getFeatures().length < pageSize) {
+            if (response.getBody().getFeatures() == null || response.getBody().getFeatures().length < pageSize) {
                 break;
             }
 

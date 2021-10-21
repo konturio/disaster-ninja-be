@@ -1,13 +1,16 @@
-package io.kontur.disasterninja.service.layers;
+package io.kontur.disasterninja.service.layers.providers;
 
+import io.kontur.disasterninja.client.KcApiClient;
 import io.kontur.disasterninja.domain.DtoFeatureProperties;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
+import io.kontur.disasterninja.service.layers.LayerPrototypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
+import org.wololo.geojson.Geometry;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,19 +18,17 @@ import java.util.stream.Collectors;
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Service
-public class LayerFactory {
+@Order(HIGHEST_PRECEDENCE)
+public class OsmLayerProvider implements LayerProvider {
 
-    private static final String HOT_ID = "hotProjects";
+    @Autowired
+    KcApiClient kcApiClient;
 
     @Autowired
     LayerPrototypeService prototypeService;
-
-    private static <T> T getProperty(Feature f, String propertyName, Class<T> clazz) {
-        Object value = f.getProperties() == null ? null : (f.getProperties()).get(propertyName);
-        return value == null ? null : clazz.cast(value);
-    }
 
     private static <T> T getMapValueFromProperty(Feature f, String propertyName, Object mapKey, Class<T> clazz) {
         Map map = getProperty(f, propertyName, Map.class);
@@ -43,42 +44,43 @@ public class LayerFactory {
         return input == null ? null : input.toLowerCase().replace(input.substring(0, 1), input.substring(0, 1).toUpperCase());
     }
 
-    public List<Layer> fromOsmLayers(List<Feature> dto) {
+    private static <T> T getProperty(Feature f, String propertyName, Class<T> clazz) {
+        Object value = f.getProperties() == null ? null : (f.getProperties()).get(propertyName);
+        return value == null ? null : clazz.cast(value);
+    }
+
+    @Override
+    public List<Layer> obtainLayers(Geometry geoJSON) {
+        List<Feature> osmLayers = kcApiClient.getOsmLayers(geoJSON);
+        return fromOsmLayers(osmLayers);
+    }
+
+    @Override
+    public Layer obtainLayer(String layerId) {
+        return null; //todo
+    }
+
+    @Override
+    public Boolean isApplicable(String layerId) {
+        return null; //todo
+    }
+
+    List<Layer> fromOsmLayers(List<Feature> dto) {
         if (dto == null) {
             return null;
         }
         return dto.stream().map(f -> {
-                Layer layer = prototypeService.prototypeOrEmpty((String) f.getId()); //todo check cast
-                layer.setName(getProperty(f, NAME, String.class));
-                layer.setDescription(getProperty(f, DESCRIPTION, String.class));
-                layer.setCategory(layerCategory(f));
-                layer.setGroup(caseFormat(getProperty(f, CATEGORY, String.class)));
-                layer.setCopyright(getMapValueFromProperty(f, ATTRIBUTION, TEXT, String.class));
+                    Layer layer = prototypeService.prototypeOrEmpty((String) f.getId());
+                    layer.setName(getProperty(f, NAME, String.class));
+                    layer.setDescription(getProperty(f, DESCRIPTION, String.class));
+                    layer.setCategory(layerCategory(f));
+                    layer.setGroup(caseFormat(getProperty(f, CATEGORY, String.class)));
+                    layer.setCopyright(getMapValueFromProperty(f, ATTRIBUTION, TEXT, String.class));
                     layer.setMaxZoom(getProperty(f, MAX_ZOOM, Integer.class));
                     layer.setMinZoom(getProperty(f, MIN_ZOOM, Integer.class));
                     return layer;
                 }
             )
             .collect(Collectors.toList());
-    }
-
-    public Layer fromHotProjectLayers(List<Feature> dto) {
-        if (dto == null) {
-            return null;
-        }
-        //The entire collection is one layer
-        return prototypeService.prototypeOrEmpty(HOT_ID);
-        //todo set anything else?
-    }
-
-    public List<Layer> fromUrbanCodeAndPeripheryLayer(org.wololo.geojson.FeatureCollection dto) {
-        if (dto == null) {
-            return null;
-        }
-        return Arrays.stream(dto.getFeatures()).map(f -> {
-            Layer layer = prototypeService.prototypeOrEmpty((String) f.getId());
-            layer.setName((String) f.getProperties().get(NAME));
-            return layer;
-        }).collect(Collectors.toList());
     }
 }

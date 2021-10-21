@@ -12,7 +12,7 @@ public class LayerDetailsDto {
     private final LayerSourceDto source;
 
     public static LayerDetailsDto fromLayer(Layer layer) {
-        return new LayerDetailsDto(layer.getId(), layer.getMaxZoom(), layer.getMinZoom(),
+        return layer == null ? null : new LayerDetailsDto(layer.getId(), layer.getMaxZoom(), layer.getMinZoom(),
             LayerSourceDto.fromLayerSource(layer.getSource()));
     }
 }

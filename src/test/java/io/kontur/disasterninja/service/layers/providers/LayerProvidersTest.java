@@ -1,9 +1,8 @@
-package io.kontur.disasterninja.dto;
+package io.kontur.disasterninja.service.layers.providers;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.domain.Layer;
-import io.kontur.disasterninja.service.layers.LayerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,11 +21,17 @@ import static io.kontur.disasterninja.domain.enums.LayerStepShape.HEX;
 import static io.kontur.disasterninja.domain.enums.LegendType.SIMPLE;
 
 @SpringBootTest
-public class LayerFactoryTest {
+public class LayerProvidersTest {
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
-    LayerFactory layerFactory;
+    OsmLayerProvider osmLayerProvider;
+
+    @Autowired
+    HotLayerProvider hotLayerProvider;
+
+    @Autowired
+    UrbanAndPeripheryLayerProvider urbanAndPeripheryLayerProvider;
 
     @BeforeEach
     private void setup() {
@@ -39,7 +44,7 @@ public class LayerFactoryTest {
                 new File("src/test/resources/io/kontur/disasterninja/client/layers/osmlayer.json"),
                 FeatureCollection.class)
             .getFeatures());
-        List<Layer> result = layerFactory.fromOsmLayers(features);
+        List<Layer> result = osmLayerProvider.fromOsmLayers(features);
 
         Layer layer1 = result.stream().filter(it -> "Bing".equals(it.getId())).findAny().get();
         Assertions.assertEquals("Bing aerial imagery", layer1.getName());
@@ -66,7 +71,7 @@ public class LayerFactoryTest {
                 new File("src/test/resources/io/kontur/disasterninja/client/layers/hotprojects.json"),
                 FeatureCollection.class)
             .getFeatures());
-        Layer result = layerFactory.fromHotProjectLayers(features);
+        Layer result = hotLayerProvider.fromHotProjectLayers(features);
         Assertions.assertEquals("hotProjects", result.getId());
 
         Assertions.assertEquals("Hot Projects", result.getName());
@@ -87,7 +92,7 @@ public class LayerFactoryTest {
         FeatureCollection featureCollection = objectMapper.readValue(
             new File("src/test/resources/io/kontur/disasterninja/client/layers/population.json"),
             FeatureCollection.class);
-        List<Layer> result = layerFactory.fromUrbanCodeAndPeripheryLayer(featureCollection);
+        List<Layer> result = urbanAndPeripheryLayerProvider.fromUrbanCodeAndPeripheryLayer(featureCollection);
         Assertions.assertEquals(2, result.size());
 
         Layer urbanCore = result.stream().filter(it -> "kontur_urban_core".equals(it.getId())).findAny().get();
@@ -109,7 +114,7 @@ public class LayerFactoryTest {
         FeatureCollection featureCollection = objectMapper.readValue(
             new File("src/test/resources/io/kontur/disasterninja/client/layers/population.json"),
             FeatureCollection.class);
-        List<Layer> result = layerFactory.fromUrbanCodeAndPeripheryLayer(featureCollection);
+        List<Layer> result = urbanAndPeripheryLayerProvider.fromUrbanCodeAndPeripheryLayer(featureCollection);
         Assertions.assertEquals(2, result.size());
 
         Layer periphery = result.stream().filter(it -> "kontur_settled_periphery".equals(it.getId())).findAny().get();

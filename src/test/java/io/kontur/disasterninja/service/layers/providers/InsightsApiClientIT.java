@@ -1,9 +1,9 @@
-package io.kontur.disasterninja.client;
+package io.kontur.disasterninja.service.layers.providers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.kontur.disasterninja.client.InsightsApiClient;
 import io.kontur.disasterninja.domain.Layer;
-import io.kontur.disasterninja.service.layers.LayerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ public class InsightsApiClientIT {
     @Autowired
     InsightsApiClient insightsApiClient;
     @Autowired
-    LayerFactory layerFactory;
+    UrbanAndPeripheryLayerProvider urbanAndPeripheryLayerProvider;
 
     @Test
     public void insightsApiTest() throws JsonProcessingException {
@@ -30,7 +30,7 @@ public class InsightsApiClientIT {
         FeatureCollection dto = insightsApiClient.getUrbanCoreAndSettledPeripheryLayers(new ObjectMapper().readValue(json,
             Geometry.class));
 
-        List<Layer> layers = layerFactory.fromUrbanCodeAndPeripheryLayer(dto);
+        List<Layer> layers = urbanAndPeripheryLayerProvider.fromUrbanCodeAndPeripheryLayer(dto);
         Assertions.assertFalse(layers.isEmpty());
     }
 }
