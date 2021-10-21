@@ -1,13 +1,7 @@
 package io.kontur.disasterninja.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import k2layers.api.model.Bbox;
-import k2layers.api.model.FeatureCollectionGeoJSON;
-import k2layers.api.model.FeatureGeoJSON;
-import k2layers.api.model.GeometryGeoJSON;
 import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +13,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.wololo.geojson.Feature;
+import org.wololo.geojson.FeatureCollection;
+import org.wololo.geojson.Geometry;
 import org.wololo.jts2geojson.GeoJSONReader;
 
 import java.util.ArrayList;
@@ -41,52 +38,46 @@ public class KcApiClient {
     @Value("${kontur.platform.kcApi.pageSize}")
     private int pageSize;
 
-    public List<FeatureGeoJSON> getOsmLayers(GeometryGeoJSON geoJSON) {
+    public List<Feature> getOsmLayers(Geometry geoJSON) {
         return getCollectionItemsByGeometry(geoJSON, OSM_LAYERS);
     }
 
-    public List<FeatureGeoJSON> getHotProjectLayer(GeometryGeoJSON geoJSON) {
+    public List<Feature> getHotProjectLayer(Geometry geoJSON) {
         return getCollectionItemsByGeometry(geoJSON, HOT_PROJECTS);
     }
 
-    public List<FeatureGeoJSON> getCollectionItemsByGeometry(GeometryGeoJSON geoJson, String collectionId) {
-        Geometry geoJsonGeometry = getGeometry(geoJson);
+    public List<Feature> getCollectionItemsByGeometry(Geometry geoJson, String collectionId) {
+        org.locationtech.jts.geom.Geometry geoJsonGeometry = getJtsGeometry(geoJson);
 
         //1 get items by bbox
-        List<FeatureGeoJSON> featureGeoJsons = getCollectionItemsForBbox(geoJsonGeometry, collectionId);
+        List<Feature> Features = getCollectionItemsForBbox(geoJsonGeometry, collectionId);
 
         //2 filter items by geoJson Geometry
-        return featureGeoJsons.stream()
+        return Features.stream()
             .filter(json -> {
-                Geometry geom = null;
-                try {
-                    if (json.getGeometry() != null) {
-                        geom = reader.read(objectMapper.writeValueAsString(json.getGeometry()));
-                    }
-                } catch (JsonProcessingException e) {
-                    LOG.warn("Can't deserialize geometry from feature json, ignoring: {}", json);
-                }
-                return geom == null || //include items without geometry ("global" ones)
-                    geoJsonGeometry.intersects(geom);
+                Geometry featureGeom = json.getGeometry();
+                return featureGeom == null || //include items without geometry ("global" ones)
+                    geoJsonGeometry.intersects(reader.read(featureGeom));
             })
             .collect(Collectors.toList());
     }
 
-    private List<FeatureGeoJSON> getCollectionItemsForBbox(Geometry geometry, String collectionId) {
+    private List<Feature> getCollectionItemsForBbox(
+        org.locationtech.jts.geom.Geometry geometry, String collectionId) {
         Envelope env = geometry.getEnvelopeInternal(); //Z axis not taken into account
 
         String uri = "/collections/" + collectionId + "/items?bbox={bbox}&limit={limit}&offset={offset}";
         int i = 0;
 
-        Bbox bbox = new Bbox(Stream.of(env.getMinX(), env.getMinY(), env.getMaxX(), env.getMaxY())
-            .map(String::valueOf).reduce((a, b) -> a + "," + b).get());
+        String bbox = Stream.of(env.getMinX(), env.getMinY(), env.getMaxX(), env.getMaxY())
+            .map(String::valueOf).reduce((a, b) -> a + "," + b).get();
         LOG.info("Getting features of collection {} with bbox {}", collectionId, bbox);
-        List<FeatureGeoJSON> result = new ArrayList<>();
+        List<Feature> result = new ArrayList<>();
 
         while (true) {
             int offset = i++ * pageSize;
 
-            ResponseEntity<FeatureCollectionGeoJSON> response = restTemplate
+            ResponseEntity<FeatureCollection> response = restTemplate
                 .exchange(uri, HttpMethod.GET, new HttpEntity<>(null,
                     null), new ParameterizedTypeReference<>() {
                 }, bbox, pageSize, offset);
@@ -95,24 +86,19 @@ public class KcApiClient {
                 LOG.info("Empty response returned for collection {} and bbox {}", collectionId, bbox);
                 break;
             }
-            if (response.getBody().getFeatures() == null || response.getBody().getFeatures().isEmpty()
-                || response.getBody().getFeatures().size() < pageSize) {
+            if (response.getBody().getFeatures() == null || response.getBody().getFeatures() == null //todo test (== null/isEmpty)
+                || response.getBody().getFeatures().length < pageSize) {
                 break;
             }
 
-            result.addAll(response.getBody().getFeatures());
+            result.addAll(List.of(response.getBody().getFeatures()));
         }
 
         LOG.info("{} features loaded for collection {} with bbox {}", result.size(), collectionId, bbox);
         return result;
     }
 
-    private Geometry getGeometry(GeometryGeoJSON geoJson) {
-        try {
-            return reader.read(objectMapper.writeValueAsString(geoJson));
-        } catch (JsonProcessingException e) {
-            LOG.error("Caught exception while serializing geoJson: {}", e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
+    private org.locationtech.jts.geom.Geometry getJtsGeometry(Geometry geoJson) {
+        return reader.read(geoJson);
     }
 }

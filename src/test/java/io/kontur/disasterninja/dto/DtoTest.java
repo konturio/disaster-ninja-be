@@ -10,8 +10,6 @@ import io.kontur.disasterninja.domain.enums.LegendType;
 import io.kontur.disasterninja.dto.layer.LayerSummaryDto;
 import io.kontur.disasterninja.dto.layer.LayerSummaryInputDto;
 import io.kontur.disasterninja.service.layers.LayerService;
-import k2layers.api.model.GeometryGeoJSON;
-import k2layers.api.model.PointGeoJSON;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,8 +18,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.wololo.geojson.Geometry;
+import org.wololo.geojson.Point;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 import static io.kontur.disasterninja.domain.enums.LayerStepShape.HEX;
@@ -42,10 +41,8 @@ public class DtoTest {
         String url = "http://localhost:" + port + "/api/layers/";
 
         String id = "123";
-        List<BigDecimal> coords = new ArrayList<>();
-        coords.add(BigDecimal.ONE);
-        coords.add(BigDecimal.ZERO);
-        GeometryGeoJSON geoJSON = new PointGeoJSON().coordinates(coords);
+        double[] coords = new double[]{1, 0};
+        Geometry geoJSON = new Point(coords);
         ArrayList<Layer> layers = new ArrayList<>();
         Layer layer = testLayer(id, geoJSON);
         layers.add(layer);
@@ -63,7 +60,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().toLegend());
     }
 
-    private Layer testLayer(String id, GeometryGeoJSON geoJSON) {
+    private Layer testLayer(String id, Geometry geoJSON) {
         LayerSource source = new LayerSource(LayerSourceType.RASTER, "url-com.com", 2d, geoJSON);
         Legend legend = new Legend("some legend", LegendType.SIMPLE, new ArrayList<>());
         Map<String, String> map = new HashMap<>();

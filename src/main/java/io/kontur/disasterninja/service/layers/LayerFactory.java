@@ -3,9 +3,9 @@ package io.kontur.disasterninja.service.layers;
 import io.kontur.disasterninja.domain.DtoFeatureProperties;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
-import k2layers.api.model.FeatureGeoJSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.wololo.geojson.Feature;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,17 +24,17 @@ public class LayerFactory {
     @Autowired
     LayerPrototypeService prototypeService;
 
-    private static <T> T getProperty(FeatureGeoJSON f, String propertyName, Class<T> clazz) {
+    private static <T> T getProperty(Feature f, String propertyName, Class<T> clazz) {
         Object value = f.getProperties() == null ? null : ((Map) f.getProperties()).get(propertyName);
         return value == null ? null : clazz.cast(value);
     }
 
-    private static <T> T getMapValueFromProperty(FeatureGeoJSON f, String propertyName, Object mapKey, Class<T> clazz) {
+    private static <T> T getMapValueFromProperty(Feature f, String propertyName, Object mapKey, Class<T> clazz) {
         Map map = getProperty(f, propertyName, Map.class);
         return map == null ? null : map.get(mapKey) == null ? null : clazz.cast(map.get(mapKey));
     }
 
-    private static LayerCategory layerCategory(FeatureGeoJSON f) {
+    private static LayerCategory layerCategory(Feature f) {
         Boolean isOverlay = getProperty(f, DtoFeatureProperties.OVERLAY, Boolean.class);
         return (isOverlay != null && isOverlay) ? OVERLAY : BASE;
     }
@@ -43,17 +43,17 @@ public class LayerFactory {
         return input == null ? null : input.toLowerCase().replace(input.substring(0, 1), input.substring(0, 1).toUpperCase());
     }
 
-    public List<Layer> fromOsmLayers(List<FeatureGeoJSON> dto) {
+    public List<Layer> fromOsmLayers(List<Feature> dto) {
         if (dto == null) {
             return null;
         }
         return dto.stream().map(f -> {
-                    Layer layer = prototypeService.prototypeOrEmpty(f.getId());
-                    layer.setName(getProperty(f, NAME, String.class));
-                    layer.setDescription(getProperty(f, DESCRIPTION, String.class));
-                    layer.setCategory(layerCategory(f));
-                    layer.setGroup(caseFormat(getProperty(f, CATEGORY, String.class)));
-                    layer.setCopyright(getMapValueFromProperty(f, ATTRIBUTION, TEXT, String.class));
+                Layer layer = prototypeService.prototypeOrEmpty((String) f.getId()); //todo check cast
+                layer.setName(getProperty(f, NAME, String.class));
+                layer.setDescription(getProperty(f, DESCRIPTION, String.class));
+                layer.setCategory(layerCategory(f));
+                layer.setGroup(caseFormat(getProperty(f, CATEGORY, String.class)));
+                layer.setCopyright(getMapValueFromProperty(f, ATTRIBUTION, TEXT, String.class));
                     layer.setMaxZoom(getProperty(f, MAX_ZOOM, Integer.class));
                     layer.setMinZoom(getProperty(f, MIN_ZOOM, Integer.class));
                     return layer;
@@ -62,7 +62,7 @@ public class LayerFactory {
             .collect(Collectors.toList());
     }
 
-    public Layer fromHotProjectLayers(List<FeatureGeoJSON> dto) {
+    public Layer fromHotProjectLayers(List<Feature> dto) {
         if (dto == null) {
             return null;
         }

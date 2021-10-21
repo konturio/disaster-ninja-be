@@ -14,7 +14,7 @@ sourceCompatibility = '16'
 
 repositories {
     mavenCentral()
-    mavenLocal()
+//    mavenLocal()
 }
 
 dependencies {
@@ -23,7 +23,6 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.wololo:jts2geojson:0.16.1'
-    implementation 'io.kontur.k2layers:model:1.0-SNAPSHOT'
     implementation 'org.springdoc:springdoc-openapi-ui:1.5.11'
 
 //    implementation('io.swagger.core.v3:swagger-annotations:2.1.10')

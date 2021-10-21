@@ -1,8 +1,6 @@
 package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import k2layers.api.model.FeatureGeoJSON;
-import k2layers.api.model.GeometryGeoJSON;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
+import org.wololo.geojson.Feature;
+import org.wololo.geojson.Geometry;
 
 import java.io.IOException;
 import java.util.List;
@@ -70,8 +70,8 @@ class KcApiClientTest {
             );
 
         //when
-        List<FeatureGeoJSON> events = client.getCollectionItemsByGeometry(objectMapper.readValue(json,
-            GeometryGeoJSON.class), "osmlayer");
+        List<Feature> events = client.getCollectionItemsByGeometry(objectMapper.readValue(json,
+            Geometry.class), "osmlayer");
 
         //then
         assertEquals(10, events.size());

@@ -17,9 +17,8 @@ public class LayerPrototypeServiceTest {
     public void test() throws IOException {
         objectMapper.findAndRegisterModules();
 
-        List<Layer> list = objectMapper.readValue(new File("src/test/resources/io/kontur/disasterninja/" +
-            "service/layerconfig.yaml"), new TypeReference<>() {
+        List<Layer> list = objectMapper.readValue(new File("src/main/resources/layerconfig.yaml"), new TypeReference<>() {
         });
-
+        //todo assert?
     }
 }

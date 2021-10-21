@@ -1,14 +1,17 @@
 package io.kontur.disasterninja.dto;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.service.layers.LayerFactory;
-import k2layers.api.model.FeatureCollectionGeoJSON;
-import k2layers.api.model.FeatureGeoJSON;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 
 import java.io.File;
@@ -27,12 +30,17 @@ public class LayerFactoryTest {
     @Autowired
     LayerFactory layerFactory;
 
+    @BeforeEach
+    private void setup() {
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
     @Test
     public void fromOsmLayersTest() throws IOException {
-        List<FeatureGeoJSON> features = objectMapper.readValue(
+        List<Feature> features = List.of(objectMapper.readValue(
                 new File("src/test/resources/io/kontur/disasterninja/client/layers/osmlayer.json"),
-                FeatureCollectionGeoJSON.class)
-            .getFeatures();
+                FeatureCollection.class)
+            .getFeatures());
         List<Layer> result = layerFactory.fromOsmLayers(features);
 
         Layer layer1 = result.stream().filter(it -> "Bing".equals(it.getId())).findAny().get();
@@ -56,10 +64,10 @@ public class LayerFactoryTest {
 
     @Test
     public void fromHotProjectLayersTest() throws IOException {
-        List<FeatureGeoJSON> features = objectMapper.readValue(
+        List<Feature> features = List.of(objectMapper.readValue(
                 new File("src/test/resources/io/kontur/disasterninja/client/layers/hotProjects.json"),
-                FeatureCollectionGeoJSON.class)
-            .getFeatures();
+                FeatureCollection.class)
+            .getFeatures());
         Layer result = layerFactory.fromHotProjectLayers(features);
         Assertions.assertEquals("hotProjects", result.getId());
 

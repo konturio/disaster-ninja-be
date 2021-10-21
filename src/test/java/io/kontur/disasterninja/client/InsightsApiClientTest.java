@@ -1,7 +1,6 @@
 package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import k2layers.api.model.GeometryGeoJSON;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import org.wololo.geojson.FeatureCollection;
+import org.wololo.geojson.Geometry;
 
 import java.io.IOException;
 
@@ -57,7 +57,7 @@ class InsightsApiClientTest {
 
         //when
         FeatureCollection events = client.getUrbanCoreAndSettledPeripheryLayers(new ObjectMapper().readValue(json,
-            GeometryGeoJSON.class));
+            Geometry.class));
 
         //then
         assertEquals(2, events.getFeatures().length);

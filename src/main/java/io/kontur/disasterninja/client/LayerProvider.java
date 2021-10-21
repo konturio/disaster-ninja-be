@@ -5,8 +5,8 @@ import org.wololo.geojson.GeoJSON;
 
 import java.util.List;
 
-public interface LayerProvider {
+public interface LayerProvider { //todo
     List<Layer> obtainLayers(GeoJSON geoJSON);
     Layer obtainLayer(String layerId);
-    Boolean isApplicable(String layedId); //todo applicable for what? why boxed boolean?
+    Boolean isApplicable(String layedId);
 }
