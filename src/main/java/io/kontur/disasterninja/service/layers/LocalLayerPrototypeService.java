@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class LocalLayerPrototypeService implements LayerPrototypeService {
+public class LocalLayerPrototypeService implements LayerConfigService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalLayerPrototypeService.class);
     ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
@@ -25,9 +24,8 @@ public class LocalLayerPrototypeService implements LayerPrototypeService {
     public LocalLayerPrototypeService() {
         objectMapper.findAndRegisterModules();
         try {
-            List<Layer> list = objectMapper.readValue(new File("src/main/resources/layerconfig.yaml"),
-                new TypeReference<>() {
-                });
+            List<Layer> list = objectMapper.readValue(ClassLoader.getSystemResource("layers/layerconfig.yaml"),
+                new TypeReference<>() {});
             defaults = list.stream().collect(Collectors.toMap(Layer::getId, l -> l));
         } catch (IOException e) {
             LOG.error("Cannot load layer configurations! {}", e.getMessage(), e);
@@ -36,11 +34,10 @@ public class LocalLayerPrototypeService implements LayerPrototypeService {
     }
 
     @Override
-    public Layer prototypeOrEmpty(String layerId) {
-        Layer prototype = defaults.get(layerId);
-        if (prototype == null) {
-            return new Layer(layerId);
+    public void applyConfig(Layer input) {
+        Layer config = defaults.get(input.getId());
+        if (config != null) {
+            input.mergeFrom(config);
         }
-        return objectMapper.convertValue(prototype, Layer.class); //clone
     }
 }

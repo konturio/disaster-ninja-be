@@ -2,7 +2,7 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.client.InsightsApiClient;
 import io.kontur.disasterninja.domain.Layer;
-import io.kontur.disasterninja.service.layers.LayerPrototypeService;
+import io.kontur.disasterninja.service.layers.LayerConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Geometry;
@@ -20,7 +20,7 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
     InsightsApiClient insightsApiClient;
 
     @Autowired
-    LayerPrototypeService prototypeService;
+    LayerConfigService prototypeService;
 
     @Override
     public List<Layer> obtainLayers(Geometry geoJSON) {
@@ -43,8 +43,8 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
         if (dto == null) {
             return null;
         }
-        return Arrays.stream(dto.getFeatures()).map(f -> {
-            Layer layer = prototypeService.prototypeOrEmpty((String) f.getId());
+        return Arrays.stream(dto.getFeatures()).map(f -> { //todo check - any other fields?
+            Layer layer = new Layer((String) f.getId());
             layer.setName((String) f.getProperties().get(NAME));
             return layer;
         }).collect(Collectors.toList());

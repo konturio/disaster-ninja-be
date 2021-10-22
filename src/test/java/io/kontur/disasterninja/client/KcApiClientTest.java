@@ -24,7 +24,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @Import(TestConfig.class)
@@ -47,12 +46,12 @@ class KcApiClientTest {
     }
 
     @Test
-    public void testGetFeatures() throws IOException {
+    public void onePageTest() throws IOException {
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
             "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
 
         //given
-        server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(), containsString(
+        server.expect(ExpectedCount.times(1), r -> assertThat(r.getURI().toString(), containsString(
                 "/collections/osmlayer/items?bbox=1.83975,6.2578,2.5494,7.11427&limit=10&offset=")))
             .andExpect(method(HttpMethod.GET))
             .andRespond(request -> {
@@ -61,11 +60,8 @@ class KcApiClientTest {
                         return withSuccess(readFile(this, "layers/osmlayer.json"),
                             MediaType.APPLICATION_JSON).createResponse(request);
                     }
-                    //second page request
-                    if (!request.getURI().toString().contains("offset=10")) {
-                        throw new RuntimeException("incorrect request uri!");
-                    }
-                    return withNoContent().createResponse(request);
+                    //no more requests expected
+                    throw new RuntimeException("incorrect request uri!");
                 }
             );
 
@@ -75,5 +71,44 @@ class KcApiClientTest {
 
         //then
         assertEquals(10, events.size());
+    }
+
+    @Test
+    public void threePagesTest() throws IOException {
+        String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
+            "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
+
+        //given
+        server.expect(ExpectedCount.times(3), r -> assertThat(r.getURI().toString(), containsString(
+                "/collections/osmlayer/items?bbox=1.83975,6.2578,2.5494,7.11427&limit=10&offset=")))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(request -> {
+                    //first page request
+                    if (request.getURI().toString().contains("offset=0")) {
+                        return withSuccess(readFile(this, "layers/osmlayer.json")
+                                .replaceAll("\"numberMatched\": 10,", "\"numberMatched\": 22,"),
+                            MediaType.APPLICATION_JSON).createResponse(request);
+                    }
+                    //second page request
+                    if (request.getURI().toString().endsWith("offset=10")) {
+                        return withSuccess(readFile(this, "layers/osmlayer.json")
+                                .replaceAll("\"numberMatched\": 10,", "\"numberMatched\": 22,"),
+                            MediaType.APPLICATION_JSON).createResponse(request);
+                    }
+                    //third page request (just 2 features)
+                    if (request.getURI().toString().endsWith("offset=20")) {
+                        return withSuccess(readFile(this, "layers/osmlayer_2.json"),
+                            MediaType.APPLICATION_JSON).createResponse(request);
+                    }
+                    throw new RuntimeException("incorrect request uri!");
+                }
+            );
+
+        //when
+        List<Feature> events = client.getCollectionItemsByGeometry(objectMapper.readValue(json,
+            Geometry.class), "osmlayer");
+
+        //then
+        assertEquals(22, events.size());
     }
 }

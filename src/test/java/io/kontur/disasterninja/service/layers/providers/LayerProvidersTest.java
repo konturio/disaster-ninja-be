@@ -74,16 +74,7 @@ public class LayerProvidersTest {
         Layer result = hotLayerProvider.fromHotProjectLayers(features);
         Assertions.assertEquals("hotProjects", result.getId());
 
-        Assertions.assertEquals("Hot Projects", result.getName());
-        Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", result.getDescription());
-        Assertions.assertEquals(OVERLAY, result.getCategory());
-        Assertions.assertEquals("Kontur", result.getGroup());
-        //legend
-        Assertions.assertEquals(SIMPLE, result.getLegend().getType());
-        Assertions.assertEquals(2, result.getLegend().getSteps().size());
-        Assertions.assertEquals("Active", result.getLegend().getSteps().get(0).getStepName());
-        Assertions.assertEquals("link_to_icon", result.getLegend().getSteps().get(0).getStyle().get("icon"));
-        Assertions.assertEquals("Archived", result.getLegend().getSteps().get(1).getStepName());
+        Assertions.assertNull(result.getName()); //defaults are set later by LayerConfigService
         //todo other fields
     }
 
@@ -97,15 +88,7 @@ public class LayerProvidersTest {
 
         Layer urbanCore = result.stream().filter(it -> "kontur_urban_core".equals(it.getId())).findAny().get();
         Assertions.assertEquals("Kontur Urban Core", urbanCore.getName());
-        Assertions.assertEquals("Kontur Urban Core highlights most populated region affected. For this event " +
-                "{{population}} people reside on {{areaKm2}}km² (out of total {{totalPopulation}} people on " +
-                "{{totalAreaKm2}}km²). This area should have higher priority in humanitarian activities.",
-            urbanCore.getDescription());
-        Assertions.assertEquals("Layers in selected area", urbanCore.getGroup());
-        //legend
-        Assertions.assertEquals(SIMPLE, urbanCore.getLegend().getType());
-        Assertions.assertEquals(HEX, urbanCore.getLegend().getSteps().get(0).getStepShape());
-        Assertions.assertEquals("#FF7B00", urbanCore.getLegend().getSteps().get(0).getStyle().get("casing-color"));
+        Assertions.assertNull(urbanCore.getDescription()); //defaults are set later by LayerConfigService
         //todo other fields
     }
 
@@ -119,11 +102,7 @@ public class LayerProvidersTest {
 
         Layer periphery = result.stream().filter(it -> "kontur_settled_periphery".equals(it.getId())).findAny().get();
         Assertions.assertEquals("Kontur Settled Periphery", periphery.getName());
-        Assertions.assertEquals("Layers in selected area", periphery.getGroup());
-        //legend
-        Assertions.assertEquals(SIMPLE, periphery.getLegend().getType());
-        Assertions.assertEquals(HEX, periphery.getLegend().getSteps().get(0).getStepShape());
-        Assertions.assertEquals("#2AD72A", periphery.getLegend().getSteps().get(0).getStyle().get("casing-color"));
+        Assertions.assertNull(periphery.getDescription()); //defaults are set later by LayerConfigService
         //todo other fields
     }
 }

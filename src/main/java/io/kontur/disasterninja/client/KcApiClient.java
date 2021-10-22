@@ -1,6 +1,9 @@
 package io.kontur.disasterninja.client;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 import org.locationtech.jts.geom.Envelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,20 +80,25 @@ public class KcApiClient {
         while (true) {
             int offset = i++ * pageSize;
 
-            ResponseEntity<FeatureCollection> response = restTemplate
+            ResponseEntity<KcApiFeatureCollection> response = restTemplate
                 .exchange(uri, HttpMethod.GET, new HttpEntity<>(null,
                     null), new ParameterizedTypeReference<>() {
                 }, bbox, pageSize, offset);
 
-            if (response.getBody() == null) {
+            KcApiFeatureCollection body = response.getBody();
+            if (body == null) {
                 LOG.info("Empty response returned for collection {} and bbox {}", collectionId, bbox);
                 break;
             }
-            if (response.getBody().getFeatures() == null || response.getBody().getFeatures().length < pageSize) {
+
+            if (body.getFeatures() == null) {
                 break;
             }
 
-            result.addAll(List.of(response.getBody().getFeatures()));
+            result.addAll(List.of(body.getFeatures()));
+            if (result.size() == body.getNumberMatched()) {
+                break;
+            }
         }
 
         LOG.info("{} features loaded for collection {} with bbox {}", result.size(), collectionId, bbox);
@@ -99,5 +107,19 @@ public class KcApiClient {
 
     private org.locationtech.jts.geom.Geometry getJtsGeometry(Geometry geoJson) {
         return reader.read(geoJson);
+    }
+
+    @Getter
+    private static class KcApiFeatureCollection extends FeatureCollection {
+        private final int numberMatched;
+        private final int numberReturned;
+        @JsonCreator
+        public KcApiFeatureCollection(@JsonProperty("features") Feature[] features,
+                                      @JsonProperty("numberReturned") int numberReturned,
+                                      @JsonProperty("numberMatched") int numberMatched) {
+            super(features);
+            this.numberMatched = numberMatched;
+            this.numberReturned = numberReturned;
+        }
     }
 }

@@ -10,6 +10,7 @@ import org.wololo.geojson.Geometry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class LayerService {
@@ -18,6 +19,8 @@ public class LayerService {
     @Autowired
     InsightsApiClient insightsApiClient;
     @Autowired
+    LayerConfigService layerConfigService;
+    @Autowired
     List<LayerProvider> providers;
 
     public List<Layer> getList(Geometry geoJSON) {
@@ -25,7 +28,9 @@ public class LayerService {
             .reduce(new ArrayList<>(), (a, b) -> {
                 a.addAll(b);
                 return a;
-            });
+            })
+            .stream().peek(layerConfigService::applyConfig)
+            .collect(Collectors.toList());
     }
 
     public Layer get(String layerId) {

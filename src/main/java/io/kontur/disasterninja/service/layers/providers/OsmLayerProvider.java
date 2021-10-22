@@ -4,7 +4,6 @@ import io.kontur.disasterninja.client.KcApiClient;
 import io.kontur.disasterninja.domain.DtoFeatureProperties;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
-import io.kontur.disasterninja.service.layers.LayerPrototypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
@@ -26,9 +25,6 @@ public class OsmLayerProvider implements LayerProvider {
 
     @Autowired
     KcApiClient kcApiClient;
-
-    @Autowired
-    LayerPrototypeService prototypeService;
 
     private static <T> T getMapValueFromProperty(Feature f, String propertyName, Object mapKey, Class<T> clazz) {
         Map map = getProperty(f, propertyName, Map.class);
@@ -70,7 +66,7 @@ public class OsmLayerProvider implements LayerProvider {
             return null;
         }
         return dto.stream().map(f -> {
-                    Layer layer = prototypeService.prototypeOrEmpty((String) f.getId());
+                    Layer layer = new Layer((String) f.getId());
                     layer.setName(getProperty(f, NAME, String.class));
                     layer.setDescription(getProperty(f, DESCRIPTION, String.class));
                     layer.setCategory(layerCategory(f));

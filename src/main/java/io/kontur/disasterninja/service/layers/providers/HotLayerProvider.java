@@ -2,7 +2,6 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.client.KcApiClient;
 import io.kontur.disasterninja.domain.Layer;
-import io.kontur.disasterninja.service.layers.LayerPrototypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
@@ -13,13 +12,10 @@ import java.util.List;
 @Service
 public class HotLayerProvider implements LayerProvider {
 
-    private static final String HOT_ID = "hotProjects";
+    public static final String HOT_ID = "hotProjects";
 
     @Autowired
     KcApiClient kcApiClient;
-
-    @Autowired
-    LayerPrototypeService prototypeService;
 
     @Override
     public List<Layer> obtainLayers(Geometry geoJSON) {
@@ -42,7 +38,7 @@ public class HotLayerProvider implements LayerProvider {
             return null;
         }
         //The entire collection is one layer
-        return prototypeService.prototypeOrEmpty(HOT_ID);
+        return new Layer(HOT_ID);
         //todo set anything else?
     }
 }
