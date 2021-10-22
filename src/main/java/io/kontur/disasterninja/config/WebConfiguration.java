@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import io.kontur.disasterninja.config.metrics.ParamLessRestTemplateExchangeTagsProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.metrics.web.client.RestTemplateExchangeTagsProvider;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
@@ -50,6 +53,12 @@ public class WebConfiguration {
         return builder
                 .rootUri(keycloakUrl)
                 .build();
+    }
+
+    @Bean
+    @Primary
+    public RestTemplateExchangeTagsProvider restTemplateExchangeTagsProvider() {
+        return new ParamLessRestTemplateExchangeTagsProvider();
     }
 
 }

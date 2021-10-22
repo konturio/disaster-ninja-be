@@ -4,6 +4,8 @@ import io.kontur.disasterninja.dto.EventListDto;
 import io.kontur.disasterninja.dto.EventType;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 
+import java.util.Map;
+
 public class EventListEventDtoConverter {
 
     public static EventListDto convert(EventApiEventDto event) {
@@ -18,11 +20,18 @@ public class EventListEventDtoConverter {
         }
 
         dto.setEventName(eventType.getName()); //TODO add properName
-        dto.setLocation(String.valueOf(event.getEventDetails().get("country"))); //TODO is it array?
         dto.setSeverity(event.getEpisodes().get(0).getSeverity());
-        dto.setAffectedPopulation(convertLong(event.getEventDetails().get("population")));
-        dto.setSettledArea(convertLong(event.getEventDetails().get("settledArea")));
-        dto.setOsmGaps(convertLong(event.getEventDetails().get("osmGapsPercentage")));
+        Map<String, Object> eventDetails = event.getEventDetails();
+        if (eventDetails != null) {
+            dto.setLocation(String.valueOf(eventDetails.get("country"))); //TODO is it array?
+            dto.setAffectedPopulation(convertLong(eventDetails.get("population")));
+            dto.setSettledArea(convertLong(eventDetails.get("settledArea")));
+            dto.setOsmGaps(convertLong(eventDetails.get("osmGapsPercentage")));
+        } else {
+            dto.setAffectedPopulation(0L);
+            dto.setSettledArea(0L);
+            dto.setOsmGaps(0L);
+        }
         dto.setUpdatedAt(event.getUpdatedAt());
 
         return dto;
