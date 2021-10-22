@@ -40,4 +40,9 @@ public class LocalLayerPrototypeService implements LayerConfigService {
             input.mergeFrom(config);
         }
     }
+
+    @Override
+    public Map<String, Layer> getConfigs() {
+        return defaults;
+    }
 }
