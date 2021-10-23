@@ -13,7 +13,7 @@ import static io.kontur.disasterninja.service.layers.providers.HotLayerProvider.
 @SpringBootTest
 public class LayerConfigServiceTest {
     @Autowired
-    LocalLayerPrototypeService service;
+    LocalLayerConfigService service;
 
     @Test
     public void hotTest() {

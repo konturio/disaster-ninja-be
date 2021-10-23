@@ -15,13 +15,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class LocalLayerPrototypeService implements LayerConfigService {
+public class LocalLayerConfigService implements LayerConfigService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LocalLayerPrototypeService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LocalLayerConfigService.class);
     ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
     Map<String, Layer> defaults;
 
-    public LocalLayerPrototypeService() {
+    public LocalLayerConfigService() {
         objectMapper.findAndRegisterModules();
         try {
             List<Layer> list = objectMapper.readValue(ClassLoader.getSystemResource("layers/layerconfig.yaml"),

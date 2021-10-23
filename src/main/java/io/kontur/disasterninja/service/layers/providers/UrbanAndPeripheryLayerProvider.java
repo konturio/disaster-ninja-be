@@ -20,7 +20,7 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
     InsightsApiClient insightsApiClient;
 
     @Autowired
-    LayerConfigService prototypeService;
+    LayerConfigService configService;
 
     @Override
     public List<Layer> obtainLayers(Geometry geoJSON) {
