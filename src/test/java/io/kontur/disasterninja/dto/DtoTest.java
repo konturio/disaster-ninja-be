@@ -68,7 +68,7 @@ public class DtoTest {
         legend.getSteps().add(new LegendStep("param name", "param value", "step name",
             HEX, map));
 
-        return new Layer(id, "test name", "test desciption", LayerCategory.BASE, "tset group",
+        return new Layer(id, false, "test name", "test desciption", LayerCategory.BASE, "tset group",
             legend, "copyright text", 10, 1, source);
     }
 }

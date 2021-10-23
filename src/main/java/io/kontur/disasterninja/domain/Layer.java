@@ -1,15 +1,15 @@
 package io.kontur.disasterninja.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class Layer {
     private final String id;
+    private final boolean globalOverlay;
     //layer summary
     private String name;
     private String description;
@@ -21,6 +21,11 @@ public class Layer {
     private Integer maxZoom;
     private Integer minZoom;
     private LayerSource source;
+
+    public Layer(@JsonProperty("id") String id, @JsonProperty("globalOverlay") boolean globalOverlay) {
+        this.id = id;
+        this.globalOverlay = globalOverlay;
+    }
 
     /**
      * Overrides all non-final fields with values from <b>other</b>, except for <b>this.source.data</b> as it's the

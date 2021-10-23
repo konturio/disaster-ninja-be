@@ -38,7 +38,7 @@ public class HotLayerProvider implements LayerProvider {
             return null;
         }
         //The entire collection is one layer
-        return new Layer(HOT_ID);
+        return new Layer(HOT_ID, true);
         //todo set anything else?
     }
 }

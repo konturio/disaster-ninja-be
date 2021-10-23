@@ -37,7 +37,10 @@ public class LayerService {
 
         configs.forEach((k, v) -> {
             if (!layers.containsKey(k)) {
-                layers.put(k, v);
+                //only global overlays are added if not received from providers
+                if (v.isGlobalOverlay()) {
+                    layers.put(k, v);
+                }
             } else {
                 layers.get(k).mergeFrom(v);
             }

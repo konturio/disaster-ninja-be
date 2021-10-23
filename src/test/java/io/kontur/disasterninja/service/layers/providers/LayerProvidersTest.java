@@ -17,8 +17,6 @@ import java.util.List;
 
 import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
-import static io.kontur.disasterninja.domain.enums.LayerStepShape.HEX;
-import static io.kontur.disasterninja.domain.enums.LegendType.SIMPLE;
 
 @SpringBootTest
 public class LayerProvidersTest {
@@ -79,7 +77,7 @@ public class LayerProvidersTest {
     }
 
     @Test
-    public void fromUrbanCodeTest() throws IOException {
+    public void fromUrbanCoreTest() throws IOException {
         FeatureCollection featureCollection = objectMapper.readValue(
             new File("src/test/resources/io/kontur/disasterninja/client/layers/population.json"),
             FeatureCollection.class);
@@ -93,7 +91,7 @@ public class LayerProvidersTest {
     }
 
     @Test
-    public void fromUrbanCodeAndPeripheryLayerTest() throws IOException {
+    public void fromUrbanCoreAndPeripheryLayerTest() throws IOException {
         FeatureCollection featureCollection = objectMapper.readValue(
             new File("src/test/resources/io/kontur/disasterninja/client/layers/population.json"),
             FeatureCollection.class);

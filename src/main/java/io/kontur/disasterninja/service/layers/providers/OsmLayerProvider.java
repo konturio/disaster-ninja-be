@@ -66,7 +66,7 @@ public class OsmLayerProvider implements LayerProvider {
             return null;
         }
         return dto.stream().map(f -> {
-                    Layer layer = new Layer((String) f.getId());
+                    Layer layer = new Layer((String) f.getId(), false);
                     layer.setName(getProperty(f, NAME, String.class));
                     layer.setDescription(getProperty(f, DESCRIPTION, String.class));
                     layer.setCategory(layerCategory(f));
