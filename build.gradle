@@ -14,9 +14,13 @@ sourceCompatibility = '16'
 
 repositories {
     mavenCentral()
+//    mavenLocal()
 }
 
 dependencies {
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.wololo:jts2geojson:0.16.1'
     implementation 'org.springdoc:springdoc-openapi-ui:1.5.11'

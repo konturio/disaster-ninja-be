@@ -35,10 +35,10 @@ public class EventApiClient {
 
     public List<EventApiEventDto> getEvents(String jwtToken) {
         String then = OffsetDateTime.now()
-                .minusDays(4)
-                .truncatedTo(ChronoUnit.SECONDS)
-                .atZoneSameInstant(ZoneOffset.UTC)
-                .toString();
+            .minusDays(4)
+            .truncatedTo(ChronoUnit.SECONDS)
+            .atZoneSameInstant(ZoneOffset.UTC)
+            .toString();
 
         String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed, then);
 

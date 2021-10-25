@@ -1,0 +1,947 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                1.722946974,
+                6.266307793
+              ],
+              [
+                1.724482019,
+                6.268222561
+              ],
+              [
+                1.72461202,
+                6.274494364
+              ],
+              [
+                1.729425272,
+                6.279098507
+              ],
+              [
+                1.736133318,
+                6.278527435
+              ],
+              [
+                1.739851872,
+                6.27982199
+              ],
+              [
+                1.745351335,
+                6.279407768
+              ],
+              [
+                1.747431938,
+                6.277469838
+              ],
+              [
+                1.748846784,
+                6.273152387
+              ],
+              [
+                1.750362304,
+                6.272875755
+              ],
+              [
+                1.76726077,
+                6.276914771
+              ],
+              [
+                1.776384018,
+                6.275703007
+              ],
+              [
+                1.780603526,
+                6.277402531
+              ],
+              [
+                1.785305782,
+                6.281244993
+              ],
+              [
+                1.791343786,
+                6.281722887
+              ],
+              [
+                1.796479659,
+                6.280625554
+              ],
+              [
+                1.79907786,
+                6.282722644
+              ],
+              [
+                1.799067837,
+                6.284007603
+              ],
+              [
+                1.79629051,
+                6.286362503
+              ],
+              [
+                1.794977809,
+                6.289953744
+              ],
+              [
+                1.796145512,
+                6.294512109
+              ],
+              [
+                1.800457248,
+                6.296962717
+              ],
+              [
+                1.807317912,
+                6.295763261
+              ],
+              [
+                1.81185289,
+                6.291672921
+              ],
+              [
+                1.815151925,
+                6.290176934
+              ],
+              [
+                1.822119924,
+                6.290621513
+              ],
+              [
+                1.82806229,
+                6.286354346
+              ],
+              [
+                1.832715676,
+                6.284829834
+              ],
+              [
+                1.836120185,
+                6.291016605
+              ],
+              [
+                1.840250763,
+                6.293078459
+              ],
+              [
+                1.843326753,
+                6.293318274
+              ],
+              [
+                1.846717769,
+                6.292103935
+              ],
+              [
+                1.852031076,
+                6.287694549
+              ],
+              [
+                1.856815679,
+                6.291989064
+              ],
+              [
+                1.869938216,
+                6.292338483
+              ],
+              [
+                1.886668166,
+                6.296331867
+              ],
+              [
+                1.890720604,
+                6.299777723
+              ],
+              [
+                1.893774407,
+                6.300764204
+              ],
+              [
+                1.898537077,
+                6.299614954
+              ],
+              [
+                1.906094279,
+                6.294307564
+              ],
+              [
+                1.904516326,
+                6.285908127
+              ],
+              [
+                1.857731013,
+                6.279457034
+              ],
+              [
+                1.817172153,
+                6.271620081
+              ],
+              [
+                1.770843377,
+                6.259963434
+              ],
+              [
+                1.758680359,
+                6.258345464
+              ],
+              [
+                1.704293484,
+                6.246993687
+              ],
+              [
+                1.699858485,
+                6.24731667
+              ],
+              [
+                1.695636745,
+                6.251198439
+              ],
+              [
+                1.69572496,
+                6.256932419
+              ],
+              [
+                1.699130521,
+                6.261338741
+              ],
+              [
+                1.722946974,
+                6.266307793
+              ]
+            ]
+          ],
+          [
+            [
+              [
+                2.367525943,
+                6.560521556
+              ],
+              [
+                2.377526871,
+                6.549663955
+              ],
+              [
+                2.377789876,
+                6.534939916
+              ],
+              [
+                2.369975299,
+                6.493506746
+              ],
+              [
+                2.370335759,
+                6.455127322
+              ],
+              [
+                2.361797461,
+                6.441393392
+              ],
+              [
+                2.354302139,
+                6.407193631
+              ],
+              [
+                2.355633883,
+                6.404951117
+              ],
+              [
+                2.367734898,
+                6.401493121
+              ],
+              [
+                2.394779602,
+                6.400733493
+              ],
+              [
+                2.401049624,
+                6.403624429
+              ],
+              [
+                2.405635945,
+                6.403427508
+              ],
+              [
+                2.420415493,
+                6.394348847
+              ],
+              [
+                2.425111331,
+                6.397992379
+              ],
+              [
+                2.429224356,
+                6.398816757
+              ],
+              [
+                2.436131865,
+                6.396717448
+              ],
+              [
+                2.439854542,
+                6.400503904
+              ],
+              [
+                2.444664212,
+                6.401805132
+              ],
+              [
+                2.453902223,
+                6.398968534
+              ],
+              [
+                2.471295034,
+                6.396343389
+              ],
+              [
+                2.48180534,
+                6.391007456
+              ],
+              [
+                2.494894053,
+                6.387437417
+              ],
+              [
+                2.500781333,
+                6.388042498
+              ],
+              [
+                2.502489891,
+                6.389791508
+              ],
+              [
+                2.502145203,
+                6.391045147
+              ],
+              [
+                2.496259955,
+                6.395615052
+              ],
+              [
+                2.495455112,
+                6.403755992
+              ],
+              [
+                2.498196536,
+                6.409996128
+              ],
+              [
+                2.502188936,
+                6.412832141
+              ],
+              [
+                2.51106403,
+                6.413129097
+              ],
+              [
+                2.532452422,
+                6.40548283
+              ],
+              [
+                2.541295914,
+                6.410903099
+              ],
+              [
+                2.546398547,
+                6.410875912
+              ],
+              [
+                2.547107492,
+                6.407095449
+              ],
+              [
+                2.5484834,
+                6.406557527
+              ],
+              [
+                2.574539223,
+                6.407194738
+              ],
+              [
+                2.575854927,
+                6.407765617
+              ],
+              [
+                2.57652796,
+                6.411663511
+              ],
+              [
+                2.585590891,
+                6.41195656
+              ],
+              [
+                2.588813556,
+                6.410838249
+              ],
+              [
+                2.609510488,
+                6.394172366
+              ],
+              [
+                2.645851088,
+                6.397047388
+              ],
+              [
+                2.650437666,
+                6.39302437
+              ],
+              [
+                2.653545212,
+                6.368326066
+              ],
+              [
+                2.612465425,
+                6.362888412
+              ],
+              [
+                2.548686311,
+                6.360616135
+              ],
+              [
+                2.547374866,
+                6.360028319
+              ],
+              [
+                2.546492948,
+                6.355452846
+              ],
+              [
+                2.502099549,
+                6.354610561
+              ],
+              [
+                2.471661343,
+                6.355916131
+              ],
+              [
+                2.467572783,
+                6.351928049
+              ],
+              [
+                2.464428171,
+                6.350302444
+              ],
+              [
+                2.453495504,
+                6.350071443
+              ],
+              [
+                2.447139503,
+                6.34629588
+              ],
+              [
+                2.438717434,
+                6.346510729
+              ],
+              [
+                2.437005699,
+                6.345540487
+              ],
+              [
+                2.43271346,
+                6.338283346
+              ],
+              [
+                2.429947337,
+                6.33707
+              ],
+              [
+                2.422511315,
+                6.33707
+              ],
+              [
+                2.365228485,
+                6.344453834
+              ],
+              [
+                2.341093431,
+                6.345298796
+              ],
+              [
+                2.311073089,
+                6.365525981
+              ],
+              [
+                2.284191657,
+                6.374813291
+              ],
+              [
+                2.281403188,
+                6.377833969
+              ],
+              [
+                2.276039294,
+                6.395012132
+              ],
+              [
+                2.27611281,
+                6.398032429
+              ],
+              [
+                2.31514741,
+                6.492266321
+              ],
+              [
+                2.316018725,
+                6.553326153
+              ],
+              [
+                2.31987342,
+                6.557505011
+              ],
+              [
+                2.336495344,
+                6.560243104
+              ],
+              [
+                2.363556914,
+                6.562095415
+              ],
+              [
+                2.367525943,
+                6.560521556
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "Benin_cotonou_pleiade_2016",
+        "url": "https://geoxxx.agrocampus-ouest.fr/owsifl/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=Benin:cotonou_pleiade_2016&STYLE=&FORMAT=image/jpeg&tileMatrixSet=EPSG:3857&tileMatrix=EPSG:3857:{zoom}&tileRow={y}&tileCol={x}",
+        "best": true,
+        "name": "Benin: Cotonou Pleiade 2016",
+        "type": "tms",
+        "category": "photo",
+        "end_date": "2016",
+        "max_zoom": 21,
+        "min_zoom": 6,
+        "start_date": "2016",
+        "license_url": "http://taches.francophonelibre.org/project/6",
+        "country_code": "BJ"
+      },
+      "id": "Benin_cotonou_pleiade_2016",
+      "links": [
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer/items/Benin_cotonou_pleiade_2016",
+          "rel": "self",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": null,
+          "length": null
+        },
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": "OSM Layers",
+          "length": null
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "id": "Bing",
+        "url": "https://www.bing.com/maps",
+        "i18n": true,
+        "icon": "https://osmlab.github.io/editor-layer-index/sources/world/Bing.png",
+        "name": "Bing aerial imagery",
+        "type": "bing",
+        "default": true,
+        "max_zoom": 22,
+        "min_zoom": 1,
+        "description": "Satellite and aerial imagery.",
+        "license_url": "https://wiki.openstreetmap.org/wiki/Bing_Maps",
+        "no_tile_header": {
+          "X-VE-Tile-Info": [
+            "no-tile"
+          ]
+        },
+        "permission_osm": "explicit",
+        "privacy_policy_url": "https://privacy.microsoft.com/en-gb/privacystatement"
+      },
+      "id": "Bing",
+      "links": [
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer/items/Bing",
+          "rel": "self",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": null,
+          "length": null
+        },
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": "OSM Layers",
+          "length": null
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "id": "EOXAT2018CLOUDLESS",
+        "url": "https://tiles.maps.eox.at?LAYERS=s2cloudless-2018_3857&STYLES=&FORMAT=image/jpeg&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap",
+        "i18n": true,
+        "icon": "https://osmlab.github.io/editor-layer-index/sources/world/eox.png",
+        "name": "eox.at 2018 cloudless",
+        "type": "wms",
+        "default": false,
+        "category": "photo",
+        "end_date": "2018",
+        "max_zoom": 18,
+        "start_date": "2018",
+        "attribution": {
+          "url": "https://s2maps.eu/",
+          "text": "Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2017 & 2018)",
+          "required": true
+        },
+        "description": "Post-processed Sentinel Satellite imagery.",
+        "license_url": "https://wiki.openstreetmap.org/wiki/Eox.at",
+        "permission_osm": "explicit",
+        "privacy_policy_url": "https://eox.at/impressum/",
+        "available_projections": [
+          "EPSG:3857",
+          "EPSG:4326"
+        ]
+      },
+      "id": "EOXAT2018CLOUDLESS",
+      "links": [
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer/items/EOXAT2018CLOUDLESS",
+          "rel": "self",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": null,
+          "length": null
+        },
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": "OSM Layers",
+          "length": null
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "id": "EsriWorldImagery",
+        "url": "https://{switch:services,server}.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{zoom}/{y}/{x}",
+        "i18n": true,
+        "icon": "https://osmlab.github.io/editor-layer-index/sources/world/EsriImageryClarity.png",
+        "name": "Esri World Imagery",
+        "type": "tms",
+        "default": true,
+        "category": "photo",
+        "max_zoom": 22,
+        "attribution": {
+          "url": "https://wiki.openstreetmap.org/wiki/Esri",
+          "text": "Terms & Feedback",
+          "required": true
+        },
+        "description": "Esri world imagery.",
+        "no_tile_header": {
+          "Etag": [
+            "\"10i954m13i2\""
+          ]
+        },
+        "permission_osm": "explicit"
+      },
+      "id": "EsriWorldImagery",
+      "links": [
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer/items/EsriWorldImagery",
+          "rel": "self",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": null,
+          "length": null
+        },
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": "OSM Layers",
+          "length": null
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "id": "EsriWorldImageryClarity",
+        "url": "https://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{zoom}/{y}/{x}",
+        "i18n": true,
+        "icon": "https://osmlab.github.io/editor-layer-index/sources/world/EsriImageryClarity.png",
+        "name": "Esri World Imagery (Clarity) Beta",
+        "type": "tms",
+        "default": true,
+        "category": "photo",
+        "max_zoom": 22,
+        "attribution": {
+          "url": "https://wiki.openstreetmap.org/wiki/Esri",
+          "text": "Terms & Feedback",
+          "required": true
+        },
+        "description": "Esri archive imagery that may be clearer and more accurate than the default layer.",
+        "license_url": "https://github.com/osmlab/editor-layer-index/pull/358#issuecomment-361416110",
+        "permission_osm": "explicit"
+      },
+      "id": "EsriWorldImageryClarity",
+      "links": [
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer/items/EsriWorldImageryClarity",
+          "rel": "self",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": null,
+          "length": null
+        },
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": "OSM Layers",
+          "length": null
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "id": "HDM_HOT",
+        "url": "https://{switch:a,b,c}.tile.openstreetmap.fr/hot/{zoom}/{x}/{y}.png",
+        "icon": "https://wiki.openstreetmap.org/w/images/thumb/c/c9/Hot_logo.svg/300px-Hot_logo.svg.png",
+        "name": "OpenStreetMap (HOT Style)",
+        "type": "tms",
+        "category": "osmbasedmap",
+        "max_zoom": 20,
+        "attribution": {
+          "url": "https://www.hotosm.org/",
+          "text": "© OpenStreetMap contributors, tiles courtesy of Humanitarian OpenStreetMap Team",
+          "required": true
+        }
+      },
+      "id": "HDM_HOT",
+      "links": [
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer/items/HDM_HOT",
+          "rel": "self",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": null,
+          "length": null
+        },
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": "OSM Layers",
+          "length": null
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "id": "MAPNIK",
+        "url": "https://tile.openstreetmap.org/{zoom}/{x}/{y}.png",
+        "i18n": true,
+        "icon": "https://osmlab.github.io/editor-layer-index/sources/world/OpenStreetMap-GPS.png",
+        "name": "OpenStreetMap (Standard)",
+        "type": "tms",
+        "default": true,
+        "category": "osmbasedmap",
+        "max_zoom": 19,
+        "attribution": {
+          "url": "https://www.openstreetmap.org",
+          "text": "© OpenStreetMap contributors, CC-BY-SA 2.0",
+          "required": true
+        },
+        "description": "The default OpenStreetMap layer.",
+        "license_url": "https://wiki.osmfoundation.org/wiki/Terms_of_Use",
+        "privacy_policy_url": "https://wiki.osmfoundation.org/wiki/Privacy_Policy"
+      },
+      "id": "MAPNIK",
+      "links": [
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer/items/MAPNIK",
+          "rel": "self",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": null,
+          "length": null
+        },
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": "OSM Layers",
+          "length": null
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "id": "Mapbox",
+        "url": "https://{switch:a,b,c,d}.tiles.mapbox.com/v4/mapbox.satellite/{zoom}/{x}/{y}.jpg?access_token=pk.eyJ1Ijoib3BlbnN0cmVldG1hcCIsImEiOiJja2w5YWt5bnYwNjZmMnFwZjhtbHk1MnA1In0.eq2aumBK6JuRoIuBMm6Gew",
+        "i18n": true,
+        "icon": "https://osmlab.github.io/editor-layer-index/sources/world/MapBoxSatellite.png",
+        "name": "Mapbox Satellite",
+        "type": "tms",
+        "default": true,
+        "category": "photo",
+        "max_zoom": 22,
+        "attribution": {
+          "url": "https://www.mapbox.com/about/maps",
+          "text": "Terms & Feedback",
+          "required": true
+        },
+        "description": "Satellite and aerial imagery.",
+        "license_url": "https://wiki.openstreetmap.org/wiki/Vertical_Aerial_Photographs#DigitalGlobe_.2F_MapBox",
+        "permission_osm": "explicit",
+        "privacy_policy_url": "https://www.mapbox.com/legal/privacy/"
+      },
+      "id": "Mapbox",
+      "links": [
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer/items/Mapbox",
+          "rel": "self",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": null,
+          "length": null
+        },
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": "OSM Layers",
+          "length": null
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "id": "OSM_Inspector-Addresses",
+        "url": "https://tools.geofabrik.de/osmi/tiles/addresses/{zoom}/{x}/{y}.png",
+        "i18n": true,
+        "icon": "https://osmlab.github.io/editor-layer-index/sources/world/OSMIHighways.png",
+        "name": "OSM Inspector: Addresses",
+        "type": "tms",
+        "overlay": true,
+        "category": "qa",
+        "max_zoom": 18,
+        "attribution": {
+          "url": "https://tools.geofabrik.de/osmi",
+          "text": "© Geofabrik GmbH, OpenStreetMap contributors, CC-BY-SA",
+          "required": true
+        }
+      },
+      "id": "OSM_Inspector-Addresses",
+      "links": [
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer/items/OSM_Inspector-Addresses",
+          "rel": "self",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": null,
+          "length": null
+        },
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": "OSM Layers",
+          "length": null
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "id": "OSM_Inspector-Geometry",
+        "url": "https://tools.geofabrik.de/osmi/tiles/geometry/{zoom}/{x}/{y}.png",
+        "i18n": true,
+        "icon": "https://osmlab.github.io/editor-layer-index/sources/world/OSMIHighways.png",
+        "name": "OSM Inspector: Geometry",
+        "type": "tms",
+        "overlay": true,
+        "category": "qa",
+        "max_zoom": 18,
+        "attribution": {
+          "url": "https://tools.geofabrik.de/osmi",
+          "text": "© Geofabrik GmbH, OpenStreetMap contributors, CC-BY-SA",
+          "required": true
+        }
+      },
+      "id": "OSM_Inspector-Geometry",
+      "links": [
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer/items/OSM_Inspector-Geometry",
+          "rel": "self",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": null,
+          "length": null
+        },
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": "OSM Layers",
+          "length": null
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "href": "http://localhost:9000/layers/collections/osmlayer/items?limit=10&offset=0&bbox=1.83975&bbox=6.2578&bbox=2.5494&bbox=7.11427",
+      "rel": "self",
+      "type": "application/geo+json",
+      "hreflang": null,
+      "title": "OSM Layers",
+      "length": null
+    },
+    {
+      "href": "http://localhost:9000/layers/collections/osmlayer/items?limit=10&offset=10&bbox=1.83975&bbox=6.2578&bbox=2.5494&bbox=7.11427",
+      "rel": "next",
+      "type": "application/geo+json",
+      "hreflang": null,
+      "title": "OSM Layers",
+      "length": null
+    }
+  ],
+  "timeStamp": "2021-10-19T16:17:13Z",
+  "numberMatched": 10,
+  "numberReturned": 10
+}

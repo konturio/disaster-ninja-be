@@ -1,0 +1,117 @@
+##### Category: NONE
+### Group: Layers in selected area
+#todo: provider for event shape layer
+- id: 'eventShape' #todo
+  globalOverlay: true
+  name: 'Event shape'
+  group: 'Layers in selected area'
+  legend:
+    type: 'simple'
+    steps:
+      - stepName: 'Moderate'
+        stepShape: 'circle' #todo: it's a ring not a circle, see in miro
+      - stepName: 'Severe'
+        stepShape: 'circle'
+      - stepName: 'Extreme'
+        stepShape: 'circle'
+        #todo paramName/paramValue
+- id: 'kontur_urban_core'
+  globalOverlay: true
+  description: 'Kontur Urban Core highlights most populated region affected. For this event {{population}} people reside on {{areaKm2}}km² (out of total {{totalPopulation}} people on {{totalAreaKm2}}km²). This area should have higher priority in humanitarian activities.'
+  group: 'Layers in selected area'
+  legend:
+    type: 'simple'
+    steps:
+      - stepShape: 'hex'
+        style:
+          color: '#FF7B00'
+          width: 3
+          offset: 4
+          casing-offset: 2
+          casing-color: '#FF7B00'
+          casing-width: 3
+          casing-opacity: 0.5
+- id: 'kontur_settled_periphery'
+  globalOverlay: true
+  description: 'Kontur Settled Periphery is complimentary to Kontur Urban Core and shows a spread-out part of the population in the region. For this event it adds {{population}} people on {{areaKm2}}km² on top of Kontur Urban Core.'
+  group: 'Layers in selected area'
+  legend:
+    type: 'simple'
+    steps:
+      - stepShape: 'hex'
+        style:
+          color: '#2AD72A'
+          width: 3
+          casing-offset: 2
+          casing-color: '#2AD72A'
+          casing-width: 3
+          casing-opacity: 0.5
+
+##### Category: OVERLAY
+### Group: Kontur
+#todo: provider for active contributors layer
+- id: 'activeContributors' #todo
+  globalOverlay: true
+  name: 'Active contributors'
+  category: 'overlay'
+  group: 'Kontur'
+  legend:
+    type: 'simple'
+    steps:
+      - stepName: 'Possibly local mappers'
+        stepShape: 'circle'
+      - stepName: 'Active mappers'
+        stepShape: 'circle'
+        #todo paramName/paramValue
+
+- id: 'hotProjects'
+  globalOverlay: true
+  name: 'Hot Projects'
+  description: 'Projects on HOT Tasking Manager, ongoing and historical'
+  category: 'overlay'
+  group: 'Kontur'
+  legend:
+    type: 'simple'
+    steps:
+      - stepName: 'Active'
+        stepShape: 'circle' #todo: it's a ring not a circle, see in miro
+        paramName: 'status'
+        paramValue: 'Active'
+        style:
+          icon: 'link_to_icon'
+      - stepName: 'Archived'
+        stepShape: 'circle' #todo: it's a ring not a circle, see in miro
+        paramName: 'status'
+        paramValue: 'Archived'
+        style:
+          icon: 'link_to_icon_2'
+
+### Group: Kontur Analytical Layers
+#todo: provider for osm analytical layers - ?
+- id: 'osmAnalytics1' #todo
+  globalOverlay: true
+  name: 'OSM Object Quantity'
+  category: 'overlay'
+  group: 'Kontur Analytical Layers'
+- id: 'osmAnalytics2' #todo
+  globalOverlay: true
+  name: 'OSM Building Quantity'
+  category: 'overlay'
+  group: 'Kontur Analytical Layers'
+- id: 'osmAnalytics3' #todo
+  globalOverlay: true
+  name: 'OSM Road Length'
+  category: 'overlay'
+  group: 'Kontur Analytical Layers'
+- id: 'osmAnalytics4' #todo
+  globalOverlay: true
+  name: 'OSM Mapping Activity'
+  category: 'overlay'
+  group: 'Kontur Analytical Layers'
+- id: 'osmAnalytics5' #todo
+  globalOverlay: true
+  name: 'OSM Antiquity'
+  category: 'overlay'
+  group: 'Kontur Analytical Layers'
+
+##### Category: BASELINE
