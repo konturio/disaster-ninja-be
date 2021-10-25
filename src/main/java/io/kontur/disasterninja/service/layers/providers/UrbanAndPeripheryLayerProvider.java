@@ -44,8 +44,10 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
             return null;
         }
         return Arrays.stream(dto.getFeatures()).map(f -> { //todo check - any other fields?
-            Layer layer = new Layer((String) f.getId(), true);
-            layer.setName((String) f.getProperties().get(NAME));
+            Layer layer = Layer.builder()
+                .id((String) f.getId())
+                .name((String) f.getProperties().get(NAME))
+                .build();
             return layer;
         }).collect(Collectors.toList());
     }

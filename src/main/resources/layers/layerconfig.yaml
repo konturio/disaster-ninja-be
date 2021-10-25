@@ -1,8 +1,9 @@
 ##### Category: NONE
 ### Group: Layers in selected area
 #todo: provider for event shape layer
-- id: 'eventShape' #todo
+- id: 'eventShape'
   globalOverlay: true
+  displayLegendIfNoFeaturesExist: true
   name: 'Event shape'
   group: 'Layers in selected area'
   legend:
@@ -17,6 +18,7 @@
         #todo paramName/paramValue
 - id: 'kontur_urban_core'
   globalOverlay: true
+  displayLegendIfNoFeaturesExist: true
   description: 'Kontur Urban Core highlights most populated region affected. For this event {{population}} people reside on {{areaKm2}}km² (out of total {{totalPopulation}} people on {{totalAreaKm2}}km²). This area should have higher priority in humanitarian activities.'
   group: 'Layers in selected area'
   legend:
@@ -33,6 +35,7 @@
           casing-opacity: 0.5
 - id: 'kontur_settled_periphery'
   globalOverlay: true
+  displayLegendIfNoFeaturesExist: true
   description: 'Kontur Settled Periphery is complimentary to Kontur Urban Core and shows a spread-out part of the population in the region. For this event it adds {{population}} people on {{areaKm2}}km² on top of Kontur Urban Core.'
   group: 'Layers in selected area'
   legend:
@@ -52,6 +55,7 @@
 #todo: provider for active contributors layer
 - id: 'activeContributors' #todo
   globalOverlay: true
+  displayLegendIfNoFeaturesExist: false
   name: 'Active contributors'
   category: 'overlay'
   group: 'Kontur'
@@ -66,6 +70,7 @@
 
 - id: 'hotProjects'
   globalOverlay: true
+  displayLegendIfNoFeaturesExist: false
   name: 'Hot Projects'
   description: 'Projects on HOT Tasking Manager, ongoing and historical'
   category: 'overlay'
@@ -79,6 +84,12 @@
         paramValue: 'Active'
         style:
           icon: 'link_to_icon'
+      - stepName: 'Published' #todo is this the same as 'Active' ?
+        stepShape: 'circle' #todo: it's a ring not a circle, see in miro
+        paramName: 'status'
+        paramValue: 'Published'
+        style:
+          icon: 'link_to_icon'
       - stepName: 'Archived'
         stepShape: 'circle' #todo: it's a ring not a circle, see in miro
         paramName: 'status'
@@ -88,27 +99,27 @@
 
 ### Group: Kontur Analytical Layers
 #todo: provider for osm analytical layers - ?
-- id: 'osmAnalytics1' #todo
+- id: 'osmObjectQuantity'
   globalOverlay: true
   name: 'OSM Object Quantity'
   category: 'overlay'
   group: 'Kontur Analytical Layers'
-- id: 'osmAnalytics2' #todo
+- id: 'osmBuildingQuantity'
   globalOverlay: true
   name: 'OSM Building Quantity'
   category: 'overlay'
   group: 'Kontur Analytical Layers'
-- id: 'osmAnalytics3' #todo
+- id: 'osmRoadLength'
   globalOverlay: true
   name: 'OSM Road Length'
   category: 'overlay'
   group: 'Kontur Analytical Layers'
-- id: 'osmAnalytics4' #todo
+- id: 'osmMappingActivity'
   globalOverlay: true
   name: 'OSM Mapping Activity'
   category: 'overlay'
   group: 'Kontur Analytical Layers'
-- id: 'osmAnalytics5' #todo
+- id: 'osmAntiquity'
   globalOverlay: true
   name: 'OSM Antiquity'
   category: 'overlay'

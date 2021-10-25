@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.wololo.geojson.Geometry;
+import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Point;
 
 import java.util.*;
@@ -41,14 +41,12 @@ public class DtoTest {
         String url = "http://localhost:" + port + "/api/layers/";
 
         String id = "123";
-        double[] coords = new double[]{1, 0};
-        Geometry geoJSON = new Point(coords);
         ArrayList<Layer> layers = new ArrayList<>();
-        Layer layer = testLayer(id, geoJSON);
+        Layer layer = testLayer(id, new FeatureCollection(null));
         layers.add(layer);
         Mockito.when(layerService.getList(any())).thenReturn(layers);
 
-        LayerSummaryInputDto input = new LayerSummaryInputDto("event id", geoJSON);
+        LayerSummaryInputDto input = new LayerSummaryInputDto("event id", new Point(new double[]{1, 0}));
         List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(url, input, LayerSummaryDto[].class).getBody());
 
         Assertions.assertEquals(layer.getId(), response.get(0).getId());
@@ -60,15 +58,29 @@ public class DtoTest {
         Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().toLegend());
     }
 
-    private Layer testLayer(String id, Geometry geoJSON) {
-        LayerSource source = new LayerSource(LayerSourceType.RASTER, "url-com.com", 2d, geoJSON);
+    private Layer testLayer(String id, FeatureCollection geoJSON) {
+        LayerSource source = LayerSource.builder()
+            .type(LayerSourceType.RASTER)
+            .url("url-com.com")
+            .tileSize(2d)
+            .data(geoJSON).build();
         Legend legend = new Legend("some legend", LegendType.SIMPLE, new ArrayList<>());
         Map<String, String> map = new HashMap<>();
         map.put("prop", "value");
         legend.getSteps().add(new LegendStep("param name", "param value", "step name",
             HEX, map));
 
-        return new Layer(id, false, "test name", "test desciption", LayerCategory.BASE, "tset group",
-            legend, "copyright text", 10, 1, source);
+        return Layer.builder()
+            .id(id)
+            .name("test name")
+            .description("test description")
+            .category(LayerCategory.BASE)
+            .group("test group")
+            .legend(legend)
+            .copyright("copyright text")
+            .maxZoom(10)
+            .minZoom(1)
+            .source(source)
+            .build();
     }
 }

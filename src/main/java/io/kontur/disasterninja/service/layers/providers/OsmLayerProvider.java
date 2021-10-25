@@ -66,14 +66,16 @@ public class OsmLayerProvider implements LayerProvider {
             return null;
         }
         return dto.stream().map(f -> {
-                    Layer layer = new Layer((String) f.getId(), false);
-                    layer.setName(getProperty(f, NAME, String.class));
-                    layer.setDescription(getProperty(f, DESCRIPTION, String.class));
-                    layer.setCategory(layerCategory(f));
-                    layer.setGroup(caseFormat(getProperty(f, CATEGORY, String.class)));
-                    layer.setCopyright(getMapValueFromProperty(f, ATTRIBUTION, TEXT, String.class));
-                    layer.setMaxZoom(getProperty(f, MAX_ZOOM, Integer.class));
-                    layer.setMinZoom(getProperty(f, MIN_ZOOM, Integer.class));
+                    Layer layer = Layer.builder()
+                        .id((String) f.getId())
+                        .name(getProperty(f, NAME, String.class))
+                        .description(getProperty(f, DESCRIPTION, String.class))
+                        .category(layerCategory(f))
+                        .group(caseFormat(getProperty(f, CATEGORY, String.class)))
+                        .copyright(getMapValueFromProperty(f, ATTRIBUTION, TEXT, String.class))
+                        .maxZoom(getProperty(f, MAX_ZOOM, Integer.class))
+                        .minZoom(getProperty(f, MIN_ZOOM, Integer.class))
+                        .build();
                     return layer;
                 }
             )

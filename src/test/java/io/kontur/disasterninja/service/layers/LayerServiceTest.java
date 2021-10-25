@@ -36,7 +36,7 @@ public class LayerServiceTest {
         when(hotLayerProvider.obtainLayers(any())).thenReturn(new ArrayList<>());
         when(osmLayerProvider.obtainLayers(any())).thenReturn(new ArrayList<>());
         when(urbanAndPeripheryLayerProvider.obtainLayers(any())).thenReturn(new ArrayList<>());
-        //todo other providers
+        //add other providers
     }
 
     @Test

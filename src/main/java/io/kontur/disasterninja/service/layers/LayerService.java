@@ -35,14 +35,15 @@ public class LayerService {
 
         Map<String, Layer> configs = layerConfigService.getConfigs();
 
-        configs.forEach((k, v) -> {
-            if (!layers.containsKey(k)) {
+        configs.forEach((layerName, config) -> {
+            if (!layers.containsKey(layerName)) {
                 //only global overlays are added if not received from providers
-                if (v.isGlobalOverlay()) {
-                    layers.put(k, v);
+                if (config.isGlobalOverlay()) {
+                    layers.put(layerName, config);
                 }
             } else {
-                layers.get(k).mergeFrom(v);
+                //apply configs to loaded layers
+                layers.get(layerName).mergeFrom(config);
             }
         });
         return new ArrayList<>(layers.values());

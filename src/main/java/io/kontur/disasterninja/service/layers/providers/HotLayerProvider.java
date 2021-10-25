@@ -2,12 +2,16 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.client.KcApiClient;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
+import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
 import java.util.List;
+
+import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 
 @Service
 public class HotLayerProvider implements LayerProvider {
@@ -38,7 +42,13 @@ public class HotLayerProvider implements LayerProvider {
             return null;
         }
         //The entire collection is one layer
-        return new Layer(HOT_ID, true);
+        Layer result = Layer.builder().id(HOT_ID)
+            .build();
+        result.setSource(LayerSource.builder()
+            .type(GEOJSON)
+            .data(new FeatureCollection(dto.toArray(new Feature[0])))
+            .build());
+        return result;
         //todo set anything else?
     }
 }

@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.config;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.config.metrics.ParamLessRestTemplateExchangeTagsProvider;
@@ -17,6 +18,7 @@ public class WebConfiguration {
 
     public WebConfiguration(@Autowired ObjectMapper objectMapper) {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
     @Bean
