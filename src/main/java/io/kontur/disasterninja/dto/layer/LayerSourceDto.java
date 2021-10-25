@@ -13,7 +13,7 @@ public class LayerSourceDto {
     private final Geometry data;
 
     public static LayerSourceDto fromLayerSource(LayerSource layerSource) {
-        return new LayerSourceDto(layerSource.getType(), layerSource.getUrl(),
+        return layerSource == null ? null : new LayerSourceDto(layerSource.getType(), layerSource.getUrl(),
             layerSource.getTileSize(), layerSource.getData());
     }
 }

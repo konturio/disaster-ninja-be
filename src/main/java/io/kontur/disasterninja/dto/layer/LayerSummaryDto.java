@@ -15,8 +15,8 @@ public class LayerSummaryDto {
     private final String copyright;
 
     public static LayerSummaryDto fromLayer(Layer layer) {
-        return new LayerSummaryDto(layer.getId(), layer.getName(), layer.getDescription(), layer.getCategory().toString(),
-            layer.getGroup(), LegendDto.fromLegend(layer.getLegend()),
-            layer.getCopyright());
+        return layer == null ? null : new LayerSummaryDto(layer.getId(), layer.getName(), layer.getDescription(),
+            layer.getCategory() == null ? null : layer.getCategory().toString(), layer.getGroup(),
+            LegendDto.fromLegend(layer.getLegend()), layer.getCopyright());
     }
 }

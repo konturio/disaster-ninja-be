@@ -14,11 +14,13 @@ public class LegendDto {
     private final List<LegendStepDto> steps;
 
     public static LegendDto fromLegend(Legend legend) {
-        return new LegendDto(legend.getName(), legend.getType().toString(), legend.getSteps().stream()
-            .map(LegendStepDto::fromLegendStep).collect(Collectors.toList()));
+        return legend == null ? null : new LegendDto(legend.getName(),
+            legend.getType() == null ? null : legend.getType().toString(),
+            legend.getSteps().stream().map(LegendStepDto::fromLegendStep).collect(Collectors.toList()));
     }
 
     public Legend toLegend() {
-        return new Legend(name, LegendType.fromString(type), steps.stream().map(LegendStepDto::toLegendStep).collect(Collectors.toList()));
+        return new Legend(name, LegendType.fromString(type), steps.stream().map(LegendStepDto::toLegendStep)
+            .collect(Collectors.toList()));
     }
 }

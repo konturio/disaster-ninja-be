@@ -15,8 +15,9 @@ public class LegendStepDto {
     private final Map<String, String> style; //todo map serialization test (quotes for FE)
 
     public static LegendStepDto fromLegendStep(LegendStep legendStep) {
-        return new LegendStepDto(legendStep.getParamName(), legendStep.getParamValue(),
-            legendStep.getStepName(), legendStep.getStepShape().toString(), legendStep.getStyle());
+        return legendStep == null ? null : new LegendStepDto(legendStep.getParamName(), legendStep.getParamValue(),
+            legendStep.getStepName(), legendStep.getStepShape() == null ? null : legendStep.getStepShape().toString(),
+            legendStep.getStyle());
     }
 
     public LegendStep toLegendStep() {
