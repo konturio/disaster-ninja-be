@@ -2,7 +2,6 @@ package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -30,7 +29,7 @@ public class EventApiClient {
     @Value("${kontur.platform.event-api.feed}")
     private String eventApiFeed;
 
-    public EventApiClient(@Qualifier("eventApiRestTemplate") RestTemplate eventApiRestTemplate) {
+    public EventApiClient(RestTemplate eventApiRestTemplate) {
         this.restTemplate = eventApiRestTemplate;
     }
 

@@ -1,17 +1,13 @@
 package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestTemplate;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
@@ -24,23 +20,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-@Import(TestConfig.class)
 @RestClientTest(InsightsApiClient.class)
-@AutoConfigureWebClient
+@AutoConfigureWebClient(registerRestTemplate = true)
 class InsightsApiClientTest {
 
-    @Autowired
-    @Qualifier("insightsApiRestTemplate")
-    private RestTemplate restTemplate;
     @Autowired
     private InsightsApiClient client;
     @Autowired
     private MockRestServiceServer server;
-
-    @BeforeEach
-    void setUp() {
-        server = MockRestServiceServer.bindTo(restTemplate).build();
-    }
 
     @Test
     public void testGetFeatures() throws IOException {

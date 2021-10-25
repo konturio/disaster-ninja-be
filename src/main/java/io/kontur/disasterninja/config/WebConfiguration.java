@@ -2,9 +2,8 @@ package io.kontur.disasterninja.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import io.kontur.disasterninja.config.metrics.ParamLessRestTemplateExchangeTagsProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.web.client.RestTemplateExchangeTagsProvider;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -21,7 +20,6 @@ public class WebConfiguration {
     }
 
     @Bean
-    @Qualifier("eventApiRestTemplate")
     public RestTemplate eventApiRestTemplate(RestTemplateBuilder builder,
                                              @Value("${kontur.platform.event-api.url}") String eventApiUrl) {
         return builder
@@ -30,7 +28,6 @@ public class WebConfiguration {
     }
 
     @Bean
-    @Qualifier("kcApiRestTemplate")
     public RestTemplate kcApiRestTemplate(RestTemplateBuilder builder,
                                           @Value("${kontur.platform.kcApi.url}") String eventApiUrl) {
         return builder
@@ -39,7 +36,6 @@ public class WebConfiguration {
     }
 
     @Bean
-    @Qualifier("insightsApiRestTemplate")
     public RestTemplate insightsApiRestTemplate(RestTemplateBuilder builder,
                                                 @Value("${kontur.platform.insightsApi.url}") String eventApiUrl) {
         return builder

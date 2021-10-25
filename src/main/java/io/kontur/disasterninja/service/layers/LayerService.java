@@ -48,7 +48,7 @@ public class LayerService {
         return new ArrayList<>(layers.values());
     }
 
-    public Layer get(String layerId) {
-        return null; //todo
-    }
+//    public Layer get(String layerId) {
+//        return null; //todo
+//    }
 }

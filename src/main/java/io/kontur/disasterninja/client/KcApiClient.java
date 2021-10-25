@@ -8,7 +8,6 @@ import org.locationtech.jts.geom.Envelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -32,14 +31,16 @@ public class KcApiClient {
     private static final Logger LOG = LoggerFactory.getLogger(KcApiClient.class);
     private static final String HOT_PROJECTS = "hotProjects";
     private static final String OSM_LAYERS = "osmlayer";
-    @Autowired
-    @Qualifier("kcApiRestTemplate")
-    RestTemplate restTemplate;
+    RestTemplate kcApiRestTemplate;
     @Autowired
     ObjectMapper objectMapper;
     GeoJSONReader reader = new GeoJSONReader();
     @Value("${kontur.platform.kcApi.pageSize}")
     private int pageSize;
+
+    public KcApiClient(RestTemplate kcApiRestTemplate) {
+        this.kcApiRestTemplate = kcApiRestTemplate;
+    }
 
     public List<Feature> getOsmLayers(Geometry geoJSON) {
         return getCollectionItemsByGeometry(geoJSON, OSM_LAYERS);
@@ -80,7 +81,7 @@ public class KcApiClient {
         while (true) {
             int offset = i++ * pageSize;
 
-            ResponseEntity<KcApiFeatureCollection> response = restTemplate
+            ResponseEntity<KcApiFeatureCollection> response = kcApiRestTemplate
                 .exchange(uri, HttpMethod.GET, new HttpEntity<>(null,
                     null), new ParameterizedTypeReference<>() {
                 }, bbox, pageSize, offset);
