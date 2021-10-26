@@ -1,6 +1,5 @@
 ##### Category: NONE
 ### Group: Layers in selected area
-#todo: provider for event shape layer
 - id: 'eventShape'
   globalOverlay: true
   displayLegendIfNoFeaturesExist: true
@@ -8,14 +7,14 @@
   group: 'Layers in selected area'
   legend:
     type: 'simple'
-    steps:
+    name: 'Hazard exposure'
+    steps: #todo configurations
       - stepName: 'Moderate'
         stepShape: 'circle' #todo: it's a ring not a circle, see in miro
       - stepName: 'Severe'
         stepShape: 'circle'
       - stepName: 'Extreme'
         stepShape: 'circle'
-        #todo paramName/paramValue
 - id: 'kontur_urban_core'
   globalOverlay: true
   displayLegendIfNoFeaturesExist: true

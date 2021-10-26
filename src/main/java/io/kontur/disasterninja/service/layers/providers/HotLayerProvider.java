@@ -10,31 +10,34 @@ import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
 import java.util.List;
+import java.util.UUID;
 
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 
 @Service
 public class HotLayerProvider implements LayerProvider {
 
-    public static final String HOT_ID = "hotProjects";
-
     @Autowired
     KcApiClient kcApiClient;
 
     @Override
-    public List<Layer> obtainLayers(Geometry geoJSON) {
+    public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
         List<Feature> hotProjectLayers = kcApiClient.getHotProjectLayer(geoJSON);
-        return List.of(fromHotProjectLayers(hotProjectLayers));
+        Layer layer = fromHotProjectLayers(hotProjectLayers);
+        return layer == null ? List.of() : List.of(layer);
     }
 
     @Override
-    public Layer obtainLayer(String layerId) {
-        return null; //todo
+    public Layer obtainLayer(String layerId, UUID eventId) {
+        if (!isApplicable(layerId)) {
+            return null;
+        }
+        return null; //todo no data can be loaded without a geoJson - too many features
     }
 
     @Override
-    public Boolean isApplicable(String layerId) {
-        return HOT_ID.equals(layerId);
+    public boolean isApplicable(String layerId) {
+        return HOT_LAYER_ID.equals(layerId);
     }
 
     Layer fromHotProjectLayers(List<Feature> dto) {
@@ -42,7 +45,7 @@ public class HotLayerProvider implements LayerProvider {
             return null;
         }
         //The entire collection is one layer
-        Layer result = Layer.builder().id(HOT_ID)
+        Layer result = Layer.builder().id(HOT_LAYER_ID)
             .build();
         result.setSource(LayerSource.builder()
             .type(GEOJSON)

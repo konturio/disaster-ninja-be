@@ -11,5 +11,5 @@ public class LayerSource {
     private final LayerSourceType type;
     private final String url;
     private final Double tileSize;
-    private final FeatureCollection data;
+    private FeatureCollection data;
 }

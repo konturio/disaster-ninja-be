@@ -44,9 +44,9 @@ public class DtoTest {
         ArrayList<Layer> layers = new ArrayList<>();
         Layer layer = testLayer(id, new FeatureCollection(null));
         layers.add(layer);
-        Mockito.when(layerService.getList(any())).thenReturn(layers);
+        Mockito.when(layerService.getList(any(), any())).thenReturn(layers);
 
-        LayerSummaryInputDto input = new LayerSummaryInputDto("event id", new Point(new double[]{1, 0}));
+        LayerSummaryInputDto input = new LayerSummaryInputDto(UUID.randomUUID(), new Point(new double[]{1, 0}));
         List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(url, input, LayerSummaryDto[].class).getBody());
 
         Assertions.assertEquals(layer.getId(), response.get(0).getId());

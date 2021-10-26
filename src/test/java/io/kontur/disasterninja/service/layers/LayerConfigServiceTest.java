@@ -17,7 +17,8 @@ import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 import static io.kontur.disasterninja.domain.enums.LayerStepShape.CIRCLE;
 import static io.kontur.disasterninja.domain.enums.LegendType.SIMPLE;
-import static io.kontur.disasterninja.service.layers.providers.HotLayerProvider.HOT_ID;
+import static io.kontur.disasterninja.service.layers.providers.LayerProvider.EVENT_SHAPE_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
 
 @SpringBootTest
 public class LayerConfigServiceTest {
@@ -33,7 +34,7 @@ public class LayerConfigServiceTest {
     @Test
     public void hotWithFeaturesForAllStepsTest() {
         Layer hot = Layer.builder()
-            .id(HOT_ID)
+            .id(HOT_LAYER_ID)
             .source(LayerSource.builder()
                 .type(GEOJSON)
                 .data(new FeatureCollection(
@@ -44,6 +45,8 @@ public class LayerConfigServiceTest {
                 )).build()).build();
         service.applyConfig(hot);
 
+        Assertions.assertTrue(hot.isGlobalOverlay());
+        Assertions.assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertEquals("Hot Projects", hot.getName());
         Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
         Assertions.assertEquals(OVERLAY, hot.getCategory());
@@ -75,7 +78,7 @@ public class LayerConfigServiceTest {
     @Test
     public void hotWithFeaturesForSomeStepsTest() {
         Layer hot = Layer.builder()
-            .id(HOT_ID)
+            .id(HOT_LAYER_ID)
             .source(LayerSource.builder()
                 .type(GEOJSON)
                 .data(new FeatureCollection(
@@ -83,9 +86,10 @@ public class LayerConfigServiceTest {
                         feature("status", "Active"),
                         feature("status", "Archived")}
                 )).build()).build();
-        //new Layer(HOT_ID, true);
         service.applyConfig(hot);
 
+        Assertions.assertTrue(hot.isGlobalOverlay());
+        Assertions.assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertEquals("Hot Projects", hot.getName());
         Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
         Assertions.assertEquals(OVERLAY, hot.getCategory());
@@ -116,6 +120,8 @@ public class LayerConfigServiceTest {
             .build();
         service.applyConfig(urban);
 
+        Assertions.assertTrue(urban.isGlobalOverlay());
+        Assertions.assertTrue(urban.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertEquals("Kontur Settled Periphery is complimentary to Kontur Urban Core and shows a " +
             "spread-out part of the population in the region. For this event it adds {{population}} people on" +
             " {{areaKm2}}km² on top of Kontur Urban Core.", urban.getDescription());
@@ -127,10 +133,12 @@ public class LayerConfigServiceTest {
     @Test
     public void eventShapeTest() {
         Layer eventShape = Layer.builder()
-            .id("eventShape")
+            .id(EVENT_SHAPE_LAYER_ID)
             .build();
         service.applyConfig(eventShape);
         //layer
+        Assertions.assertTrue(eventShape.isGlobalOverlay());
+        Assertions.assertTrue(eventShape.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertEquals("Event shape", eventShape.getName());
         Assertions.assertEquals("Layers in selected area", eventShape.getGroup());
         //legend
@@ -151,6 +159,8 @@ public class LayerConfigServiceTest {
             .build();
         service.applyConfig(activeContributors);
         //layer
+        Assertions.assertTrue(activeContributors.isGlobalOverlay());
+        Assertions.assertFalse(activeContributors.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertEquals("Active contributors", activeContributors.getName());
         Assertions.assertEquals("Kontur", activeContributors.getGroup());
         Assertions.assertEquals(OVERLAY, activeContributors.getCategory());
@@ -165,13 +175,15 @@ public class LayerConfigServiceTest {
 
     @Test
     public void konturAnalyticsTest() {
-        Layer activeContributors = Layer.builder()
+        Layer analytics = Layer.builder()
             .id("osmObjectQuantity")
             .build();
-        service.applyConfig(activeContributors);
+        service.applyConfig(analytics);
         //layer
-        Assertions.assertEquals("OSM Object Quantity", activeContributors.getName());
-        Assertions.assertEquals(OVERLAY, activeContributors.getCategory());
-        Assertions.assertEquals("Kontur Analytical Layers", activeContributors.getGroup());
+        Assertions.assertTrue(analytics.isGlobalOverlay());
+        Assertions.assertFalse(analytics.isDisplayLegendIfNoFeaturesExist());
+        Assertions.assertEquals("OSM Object Quantity", analytics.getName());
+        Assertions.assertEquals(OVERLAY, analytics.getCategory());
+        Assertions.assertEquals("Kontur Analytical Layers", analytics.getGroup());
     }
 }

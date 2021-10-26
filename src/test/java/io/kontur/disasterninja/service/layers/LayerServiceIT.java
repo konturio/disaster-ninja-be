@@ -25,7 +25,7 @@ public class LayerServiceIT {
             "[-10.656738281,6.219060146],[-10.651073456,6.246363619],[-10.649528503,6.265304567]," +
             "[-10.654764175,6.276395795]]]]}";
         List<Layer> layers = layerService.getList(new ObjectMapper().readValue(json,
-            Geometry.class));
+            Geometry.class), null);
         Assertions.assertFalse(layers.isEmpty());
     }
 }

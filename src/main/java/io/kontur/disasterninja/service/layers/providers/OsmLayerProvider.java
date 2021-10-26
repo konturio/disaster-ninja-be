@@ -4,14 +4,17 @@ import io.kontur.disasterninja.client.KcApiClient;
 import io.kontur.disasterninja.domain.DtoFeatureProperties;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.Geometry;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
@@ -46,38 +49,38 @@ public class OsmLayerProvider implements LayerProvider {
     }
 
     @Override
-    public List<Layer> obtainLayers(Geometry geoJSON) {
+    public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
         List<Feature> osmLayers = kcApiClient.getOsmLayers(geoJSON);
         return fromOsmLayers(osmLayers);
     }
 
     @Override
-    public Layer obtainLayer(String layerId) {
-        return null; //todo
+    public Layer obtainLayer(String layerId, UUID eventId) {
+        if (!isApplicable(layerId)) {
+            return null;
+        }
+        throw new NotImplementedException(); //todo
     }
 
     @Override
-    public Boolean isApplicable(String layerId) {
-        return null; //todo
+    public boolean isApplicable(String layerId) {
+        return true; //todo
     }
 
     List<Layer> fromOsmLayers(List<Feature> dto) {
         if (dto == null) {
-            return null;
+            return Collections.emptyList();
         }
-        return dto.stream().map(f -> {
-                    Layer layer = Layer.builder()
-                        .id((String) f.getId())
-                        .name(getProperty(f, NAME, String.class))
-                        .description(getProperty(f, DESCRIPTION, String.class))
-                        .category(layerCategory(f))
-                        .group(caseFormat(getProperty(f, CATEGORY, String.class)))
-                        .copyright(getMapValueFromProperty(f, ATTRIBUTION, TEXT, String.class))
-                        .maxZoom(getProperty(f, MAX_ZOOM, Integer.class))
-                        .minZoom(getProperty(f, MIN_ZOOM, Integer.class))
-                        .build();
-                    return layer;
-                }
+        return dto.stream().map(f -> Layer.builder()
+                .id((String) f.getId())
+                .name(getProperty(f, NAME, String.class))
+                .description(getProperty(f, DESCRIPTION, String.class))
+                .category(layerCategory(f))
+                .group(caseFormat(getProperty(f, CATEGORY, String.class)))
+                .copyright(getMapValueFromProperty(f, ATTRIBUTION, TEXT, String.class))
+                .maxZoom(getProperty(f, MAX_ZOOM, Integer.class))
+                .minZoom(getProperty(f, MIN_ZOOM, Integer.class))
+                .build()
             )
             .collect(Collectors.toList());
     }
