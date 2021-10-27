@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wololo.geojson.FeatureCollection;
 
 import java.util.List;
@@ -12,6 +13,10 @@ public class EventDto {
     private List<String> externalUrls;
     private Severity severity;
     private FeatureCollection geojson;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private EventType eventType;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private FeatureCollection latestEpisodeGeojson;
 
     public UUID getEventId() {
         return eventId;
@@ -51,5 +56,21 @@ public class EventDto {
 
     public void setGeojson(FeatureCollection geojson) {
         this.geojson = geojson;
+    }
+
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
+    }
+
+    public FeatureCollection getLatestEpisodeGeojson() {
+        return latestEpisodeGeojson;
+    }
+
+    public void setLatestEpisodeGeojson(FeatureCollection latestEpisodeGeojson) {
+        this.latestEpisodeGeojson = latestEpisodeGeojson;
     }
 }

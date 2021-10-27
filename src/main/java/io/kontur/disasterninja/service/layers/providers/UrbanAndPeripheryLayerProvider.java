@@ -2,7 +2,6 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.client.InsightsApiClient;
 import io.kontur.disasterninja.domain.Layer;
-import io.kontur.disasterninja.service.layers.LayerConfigService;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +19,8 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
     @Autowired
     InsightsApiClient insightsApiClient;
 
-    @Autowired
-    LayerConfigService configService;
-
     @Override
+
     public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
         org.wololo.geojson.FeatureCollection urbanCoreAndSettledPeripheryLayers = insightsApiClient
             .getUrbanCoreAndSettledPeripheryLayers(geoJSON);
@@ -35,7 +32,7 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
         if (!isApplicable(layerId)) {
             return null;
         }
-        throw new NotImplementedException(); //todo
+        throw new NotImplementedException(); //todo #7385
     }
 
     @Override

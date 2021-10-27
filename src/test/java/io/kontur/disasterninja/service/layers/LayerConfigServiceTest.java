@@ -10,13 +10,14 @@ import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Point;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
-import static io.kontur.disasterninja.domain.enums.LayerStepShape.CIRCLE;
 import static io.kontur.disasterninja.domain.enums.LegendType.SIMPLE;
+import static io.kontur.disasterninja.dto.EventType.CYCLONE;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.EVENT_SHAPE_LAYER_ID;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
 
@@ -29,6 +30,12 @@ public class LayerConfigServiceTest {
         Map<String, Object> properties = new HashMap<>();
         properties.put(paramName, paramValue);
         return new Feature(new Point(new double[]{1, 2}), properties);
+    }
+
+
+    @Test
+    public void test() throws IOException {
+        Assertions.assertFalse(service.getConfigs().isEmpty());
     }
 
     @Test
@@ -58,21 +65,21 @@ public class LayerConfigServiceTest {
 
         //steps
         Assertions.assertEquals("Active", hot.getLegend().getSteps().get(0).getStepName());
-        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(1).getStepName());
-        Assertions.assertEquals("Published", hot.getLegend().getSteps().get(2).getStepName());
+        Assertions.assertEquals("Published", hot.getLegend().getSteps().get(1).getStepName());
+        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(2).getStepName());
         //step 1
         Assertions.assertEquals("status", hot.getLegend().getSteps().get(0).getParamName());
         Assertions.assertEquals("Active", hot.getLegend().getSteps().get(0).getParamValue());
         //step 2
         Assertions.assertEquals("status", hot.getLegend().getSteps().get(1).getParamName());
-        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(1).getParamValue());
+        Assertions.assertEquals("Published", hot.getLegend().getSteps().get(1).getParamValue());
         //step 3
         Assertions.assertEquals("status", hot.getLegend().getSteps().get(2).getParamName());
-        Assertions.assertEquals("Published", hot.getLegend().getSteps().get(2).getParamValue());
+        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(2).getParamValue());
 
         Assertions.assertEquals("link_to_icon", hot.getLegend().getSteps().get(0).getStyle().get("icon"));
         Assertions.assertEquals("link_to_icon_2", hot.getLegend().getSteps().get(1).getStyle().get("icon"));
-        Assertions.assertEquals("link_to_icon", hot.getLegend().getSteps().get(2).getStyle().get("icon"));
+        Assertions.assertEquals("link_to_icon_3", hot.getLegend().getSteps().get(2).getStyle().get("icon"));
     }
 
     @Test
@@ -110,7 +117,26 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(1).getParamValue());
 
         Assertions.assertEquals("link_to_icon", hot.getLegend().getSteps().get(0).getStyle().get("icon"));
-        Assertions.assertEquals("link_to_icon_2", hot.getLegend().getSteps().get(1).getStyle().get("icon"));
+        Assertions.assertEquals("link_to_icon_3", hot.getLegend().getSteps().get(1).getStyle().get("icon"));
+    }
+
+    @Test
+    public void hotWithoutFeaturesTest() {
+        Layer hot = Layer.builder()
+            .id(HOT_LAYER_ID)
+            .build();
+        service.applyConfig(hot);
+
+        Assertions.assertTrue(hot.isGlobalOverlay());
+        Assertions.assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
+        Assertions.assertEquals("Hot Projects", hot.getName());
+        Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
+        Assertions.assertEquals(OVERLAY, hot.getCategory());
+        Assertions.assertEquals("Kontur", hot.getGroup());
+        Assertions.assertNotNull(hot.getLegend());
+        Assertions.assertNotNull(hot.getLegend().getSteps());
+        //empty Legend since no features exist for defined steps
+        Assertions.assertEquals(0, hot.getLegend().getSteps().size());
     }
 
     @Test
@@ -131,27 +157,6 @@ public class LayerConfigServiceTest {
     }
 
     @Test
-    public void eventShapeTest() {
-        Layer eventShape = Layer.builder()
-            .id(EVENT_SHAPE_LAYER_ID)
-            .build();
-        service.applyConfig(eventShape);
-        //layer
-        Assertions.assertTrue(eventShape.isGlobalOverlay());
-        Assertions.assertTrue(eventShape.isDisplayLegendIfNoFeaturesExist());
-        Assertions.assertEquals("Event shape", eventShape.getName());
-        Assertions.assertEquals("Layers in selected area", eventShape.getGroup());
-        //legend
-        Assertions.assertNotNull(eventShape.getLegend());
-        Assertions.assertEquals(SIMPLE, eventShape.getLegend().getType());
-        //steps
-        Assertions.assertEquals(3, eventShape.getLegend().getSteps().size());
-        Assertions.assertEquals("Moderate", eventShape.getLegend().getSteps().get(0).getStepName());
-        Assertions.assertEquals(CIRCLE, eventShape.getLegend().getSteps().get(0).getStepShape());
-        //skipping other fields
-    }
-
-    @Test
     public void activeContributorsWithoutFeaturesTest() {
         Layer activeContributors = Layer.builder()
             .id("activeContributors")
@@ -160,7 +165,7 @@ public class LayerConfigServiceTest {
         service.applyConfig(activeContributors);
         //layer
         Assertions.assertTrue(activeContributors.isGlobalOverlay());
-        Assertions.assertFalse(activeContributors.isDisplayLegendIfNoFeaturesExist());
+        Assertions.assertTrue(activeContributors.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertEquals("Active contributors", activeContributors.getName());
         Assertions.assertEquals("Kontur", activeContributors.getGroup());
         Assertions.assertEquals(OVERLAY, activeContributors.getCategory());
@@ -168,8 +173,8 @@ public class LayerConfigServiceTest {
         Assertions.assertNotNull(activeContributors.getLegend());
         Assertions.assertEquals(SIMPLE, activeContributors.getLegend().getType());
         //steps
-        //empty Legend since no features exist for defined steps
-        Assertions.assertEquals(0, activeContributors.getLegend().getSteps().size());
+        //Steps are always shown since displayLegendIfNoFeaturesExist is true
+        Assertions.assertEquals(2, activeContributors.getLegend().getSteps().size());
         //skipping other fields
     }
 
@@ -186,4 +191,116 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals(OVERLAY, analytics.getCategory());
         Assertions.assertEquals("Kontur Analytical Layers", analytics.getGroup());
     }
+
+    //even shape tests
+
+    @Test
+    public void eventShapeTest() {
+        //base config params
+        Layer eventShape = Layer.builder()
+            .id(EVENT_SHAPE_LAYER_ID)
+            .build();
+        service.applyConfig(eventShape);
+        //layer
+        Assertions.assertFalse(eventShape.isGlobalOverlay());
+        Assertions.assertTrue(eventShape.isDisplayLegendIfNoFeaturesExist());
+        Assertions.assertEquals("Event shape", eventShape.getName());
+        Assertions.assertEquals("Layers in selected area", eventShape.getGroup());
+        //legend
+        Assertions.assertNotNull(eventShape.getLegend());
+        Assertions.assertEquals(SIMPLE, eventShape.getLegend().getType());
+        //steps
+        Assertions.assertEquals(1, eventShape.getLegend().getSteps().size());
+        Assertions.assertEquals("Exposure Area", eventShape.getLegend().getSteps().get(0).getStepName());
+        //skipping other fields
+    }
+
+    @Test
+    public void eventShapeDefaultTest() {
+        //eventShape without 'Class' property in features - uses basic config
+        Layer layer = Layer.builder()
+            .id(EVENT_SHAPE_LAYER_ID)
+            .source(LayerSource.builder()
+                .data(new FeatureCollection(new Feature[]{feature("some", "value")}))
+                .build())
+            .build();
+
+        service.applyConfig(layer);
+
+        Assertions.assertNotNull(layer.getLegend());
+        Assertions.assertFalse(layer.getLegend().getSteps().isEmpty());
+        Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
+        Assertions.assertEquals(1, layer.getLegend().getSteps().size());
+        Assertions.assertEquals("Exposure Area", layer.getLegend().getSteps().get(0).getStepName());
+        //skipping other fields
+    }
+
+    @Test
+    public void eventShapeCycloneAllStepsTest() {
+        //event type = CYCLONE
+        //features with different Class value exist - each should be added to legend
+        Layer layer = Layer.builder()
+            .id(EVENT_SHAPE_LAYER_ID + "." + CYCLONE)
+            .source(LayerSource.builder()
+                .data(new FeatureCollection(new Feature[]{
+                    //random order, some duplicates
+                    feature("Class", "Point_Centroid"),
+                    feature("Class", "Poly_Red"),
+                    feature("Class", "Poly_Green"),
+                    feature("Class", "Poly_Orange"),
+                    feature("Class", "Poly_Orange"),
+                    feature("Class", "Poly_Green"),
+                    feature("Class", "Point_Polygon_Point_234"),
+                    feature("Class", "Poly_Green"),
+                    feature("Class", "Line_Line_2"),
+                    feature("Class", "Poly_Cones")}
+                ))
+                .build())
+            .build();
+
+        service.applyConfig(layer);
+
+        Assertions.assertNotNull(layer.getLegend());
+        Assertions.assertFalse(layer.getLegend().getSteps().isEmpty());
+        Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
+        Assertions.assertEquals(7, layer.getLegend().getSteps().size());
+        Assertions.assertEquals("Centroid", layer.getLegend().getSteps().get(0).getStepName());
+        Assertions.assertEquals("Exposure Area 60 km/h", layer.getLegend().getSteps().get(1).getStepName());
+        Assertions.assertEquals("Exposure Area 90 km/h", layer.getLegend().getSteps().get(2).getStepName());
+        Assertions.assertEquals("Exposure Area 120 km/h", layer.getLegend().getSteps().get(3).getStepName());
+        Assertions.assertEquals("Line Track", layer.getLegend().getSteps().get(4).getStepName());
+        Assertions.assertEquals("Point Track", layer.getLegend().getSteps().get(5).getStepName());
+        Assertions.assertEquals("Uncertainty Cones", layer.getLegend().getSteps().get(6).getStepName());
+        //skipping other fields
+    }
+
+    @Test
+    public void eventShapeCycloneSomeStepsTest() {
+        //event type = CYCLONE
+        //features with different Class value exist - each should be added to legend
+        Layer layer = Layer.builder()
+            .id(EVENT_SHAPE_LAYER_ID + "." + CYCLONE)
+            .source(LayerSource.builder()
+                .data(new FeatureCollection(new Feature[]{
+                    //random order, some duplicates
+                    feature("Class", "Point_Centroid"),
+                    feature("Class", "Point_Polygon_Point_777"),
+                    feature("Class", "Poly_Cones")}
+                ))
+                .build())
+            .build();
+
+        service.applyConfig(layer);
+
+        Assertions.assertNotNull(layer.getLegend());
+        Assertions.assertFalse(layer.getLegend().getSteps().isEmpty());
+        Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
+        Assertions.assertEquals(3, layer.getLegend().getSteps().size());
+        Assertions.assertEquals("Centroid", layer.getLegend().getSteps().get(0).getStepName());
+        Assertions.assertEquals("Point Track", layer.getLegend().getSteps().get(1).getStepName());
+        Assertions.assertEquals("Uncertainty Cones", layer.getLegend().getSteps().get(2).getStepName());
+        //skipping other fields
+    }
+
+
 }

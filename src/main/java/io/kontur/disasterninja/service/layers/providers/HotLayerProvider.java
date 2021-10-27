@@ -32,7 +32,7 @@ public class HotLayerProvider implements LayerProvider {
         if (!isApplicable(layerId)) {
             return null;
         }
-        return null; //todo no data can be loaded without a geoJson - too many features
+        return null; //todo no data can be loaded without a geoJson - too many features #7385
     }
 
     @Override
@@ -45,13 +45,12 @@ public class HotLayerProvider implements LayerProvider {
             return null;
         }
         //The entire collection is one layer
-        Layer result = Layer.builder().id(HOT_LAYER_ID)
+        return Layer.builder().id(HOT_LAYER_ID)
+            .source(LayerSource.builder()
+                .type(GEOJSON)
+                .data(new FeatureCollection(dto.toArray(new Feature[0])))
+                .build())
             .build();
-        result.setSource(LayerSource.builder()
-            .type(GEOJSON)
-            .data(new FeatureCollection(dto.toArray(new Feature[0])))
-            .build());
-        return result;
         //todo set anything else?
     }
 }

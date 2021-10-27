@@ -3,6 +3,7 @@ package io.kontur.disasterninja.service.layers.providers;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.dto.EventDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,10 +14,13 @@ import org.wololo.geojson.FeatureCollection;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
+import static io.kontur.disasterninja.dto.EventType.EARTHQUAKE;
+import static io.kontur.disasterninja.service.layers.providers.LayerProvider.EVENT_SHAPE_LAYER_ID;
 
 @SpringBootTest
 public class LayerProvidersTest {
@@ -30,6 +34,9 @@ public class LayerProvidersTest {
 
     @Autowired
     UrbanAndPeripheryLayerProvider urbanAndPeripheryLayerProvider;
+
+    @Autowired
+    EventShapeLayerProvider eventShapeLayerProvider;
 
     @BeforeEach
     private void setup() {
@@ -102,5 +109,39 @@ public class LayerProvidersTest {
         Assertions.assertEquals("Kontur Settled Periphery", periphery.getName());
         Assertions.assertNull(periphery.getDescription()); //defaults are set later by LayerConfigService
         //todo other fields
+    }
+
+    @Test
+    public void eventShapeEarthquakeLayerTest() throws IOException {
+        EventDto eventDto = objectMapper.readValue(new File(ClassLoader
+                .getSystemResource("io/kontur/disasterninja/client/layers/eventdto.json").getPath()),
+            EventDto.class);
+        Layer result = eventShapeLayerProvider.fromEventDto(eventDto);
+        //there are "Class" properties in features - which define further layer id hence layer config
+        Assertions.assertEquals(EVENT_SHAPE_LAYER_ID + "." + EARTHQUAKE, result.getId());
+        //check source data was loaded
+        Assertions.assertEquals(2, result.getSource().getData().getFeatures().length);
+        Assertions.assertEquals("Point", result.getSource().getData().getFeatures()[0].getGeometry().getType());
+        Assertions.assertEquals("Polygon", result.getSource().getData().getFeatures()[1].getGeometry().getType());
+    }
+
+    @Test
+    public void eventShapeDefaultLayerTest() throws IOException {
+        EventDto eventDto = objectMapper.readValue(new File(ClassLoader
+                .getSystemResource("io/kontur/disasterninja/client/layers/eventdto.json").getPath()),
+            EventDto.class);
+        //remove "Class" entries from features properties
+        Arrays.stream(eventDto.getLatestEpisodeGeojson().getFeatures()).forEach(feature -> {
+            if (feature.getProperties() != null) {
+                feature.getProperties().remove("Class");
+            }
+        });
+        Layer result = eventShapeLayerProvider.fromEventDto(eventDto);
+        //"Class" property is absent from features properties => the default template is used
+        Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.getId());
+        //check source data was loaded
+        Assertions.assertEquals(2, result.getSource().getData().getFeatures().length);
+        Assertions.assertEquals("Point", result.getSource().getData().getFeatures()[0].getGeometry().getType());
+        Assertions.assertEquals("Polygon", result.getSource().getData().getFeatures()[1].getGeometry().getType());
     }
 }

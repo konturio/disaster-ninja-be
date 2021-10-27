@@ -6,7 +6,9 @@ import lombok.Data;
 import org.wololo.geojson.Feature;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Data
 @Builder
@@ -104,7 +106,10 @@ public class Layer {
                 for (LegendStep step : stepsToCheck) {
                     String value = feature.getProperties() == null ? null
                         : (String) (feature.getProperties()).get(step.getParamName());
-                    if (step.getParamValue().equalsIgnoreCase(value)) {
+                    if (value == null) {
+                        continue;
+                    }
+                    if (Pattern.compile(step.getParamValue()).matcher(value).matches()) {
                         //a feature exist for this legend step
                         thisLegend.getSteps().add(step);
                         //no need to check this legend step again
@@ -114,6 +119,7 @@ public class Layer {
                 }
             }
         }
+        thisLegend.getSteps().sort(Comparator.comparing(LegendStep::getOrder));
 
         return thisLegend;
     }

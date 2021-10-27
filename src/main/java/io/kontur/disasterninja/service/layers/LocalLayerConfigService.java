@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LegendStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,9 +25,11 @@ public class LocalLayerConfigService implements LayerConfigService {
     public LocalLayerConfigService() {
         objectMapper.findAndRegisterModules();
         try {
-            List<Layer> list = objectMapper.readValue(ClassLoader.getSystemResource("layers/layerconfig.yaml"),
-                new TypeReference<>() {});
-            defaults = list.stream().collect(Collectors.toMap(Layer::getId, l -> l));
+            List<Layer> layers = objectMapper.readValue(ClassLoader.getSystemResource("layers/layerconfig.yaml"),
+                new TypeReference<>() {
+                });
+            layers.forEach(this::setLegendStepsOrder);
+            defaults = layers.stream().collect(Collectors.toMap(Layer::getId, l -> l));
         } catch (IOException e) {
             LOG.error("Cannot load layer configurations! {}", e.getMessage(), e);
             defaults = new HashMap<>();
@@ -60,5 +63,14 @@ public class LocalLayerConfigService implements LayerConfigService {
     @Override
     public Map<String, Layer> getConfigs() {
         return defaults;
+    }
+
+    private void setLegendStepsOrder(Layer layer) {
+        if (layer.getLegend() != null && layer.getLegend().getSteps() != null) {
+            List<LegendStep> steps = layer.getLegend().getSteps();
+            for (int i = 0; i < steps.size(); i++) {
+                steps.get(i).setOrder(i);
+            }
+        }
     }
 }

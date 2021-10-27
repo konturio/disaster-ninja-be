@@ -30,7 +30,7 @@ public class LayerService {
     private Map<String, Layer> configs;
 
     @PostConstruct
-    private void init() { //todo test
+    private void init() {
         configs = layerConfigService.getConfigs();
     }
 
@@ -63,7 +63,7 @@ public class LayerService {
         //handle errors
         if (layers.size() > 1) {
             LOG.error("More than one layer found by id {}, found by providers: {}",
-                layerId, layers.keySet()); //todo test keyset is logged correctly
+                layerId, layers.keySet());
             throw new RuntimeException("More than one layer found by id"); //todo test internal server error
         }
 

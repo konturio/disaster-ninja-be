@@ -16,13 +16,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static io.kontur.disasterninja.domain.enums.LayerSourceType.RASTER;
+import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
 
 @Service
 public class EventShapeLayerProvider implements LayerProvider {
     @Autowired
     EventApiService eventApiService;
-    private GeoJSONReader reader = new GeoJSONReader();
+    private final GeoJSONReader reader = new GeoJSONReader();
 
     @Override
     public List<Layer> obtainLayers(Geometry geoJson, UUID eventId) {
@@ -51,13 +51,21 @@ public class EventShapeLayerProvider implements LayerProvider {
         if (eventDto == null) {
             return null;
         }
+
+        //if 'Class' property is absent from features - use common config for EVENT_SHAPE_LAYER_ID
+        //otherwise there are separate cfgs based on event type
+        boolean isClassSpecified = Arrays.stream(eventDto.getLatestEpisodeGeojson().getFeatures())
+            .anyMatch(f -> f.getProperties().containsKey("Class"));
+        String layerId = isClassSpecified ? EVENT_SHAPE_LAYER_ID + "." + eventDto.getEventType()
+            : EVENT_SHAPE_LAYER_ID;
+
         return Layer.builder()
-            .id(EVENT_SHAPE_LAYER_ID)
+            .id(layerId)
             .source(LayerSource.builder()
-                .type(RASTER) //todo check
-//                .url() //todo other fields
-//                .tileSize()
-                .data(eventDto.getGeojson())
+                .type(VECTOR)
+//                .url() //todo #7385
+//                .tileSize() //todo #7385
+                .data(eventDto.getLatestEpisodeGeojson()) //sic!
                 .build())
             .build();
     }
@@ -67,7 +75,7 @@ public class EventShapeLayerProvider implements LayerProvider {
         return EVENT_SHAPE_LAYER_ID.equals(layerId);
     }
 
-    protected org.locationtech.jts.geom.Geometry getJtsGeometry(Geometry geoJson) {
+    private org.locationtech.jts.geom.Geometry getJtsGeometry(Geometry geoJson) {
         return reader.read(geoJson);
     }
 
@@ -81,7 +89,7 @@ public class EventShapeLayerProvider implements LayerProvider {
         return Arrays.stream(input)
             .filter(json -> {
                 Geometry featureGeom = json.getGeometry();
-                return featureGeom == null || //include items without geometry ("global" ones) //todo seems to be unneeded here?
+                return featureGeom == null || //include items without geometry ("global" ones)
                     jtsGeometry.intersects(reader.read(featureGeom));
             })
             .toArray(Feature[]::new);

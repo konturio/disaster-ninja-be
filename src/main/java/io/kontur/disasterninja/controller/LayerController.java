@@ -33,7 +33,7 @@ public class LayerController {
     @GetMapping(produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
     public LayerDetailsDto getDetails(@Parameter @RequestParam String layerId,
                                       @Parameter @RequestParam UUID eventId) {
-        return LayerDetailsDto.fromLayer(layerService.get(layerId, eventId));  //todo case-insensitive layerId?
+        return LayerDetailsDto.fromLayer(layerService.get(layerId, eventId));  //todo case-insensitive layerId? #7385
     }
 
 }
