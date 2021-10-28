@@ -30,10 +30,9 @@ public class LayerController {
             .collect(Collectors.toList());
     }
 
-    @GetMapping(produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
-    public LayerDetailsDto getDetails(@Parameter @RequestParam String layerId,
-                                      @Parameter @RequestParam UUID eventId) {
-        return LayerDetailsDto.fromLayer(layerService.get(layerId, eventId));  //todo case-insensitive layerId? #7385
-    }
+//    @GetMapping(produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE) //todo #7385
+//    public LayerDetailsDto getDetails(@Parameter @RequestParam String layerId,
+//                                      @Parameter @RequestParam UUID eventId) {
+//        return LayerDetailsDto.fromLayer(layerService.get(layerId, eventId));//    }
 
 }
