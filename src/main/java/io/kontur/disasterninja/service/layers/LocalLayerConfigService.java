@@ -24,7 +24,7 @@ public class LocalLayerConfigService implements LayerConfigService {
     public LocalLayerConfigService() {
         objectMapper.findAndRegisterModules();
         try {
-            List<Layer> list = objectMapper.readValue(ClassLoader.getSystemResource("layers/layerconfig.yaml"),
+            List<Layer> list = objectMapper.readValue(getClass().getResourceAsStream("/layers/layerconfig.yaml"),
                 new TypeReference<>() {});
             defaults = list.stream().collect(Collectors.toMap(Layer::getId, l -> l));
         } catch (IOException e) {
