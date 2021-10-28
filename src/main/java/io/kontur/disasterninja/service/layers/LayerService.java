@@ -38,7 +38,7 @@ public class LayerService {
         Map<String, Layer> layers = new HashMap<>();
 
         //load layers from providers
-        providers.stream().map(it -> it.obtainLayers(geoJSON, eventId)) //todo test @NotNull combinations
+        providers.stream().map(it -> it.obtainLayers(geoJSON, eventId))
             .reduce(new ArrayList<>(), (a, b) -> {
                 a.addAll(b);
                 return a;
