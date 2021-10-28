@@ -12,9 +12,9 @@ public interface LayerProvider {
     String SETTL_PERIPHERY_LAYER_ID = "kontur_settled_periphery";
     String EVENT_SHAPE_LAYER_ID = "eventShape";
 
-    List<Layer> obtainLayers(Geometry geoJSON, UUID eventId); //todo add comments where any of params is not taken into account
+    List<Layer> obtainLayers(Geometry geoJSON, UUID eventId);
 
-    Layer obtainLayer(String layerId, UUID eventId); //todo add comments where any of params is not taken into account
+    Layer obtainLayer(String layerId, UUID eventId);
 
     boolean isApplicable(String layerId);
 }

@@ -39,7 +39,7 @@ public class EventApiService {
         String accessToken = authorizationService.getAccessToken();
         EventApiEventDto event = client.getEvent(eventId, accessToken);
         if (event == null) {
-            throw new WebApplicationException("Event is not found", HttpStatus.NOT_FOUND);
+            throw new WebApplicationException("Event " + eventId + " is not found", HttpStatus.NOT_FOUND);
         }
         return EventDtoConverter.convert(event);
     }

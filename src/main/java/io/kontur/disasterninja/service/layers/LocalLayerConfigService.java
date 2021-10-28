@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +29,7 @@ public class LocalLayerConfigService implements LayerConfigService {
                 });
             layers.forEach(this::setLegendStepsOrder);
             defaults = layers.stream().collect(Collectors.toMap(Layer::getId, l -> l));
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error("Cannot load layer configurations! {}", e.getMessage(), e);
             defaults = new HashMap<>();
         }

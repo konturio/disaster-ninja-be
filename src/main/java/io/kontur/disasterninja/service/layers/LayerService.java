@@ -38,7 +38,7 @@ public class LayerService {
         Map<String, Layer> layers = new HashMap<>();
 
         //load layers from providers
-        providers.stream().map(it -> it.obtainLayers(geoJSON, eventId))
+        providers.stream().map(it -> it.obtainLayers(geoJSON, eventId)) //todo test @NotNull combinations
             .reduce(new ArrayList<>(), (a, b) -> {
                 a.addAll(b);
                 return a;
@@ -64,7 +64,7 @@ public class LayerService {
         if (layers.size() > 1) {
             LOG.error("More than one layer found by id {}, found by providers: {}",
                 layerId, layers.keySet());
-            throw new RuntimeException("More than one layer found by id"); //todo test internal server error
+            throw new RuntimeException("More than one layer found by id"); //todo test internal server error #7385
         }
 
         //apply config (if a single layer was found)
@@ -78,6 +78,6 @@ public class LayerService {
         if (configs.containsKey(layerId)) {
             LOG.info("No layer found by id, returning default config {}", layerId);
         }
-        return configs.get(layerId); //todo test it should return 404 if not found
+        return configs.get(layerId); //todo test it should return 404 if not found #7385
     }
 }

@@ -41,10 +41,8 @@ public class DtoTest {
         String url = "http://localhost:" + port + "/api/layers/";
 
         String id = "123";
-        ArrayList<Layer> layers = new ArrayList<>();
         Layer layer = testLayer(id, new FeatureCollection(null));
-        layers.add(layer);
-        Mockito.when(layerService.getList(any(), any())).thenReturn(layers);
+        Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layer));
 
         LayerSummaryInputDto input = new LayerSummaryInputDto(UUID.randomUUID(), new Point(new double[]{1, 0}));
         List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(url, input, LayerSummaryDto[].class)
@@ -55,7 +53,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
         Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
-        Assertions.assertEquals(layer.getCopyright(), response.get(0).getCopyright());
+        Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
         Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().toLegend());
     }
 
@@ -78,7 +76,7 @@ public class DtoTest {
             .category(LayerCategory.BASE)
             .group("test group")
             .legend(legend)
-            .copyright("copyright text")
+            .copyrights(List.of("copyright text"))
             .maxZoom(10)
             .minZoom(1)
             .source(source)

@@ -238,8 +238,8 @@
 - id: 'kontur_urban_core'
   globalOverlay: true
   displayLegendIfNoFeaturesExist: true
-  description: 'Kontur Urban Core highlights most populated region affected. For this event {{population}} people reside on {{areaKm2}}km² (out of total {{totalPopulation}} people on {{totalAreaKm2}}km²). This area should have higher priority in humanitarian activities.'
   group: 'Layers in selected area'
+  #todo copyright
   legend:
     type: 'simple'
     steps:
@@ -255,8 +255,8 @@
 - id: 'kontur_settled_periphery'
   globalOverlay: true
   displayLegendIfNoFeaturesExist: true
-  description: 'Kontur Settled Periphery is complimentary to Kontur Urban Core and shows a spread-out part of the population in the region. For this event it adds {{population}} people on {{areaKm2}}km² on top of Kontur Urban Core.'
   group: 'Layers in selected area'
+  #todo copyright
   legend:
     type: 'simple'
     steps:
@@ -271,13 +271,14 @@
 
 ##### Category: OVERLAY
 ### Group: Kontur
-#todo: provider for active contributors layer
+#todo: provider for active contributors layer #7385
 - id: 'activeContributors'
   globalOverlay: true
   displayLegendIfNoFeaturesExist: true
   name: 'Active contributors'
   category: 'overlay'
   group: 'Kontur'
+  #todo copyright
   legend:
     type: 'simple'
     steps:
@@ -294,54 +295,74 @@
   description: 'Projects on HOT Tasking Manager, ongoing and historical'
   category: 'overlay'
   group: 'Kontur'
+  #todo copyright
   legend:
     type: 'simple'
     steps:
       - stepName: 'Active'
-        stepShape: 'circle' #todo: it's a ring not a circle, see in miro
+        stepShape: 'circle'
         paramName: 'status'
         paramValue: 'Active'
         style:
           icon: 'link_to_icon'
-      - stepName: 'Published' #todo is this the same as 'Active' ?
-        stepShape: 'circle' #todo: it's a ring not a circle, see in miro
+      - stepName: 'Published'
+        stepShape: 'circle'
         paramName: 'status'
         paramValue: 'Published'
         style:
           icon: 'link_to_icon_2'
       - stepName: 'Archived'
-        stepShape: 'circle' #todo: it's a ring not a circle, see in miro
+        stepShape: 'circle'
         paramName: 'status'
         paramValue: 'Archived'
         style:
           icon: 'link_to_icon_3'
 
 ### Group: Kontur Analytical Layers
-#todo: provider for osm analytical layers - ?
+#todo: provider for osm analytical layers - #7385
 - id: 'osmObjectQuantity'
   globalOverlay: true
   name: 'OSM Object Quantity'
   category: 'overlay'
   group: 'Kontur Analytical Layers'
+  description: 'This map shows relative distribution of OpenStreetMap objects and Population. Last updated {TODO}' #todo lastUpdated
+  copyrights:
+    - '© Kontur https://kontur.io/'
+    - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
 - id: 'osmBuildingQuantity'
   globalOverlay: true
   name: 'OSM Building Quantity'
   category: 'overlay'
   group: 'Kontur Analytical Layers'
+  description: 'This map shows whether all populated houses are mapped in OpenStreetMap. Last updated {TODO}' #todo lastUpdated
+  copyrights:
+    - '© Kontur https://kontur.io/'
+    - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
 - id: 'osmRoadLength'
   globalOverlay: true
   name: 'OSM Road Length'
   category: 'overlay'
   group: 'Kontur Analytical Layers'
+  description: 'This map shows whether populated places have roads to visit them or escape in time of disaster. Last updated {TODO}' #todo lastUpdated
+  copyrights:
+    - '© Kontur https://kontur.io/'
+    - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
 - id: 'osmMappingActivity'
   globalOverlay: true
   name: 'OSM Mapping Activity'
   category: 'overlay'
   group: 'Kontur Analytical Layers'
+  description: 'Greener - stronger local community, darker - more active mapping. This map shows how active mapping in the area in last two years is. All mapping hours are shown against mapping hours we can surely attribute to an active local user. Mapper is considered active if they contributed more than 30 mapping hours during last two years. Position of active mapper is estimated by region of their highest activity. A mapping hour is a hour in which an user uploaded at least one tagged object. Last updated {TODO}' #todo lastUpdated
+  copyrights:
+    - '© Kontur https://kontur.io/'
+    - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
 - id: 'osmAntiquity'
   globalOverlay: true
   name: 'OSM Antiquity'
   category: 'overlay'
   group: 'Kontur Analytical Layers'
-
+  description: 'This map shows how old is OpenStreetMap and how many times users view in particular region of OpenStreetMap for the last 30 days. Explore to find the least edited, but the most popular areas at the same time. Last updated {TODO}' #todo lastUpdated
+  copyrights:
+    - '© Kontur https://kontur.io/'
+    - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
 ##### Category: BASELINE

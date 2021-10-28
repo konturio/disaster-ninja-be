@@ -148,9 +148,8 @@ public class LayerConfigServiceTest {
 
         Assertions.assertTrue(urban.isGlobalOverlay());
         Assertions.assertTrue(urban.isDisplayLegendIfNoFeaturesExist());
-        Assertions.assertEquals("Kontur Settled Periphery is complimentary to Kontur Urban Core and shows a " +
-            "spread-out part of the population in the region. For this event it adds {{population}} people on" +
-            " {{areaKm2}}km² on top of Kontur Urban Core.", urban.getDescription());
+        //description is not populated for this layer (it's populated by LayerProvider and not changed by configs)
+        Assertions.assertNull(urban.getDescription());
 
         Assertions.assertNotNull(urban.getLegend());
         Assertions.assertEquals(SIMPLE, urban.getLegend().getType());
@@ -190,6 +189,10 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("OSM Object Quantity", analytics.getName());
         Assertions.assertEquals(OVERLAY, analytics.getCategory());
         Assertions.assertEquals("Kontur Analytical Layers", analytics.getGroup());
+        //copyrights
+        Assertions.assertEquals(2, analytics.getCopyrights().size());
+        Assertions.assertEquals("© Kontur https://kontur.io/", analytics.getCopyrights().get(0));
+        Assertions.assertEquals("© OpenStreetMap contributors https://www.openstreetmap.org/copyright", analytics.getCopyrights().get(1));
     }
 
     //even shape tests

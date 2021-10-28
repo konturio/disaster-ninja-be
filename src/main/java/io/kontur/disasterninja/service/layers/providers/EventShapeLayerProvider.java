@@ -12,7 +12,6 @@ import org.wololo.geojson.Geometry;
 import org.wololo.jts2geojson.GeoJSONReader;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,11 +23,18 @@ public class EventShapeLayerProvider implements LayerProvider {
     EventApiService eventApiService;
     private final GeoJSONReader reader = new GeoJSONReader();
 
+    /**
+     * @param geoJson if specified - used to filter Event features by intersection
+     * @param eventId required to get event from Event API
+     */
     @Override
     public List<Layer> obtainLayers(Geometry geoJson, UUID eventId) {
+        if (eventId == null) {
+            return List.of();
+        }
         Layer layer = obtainLayer(EVENT_SHAPE_LAYER_ID, eventId);
         if (layer == null) {
-            return Collections.emptyList();
+            return List.of();
         }
 
         if (layer.getSource() != null && layer.getSource().getData() != null) {
@@ -38,9 +44,13 @@ public class EventShapeLayerProvider implements LayerProvider {
         return List.of(layer);
     }
 
+    /**
+     * @param layerId Layer ID
+     * @param eventId required to get event from Event API
+     */
     @Override
     public Layer obtainLayer(String layerId, UUID eventId) {
-        if (!isApplicable(layerId)) {
+        if (!isApplicable(layerId) || eventId == null) {
             return null;
         }
         EventDto eventDto = eventApiService.getEvent(eventId);
@@ -82,6 +92,9 @@ public class EventShapeLayerProvider implements LayerProvider {
     private Feature[] filterFeaturesByGeometry(Feature[] input, Geometry geoJson) {
         if (input == null) {
             return new Feature[]{};
+        }
+        if (geoJson == null) {
+            return input;
         }
         org.locationtech.jts.geom.Geometry jtsGeometry = getJtsGeometry(geoJson);
 

@@ -20,13 +20,23 @@ public class HotLayerProvider implements LayerProvider {
     @Autowired
     KcApiClient kcApiClient;
 
+    /**
+     * @param geoJSON required to find features by intersection
+     * @param eventId not used
+     */
     @Override
     public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
+        if (geoJSON == null) {
+            return List.of();
+        }
         List<Feature> hotProjectLayers = kcApiClient.getHotProjectLayer(geoJSON);
         Layer layer = fromHotProjectLayers(hotProjectLayers);
         return layer == null ? List.of() : List.of(layer);
     }
 
+    /**
+     * @return null, as no data for this layer can be loaded without a GeoJSON boundary
+     */
     @Override
     public Layer obtainLayer(String layerId, UUID eventId) {
         if (!isApplicable(layerId)) {
@@ -40,6 +50,9 @@ public class HotLayerProvider implements LayerProvider {
         return HOT_LAYER_ID.equals(layerId);
     }
 
+    /**
+     * A single layer is constructed from all <b>dto</b> features
+     */
     Layer fromHotProjectLayers(List<Feature> dto) {
         if (dto == null) {
             return null;
@@ -51,6 +64,6 @@ public class HotLayerProvider implements LayerProvider {
                 .data(new FeatureCollection(dto.toArray(new Feature[0])))
                 .build())
             .build();
-        //todo set anything else?
+        //the rest params are set by LayerConfigService
     }
 }

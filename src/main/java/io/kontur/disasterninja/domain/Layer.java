@@ -22,7 +22,7 @@ public class Layer {
     private LayerCategory category;
     private String group;
     private Legend legend;
-    private String copyright;
+    private List<String> copyrights;
     //layer details
     private Integer maxZoom;
     private Integer minZoom;
@@ -58,8 +58,8 @@ public class Layer {
                 this.legend = getLegendWithStepsForWhichFeaturesExist(other.getLegend());
             }
         }
-        if (other.getCopyright() != null) {
-            this.copyright = other.getCopyright();
+        if (other.getCopyrights() != null) {
+            this.copyrights = other.getCopyrights();
         }
         if (other.getMaxZoom() != null) {
             this.maxZoom = other.getMaxZoom();
