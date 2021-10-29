@@ -35,7 +35,7 @@ public class EventApiClient {
     public List<EventApiEventDto> getEvents(String jwtToken) {
         String then = OffsetDateTime.now()
             .minusDays(4)
-            .truncatedTo(ChronoUnit.SECONDS)
+            .truncatedTo(ChronoUnit.MINUTES)
             .atZoneSameInstant(ZoneOffset.UTC)
             .toString();
 
