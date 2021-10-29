@@ -3,7 +3,7 @@ package io.kontur.disasterninja.service;
 import io.kontur.disasterninja.client.EventApiClient;
 import io.kontur.disasterninja.dto.EventListDto;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
-import io.kontur.disasterninja.resource.exception.WebApplicationException;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
