@@ -6,12 +6,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 @Getter
 @ConfigurationProperties(prefix = "layers")
 public class LocalLayersConfig {
-    private final Map<String, Layer> configs;
+    private final List<Layer> configs;
 }

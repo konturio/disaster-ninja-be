@@ -4,7 +4,7 @@ layers:
     ### Group: Layers in selected area
 
     ## Event Shape: default config
-    eventShape:
+    - id: 'eventShape'
       globalOverlay: false
       displayLegendIfNoFeaturesExist: true
       name: 'Event shape'
@@ -18,7 +18,7 @@ layers:
               line-color: '#051626'
 
     ## Event Shape: configs per event type
-    "[eventShape.CYCLONE]":
+    - id: 'eventShape.CYCLONE'
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       name: 'Event shape'
@@ -68,7 +68,7 @@ layers:
               line-width: 1px
               line-color: '#646F78'
 
-    "[eventShape.DROUGHT]":
+    - id: 'eventShape.DROUGHT'
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       name: 'Event shape'
@@ -90,7 +90,7 @@ layers:
               line-width: 3px
               line-color: '#051626'
 
-    "[eventShape.EARTHQUAKE]":
+    - id: 'eventShape.EARTHQUAKE'
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       name: 'Event shape'
@@ -112,7 +112,7 @@ layers:
               line-width: 3px
               line-color: '#646F78'
 
-    "[eventShape.FLOOD]":
+    - id: 'eventShape.FLOOD'
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       name: 'Event shape'
@@ -141,7 +141,7 @@ layers:
               line-color: '#051626'
               line-opacity: 50%
 
-    "[eventShape.WILDFIRE]":
+    - id: 'eventShape.WILDFIRE'
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       name: 'Event shape'
@@ -163,7 +163,7 @@ layers:
               line-width: 3px
               line-color: '#051626'
 
-    "[eventShape.VOLCANO]":
+    - id: 'eventShape.VOLCANO'
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       name: 'Event shape'
@@ -213,7 +213,7 @@ layers:
               line-opacity: 30%
 
     # --- empty template ---
-    #eventShape:
+    #- id: 'eventShape.'
     #  globalOverlay: false
     #  displayLegendIfNoFeaturesExist: false
     #  name: 'Event shape'
@@ -237,7 +237,7 @@ layers:
 
     ##end of Event Shape
 
-    kontur_urban_core:
+    - id: 'kontur_urban_core'
       globalOverlay: true
       displayLegendIfNoFeaturesExist: true
       group: 'Layers in selected area'
@@ -254,7 +254,7 @@ layers:
               casing-color: '#FF7B00'
               casing-width: 3
               casing-opacity: 0.5
-    kontur_settled_periphery:
+    - id: 'kontur_settled_periphery'
       globalOverlay: true
       displayLegendIfNoFeaturesExist: true
       group: 'Layers in selected area'
@@ -274,7 +274,7 @@ layers:
     ##### Category: OVERLAY
     ### Group: Kontur
     #todo: provider for active contributors layer #7385
-    activeContributors:
+    - id: 'activeContributors'
       globalOverlay: true
       displayLegendIfNoFeaturesExist: true
       name: 'Active contributors'
@@ -290,7 +290,7 @@ layers:
             stepShape: 'circle'
             #todo paramName/paramValue
 
-    hotProjects:
+    - id: 'hotProjects'
       globalOverlay: true
       displayLegendIfNoFeaturesExist: false
       name: 'Hot Projects'
@@ -322,7 +322,7 @@ layers:
 
     ### Group: Kontur Analytical Layers
     #todo: provider for osm analytical layers - #7385
-    osmObjectQuantity:
+    - id: 'osmObjectQuantity'
       globalOverlay: true
       name: 'OSM Object Quantity'
       category: 'overlay'
@@ -331,7 +331,7 @@ layers:
       copyrights:
         - '© Kontur https://kontur.io/'
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
-    osmBuildingQuantity:
+    - id: 'osmBuildingQuantity'
       globalOverlay: true
       name: 'OSM Building Quantity'
       category: 'overlay'
@@ -340,7 +340,7 @@ layers:
       copyrights:
         - '© Kontur https://kontur.io/'
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
-    osmRoadLength:
+    - id: 'osmRoadLength'
       globalOverlay: true
       name: 'OSM Road Length'
       category: 'overlay'
@@ -349,7 +349,7 @@ layers:
       copyrights:
         - '© Kontur https://kontur.io/'
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
-    osmMappingActivity:
+    - id: 'osmMappingActivity'
       globalOverlay: true
       name: 'OSM Mapping Activity'
       category: 'overlay'
@@ -358,7 +358,7 @@ layers:
       copyrights:
         - '© Kontur https://kontur.io/'
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
-    osmAntiquity:
+    - id: 'osmAntiquity'
       globalOverlay: true
       name: 'OSM Antiquity'
       category: 'overlay'
@@ -367,4 +367,4 @@ layers:
       copyrights:
         - '© Kontur https://kontur.io/'
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
-    ##### Category: BASELINE
+  ##### Category: BASELINE

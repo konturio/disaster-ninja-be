@@ -14,46 +14,43 @@ import java.util.Map;
 public class LocalLayerConfigService implements LayerConfigService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalLayerConfigService.class);
-    Map<String, Layer> defaults;
+    private final Map<String, Layer> globalOverlays = new HashMap<>();
+    private final Map<String, Layer> regularLayers = new HashMap<>();
 
     public LocalLayerConfigService(LocalLayersConfig localLayersConfig) {
         try {
-            defaults = localLayersConfig.getConfigs();
-            defaults.values().forEach(this::setLegendStepsOrder);
-            LOG.info("Loaded {} layer configurations: {}", defaults.values().size(), defaults.keySet());
+            localLayersConfig.getConfigs().forEach(this::setLegendStepsOrder);
+
+            localLayersConfig.getConfigs().forEach((config) -> {
+                if (config.isGlobalOverlay()) {
+                    globalOverlays.put(config.getId(), config);
+                } else {
+                    regularLayers.put(config.getId(), config);
+                }
+            });
+
+            LOG.info("Loaded {} regular layer configurations: {}", regularLayers.values().size(), regularLayers.keySet());
+            LOG.info("Loaded {} global overlay layers: {}", globalOverlays.values().size(), globalOverlays.keySet());
         } catch (Exception e) {
             LOG.error("Cannot load layer configurations! {}", e.getMessage(), e);
-            defaults = new HashMap<>();
         }
     }
 
     @Override
-    public void applyConfigs(Map<String, Layer> layers) {
-        //apply layer configs
-        defaults.forEach((layerName, config) -> {
-            if (!layers.containsKey(layerName)) {
-                //only global overlays are added if not received from providers
-                if (config.isGlobalOverlay()) {
-                    layers.put(layerName, config);
-                }
-            } else {
-                //apply configs to loaded layers
-                layers.get(layerName).mergeFrom(config);
-            }
-        });
-    }
-
-    @Override
     public void applyConfig(Layer input) {
-        Layer config = defaults.get(input.getId());
+        Layer config = regularLayers.get(input.getId());
+        if (config == null) {
+            config = globalOverlays.get(input.getId());
+        }
+
         if (config != null) {
             input.mergeFrom(config);
         }
     }
 
     @Override
-    public Map<String, Layer> getConfigs() {
-        return defaults;
+    public Map<String, Layer> getGlobalOverlays() {
+        return globalOverlays;
     }
 
     private void setLegendStepsOrder(Layer layer) {

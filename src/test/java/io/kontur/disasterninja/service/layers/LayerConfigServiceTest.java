@@ -34,8 +34,8 @@ public class LayerConfigServiceTest {
 
 
     @Test
-    public void test() throws IOException {
-        Assertions.assertFalse(service.getConfigs().isEmpty());
+    public void globalOverlaysTest() throws IOException {
+        Assertions.assertFalse(service.getGlobalOverlays().isEmpty());
     }
 
     @Test

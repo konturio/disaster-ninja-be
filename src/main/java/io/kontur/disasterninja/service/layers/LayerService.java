@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Geometry;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 @Service
@@ -27,12 +26,6 @@ public class LayerService {
     List<LayerProvider> providers;
     @Autowired
     EventApiService eventApiService;
-    private Map<String, Layer> configs;
-
-    @PostConstruct
-    private void init() {
-        configs = layerConfigService.getConfigs();
-    }
 
     public List<Layer> getList(Geometry geoJSON, UUID eventId) {
         Map<String, Layer> layers = new HashMap<>();
@@ -45,7 +38,16 @@ public class LayerService {
             }).forEach(l -> layers.put(l.getId(), l)); //if there are multiple layers with same id - just one of them will be kept
 
         //apply layer configs
-        layerConfigService.applyConfigs(layers);
+        layers.values().forEach(layerConfigService::applyConfig);
+
+        //add global overlays
+        Map<String, Layer> globalOverlays = layerConfigService.getGlobalOverlays();
+
+        globalOverlays.forEach((id, config) -> {
+            if (!layers.containsKey(id)) { //can be already loaded by a provider
+                layers.put(id, config);
+            }
+        });
 
         return new ArrayList<>(layers.values());
     }
@@ -62,10 +64,11 @@ public class LayerService {
             }
         }
 
-        //return default config if exists
-        if (configs.containsKey(layerId)) {
-            LOG.info("No layer found by id, returning default config {}", layerId);
+        //return global overlay
+        result = layerConfigService.getGlobalOverlays().get(layerId);
+        if (result != null) {
+            LOG.info("No loaded layer found by id, returning a global overlay: {}", layerId);
         }
-        return configs.get(layerId); //todo test it should return 404 if not found #7385
+        return result; //todo test it should return 404 if not found #7385
     }
 }
