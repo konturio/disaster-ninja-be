@@ -4,7 +4,7 @@ import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.service.EventApiService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
@@ -18,9 +18,9 @@ import java.util.UUID;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
 
 @Service
+@RequiredArgsConstructor
 public class EventShapeLayerProvider implements LayerProvider {
-    @Autowired
-    EventApiService eventApiService;
+    private final EventApiService eventApiService;
     private final GeoJSONReader reader = new GeoJSONReader();
 
     /**

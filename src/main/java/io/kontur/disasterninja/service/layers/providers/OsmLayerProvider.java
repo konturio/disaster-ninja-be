@@ -4,8 +4,8 @@ import io.kontur.disasterninja.client.KcApiClient;
 import io.kontur.disasterninja.domain.DtoFeatureProperties;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
@@ -23,10 +23,10 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Service
 @Order(HIGHEST_PRECEDENCE)
+@RequiredArgsConstructor
 public class OsmLayerProvider implements LayerProvider {
 
-    @Autowired
-    KcApiClient kcApiClient;
+    private final KcApiClient kcApiClient;
 
     private static <T> T getMapValueFromProperty(Feature f, String propertyName, Object mapKey, Class<T> clazz) {
         Map map = getFeatureProperty(f, propertyName, Map.class);

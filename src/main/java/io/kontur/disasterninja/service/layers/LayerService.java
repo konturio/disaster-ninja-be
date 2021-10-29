@@ -51,27 +51,15 @@ public class LayerService {
     }
 
     public Layer get(String layerId, UUID eventId) {
-        Map<String, Layer> layers = new HashMap<>();
-        //try load from all providers
-        providers.forEach(it -> {
-            Layer l = it.obtainLayer(layerId, eventId);
-            if (l != null) {
-                layers.put(it.getClass().getSimpleName(), l);
+        Layer result;
+        //find first and return
+        for (LayerProvider provider : providers) {
+            result = provider.obtainLayer(layerId, eventId);
+            if (result != null) {
+                LOG.info("Found layer by id {} by provider {}", layerId, provider.getClass().getSimpleName());
+                layerConfigService.applyConfig(result);
+                return result;
             }
-        });
-
-        //handle errors
-        if (layers.size() > 1) {
-            LOG.error("More than one layer found by id {}, found by providers: {}",
-                layerId, layers.keySet());
-            throw new RuntimeException("More than one layer found by id"); //todo test internal server error #7385
-        }
-
-        //apply config (if a single layer was found)
-        for (Map.Entry<String, Layer> layer : layers.entrySet()) {
-            LOG.info("Found layer by id {} by provider {}", layerId, layer.getKey());
-            layerConfigService.applyConfig(layer.getValue());
-            return layer.getValue();
         }
 
         //return default config if exists

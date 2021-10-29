@@ -3,10 +3,12 @@ package io.kontur.disasterninja.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.kontur.disasterninja.domain.enums.LayerStepShape;
 import lombok.Data;
+import org.springframework.boot.context.properties.ConstructorBinding;
 
 import java.util.Map;
 
 @Data
+@ConstructorBinding
 public class LegendStep {
     private final String paramName;
     private final String paramValue;

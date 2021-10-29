@@ -2,8 +2,8 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.client.InsightsApiClient;
 import io.kontur.disasterninja.domain.Layer;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.Geometry;
@@ -18,11 +18,11 @@ import static io.kontur.disasterninja.domain.DtoFeatureProperties.NAME;
 import static io.kontur.disasterninja.service.layers.providers.OsmLayerProvider.getFeatureProperty;
 
 @Service
+@RequiredArgsConstructor
 public class UrbanAndPeripheryLayerProvider implements LayerProvider {
     private static final Set<String> providedLayers = Set.of(SETTL_PERIPHERY_LAYER_ID, URBAN_CORE_LAYER_ID);
 
-    @Autowired
-    InsightsApiClient insightsApiClient;
+    private final InsightsApiClient insightsApiClient;
 
     /**
      * @param geoJSON required to find features by intersection

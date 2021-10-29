@@ -1,8 +1,5 @@
 package io.kontur.disasterninja.service.layers;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LegendStep;
 import org.slf4j.Logger;
@@ -12,23 +9,18 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class LocalLayerConfigService implements LayerConfigService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalLayerConfigService.class);
-    ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
     Map<String, Layer> defaults;
 
-    public LocalLayerConfigService() {
-        objectMapper.findAndRegisterModules();
+    public LocalLayerConfigService(LocalLayersConfig localLayersConfig) {
         try {
-            List<Layer> layers = objectMapper.readValue(getClass().getResourceAsStream("/layers/layerconfig.yaml"),
-                new TypeReference<>() {
-                });
-            layers.forEach(this::setLegendStepsOrder);
-            defaults = layers.stream().collect(Collectors.toMap(Layer::getId, l -> l));
+            defaults = localLayersConfig.getConfigs();
+            defaults.values().forEach(this::setLegendStepsOrder);
+            LOG.info("Loaded {} layer configurations: {}", defaults.values().size(), defaults.keySet());
         } catch (Exception e) {
             LOG.error("Cannot load layer configurations! {}", e.getMessage(), e);
             defaults = new HashMap<>();

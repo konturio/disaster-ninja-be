@@ -3,7 +3,7 @@ package io.kontur.disasterninja.service.layers.providers;
 import io.kontur.disasterninja.client.KcApiClient;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
@@ -15,10 +15,10 @@ import java.util.UUID;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 
 @Service
+@RequiredArgsConstructor
 public class HotLayerProvider implements LayerProvider {
 
-    @Autowired
-    KcApiClient kcApiClient;
+    private final KcApiClient kcApiClient;
 
     /**
      * @param geoJSON required to find features by intersection

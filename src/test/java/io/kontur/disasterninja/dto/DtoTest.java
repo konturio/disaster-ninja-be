@@ -38,7 +38,7 @@ public class DtoTest {
 
     @Test
     public void serializeDeserializeTest() {
-        String url = "http://localhost:" + port + "/api/layers/";
+        String url = "/layers/";
 
         String id = "123";
         Layer layer = testLayer(id, new FeatureCollection(null));
