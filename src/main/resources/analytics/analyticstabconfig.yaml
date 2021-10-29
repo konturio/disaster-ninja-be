@@ -1,0 +1,78 @@
+analyticstab:
+  fields:
+    - name: Population
+      description: Population description
+      functions:
+        - id: population0
+          function: sumX
+          postfix: people on
+          arguments:
+            - population
+        - id: population1
+          function: sumX
+          postfix: km2
+          arguments:
+            - populated_area_km2
+    - name: OSM Gaps
+      description: OSM Gaps description
+      functions:
+        - id: osmGaps0
+          function: percentageXWhereNoY
+          postfix: '%'
+          arguments:
+            - populated_area_km2
+            - count
+        - id: osmGaps1
+          function: sumXWhereNoY
+          postfix: people on
+          arguments:
+            - population
+            - count
+        - id: osmGaps2
+          function: sumXWhereNoY
+          postfix: km2
+          arguments:
+            - populated_area_km2
+            - count
+    - name: No buildings
+      description: No buildings description
+      functions:
+        - id: noBuildings0
+          function: percentageXWhereNoY
+          postfix: '%'
+          arguments:
+            - populated_area_km2
+            - building_count
+        - id: noBuildings1
+          function: sumXWhereNoY
+          postfix: people on
+          arguments:
+            - population
+            - building_count
+        - id: noBuildings2
+          function: sumXWhereNoY
+          postfix: km2
+          arguments:
+            - populated_area_km2
+            - building_count
+    - name: No roads
+      description: No roads description
+      functions:
+        - id: noRoads0
+          function: percentageXWhereNoY
+          postfix: '%'
+          arguments:
+            - populated_area_km2
+            - highway_length
+        - id: noRoads1
+          function: sumXWhereNoY
+          postfix: people on
+          arguments:
+            - population
+            - highway_length
+        - id: noRoads2
+          function: sumXWhereNoY
+          postfix: km2
+          arguments:
+            - populated_area_km2
+            - highway_length

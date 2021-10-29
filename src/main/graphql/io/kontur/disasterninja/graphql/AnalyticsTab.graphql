@@ -1,0 +1,14 @@
+query AnalyticsTab($polygon: GeoJSON, $functionsArray: [FunctionArgs]) {
+    polygonStatistic(polygonStatisticRequest:{
+        polygonV2: $polygon
+    }
+    ){
+        analytics {
+            functions(args: $functionsArray) {
+                id,
+                result
+            }
+        }
+    }
+
+}

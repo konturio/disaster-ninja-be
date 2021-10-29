@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.config;
 
+import com.apollographql.apollo.ApolloClient;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.config.metrics.ParamLessRestTemplateExchangeTagsProvider;
@@ -55,6 +56,13 @@ public class WebConfiguration {
     @Primary
     public RestTemplateExchangeTagsProvider restTemplateExchangeTagsProvider() {
         return new ParamLessRestTemplateExchangeTagsProvider();
+    }
+
+    @Bean
+    public ApolloClient insightsApiApolloClient(@Value("${kontur.platform.insightsApi.url}") String insightsApiUrl){
+        return ApolloClient.builder()
+                .serverUrl(insightsApiUrl+"/graphql")
+                .build();
     }
 
 }

@@ -1,0 +1,164 @@
+type Axis {
+  label: String
+  steps: [Step]
+  quality: Float
+  quotient: [String]
+}
+
+type BivariateStatistic {
+  axis: [Axis]
+  meta: Meta
+  initAxis: InitAxis
+  overlays: [Overlay]
+  indicators: [Indicator]
+  correlationRates: [PolygonCorrelationRate]
+  colors: Color
+}
+
+type Color {
+  fallback: String
+  combinations: [Combination]
+}
+
+type Combination {
+  color: String
+  corner: [String]
+  color_comment: String
+}
+
+type CorrelationRate {
+  x: Axis
+  y: Axis
+  rate: Float
+  quality: Float
+  correlation: Float
+}
+
+input FunctionArgs {
+  id: String
+  name: String
+  x: String
+  y: String
+}
+
+type FunctionResult {
+  id: String
+  result: Float
+}
+
+scalar GeoJSON
+
+type Indicator {
+  name: String
+  label: String
+  copyrights: [String]
+  direction: [[String]]
+}
+
+type InitAxis {
+  x: Axis
+  y: Axis
+}
+
+scalar Long
+
+type Meta {
+  max_zoom: Int
+  min_zoom: Int
+}
+
+type OsmQuality {
+  peopleWithoutOsmBuildings: Long
+  areaWithoutOsmBuildingsKm2: Float
+  peopleWithoutOsmRoads: Long
+  areaWithoutOsmRoadsKm2: Float
+  peopleWithoutOsmObjects: Long
+  areaWithoutOsmObjectsKm2: Float
+  osmGapsPercentage: Float
+}
+
+type Overlay {
+  name: String
+  description: String
+  active: Boolean
+  colors: [OverlayColor]
+  x: Axis
+  y: Axis
+}
+
+type OverlayColor {
+  id: String
+  color: String
+}
+
+type PolygonCorrelationRate {
+  x: Axis
+  y: Axis
+  rate: Float
+  quality: Float
+  correlation: Float
+}
+
+type Analytics {
+  population: Population
+  humanitarianImpact: String
+  osmQuality: OsmQuality
+  thermalSpotStatistic: ThermalSpotStatistic
+  urbanCore: UrbanCore
+  functions(args: [FunctionArgs]): [FunctionResult]
+}
+
+type PolygonStatistic {
+  bivariateStatistic: BivariateStatistic
+  analytics: Analytics
+}
+
+input PolygonStatisticRequest {
+  polygon: String
+  polygonV2: GeoJSON
+  xNumeratorList: [String]
+  yNumeratorList: [String]
+}
+
+type Population {
+  population: Float
+  urban: Float
+  gdp: Float
+}
+
+type Statistic {
+  axis: [Axis]
+  meta: Meta
+  initAxis: InitAxis
+  overlays: [Overlay]
+  indicators: [Indicator]
+  correlationRates: [CorrelationRate]
+  colors: Color
+}
+
+type Step {
+  label: String
+  value: Float
+}
+
+type ThermalSpotStatistic {
+  industrialAreaKm2: Float
+  hotspotDaysPerYearMax: Int
+  volcanoesCount: Int
+  forestAreaKm2: Float
+}
+
+type UrbanCore {
+  urbanCorePopulation: Float
+  urbanCoreAreaKm2: Float
+  totalPopulatedAreaKm2: Float
+}
+
+type Query {
+  allStatistic(defaultParam: Int): Statistic
+  polygonStatistic(polygonStatisticRequest: PolygonStatisticRequest): PolygonStatistic
+}
+
+schema {
+  query: Query
+}
