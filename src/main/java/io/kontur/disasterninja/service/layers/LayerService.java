@@ -41,9 +41,7 @@ public class LayerService {
         layers.values().forEach(layerConfigService::applyConfig);
 
         //add global overlays
-        Map<String, Layer> globalOverlays = layerConfigService.getGlobalOverlays();
-
-        globalOverlays.forEach((id, config) -> {
+        layerConfigService.getGlobalOverlays().forEach((id, config) -> {
             if (!layers.containsKey(id)) { //can be already loaded by a provider
                 layers.put(id, config);
             }
