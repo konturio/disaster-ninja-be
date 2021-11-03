@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.apollographql.apollo.ApolloClient;
 import io.kontur.disasterninja.config.metrics.ParamLessRestTemplateExchangeTagsProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.web.client.RestTemplateExchangeTagsProvider;
@@ -82,4 +83,11 @@ public class WebConfiguration {
             jacksonObjectMapperBuilder.deserializerByType(GeoJSON.class, new GeoJSONDeserializer());
         }
     }
+    @Bean
+    public ApolloClient insightsApiApolloClient(@Value("${kontur.platform.insightsApi.url}") String insightsApiUrl){
+        return ApolloClient.builder()
+                .serverUrl(insightsApiUrl+"/graphql")
+                .build();
+    }
+
 }
