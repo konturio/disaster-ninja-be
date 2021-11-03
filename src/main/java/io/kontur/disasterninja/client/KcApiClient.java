@@ -2,12 +2,10 @@ package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import org.locationtech.jts.geom.Envelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -32,8 +30,6 @@ public class KcApiClient {
     private static final String HOT_PROJECTS = "hotProjects";
     private static final String OSM_LAYERS = "osmlayer";
     RestTemplate kcApiRestTemplate;
-    @Autowired
-    ObjectMapper objectMapper;
     GeoJSONReader reader = new GeoJSONReader();
     @Value("${kontur.platform.kcApi.pageSize}")
     private int pageSize;
@@ -54,10 +50,10 @@ public class KcApiClient {
         org.locationtech.jts.geom.Geometry geoJsonGeometry = getJtsGeometry(geoJson);
 
         //1 get items by bbox
-        List<Feature> Features = getCollectionItemsForBbox(geoJsonGeometry, collectionId);
+        List<Feature> features = getCollectionItemsForBbox(geoJsonGeometry, collectionId);
 
         //2 filter items by geoJson Geometry
-        return Features.stream()
+        return features.stream()
             .filter(json -> {
                 Geometry featureGeom = json.getGeometry();
                 return featureGeom == null || //include items without geometry ("global" ones)

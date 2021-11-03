@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Point;
 
@@ -37,7 +38,7 @@ public class DtoTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void serializeDeserializeTest() {
+    public void serializeDeserializeFromGeometryTest() {
         String url = "/layers/";
 
         String id = "123";
@@ -45,6 +46,52 @@ public class DtoTest {
         Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layer));
 
         LayerSummaryInputDto input = new LayerSummaryInputDto(UUID.randomUUID(), new Point(new double[]{1, 0}));
+        List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(url, input, LayerSummaryDto[].class)
+            .getBody());
+
+        Assertions.assertEquals(layer.getId(), response.get(0).getId());
+        Assertions.assertEquals(layer.getName(), response.get(0).getName());
+        Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
+        Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
+        Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
+        Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
+        Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().toLegend());
+    }
+
+    @Test
+    public void serializeDeserializeFromFeatureTest() {
+        String url = "/layers/";
+
+        String id = "123";
+        Layer layer = testLayer(id, new FeatureCollection(null));
+        Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layer));
+
+        LayerSummaryInputDto input = new LayerSummaryInputDto(UUID.randomUUID(), new Feature(new Point(
+            new double[]{1, 0}), new HashMap<>()));
+        List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(url, input, LayerSummaryDto[].class)
+            .getBody());
+
+        Assertions.assertEquals(layer.getId(), response.get(0).getId());
+        Assertions.assertEquals(layer.getName(), response.get(0).getName());
+        Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
+        Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
+        Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
+        Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
+        Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().toLegend());
+    }
+
+    @Test
+    public void serializeDeserializeFromFeatureCollectionTest() {
+        String url = "/layers/";
+
+        String id = "123";
+        Layer layer = testLayer(id, new FeatureCollection(null));
+        Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layer));
+
+        LayerSummaryInputDto input = new LayerSummaryInputDto(UUID.randomUUID(), new FeatureCollection(new Feature[]{
+            new Feature(new Point(new double[]{1, 0}), new HashMap<>()),
+            new Feature(new Point(new double[]{1, 0}), new HashMap<>())}));
+
         List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(url, input, LayerSummaryDto[].class)
             .getBody());
 
