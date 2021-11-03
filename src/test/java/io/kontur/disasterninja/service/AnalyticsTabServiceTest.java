@@ -1,13 +1,13 @@
 package io.kontur.disasterninja.service;
 
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.AnalyticsTabProperties;
 import io.kontur.disasterninja.dto.AnalyticsDto;
 import io.kontur.disasterninja.dto.AnalyticsField;
 import io.kontur.disasterninja.dto.Function;
 import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
 import io.kontur.disasterninja.graphql.type.FunctionArgs;
-import io.kontur.disasterninja.resource.exception.WebApplicationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
