@@ -1,48 +1,64 @@
 package io.kontur.disasterninja.service.layers;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LegendStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class LocalLayerConfigService implements LayerConfigService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalLayerConfigService.class);
-    ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
-    Map<String, Layer> defaults;
+    private final Map<String, Layer> globalOverlays = new HashMap<>();
+    private final Map<String, Layer> regularLayers = new HashMap<>();
 
-    public LocalLayerConfigService() {
-        objectMapper.findAndRegisterModules();
+    public LocalLayerConfigService(LocalLayersConfig localLayersConfig) {
         try {
-            List<Layer> list = objectMapper.readValue(getClass().getResourceAsStream("/layers/layerconfig.yaml"),
-                new TypeReference<>() {});
-            defaults = list.stream().collect(Collectors.toMap(Layer::getId, l -> l));
-        } catch (IOException e) {
+            localLayersConfig.getConfigs().forEach(this::setLegendStepsOrder);
+
+            localLayersConfig.getConfigs().forEach((config) -> {
+                if (config.isGlobalOverlay()) {
+                    globalOverlays.put(config.getId(), config);
+                } else {
+                    regularLayers.put(config.getId(), config);
+                }
+            });
+
+            LOG.info("Loaded {} regular layer configurations: {}", regularLayers.values().size(), regularLayers.keySet());
+            LOG.info("Loaded {} global overlay layers: {}", globalOverlays.values().size(), globalOverlays.keySet());
+        } catch (Exception e) {
             LOG.error("Cannot load layer configurations! {}", e.getMessage(), e);
-            defaults = new HashMap<>();
         }
     }
 
     @Override
     public void applyConfig(Layer input) {
-        Layer config = defaults.get(input.getId());
+        Layer config = regularLayers.get(input.getId());
+        if (config == null) {
+            config = globalOverlays.get(input.getId());
+        }
+
         if (config != null) {
             input.mergeFrom(config);
         }
     }
 
     @Override
-    public Map<String, Layer> getConfigs() {
-        return defaults;
+    public Map<String, Layer> getGlobalOverlays() {
+        return globalOverlays;
+    }
+
+    private void setLegendStepsOrder(Layer layer) {
+        if (layer.getLegend() != null && layer.getLegend().getSteps() != null) {
+            List<LegendStep> steps = layer.getLegend().getSteps();
+            for (int i = 0; i < steps.size(); i++) {
+                steps.get(i).setOrder(i);
+            }
+        }
     }
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.dto.layer.LayerSummaryDto;
 import io.kontur.disasterninja.dto.layer.LayerSummaryInputDto;
 import io.kontur.disasterninja.service.layers.LayerService;
-import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,17 +24,22 @@ public class LayerController {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Operation(summary = "Get List of available layers")
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public List<LayerSummaryDto> getSummaries(@Parameter @RequestBody LayerSummaryInputDto inputDto) {
-        return layerService.getList(inputDto.getGeoJSON())
+    public List<LayerSummaryDto> getSummaries(@RequestBody
+                                              @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                                                  description = "geoJSON: only layers with features intersecting with" +
+                                                      " geoJSON boundary will be returned and id: EventId for" +
+                                                      " EventShape layer")
+                                                  LayerSummaryInputDto inputDto) {
+        return layerService.getList(inputDto.getGeoJSON(), inputDto.getId())
             .stream().map(LayerSummaryDto::fromLayer)
             .collect(Collectors.toList());
     }
 
-//    @GetMapping(produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
-//    public LayerDetailsDto getDetails(@Parameter @RequestParam String eventId, //todo take into account?
-//                                      @Parameter @RequestParam String layerId) {
-//        return LayerDetailsDto.fromLayer(layerService.get(layerId)); //todo
-//    }
+//    @GetMapping(produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE) //todo #7385
+//    public LayerDetailsDto getDetails(@Parameter @RequestParam String layerId,
+//                                      @Parameter @RequestParam UUID eventId) {
+//        return LayerDetailsDto.fromLayer(layerService.get(layerId, eventId));//    }
 
 }

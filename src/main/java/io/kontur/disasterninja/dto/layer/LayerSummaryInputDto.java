@@ -1,10 +1,14 @@
 package io.kontur.disasterninja.dto.layer;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.wololo.geojson.Geometry;
+import org.wololo.geojson.GeoJSON;
+
+import java.util.UUID;
 
 @Data
+@AllArgsConstructor
 public class LayerSummaryInputDto {
-    private final String id; //event id
-    private final Geometry geoJSON;
+    private final UUID id; //event id
+    private final GeoJSON geoJSON;
 }

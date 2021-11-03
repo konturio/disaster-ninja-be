@@ -1,4 +1,4 @@
-package io.kontur.disasterninja.resource;
+package io.kontur.disasterninja.controller;
 
 import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.dto.EventListDto;
@@ -18,11 +18,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/events")
-public class EventsResource {
+public class EventsController {
 
     private final EventApiService service;
 
-    public EventsResource(EventApiService service) {
+    public EventsController(EventApiService service) {
         this.service = service;
     }
 

@@ -1,117 +1,370 @@
-##### Category: NONE
-### Group: Layers in selected area
-#todo: provider for event shape layer
-- id: 'eventShape' #todo
-  globalOverlay: true
-  name: 'Event shape'
-  group: 'Layers in selected area'
-  legend:
-    type: 'simple'
-    steps:
-      - stepName: 'Moderate'
-        stepShape: 'circle' #todo: it's a ring not a circle, see in miro
-      - stepName: 'Severe'
-        stepShape: 'circle'
-      - stepName: 'Extreme'
-        stepShape: 'circle'
-        #todo paramName/paramValue
-- id: 'kontur_urban_core'
-  globalOverlay: true
-  description: 'Kontur Urban Core highlights most populated region affected. For this event {{population}} people reside on {{areaKm2}}km² (out of total {{totalPopulation}} people on {{totalAreaKm2}}km²). This area should have higher priority in humanitarian activities.'
-  group: 'Layers in selected area'
-  legend:
-    type: 'simple'
-    steps:
-      - stepShape: 'hex'
-        style:
-          color: '#FF7B00'
-          width: 3
-          offset: 4
-          casing-offset: 2
-          casing-color: '#FF7B00'
-          casing-width: 3
-          casing-opacity: 0.5
-- id: 'kontur_settled_periphery'
-  globalOverlay: true
-  description: 'Kontur Settled Periphery is complimentary to Kontur Urban Core and shows a spread-out part of the population in the region. For this event it adds {{population}} people on {{areaKm2}}km² on top of Kontur Urban Core.'
-  group: 'Layers in selected area'
-  legend:
-    type: 'simple'
-    steps:
-      - stepShape: 'hex'
-        style:
-          color: '#2AD72A'
-          width: 3
-          casing-offset: 2
-          casing-color: '#2AD72A'
-          casing-width: 3
-          casing-opacity: 0.5
+layers:
+  configs:
+    ##### Category: NONE
+    ### Group: Layers in selected area
 
-##### Category: OVERLAY
-### Group: Kontur
-#todo: provider for active contributors layer
-- id: 'activeContributors' #todo
-  globalOverlay: true
-  name: 'Active contributors'
-  category: 'overlay'
-  group: 'Kontur'
-  legend:
-    type: 'simple'
-    steps:
-      - stepName: 'Possibly local mappers'
-        stepShape: 'circle'
-      - stepName: 'Active mappers'
-        stepShape: 'circle'
-        #todo paramName/paramValue
+    ## Event Shape: default config
+    - id: 'eventShape'
+      globalOverlay: false
+      displayLegendIfNoFeaturesExist: true
+      name: 'Event shape'
+      group: 'Layers in selected area'
+      legend:
+        type: 'simple'
+        steps:
+          - stepName: 'Exposure Area'
+            style:
+              line-width: '3px'
+              line-color: '#051626'
 
-- id: 'hotProjects'
-  globalOverlay: true
-  name: 'Hot Projects'
-  description: 'Projects on HOT Tasking Manager, ongoing and historical'
-  category: 'overlay'
-  group: 'Kontur'
-  legend:
-    type: 'simple'
-    steps:
-      - stepName: 'Active'
-        stepShape: 'circle' #todo: it's a ring not a circle, see in miro
-        paramName: 'status'
-        paramValue: 'Active'
-        style:
-          icon: 'link_to_icon'
-      - stepName: 'Archived'
-        stepShape: 'circle' #todo: it's a ring not a circle, see in miro
-        paramName: 'status'
-        paramValue: 'Archived'
-        style:
-          icon: 'link_to_icon_2'
+    ## Event Shape: configs per event type
+    - id: 'eventShape.CYCLONE'
+      globalOverlay: false
+      displayLegendIfNoFeaturesExist: false
+      name: 'Event shape'
+      group: 'Layers in selected area'
+      legend:
+        type: 'simple'
+        steps:
+          - stepName: 'Centroid'
+            paramName: 'Class'
+            paramValue: 'Point_Centroid'
+            style:
+              fill: '#051626'
+              line-width: 3px
+              line-color: '#fff'
+          - stepName: 'Exposure Area 60 km/h'
+            paramName: 'Class'
+            paramValue: 'Poly_Green'
+            style:
+              line-width: 3px
+              line-color: '#F5A663'
+          - stepName: 'Exposure Area 90 km/h'
+            paramName: 'Class'
+            paramValue: 'Poly_Orange'
+            style:
+              line-width: 3px
+              line-color: '#DA5080'
+          - stepName: 'Exposure Area 120 km/h'
+            paramName: 'Class'
+            paramValue: 'Poly_Red'
+            style:
+              line-width: 2px
+              line-color: '#830909'
+          - stepName: 'Line Track'
+            paramName: 'Class'
+            paramValue: 'Line_Line_[0-9]+'
+            style:
+              color: '#8C949B'
+          - stepName: 'Point Track'
+            paramName: 'Class'
+            paramValue: 'Point_Polygon_Point_[0-9]+'
+            style:
+              color: '#8C949B'
+          - stepName: 'Uncertainty Cones'
+            paramName: 'Class'
+            paramValue: 'Poly_Cones'
+            style:
+              line-width: 1px
+              line-color: '#646F78'
 
-### Group: Kontur Analytical Layers
-#todo: provider for osm analytical layers - ?
-- id: 'osmAnalytics1' #todo
-  globalOverlay: true
-  name: 'OSM Object Quantity'
-  category: 'overlay'
-  group: 'Kontur Analytical Layers'
-- id: 'osmAnalytics2' #todo
-  globalOverlay: true
-  name: 'OSM Building Quantity'
-  category: 'overlay'
-  group: 'Kontur Analytical Layers'
-- id: 'osmAnalytics3' #todo
-  globalOverlay: true
-  name: 'OSM Road Length'
-  category: 'overlay'
-  group: 'Kontur Analytical Layers'
-- id: 'osmAnalytics4' #todo
-  globalOverlay: true
-  name: 'OSM Mapping Activity'
-  category: 'overlay'
-  group: 'Kontur Analytical Layers'
-- id: 'osmAnalytics5' #todo
-  globalOverlay: true
-  name: 'OSM Antiquity'
-  category: 'overlay'
-  group: 'Kontur Analytical Layers'
+    - id: 'eventShape.DROUGHT'
+      globalOverlay: false
+      displayLegendIfNoFeaturesExist: false
+      name: 'Event shape'
+      group: 'Layers in selected area'
+      legend:
+        type: 'simple'
+        steps:
+          - stepName: 'Centroid'
+            paramName: 'Class'
+            paramValue: 'Point_Centroid'
+            style:
+              fill: '#051626'
+              line-width: 3px
+              line-color: '#fff'
+          - stepName: 'Exposure Area'
+            paramName: 'Class'
+            paramValue: 'Poly_area'
+            style:
+              line-width: 3px
+              line-color: '#051626'
 
-##### Category: BASELINE
+    - id: 'eventShape.EARTHQUAKE'
+      globalOverlay: false
+      displayLegendIfNoFeaturesExist: false
+      name: 'Event shape'
+      group: 'Layers in selected area'
+      legend:
+        type: 'simple'
+        steps:
+          - stepName: 'Centroid'
+            paramName: 'Class'
+            paramValue: 'Point_Centroid'
+            style:
+              fill: '#051626'
+              line-width: 3px
+              line-color: '#fff'
+          - stepName: 'Exposure Area 100km'
+            paramName: 'Class'
+            paramValue: 'Poly_Circle'
+            style:
+              line-width: 3px
+              line-color: '#646F78'
+
+    - id: 'eventShape.FLOOD'
+      globalOverlay: false
+      displayLegendIfNoFeaturesExist: false
+      name: 'Event shape'
+      group: 'Layers in selected area'
+      legend:
+        type: 'simple'
+        steps:
+          - stepName: 'Centroid'
+            paramName: 'Class'
+            paramValue: 'Point_Centroid'
+            style:
+              fill: '#051626'
+              line-width: 3px
+              line-color: '#fff'
+          - stepName: 'Exposure Area'
+            paramName: 'Class'
+            paramValue: 'Poly_Affected'
+            style:
+              line-width: 3px
+              line-color: '#051626'
+          - stepName: 'Alert Area'
+            paramName: 'Class'
+            paramValue: 'Poly_Global'
+            style:
+              line-width: 2px
+              line-color: '#051626'
+              line-opacity: 50%
+
+    - id: 'eventShape.WILDFIRE'
+      globalOverlay: false
+      displayLegendIfNoFeaturesExist: false
+      name: 'Event shape'
+      group: 'Layers in selected area'
+      legend:
+        type: 'simple'
+        steps:
+          - stepName: 'Centroid'
+            paramName: 'Class'
+            paramValue: 'Point_Centroid'
+            style:
+              fill: '#051626'
+              line-width: 3px
+              line-color: '#fff'
+          - stepName: 'Exposure Area'
+            paramName: 'Class'
+            paramValue: 'Poly_area'
+            style:
+              line-width: 3px
+              line-color: '#051626'
+
+    - id: 'eventShape.VOLCANO'
+      globalOverlay: false
+      displayLegendIfNoFeaturesExist: false
+      name: 'Event shape'
+      group: 'Layers in selected area'
+      legend:
+        type: 'simple'
+        steps:
+          - stepName: 'Centroid'
+            paramName: 'Class'
+            paramValue: 'Point_Centroid'
+            style:
+              fill: '#051626'
+              line-width: 3px
+              line-color: '#fff'
+          - stepName: 'Exposure Area 100Km'
+            paramName: 'Class'
+            paramValue: 'Poly_Circle'
+            style:
+              line-width: 3px
+              line-color: '#051626'
+          - stepName: 'Exposure Area'
+            paramName: 'Class'
+            paramValue: 'Poly_Cones_0'
+            style:
+              line-width: 3px
+              line-color: '#051626'
+          - stepName: '6 hours Forecast'
+            paramName: 'Class'
+            paramValue: 'Poly_Cones_6'
+            style:
+              line-width: 2px
+              line-color: '#051626'
+              line-opacity: 70%
+          - stepName: '12 hours Forecast'
+            paramName: 'Class'
+            paramValue: 'Poly_Cones_12'
+            style:
+              line-width: 2px
+              line-color: '#051626'
+              line-opacity: 50%
+          - stepName: '18 hours Forecast'
+            paramName: 'Class'
+            paramValue: 'Poly_Cones_18'
+            style:
+              line-width: 2px
+              line-color: '#051626'
+              line-opacity: 30%
+
+    # --- empty template ---
+    #- id: 'eventShape.'
+    #  globalOverlay: false
+    #  displayLegendIfNoFeaturesExist: false
+    #  name: 'Event shape'
+    #  group: 'Layers in selected area'
+    #  legend:
+    #    type: 'simple'
+    #    steps:
+    #      - stepName: 'Centroid'
+    #        paramName: 'Class'
+    #        paramValue: 'Point_Centroid'
+    #        paramValue: 'Poly_area'
+    #        paramValue: 'Poly_Circle'
+    #        paramValue: 'Poly_Affected'
+    #        paramValue: 'Poly_Global'
+    #        style:
+    #          fill: '#051626'
+    #          line-width: 3px
+    #          line-color: '#fff'
+    #          line-opacity: 50%
+    #          color: '#fff'
+
+    ##end of Event Shape
+
+    - id: 'kontur_urban_core'
+      globalOverlay: true
+      displayLegendIfNoFeaturesExist: true
+      group: 'Layers in selected area'
+      #todo copyright
+      legend:
+        type: 'simple'
+        steps:
+          - stepShape: 'hex'
+            style:
+              color: '#FF7B00'
+              width: 3
+              offset: 4
+              casing-offset: 2
+              casing-color: '#FF7B00'
+              casing-width: 3
+              casing-opacity: 0.5
+    - id: 'kontur_settled_periphery'
+      globalOverlay: true
+      displayLegendIfNoFeaturesExist: true
+      group: 'Layers in selected area'
+      #todo copyright
+      legend:
+        type: 'simple'
+        steps:
+          - stepShape: 'hex'
+            style:
+              color: '#2AD72A'
+              width: 3
+              casing-offset: 2
+              casing-color: '#2AD72A'
+              casing-width: 3
+              casing-opacity: 0.5
+
+    ##### Category: OVERLAY
+    ### Group: Kontur
+    #todo: provider for active contributors layer #7385
+    - id: 'activeContributors'
+      globalOverlay: true
+      displayLegendIfNoFeaturesExist: true
+      name: 'Active contributors'
+      category: 'overlay'
+      group: 'Kontur'
+      #todo copyright
+      legend:
+        type: 'simple'
+        steps:
+          - stepName: 'Possibly local mappers'
+            stepShape: 'circle'
+          - stepName: 'Active mappers'
+            stepShape: 'circle'
+            #todo paramName/paramValue
+
+    - id: 'hotProjects'
+      globalOverlay: true
+      displayLegendIfNoFeaturesExist: false
+      name: 'Hot Projects'
+      description: 'Projects on HOT Tasking Manager, ongoing and historical'
+      category: 'overlay'
+      group: 'Kontur'
+      #todo copyright
+      legend:
+        type: 'simple'
+        steps:
+          - stepName: 'Active'
+            stepShape: 'circle'
+            paramName: 'status'
+            paramValue: 'Active'
+            style:
+              icon: 'link_to_icon'
+          - stepName: 'Published'
+            stepShape: 'circle'
+            paramName: 'status'
+            paramValue: 'Published'
+            style:
+              icon: 'link_to_icon_2'
+          - stepName: 'Archived'
+            stepShape: 'circle'
+            paramName: 'status'
+            paramValue: 'Archived'
+            style:
+              icon: 'link_to_icon_3'
+
+    ### Group: Kontur Analytical Layers
+    #todo: provider for osm analytical layers - #7385
+    - id: 'osmObjectQuantity'
+      globalOverlay: true
+      name: 'OSM Object Quantity'
+      category: 'overlay'
+      group: 'Kontur Analytical Layers'
+      description: 'This map shows relative distribution of OpenStreetMap objects and Population. Last updated {TODO}' #todo lastUpdated
+      copyrights:
+        - '© Kontur https://kontur.io/'
+        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
+    - id: 'osmBuildingQuantity'
+      globalOverlay: true
+      name: 'OSM Building Quantity'
+      category: 'overlay'
+      group: 'Kontur Analytical Layers'
+      description: 'This map shows whether all populated houses are mapped in OpenStreetMap. Last updated {TODO}' #todo lastUpdated
+      copyrights:
+        - '© Kontur https://kontur.io/'
+        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
+    - id: 'osmRoadLength'
+      globalOverlay: true
+      name: 'OSM Road Length'
+      category: 'overlay'
+      group: 'Kontur Analytical Layers'
+      description: 'This map shows whether populated places have roads to visit them or escape in time of disaster. Last updated {TODO}' #todo lastUpdated
+      copyrights:
+        - '© Kontur https://kontur.io/'
+        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
+    - id: 'osmMappingActivity'
+      globalOverlay: true
+      name: 'OSM Mapping Activity'
+      category: 'overlay'
+      group: 'Kontur Analytical Layers'
+      description: 'Greener - stronger local community, darker - more active mapping. This map shows how active mapping in the area in last two years is. All mapping hours are shown against mapping hours we can surely attribute to an active local user. Mapper is considered active if they contributed more than 30 mapping hours during last two years. Position of active mapper is estimated by region of their highest activity. A mapping hour is a hour in which an user uploaded at least one tagged object. Last updated {TODO}' #todo lastUpdated
+      copyrights:
+        - '© Kontur https://kontur.io/'
+        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
+    - id: 'osmAntiquity'
+      globalOverlay: true
+      name: 'OSM Antiquity'
+      category: 'overlay'
+      group: 'Kontur Analytical Layers'
+      description: 'This map shows how old is OpenStreetMap and how many times users view in particular region of OpenStreetMap for the last 30 days. Explore to find the least edited, but the most popular areas at the same time. Last updated {TODO}' #todo lastUpdated
+      copyrights:
+        - '© Kontur https://kontur.io/'
+        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
+  ##### Category: BASELINE

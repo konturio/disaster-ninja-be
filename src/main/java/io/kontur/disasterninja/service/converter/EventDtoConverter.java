@@ -36,11 +36,12 @@ public class EventDtoConverter {
         } catch (IllegalArgumentException ex) {
             eventType = EventType.OTHER;
         }
-
+        dto.setEventType(eventType);
         dto.setEventName(eventType.getName()); //TODO add properName
         dto.setSeverity(latestEpisode.getSeverity());
 
-        dto.setGeojson(uniteGeometry(latestEpisode));
+        dto.setGeojson(uniteGeometry(latestEpisode)); //todo isn't this event's geometries? -- check in eventApi!
+        dto.setLatestEpisodeGeojson(latestEpisode.getGeometries());
 
         return dto;
     }

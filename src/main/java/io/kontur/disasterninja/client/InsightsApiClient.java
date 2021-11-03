@@ -8,11 +8,14 @@ import org.wololo.geojson.Geometry;
 
 @Component
 public class InsightsApiClient {
+
+    private static final String INSIGHTS_API_HUM_IMPACT_URI = "/population/humanitarian_impact";
+
     @Autowired
     RestTemplate insightsApiRestTemplate;
 
     public FeatureCollection getUrbanCoreAndSettledPeripheryLayers(Geometry geoJSON) {
-        String url = "/population/humanitarian_impact";
-        return insightsApiRestTemplate.postForEntity(url, geoJSON, FeatureCollection.class).getBody();
+        return insightsApiRestTemplate.postForEntity(INSIGHTS_API_HUM_IMPACT_URI,
+            geoJSON, FeatureCollection.class).getBody();
     }
 }
