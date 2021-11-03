@@ -42,7 +42,7 @@ class EventApiClientTest {
 
         server.expect(r -> assertThat(r.getURI().toString(),
                         matchesRegex(Pattern.compile(
-                                "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&after=" + then + "(t|T)\\d{2}:\\d{2}(:\\d{2})?Z&episodeFilterType=LATEST&limit=1000&sortOrder=ASC"))))
+                                "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&after=" + then + "(t|T)\\d{2}:\\d{2}Z&episodeFilterType=LATEST&limit=1000&sortOrder=ASC"))))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header("Authorization", "Bearer JwtTestToken"))
                 .andRespond(withSuccess(readFile(this, "EventApiClientTest.testGetEvents.response.json"),

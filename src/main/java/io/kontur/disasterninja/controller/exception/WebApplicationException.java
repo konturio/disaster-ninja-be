@@ -1,4 +1,4 @@
-package io.kontur.disasterninja.resource.exception;
+package io.kontur.disasterninja.controller.exception;
 
 import org.springframework.http.HttpStatus;
 

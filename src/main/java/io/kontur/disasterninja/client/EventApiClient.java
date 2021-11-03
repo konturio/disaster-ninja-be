@@ -14,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,7 +35,7 @@ public class EventApiClient {
     public List<EventApiEventDto> getEvents(String jwtToken) {
         String then = OffsetDateTime.now()
             .minusDays(4)
-            .truncatedTo(ChronoUnit.SECONDS)
+            .truncatedTo(ChronoUnit.MINUTES)
             .atZoneSameInstant(ZoneOffset.UTC)
             .toString();
 
@@ -50,19 +49,22 @@ public class EventApiClient {
                 });
 
         if (response.getBody() == null) {
-            return Collections.emptyList();
+            return List.of();
         }
         return response.getBody().data;
     }
 
     public EventApiEventDto getEvent(UUID eventId, String jwtToken) {
+        if (eventId == null) {
+            return null;
+        }
         String uri = String.format(EVENT_API_EVENT_ID_URI, eventApiFeed, eventId);
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(jwtToken);
 
         ResponseEntity<EventApiEventDto> response = restTemplate
-                .exchange(uri, HttpMethod.GET, new HttpEntity<>(null, headers), new ParameterizedTypeReference<>() {
-                });
+            .exchange(uri, HttpMethod.GET, new HttpEntity<>(null, headers), new ParameterizedTypeReference<>() {
+            });
 
         return response.getBody();
     }

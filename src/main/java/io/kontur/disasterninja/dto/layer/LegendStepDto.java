@@ -12,7 +12,7 @@ public class LegendStepDto {
     private final String paramValue;
     private final String stepName;
     private final String stepShape;
-    private final Map<String, String> style; //todo map serialization test (quotes for FE)
+    private final Map<String, String> style;
 
     public static LegendStepDto fromLegendStep(LegendStep legendStep) {
         return legendStep == null ? null : new LegendStepDto(legendStep.getParamName(), legendStep.getParamValue(),

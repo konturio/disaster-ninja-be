@@ -4,7 +4,7 @@ import io.kontur.disasterninja.client.EventApiClient;
 import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.dto.EventListDto;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
-import io.kontur.disasterninja.resource.exception.WebApplicationException;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.service.converter.EventDtoConverter;
 import io.kontur.disasterninja.service.converter.EventListEventDtoConverter;
 import org.springframework.http.HttpStatus;
@@ -39,7 +39,7 @@ public class EventApiService {
         String accessToken = authorizationService.getAccessToken();
         EventApiEventDto event = client.getEvent(eventId, accessToken);
         if (event == null) {
-            throw new WebApplicationException("Event is not found", HttpStatus.NOT_FOUND);
+            throw new WebApplicationException("Event " + eventId + " is not found", HttpStatus.NOT_FOUND);
         }
         return EventDtoConverter.convert(event);
     }

@@ -4,11 +4,17 @@ import io.kontur.disasterninja.domain.Layer;
 import org.wololo.geojson.Geometry;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface LayerProvider {
-    List<Layer> obtainLayers(Geometry geoJSON);
+    String HOT_LAYER_ID = "hotProjects";
+    String URBAN_CORE_LAYER_ID = "kontur_urban_core";
+    String SETTL_PERIPHERY_LAYER_ID = "kontur_settled_periphery";
+    String EVENT_SHAPE_LAYER_ID = "eventShape";
 
-    Layer obtainLayer(String layerId);
+    List<Layer> obtainLayers(Geometry geoJSON, UUID eventId);
 
-    Boolean isApplicable(String layerId);
+    Layer obtainLayer(String layerId, UUID eventId);
+
+    boolean isApplicable(String layerId);
 }
