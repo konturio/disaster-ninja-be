@@ -23,20 +23,19 @@ public class LayerService {
     final List<LayerProvider> providers;
     final EventApiService eventApiService;
 
-    public List<Layer> getList(GeoJSON geoJSON, UUID eventId) {
+    public List<Layer> getList(Geometry geometry, UUID eventId) {
         Map<String, Layer> layers = new HashMap<>();
-        Geometry boundary = getGeometryFromGeoJson(geoJSON);
+        if (geometry != null) {
+            //load layers from providers
+            providers.stream().map(it -> it.obtainLayers(geometry, eventId))
+                .reduce(new ArrayList<>(), (a, b) -> {
+                    a.addAll(b);
+                    return a;
+                }).forEach(l -> layers.put(l.getId(), l)); //if there are multiple layers with same id - just one of them will be kept
 
-        //load layers from providers
-        providers.stream().map(it -> it.obtainLayers(boundary, eventId))
-            .reduce(new ArrayList<>(), (a, b) -> {
-                a.addAll(b);
-                return a;
-            }).forEach(l -> layers.put(l.getId(), l)); //if there are multiple layers with same id - just one of them will be kept
-
-        //apply layer configs
-        layers.values().forEach(layerConfigService::applyConfig);
-
+            //apply layer configs
+            layers.values().forEach(layerConfigService::applyConfig);
+        }
         //add global overlays
         layerConfigService.getGlobalOverlays().forEach((id, config) -> {
             if (!layers.containsKey(id)) { //can be already loaded by a provider
