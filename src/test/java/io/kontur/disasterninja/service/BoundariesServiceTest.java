@@ -8,10 +8,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.wololo.geojson.FeatureCollection;
-import org.wololo.geojson.GeoJSON;
-import org.wololo.geojson.GeoJSONFactory;
-import org.wololo.geojson.Geometry;
+import org.wololo.geojson.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -32,14 +29,24 @@ class BoundariesServiceTest {
     public void getBoundariesTest(){
         //given
         String geoJsonString = """
-                {"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[27.2021484375,54.13347814286039],[26.9989013671875,53.82335438174398],[27.79541015625,53.70321053273598],[27.960205078125,53.90110181472825],[28.004150390625,54.081951104880396],[27.6470947265625,54.21707306629117],[27.2021484375,54.13347814286039]]]}}]}";
+                {
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "Point",
+                    "coordinates": [-3.6749267578125, 41.166249339092]
+                  },
+                  "properties": {
+                  }
+                }
                 """;
-        Geometry geometry = ((FeatureCollection) GeoJSONFactory.create(geoJsonString)).getFeatures()[0].getGeometry();
+        Geometry geometry = ((Feature) GeoJSONFactory.create(geoJsonString)).getGeometry();
+        Point point = new Point(new double[]{-3.6749267578125, 41.166249339092});
 
         ArgumentCaptor<GeoJSON> geoJSONArgumentCaptor = ArgumentCaptor.forClass(GeoJSON.class);
 
         when(geometryTransformer.getGeometryFromGeoJson(geoJSONArgumentCaptor.capture())).thenReturn(geometry);
-        when(kcApiClient.getCollectionItemsByGeometry(geometry, "bounds")).thenReturn(Lists.newArrayList());
+        when(geometryTransformer.getPointFromGeometry(geometry)).thenReturn(point);
+        when(kcApiClient.getCollectionItemsByPoint(point, "bounds")).thenReturn(Lists.newArrayList());
 
         //when
         boundariesService.getBoundaries(geoJsonString);
@@ -49,7 +56,8 @@ class BoundariesServiceTest {
         assertEquals(GeoJSONFactory.create(geoJsonString).toString(), geoJSONCaptorValue.toString());
 
         verify(geometryTransformer).getGeometryFromGeoJson(any(GeoJSON.class));
-        verify(kcApiClient).getCollectionItemsByGeometry(geometry, "bounds");
+        verify(geometryTransformer).getPointFromGeometry(geometry);
+        verify(kcApiClient).getCollectionItemsByPoint(point, "bounds");
 
     }
 

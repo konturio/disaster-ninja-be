@@ -8,6 +8,7 @@ public class GeometryTransformer {
 
     /**
      * Finds all nested features, collects their geometries.
+     *
      * @param input GeoJSON of any type
      * @return GeometryCollection with all found geometries. Geometry in case <b>input</b> is a Geometry or a Feature
      */
@@ -29,5 +30,22 @@ public class GeometryTransformer {
         }
         //it's a Geometry otherwise
         return (Geometry) input;
+    }
+
+    public Point getPointFromGeometry(Geometry geometry) {
+        if (geometry instanceof GeometryCollection) {
+            Geometry[] geometries = ((GeometryCollection) geometry).getGeometries();
+            if (geometries.length > 1) {
+                throw new IllegalArgumentException("Geometry contains more than one element");
+            }
+            if (!geometries[0].getType().equals("Point")) {
+                throw new IllegalArgumentException("Geometry is not a point");
+            }
+            return (Point) geometries[0];
+        }
+        if (!(geometry instanceof Point)) {
+            throw new IllegalArgumentException("Geometry is not a point");
+        }
+        return (Point) geometry;
     }
 }

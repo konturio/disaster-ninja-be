@@ -21,13 +21,14 @@ public class BoundariesController {
 
     private final BoundariesService boundariesService;
 
-    @Operation(summary = "Returns boundaries for selected geometry using kcApi service",
+    @Operation(summary = "Returns boundaries for selected point using kcApi service",
             tags = {"Boundaries"},
-            description = "Returns boundaries for selected geometry using kcApi service")
+            description = "Returns boundaries for selected point using kcApi service")
     @ApiResponse(responseCode = "200", description = "Successful operation",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = FeatureCollection.class)))
     @PostMapping
-    public FeatureCollection getBoundaries(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Polygon in GeoJSON format. Send polygon as FeatureCollection")
+    public FeatureCollection getBoundaries(@io.swagger.v3.oas.annotations.parameters.RequestBody(description =
+            "Point in GeoJSON format. Send point as FeatureCollection or Feature or Point")
                                            @RequestBody String geoJsonString) {
         return boundariesService.getBoundaries(geoJsonString);
     }

@@ -3,10 +3,7 @@ package io.kontur.disasterninja.service;
 import io.kontur.disasterninja.client.KcApiClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.wololo.geojson.Feature;
-import org.wololo.geojson.FeatureCollection;
-import org.wololo.geojson.GeoJSONFactory;
-import org.wololo.geojson.Geometry;
+import org.wololo.geojson.*;
 
 import java.util.List;
 
@@ -22,7 +19,8 @@ public class BoundariesService {
 
     public FeatureCollection getBoundaries(String geoJsonString){
         Geometry geometry = geometryTransformer.getGeometryFromGeoJson(GeoJSONFactory.create(geoJsonString));
-        List<Feature> featureList = kcApiClient.getCollectionItemsByGeometry(geometry, BOUNDS);
+        Point point = geometryTransformer.getPointFromGeometry(geometry);
+        List<Feature> featureList = kcApiClient.getCollectionItemsByPoint(point, BOUNDS);
         return new FeatureCollection(featureList.toArray(Feature[]::new));
     }
 
