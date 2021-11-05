@@ -4,6 +4,7 @@ import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LegendStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -17,11 +18,18 @@ public class LocalLayerConfigService implements LayerConfigService {
     private final Map<String, Layer> globalOverlays = new HashMap<>();
     private final Map<String, Layer> regularLayers = new HashMap<>();
 
-    public LocalLayerConfigService(LocalLayersConfig localLayersConfig) {
+    public LocalLayerConfigService(LocalLayersConfig localLayersConfig,
+                                   @Value("${kontur.platform.tiles.host}") String tilesHost) {
         try {
             localLayersConfig.getConfigs().forEach(this::setLegendStepsOrder);
 
             localLayersConfig.getConfigs().forEach((config) -> {
+                //todo spring messages?
+                if (config.getSource() != null && config.getSource().getUrl() != null && config.getSource().getUrl()
+                    .contains("{tilesHost}")) {
+                    config.getSource().setUrl(config.getSource().getUrl().replaceAll("\\{tilesHost}",
+                        tilesHost));
+                }
                 if (config.isGlobalOverlay()) {
                     globalOverlays.put(config.getId(), config);
                 } else {

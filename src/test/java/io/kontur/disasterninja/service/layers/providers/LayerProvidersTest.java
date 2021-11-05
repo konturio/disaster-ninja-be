@@ -70,12 +70,30 @@ public class LayerProvidersTest {
     }
 
     @Test
+    public void fromOsmLayerDetailsTest() throws IOException {
+        Feature feature = objectMapper.readValue(
+            getClass().getResource("/io/kontur/disasterninja/client/layers/osmlayer_feature.json"),
+            Feature.class);
+        Layer layer1 = osmLayerProvider.fromOsmLayer(feature, true);
+
+        Assertions.assertEquals("Benin: Cotonou Pleiade 2016", layer1.getName());
+        Assertions.assertEquals(BASE, layer1.getCategory());
+        Assertions.assertEquals("Photo", layer1.getGroup()); // test in layer2
+        Assertions.assertNull(layer1.getLegend());
+        Assertions.assertNull(layer1.getCopyrights());
+        Assertions.assertEquals(21, layer1.getMaxZoom());
+        Assertions.assertEquals(6, layer1.getMinZoom());
+        //source
+        Assertions.assertEquals(feature, layer1.getSource().getData().getFeatures()[0]);
+    }
+
+    @Test
     public void fromHotProjectLayersTest() throws IOException {
         List<Feature> features = List.of(objectMapper.readValue(
                 getClass().getResource("/io/kontur/disasterninja/client/layers/hotprojects.json"),
                 FeatureCollection.class)
             .getFeatures());
-        Layer result = hotLayerProvider.fromHotProjectLayers(features);
+        Layer result = hotLayerProvider.fromHotProjectLayers(features, true);
         Assertions.assertEquals("hotProjects", result.getId());
         Assertions.assertNotNull(result.getSource());
         Assertions.assertEquals(10, result.getSource().getData().getFeatures().length);
@@ -92,7 +110,7 @@ public class LayerProvidersTest {
         FeatureCollection featureCollection = objectMapper.readValue(
             getClass().getResource("/io/kontur/disasterninja/client/layers/population.json"),
             FeatureCollection.class);
-        List<Layer> result = urbanAndPeripheryLayerProvider.fromUrbanCoreAndPeripheryLayer(featureCollection);
+        List<Layer> result = urbanAndPeripheryLayerProvider.fromUrbanCoreAndPeripheryLayer(featureCollection, false);
         Assertions.assertEquals(2, result.size());
 
         Layer urbanCore = result.stream().filter(it -> "kontur_urban_core".equals(it.getId())).findAny().get();
@@ -108,7 +126,7 @@ public class LayerProvidersTest {
         FeatureCollection featureCollection = objectMapper.readValue(
             getClass().getResource("/io/kontur/disasterninja/client/layers/population.json"),
             FeatureCollection.class);
-        List<Layer> result = urbanAndPeripheryLayerProvider.fromUrbanCoreAndPeripheryLayer(featureCollection);
+        List<Layer> result = urbanAndPeripheryLayerProvider.fromUrbanCoreAndPeripheryLayer(featureCollection, false);
         Assertions.assertEquals(2, result.size());
 
         Layer periphery = result.stream().filter(it -> "kontur_settled_periphery".equals(it.getId())).findAny().get();
@@ -120,11 +138,28 @@ public class LayerProvidersTest {
     }
 
     @Test
+    public void fromUrbanCoreAndPeripheryLayerSourceTest() throws IOException {
+        FeatureCollection featureCollection = objectMapper.readValue(
+            getClass().getResource("/io/kontur/disasterninja/client/layers/population.json"),
+            FeatureCollection.class);
+        List<Layer> result = urbanAndPeripheryLayerProvider.fromUrbanCoreAndPeripheryLayer(featureCollection, true);
+        Assertions.assertEquals(2, result.size());
+
+        Feature feature = Arrays.stream(featureCollection.getFeatures()).filter(it -> "kontur_settled_periphery"
+            .equals(it.getId())).findFirst().get();
+
+        Layer periphery = result.stream().filter(it -> "kontur_settled_periphery".equals(it.getId())).findAny().get();
+        Assertions.assertNotNull(periphery.getSource());
+        Assertions.assertEquals(periphery.getSource().getData().getFeatures()[0], periphery.getSource().getData()
+            .getFeatures()[0]);
+    }
+
+    @Test
     public void eventShapeEarthquakeLayerTest() throws IOException {
         EventDto eventDto = objectMapper.readValue(getClass()
                 .getResource("/io/kontur/disasterninja/client/layers/eventdto.json"),
             EventDto.class);
-        Layer result = eventShapeLayerProvider.fromEventDto(eventDto);
+        Layer result = eventShapeLayerProvider.fromEventDto(eventDto, true);
         //there are "Class" properties in features - which define further layer id hence layer config
         Assertions.assertEquals(EVENT_SHAPE_LAYER_ID + "." + EARTHQUAKE, result.getId());
         //check source data was loaded
@@ -144,12 +179,30 @@ public class LayerProvidersTest {
                 feature.getProperties().remove("Class");
             }
         });
-        Layer result = eventShapeLayerProvider.fromEventDto(eventDto);
+        Layer result = eventShapeLayerProvider.fromEventDto(eventDto, true);
         //"Class" property is absent from features properties => the default template is used
         Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.getId());
         //check source data was loaded
         Assertions.assertEquals(2, result.getSource().getData().getFeatures().length);
         Assertions.assertEquals("Point", result.getSource().getData().getFeatures()[0].getGeometry().getType());
         Assertions.assertEquals("Polygon", result.getSource().getData().getFeatures()[1].getGeometry().getType());
+    }
+
+    @Test
+    public void eventShapeDefaultWithoutSourceTest() throws IOException {
+        EventDto eventDto = objectMapper.readValue(getClass()
+                .getResource("/io/kontur/disasterninja/client/layers/eventdto.json"),
+            EventDto.class);
+        //remove "Class" entries from features properties
+        Arrays.stream(eventDto.getLatestEpisodeGeojson().getFeatures()).forEach(feature -> {
+            if (feature.getProperties() != null) {
+                feature.getProperties().remove("Class");
+            }
+        });
+        Layer result = eventShapeLayerProvider.fromEventDto(eventDto, false);
+        //"Class" property is absent from features properties => the default template is used
+        Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.getId());
+        //check source data was not loaded
+        Assertions.assertNull(result.getSource());
     }
 }

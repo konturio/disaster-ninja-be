@@ -45,7 +45,7 @@ public class KcApiClientIT {
             "[-10.654764175,6.276395795]]]]}";
         List<Feature> features = kcApiClient.getHotProjectLayer(new ObjectMapper().readValue(json,
             Geometry.class));
-        Layer layer = hotLayerProvider.fromHotProjectLayers(features);
+        Layer layer = hotLayerProvider.fromHotProjectLayers(features, false);
         Assertions.assertNotNull(layer);
     }
 }

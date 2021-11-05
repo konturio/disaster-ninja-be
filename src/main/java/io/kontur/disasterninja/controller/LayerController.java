@@ -1,17 +1,17 @@
 package io.kontur.disasterninja.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.kontur.disasterninja.dto.layer.LayerDetailsDto;
 import io.kontur.disasterninja.dto.layer.LayerSummaryDto;
 import io.kontur.disasterninja.dto.layer.LayerSummaryInputDto;
 import io.kontur.disasterninja.service.layers.LayerService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -37,9 +37,13 @@ public class LayerController {
             .collect(Collectors.toList());
     }
 
-//    @GetMapping(produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE) //todo #7385
-//    public LayerDetailsDto getDetails(@Parameter @RequestParam String layerId,
-//                                      @Parameter @RequestParam UUID eventId) {
-//        return LayerDetailsDto.fromLayer(layerService.get(layerId, eventId));//    }
+    @Operation(summary = "Get Layers by their ids")
+    @GetMapping(produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public List<LayerDetailsDto> getDetails(@Parameter(description = "List of layer ids to retrieve") @RequestParam List<String> layerIds,
+                                            @Parameter(description = "EventId for EventShape layer") @RequestParam UUID eventId) {
+        return layerService.get(layerIds, eventId)
+            .stream().map(LayerDetailsDto::fromLayer)
+            .collect(Collectors.toList());
+    }
 
 }

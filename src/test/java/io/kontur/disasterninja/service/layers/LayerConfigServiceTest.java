@@ -10,7 +10,6 @@ import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Point;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +33,7 @@ public class LayerConfigServiceTest {
 
 
     @Test
-    public void globalOverlaysTest() throws IOException {
+    public void globalOverlaysTest() {
         Assertions.assertFalse(service.getGlobalOverlays().isEmpty());
     }
 
@@ -61,25 +60,20 @@ public class LayerConfigServiceTest {
         Assertions.assertNotNull(hot.getLegend());
         Assertions.assertNotNull(hot.getLegend().getSteps());
         // all 3 steps are present since there is at least one feature for each step
-        Assertions.assertEquals(3, hot.getLegend().getSteps().size());
+        Assertions.assertEquals(2, hot.getLegend().getSteps().size());
 
         //steps
-        Assertions.assertEquals("Active", hot.getLegend().getSteps().get(0).getStepName());
-        Assertions.assertEquals("Published", hot.getLegend().getSteps().get(1).getStepName());
-        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(2).getStepName());
+        Assertions.assertEquals("Published", hot.getLegend().getSteps().get(0).getStepName());
+        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(1).getStepName());
         //step 1
         Assertions.assertEquals("status", hot.getLegend().getSteps().get(0).getParamName());
-        Assertions.assertEquals("Active", hot.getLegend().getSteps().get(0).getParamValue());
+        Assertions.assertEquals("Published", hot.getLegend().getSteps().get(0).getParamValue());
         //step 2
         Assertions.assertEquals("status", hot.getLegend().getSteps().get(1).getParamName());
-        Assertions.assertEquals("Published", hot.getLegend().getSteps().get(1).getParamValue());
-        //step 3
-        Assertions.assertEquals("status", hot.getLegend().getSteps().get(2).getParamName());
-        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(2).getParamValue());
+        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(1).getParamValue());
 
-        Assertions.assertEquals("link_to_icon", hot.getLegend().getSteps().get(0).getStyle().get("icon"));
-        Assertions.assertEquals("link_to_icon_2", hot.getLegend().getSteps().get(1).getStyle().get("icon"));
-        Assertions.assertEquals("link_to_icon_3", hot.getLegend().getSteps().get(2).getStyle().get("icon"));
+        Assertions.assertEquals("link_to_icon_2", hot.getLegend().getSteps().get(0).getStyle().get("icon"));
+        Assertions.assertEquals("link_to_icon_3", hot.getLegend().getSteps().get(1).getStyle().get("icon"));
     }
 
     @Test
@@ -90,7 +84,7 @@ public class LayerConfigServiceTest {
                 .type(GEOJSON)
                 .data(new FeatureCollection(
                     new Feature[]{
-                        feature("status", "Active"),
+                        feature("status", "Archived"),
                         feature("status", "Archived")}
                 )).build()).build();
         service.applyConfig(hot);
@@ -103,21 +97,16 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("Kontur", hot.getGroup());
         Assertions.assertNotNull(hot.getLegend());
         Assertions.assertNotNull(hot.getLegend().getSteps());
-        // just two steps are present since there are no features for step 3 (Published)
-        Assertions.assertEquals(2, hot.getLegend().getSteps().size());
+        // just one step is present since there are no features for step 2 (Published)
+        Assertions.assertEquals(1, hot.getLegend().getSteps().size());
 
         //steps
-        Assertions.assertEquals("Active", hot.getLegend().getSteps().get(0).getStepName());
-        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(1).getStepName());
+        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(0).getStepName());
         //step 1
         Assertions.assertEquals("status", hot.getLegend().getSteps().get(0).getParamName());
-        Assertions.assertEquals("Active", hot.getLegend().getSteps().get(0).getParamValue());
-        //step 2
-        Assertions.assertEquals("status", hot.getLegend().getSteps().get(1).getParamName());
-        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(1).getParamValue());
+        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(0).getParamValue());
 
-        Assertions.assertEquals("link_to_icon", hot.getLegend().getSteps().get(0).getStyle().get("icon"));
-        Assertions.assertEquals("link_to_icon_3", hot.getLegend().getSteps().get(1).getStyle().get("icon"));
+        Assertions.assertEquals("link_to_icon_3", hot.getLegend().getSteps().get(0).getStyle().get("icon"));
     }
 
     @Test
@@ -184,6 +173,8 @@ public class LayerConfigServiceTest {
             .build();
         service.applyConfig(analytics);
         //layer
+        Assertions.assertEquals("https://test-apps02.konturlabs.com/tiles/stats/{x}/{y}/{z}.mvt",
+            analytics.getSource().getUrl());
         Assertions.assertTrue(analytics.isGlobalOverlay());
         Assertions.assertFalse(analytics.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertEquals("OSM Object Quantity", analytics.getName());
@@ -192,7 +183,8 @@ public class LayerConfigServiceTest {
         //copyrights
         Assertions.assertEquals(2, analytics.getCopyrights().size());
         Assertions.assertEquals("© Kontur https://kontur.io/", analytics.getCopyrights().get(0));
-        Assertions.assertEquals("© OpenStreetMap contributors https://www.openstreetmap.org/copyright", analytics.getCopyrights().get(1));
+        Assertions.assertEquals("© OpenStreetMap contributors https://www.openstreetmap.org/copyright",
+            analytics.getCopyrights().get(1));
     }
 
     //even shape tests

@@ -30,7 +30,7 @@ public class InsightsApiClientIT {
         FeatureCollection dto = insightsApiClient.getUrbanCoreAndSettledPeripheryLayers(new ObjectMapper().readValue(json,
             Geometry.class));
 
-        List<Layer> layers = urbanAndPeripheryLayerProvider.fromUrbanCoreAndPeripheryLayer(dto);
+        List<Layer> layers = urbanAndPeripheryLayerProvider.fromUrbanCoreAndPeripheryLayer(dto, false);
         Assertions.assertFalse(layers.isEmpty());
     }
 }

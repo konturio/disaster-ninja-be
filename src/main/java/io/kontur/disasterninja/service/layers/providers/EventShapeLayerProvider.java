@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
+import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class EventShapeLayerProvider implements LayerProvider {
         if (eventId == null) {
             return List.of();
         }
-        Layer layer = obtainLayer(EVENT_SHAPE_LAYER_ID, eventId);
+        Layer layer = fromEventDto(eventApiService.getEvent(eventId), false);
         if (layer == null) {
             return List.of();
         }
@@ -54,10 +54,10 @@ public class EventShapeLayerProvider implements LayerProvider {
             return null;
         }
         EventDto eventDto = eventApiService.getEvent(eventId);
-        return fromEventDto(eventDto);
+        return fromEventDto(eventDto, true);
     }
 
-    Layer fromEventDto(EventDto eventDto) {
+    Layer fromEventDto(EventDto eventDto, boolean includeSourceData) {
         if (eventDto == null) {
             return null;
         }
@@ -69,15 +69,16 @@ public class EventShapeLayerProvider implements LayerProvider {
         String layerId = isClassSpecified ? EVENT_SHAPE_LAYER_ID + "." + eventDto.getEventType()
             : EVENT_SHAPE_LAYER_ID;
 
-        return Layer.builder()
-            .id(layerId)
-            .source(LayerSource.builder()
-                .type(VECTOR)
-//                .url() //todo #7385
-//                .tileSize() //todo #7385
+        Layer.LayerBuilder builder = Layer.builder()
+            .id(layerId);
+
+        if (includeSourceData) {
+            builder.source(LayerSource.builder()
+                .type(GEOJSON)
                 .data(eventDto.getLatestEpisodeGeojson()) //sic!
-                .build())
-            .build();
+                .build());
+        }
+        return builder.build();
     }
 
     @Override

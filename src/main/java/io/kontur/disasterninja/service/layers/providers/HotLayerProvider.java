@@ -30,19 +30,21 @@ public class HotLayerProvider implements LayerProvider {
             return List.of();
         }
         List<Feature> hotProjectLayers = kcApiClient.getHotProjectLayer(geoJSON);
-        Layer layer = fromHotProjectLayers(hotProjectLayers);
+        Layer layer = fromHotProjectLayers(hotProjectLayers, false);
         return layer == null ? List.of() : List.of(layer);
     }
 
     /**
-     * @return null, as no data for this layer can be loaded without a GeoJSON boundary
+     * @param layerId equal to HOT_LAYER_ID otherwise null is returned
+     * @param eventId ignored
+     * @return Entire <b>HOT_LAYER_ID</b> layer, not limited by geometry
      */
     @Override
-    public Layer obtainLayer(String layerId, UUID eventId) {
+    public Layer obtainLayer(String layerId, UUID eventId) { //todo should it return null?
         if (!isApplicable(layerId)) {
             return null;
         }
-        return null; //todo no data can be loaded without a geoJson - too many features #7385
+        return fromHotProjectLayers(kcApiClient.getHotProjectLayer(null), true);
     }
 
     @Override
@@ -53,17 +55,19 @@ public class HotLayerProvider implements LayerProvider {
     /**
      * A single layer is constructed from all <b>dto</b> features
      */
-    Layer fromHotProjectLayers(List<Feature> dto) {
+    Layer fromHotProjectLayers(List<Feature> dto, boolean includeSourceData) {
         if (dto == null) {
             return null;
         }
         //The entire collection is one layer
-        return Layer.builder().id(HOT_LAYER_ID)
-            .source(LayerSource.builder()
+        Layer.LayerBuilder builder = Layer.builder().id(HOT_LAYER_ID);
+        if (includeSourceData) {
+            builder.source(LayerSource.builder()
                 .type(GEOJSON)
                 .data(new FeatureCollection(dto.toArray(new Feature[0])))
-                .build())
-            .build();
+                .build());
+        }
+        return builder.build();
         //the rest params are set by LayerConfigService
     }
 }

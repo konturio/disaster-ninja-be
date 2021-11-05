@@ -12,6 +12,13 @@ public interface LayerProvider {
     String SETTL_PERIPHERY_LAYER_ID = "kontur_settled_periphery";
     String EVENT_SHAPE_LAYER_ID = "eventShape";
 
+    /**
+     * Return list of layers available from this LayerProvider. Layer.Source is not populated for layers returned!
+     *
+     * @param geoJSON if specified - used to filter features by intersection
+     * @param eventId used by EventShapeLayerProvider
+     * @return list of layers available from this LayerProvider.
+     */
     List<Layer> obtainLayers(Geometry geoJSON, UUID eventId);
 
     Layer obtainLayer(String layerId, UUID eventId);

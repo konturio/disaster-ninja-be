@@ -17,7 +17,7 @@ import java.util.List;
 
 import static io.kontur.disasterninja.util.TestUtil.readFile;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -33,17 +33,17 @@ class KcApiClientTest {
     private MockRestServiceServer server;
 
     @Test
-    public void onePageTest() throws IOException {
+    public void collectionByGeometryOnePageTest() throws IOException {
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
             "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
 
         //given
         server.expect(ExpectedCount.times(1), r -> assertThat(r.getURI().toString(), containsString(
-                "/collections/osmlayer/items?bbox=1.83975,6.2578,2.5494,7.11427&limit=10&offset=")))
+                "/collections/osmlayer/items?limit=10&offset=0&bbox=1.83975,6.2578,2.5494,7.11427")))
             .andExpect(method(HttpMethod.GET))
             .andRespond(request -> {
-                    //first page request
-                    if (request.getURI().toString().contains("offset=0")) {
+                //first page request
+                if (request.getURI().toString().contains("offset=0")) {
                         return withSuccess(readFile(this, "layers/osmlayer.json"),
                             MediaType.APPLICATION_JSON).createResponse(request);
                     }
@@ -61,29 +61,29 @@ class KcApiClientTest {
     }
 
     @Test
-    public void threePagesTest() throws IOException {
+    public void collectionByGeometryThreePagesTest() throws IOException {
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
             "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
 
         //given
-        server.expect(ExpectedCount.times(3), r -> assertThat(r.getURI().toString(), containsString(
-                "/collections/osmlayer/items?bbox=1.83975,6.2578,2.5494,7.11427&limit=10&offset=")))
+        server.expect(ExpectedCount.times(3), r -> assertThat(r.getURI().toString(), matchesRegex(
+                "/collections/osmlayer/items\\?limit=10&offset=[12]?0&bbox=1.83975,6.2578,2.5494,7.11427")))
             .andExpect(method(HttpMethod.GET))
             .andRespond(request -> {
                     //first page request
-                    if (request.getURI().toString().contains("offset=0")) {
+                    if (request.getURI().toString().contains("offset=0&")) {
                         return withSuccess(readFile(this, "layers/osmlayer.json")
                                 .replaceAll("\"numberMatched\": 10,", "\"numberMatched\": 22,"),
                             MediaType.APPLICATION_JSON).createResponse(request);
                     }
                     //second page request
-                    if (request.getURI().toString().endsWith("offset=10")) {
+                    if (request.getURI().toString().contains("offset=10&")) {
                         return withSuccess(readFile(this, "layers/osmlayer.json")
                                 .replaceAll("\"numberMatched\": 10,", "\"numberMatched\": 22,"),
                             MediaType.APPLICATION_JSON).createResponse(request);
                     }
                     //third page request (just 2 features)
-                    if (request.getURI().toString().endsWith("offset=20")) {
+                    if (request.getURI().toString().contains("offset=20&")) {
                         return withSuccess(readFile(this, "layers/osmlayer_2.json"),
                             MediaType.APPLICATION_JSON).createResponse(request);
                     }
@@ -97,5 +97,59 @@ class KcApiClientTest {
 
         //then
         assertEquals(22, events.size());
+    }
+
+    @Test
+    public void collectionThreePagesTest() {
+        //given
+        server.expect(ExpectedCount.times(3), r -> assertThat(r.getURI().toString(), matchesRegex(
+                "/collections/osmlayer/items\\?limit=10&offset=[12]?0")))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(request -> {
+                    //first page request
+                    if (request.getURI().toString().contains("offset=0")) {
+                        return withSuccess(readFile(this, "layers/osmlayer.json")
+                                .replaceAll("\"numberMatched\": 10,", "\"numberMatched\": 22,"),
+                            MediaType.APPLICATION_JSON).createResponse(request);
+                    }
+                    //second page request
+                    if (request.getURI().toString().contains("offset=10")) {
+                        return withSuccess(readFile(this, "layers/osmlayer.json")
+                                .replaceAll("\"numberMatched\": 10,", "\"numberMatched\": 22,"),
+                            MediaType.APPLICATION_JSON).createResponse(request);
+                    }
+                    //third page request (just 2 features)
+                    if (request.getURI().toString().contains("offset=20")) {
+                        return withSuccess(readFile(this, "layers/osmlayer_2.json"),
+                            MediaType.APPLICATION_JSON).createResponse(request);
+                    }
+                    throw new RuntimeException("incorrect request uri!");
+                }
+            );
+
+        //when
+        List<Feature> events = client.getCollectionItems("osmlayer", null);
+
+        //then
+        assertEquals(22, events.size());
+    }
+
+    @Test
+    public void singleFeatureFromCollectionTest() {
+        //given
+        server.expect(ExpectedCount.times(1), r -> assertThat(r.getURI().toString(), endsWith(
+                "/collections/osmlayer/items/Benin_cotonou_pleiade_2016")))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(request -> {
+                    return withSuccess(readFile(this, "layers/osmlayer_feature.json"),
+                        MediaType.APPLICATION_JSON).createResponse(request);
+                }
+            );
+
+        //when
+        Feature event = client.getOsmLayer("Benin_cotonou_pleiade_2016");
+
+        //then
+        assertEquals("Benin_cotonou_pleiade_2016", event.getId());
     }
 }

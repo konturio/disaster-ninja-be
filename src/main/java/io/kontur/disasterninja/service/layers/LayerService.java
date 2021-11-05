@@ -5,9 +5,11 @@ import io.kontur.disasterninja.client.KcApiClient;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.service.EventApiService;
 import io.kontur.disasterninja.service.layers.providers.LayerProvider;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.*;
 
@@ -47,25 +49,37 @@ public class LayerService {
         return new ArrayList<>(layers.values());
     }
 
-    public Layer get(String layerId, UUID eventId) {
-        Layer result;
-        //find first and return
-        for (LayerProvider provider : providers) {
-            result = provider.obtainLayer(layerId, eventId);
-            if (result != null) {
-                LOG.info("Found layer by id {} by provider {}", layerId, provider.getClass().getSimpleName());
-                layerConfigService.applyConfig(result);
-                return result;
+    public List<Layer> get(List<String> layerIds, UUID eventId) {
+        List<Layer> result = new ArrayList<>();
+
+        for (String layerId : layerIds) {
+            Layer layer = null;
+            //find first by layer id and use it
+            for (LayerProvider provider : providers) {
+                layer = provider.obtainLayer(layerId, eventId);
+                if (layer != null) {
+                    LOG.info("Found layer by id {} by provider {}", layerId, provider.getClass().getSimpleName());
+                    layerConfigService.applyConfig(layer);
+                    result.add(layer);
+                    break;
+                }
+            }
+            //if not found - use global overlay from config
+            if (layer == null) {
+                layer = layerConfigService.getGlobalOverlays().get(layerId);
+                if (layer != null) {
+                    LOG.info("No loaded layer found by id, using a global overlay: {}", layerId);
+                    result.add(layer);
+                }
             }
         }
 
-        //return global overlay
-        result = layerConfigService.getGlobalOverlays().get(layerId);
-        if (result != null) {
-            LOG.info("No loaded layer found by id, returning a global overlay: {}", layerId);
+        if (result.isEmpty()) {
+            throw new WebApplicationException("Layer not found by id!", HttpStatus.NOT_FOUND);
         }
-        return result; //todo test it should return 404 if not found #7385
+        return result;
     }
+
 
     /**
      * Finds all nested features, collects their geometries.

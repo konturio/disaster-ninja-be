@@ -26,8 +26,8 @@ public class Layer {
     private Legend legend;
     private List<String> copyrights;
     //layer details
-    private Integer maxZoom;
-    private Integer minZoom;
+    private Integer maxZoom; //for 'vector' and 'raster' only (see source.type)
+    private Integer minZoom; //for 'vector' and 'raster' only (see source.type)
     private LayerSource source;
 
     /**
@@ -71,8 +71,8 @@ public class Layer {
         }
         LayerSource otherSource = other.getSource();
         if (otherSource != null) {
-            this.source = new LayerSource(otherSource.getType(), otherSource.getUrl(),
-                otherSource.getTileSize(), source.getData()); //sic! source.data is not replaced
+            this.source = new LayerSource(otherSource.getType(), otherSource.getTileSize(),
+                otherSource.getUrl(), this.source != null ? this.source.getData() : null); //sic! source.data is not replaced
         }
     }
 

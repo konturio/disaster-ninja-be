@@ -9,7 +9,7 @@ import org.wololo.geojson.FeatureCollection;
 @Builder
 public class LayerSource {
     private final LayerSourceType type;
-    private final String url;
-    private final Double tileSize;
-    private FeatureCollection data;
+    private final Double tileSize; //for 'vector' and 'raster' only
+    private String url; //for 'vector' and 'raster' only
+    private FeatureCollection data; //for geoJson only
 }

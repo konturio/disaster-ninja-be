@@ -42,15 +42,40 @@ public class KcApiClient {
         return getCollectionItemsByGeometry(geoJSON, OSM_LAYERS);
     }
 
+    public Feature getOsmLayer(String featureId) {
+        return getFeatureFromCollection(featureId, OSM_LAYERS);
+    }
+
     public List<Feature> getHotProjectLayer(Geometry geoJSON) {
+        if (geoJSON == null) {
+            getCollectionItems(HOT_PROJECTS, null);
+        }
         return getCollectionItemsByGeometry(geoJSON, HOT_PROJECTS);
+    }
+
+    private Feature getFeatureFromCollection(String featureId, String collectionId) {
+        String uri = "/collections/{collectionId}/items/{featureId}";
+
+        LOG.info("Getting feature by id {} from collection {}", featureId, collectionId);
+
+        ResponseEntity<Feature> response = kcApiRestTemplate
+            .exchange(uri, HttpMethod.GET, new HttpEntity<>(null,
+                null), new ParameterizedTypeReference<>() {
+            }, collectionId, featureId);
+
+        Feature body = response.getBody();
+        if (body == null) {
+            LOG.info("Empty response returned for collection {} and featureId {}", collectionId, featureId);
+        }
+
+        return body;
     }
 
     public List<Feature> getCollectionItemsByGeometry(Geometry geoJson, String collectionId) {
         org.locationtech.jts.geom.Geometry geoJsonGeometry = getJtsGeometry(geoJson);
 
         //1 get items by bbox
-        List<Feature> features = getCollectionItemsForBbox(geoJsonGeometry, collectionId);
+        List<Feature> features = getCollectionItems(collectionId, geoJsonGeometry);
 
         //2 filter items by geoJson Geometry
         return features.stream()
@@ -62,16 +87,25 @@ public class KcApiClient {
             .collect(Collectors.toList());
     }
 
-    private List<Feature> getCollectionItemsForBbox(
-        org.locationtech.jts.geom.Geometry geometry, String collectionId) {
-        Envelope env = geometry.getEnvelopeInternal(); //Z axis not taken into account
+    protected List<Feature> getCollectionItems(String collectionId,
+                                               org.locationtech.jts.geom.Geometry boundary) {
+        String uri = "/collections/" + collectionId + "/items?limit={limit}&offset={offset}";
+        String bbox = null;
+        if (boundary != null) {
+            Envelope env = boundary.getEnvelopeInternal(); //Z axis not taken into account
+            bbox = Stream.of(env.getMinX(), env.getMinY(), env.getMaxX(), env.getMaxY())
+                .map(String::valueOf).reduce((a, b) -> a + "," + b).get();
+            uri += "&bbox={bbox}";
+        }
 
-        String uri = "/collections/" + collectionId + "/items?bbox={bbox}&limit={limit}&offset={offset}";
         int i = 0;
 
-        String bbox = Stream.of(env.getMinX(), env.getMinY(), env.getMaxX(), env.getMaxY())
-            .map(String::valueOf).reduce((a, b) -> a + "," + b).get();
-        LOG.info("Getting features of collection {} with bbox {}", collectionId, bbox);
+        if (bbox == null) {
+            LOG.info("Getting features of collection {}", collectionId);
+        } else {
+            LOG.info("Getting features of collection {} with bbox {}", collectionId, bbox);
+        }
+
         List<Feature> result = new ArrayList<>();
 
         while (true) {
@@ -80,11 +114,15 @@ public class KcApiClient {
             ResponseEntity<KcApiFeatureCollection> response = kcApiRestTemplate
                 .exchange(uri, HttpMethod.GET, new HttpEntity<>(null,
                     null), new ParameterizedTypeReference<>() {
-                }, bbox, pageSize, offset);
+                }, pageSize, offset, bbox);
 
             KcApiFeatureCollection body = response.getBody();
             if (body == null) {
-                LOG.info("Empty response returned for collection {} and bbox {}", collectionId, bbox);
+                if (bbox == null) {
+                    LOG.info("Empty response returned for collection {}", collectionId);
+                } else {
+                    LOG.info("Empty response returned for collection {} and bbox {}", collectionId, bbox);
+                }
                 break;
             }
 
@@ -98,7 +136,11 @@ public class KcApiClient {
             }
         }
 
-        LOG.info("{} features loaded for collection {} with bbox {}", result.size(), collectionId, bbox);
+        if (bbox == null) {
+            LOG.info("{} features loaded for collection {}", result.size(), collectionId);
+        } else {
+            LOG.info("{} features loaded for collection {} with bbox {}", result.size(), collectionId, bbox);
+        }
         return result;
     }
 

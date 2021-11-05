@@ -2,10 +2,11 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.client.InsightsApiClient;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSource;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
+import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
 import java.util.Arrays;
@@ -15,6 +16,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.NAME;
+import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 import static io.kontur.disasterninja.service.layers.providers.OsmLayerProvider.getFeatureProperty;
 
 @Service
@@ -33,15 +35,18 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
     public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
         org.wololo.geojson.FeatureCollection urbanCoreAndSettledPeripheryLayers = insightsApiClient
             .getUrbanCoreAndSettledPeripheryLayers(geoJSON);
-        return fromUrbanCoreAndPeripheryLayer(urbanCoreAndSettledPeripheryLayers);
+        return fromUrbanCoreAndPeripheryLayer(urbanCoreAndSettledPeripheryLayers, false);
     }
 
+    /**
+     * Returns null, as it's not possible to get urbanCore/settledPeriphery layers
+     * without a geoJson boundary
+     *
+     * @return null
+     */
     @Override
     public Layer obtainLayer(String layerId, UUID eventId) {
-        if (!isApplicable(layerId)) {
-            return null;
-        }
-        throw new NotImplementedException(); //todo #7385 + javadoc
+        return null;
     }
 
     @Override
@@ -49,15 +54,23 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
         return providedLayers.contains(layerId);
     }
 
-    List<Layer> fromUrbanCoreAndPeripheryLayer(org.wololo.geojson.FeatureCollection dto) {
+    List<Layer> fromUrbanCoreAndPeripheryLayer(org.wololo.geojson.FeatureCollection dto, boolean includeSourceData) {
         if (dto == null) {
             return List.of();
         }
-        return Arrays.stream(dto.getFeatures()).map(f -> Layer.builder()
-            .id((String) f.getId())
-            .name((String) f.getProperties().get(NAME))
-            .description(description(f))
-            .build()
+        return Arrays.stream(dto.getFeatures()).map(f -> {
+                Layer.LayerBuilder builder = Layer.builder()
+                    .id((String) f.getId())
+                    .name((String) f.getProperties().get(NAME))
+                    .description(description(f));
+                if (includeSourceData) {
+                    builder.source(LayerSource.builder()
+                        .type(GEOJSON)
+                        .data(new FeatureCollection(new Feature[]{f}))
+                        .build());
+                }
+                return builder.build();
+            }
         ).collect(Collectors.toList());
     }
 

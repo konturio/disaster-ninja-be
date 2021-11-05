@@ -3,22 +3,25 @@ package io.kontur.disasterninja.service.layers.providers;
 import io.kontur.disasterninja.client.KcApiClient;
 import io.kontur.disasterninja.domain.DtoFeatureProperties;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
+import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
+import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Service
@@ -61,17 +64,22 @@ public class OsmLayerProvider implements LayerProvider {
         return fromOsmLayers(osmLayers);
     }
 
+    /**
+     * @param layerId LayerID to retrieve
+     * @param eventId ignored
+     * @return Entire layer, not limited by geometry
+     */
     @Override
     public Layer obtainLayer(String layerId, UUID eventId) {
         if (!isApplicable(layerId)) {
             return null;
         }
-        throw new NotImplementedException(); //todo #7385 + javadoc
+        return fromOsmLayer(kcApiClient.getOsmLayer(layerId), true);
     }
 
     @Override
     public boolean isApplicable(String layerId) {
-        return true; //todo #7385
+        return true;
     }
 
     /**
@@ -81,20 +89,34 @@ public class OsmLayerProvider implements LayerProvider {
         if (dto == null) {
             return List.of();
         }
-        return dto.stream().map(f -> {
-                    String copyright = getMapValueFromProperty(f, ATTRIBUTION, TEXT, String.class);
-                    return Layer.builder()
-                        .id((String) f.getId())
-                        .name(getFeatureProperty(f, NAME, String.class))
-                        .description(getFeatureProperty(f, DESCRIPTION, String.class))
-                        .category(layerCategory(f))
-                        .group(caseFormat(getFeatureProperty(f, CATEGORY, String.class)))
-                        .copyrights(copyright == null ? null : List.of(copyright))
-                        .maxZoom(getFeatureProperty(f, MAX_ZOOM, Integer.class))
-                        .minZoom(getFeatureProperty(f, MIN_ZOOM, Integer.class))
-                        .build();
-                }
-            )
+        return dto.stream().filter(Objects::nonNull).map(it -> fromOsmLayer(it, false))
             .collect(Collectors.toList());
+    }
+
+    /**
+     * A feature from represents a separate layer
+     */
+    Layer fromOsmLayer(Feature f, boolean includeSourceData) {
+        if (f == null) {
+            return null;
+        }
+        String copyright = getMapValueFromProperty(f, ATTRIBUTION, TEXT, String.class);
+        Layer.LayerBuilder builder = Layer.builder()
+            .id((String) f.getId())
+            .name(getFeatureProperty(f, NAME, String.class))
+            .description(getFeatureProperty(f, DESCRIPTION, String.class))
+            .category(layerCategory(f))
+            .group(caseFormat(getFeatureProperty(f, CATEGORY, String.class)))
+            .copyrights(copyright == null ? null : List.of(copyright))
+            .maxZoom(getFeatureProperty(f, MAX_ZOOM, Integer.class))
+            .minZoom(getFeatureProperty(f, MIN_ZOOM, Integer.class));
+
+        if (includeSourceData) {
+            builder.source(LayerSource.builder()
+                .type(GEOJSON)
+                .data(new FeatureCollection(new Feature[]{f}))
+                .build());
+        }
+        return builder.build();
     }
 }
