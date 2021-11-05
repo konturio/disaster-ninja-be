@@ -4,12 +4,14 @@ import io.kontur.disasterninja.client.InsightsApiClient;
 import io.kontur.disasterninja.client.KcApiClient;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.service.EventApiService;
+import io.kontur.disasterninja.service.GeometryTransformer;
 import io.kontur.disasterninja.service.layers.providers.LayerProvider;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.wololo.geojson.*;
+import org.wololo.geojson.GeoJSON;
+import org.wololo.geojson.Geometry;
 
 import java.util.*;
 
@@ -23,9 +25,11 @@ public class LayerService {
     final List<LayerProvider> providers;
     final EventApiService eventApiService;
 
+    private final GeometryTransformer geometryTransformer;
+
     public List<Layer> getList(GeoJSON geoJSON, UUID eventId) {
         Map<String, Layer> layers = new HashMap<>();
-        Geometry boundary = getGeometryFromGeoJson(geoJSON);
+        Geometry boundary = geometryTransformer.getGeometryFromGeoJson(geoJSON);
 
         //load layers from providers
         providers.stream().map(it -> it.obtainLayers(boundary, eventId))
@@ -65,30 +69,5 @@ public class LayerService {
             LOG.info("No loaded layer found by id, returning a global overlay: {}", layerId);
         }
         return result; //todo test it should return 404 if not found #7385
-    }
-
-    /**
-     * Finds all nested features, collects their geometries.
-     * @param input GeoJSON of any type
-     * @return GeometryCollection with all found geometries. Geometry in case <b>input</b> is a Geometry or a Feature
-     */
-    protected static Geometry getGeometryFromGeoJson(GeoJSON input) {
-        if (input == null) {
-            return null;
-        }
-        if (input instanceof Feature) {
-            return ((Feature) input).getGeometry();
-        }
-        if (input instanceof FeatureCollection) {
-            int length = ((FeatureCollection) input).getFeatures().length;
-            Geometry[] result = new Geometry[length];
-
-            for (int i = 0; i < length; i++) {
-                result[i] = ((FeatureCollection) input).getFeatures()[i].getGeometry();
-            }
-            return new GeometryCollection(result);
-        }
-        //it's a Geometry otherwise
-        return (Geometry) input;
     }
 }

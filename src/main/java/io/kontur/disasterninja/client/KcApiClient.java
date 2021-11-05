@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
+import org.wololo.geojson.Point;
 import org.wololo.jts2geojson.GeoJSONReader;
 
 import java.util.ArrayList;
@@ -60,6 +61,40 @@ public class KcApiClient {
                     geoJsonGeometry.intersects(reader.read(featureGeom));
             })
             .collect(Collectors.toList());
+    }
+
+    public List<Feature> getCollectionItemsByPoint(Point point, String collectionId){
+        String uri = "/collections/" + collectionId + "/itemsByMultipoint?geom={geom}&limit={limit}&offset={offset}";
+        int i = 0;
+
+        List<Feature> result = new ArrayList<>();
+
+        while (true) {
+            int offset = i++ * pageSize;
+
+            ResponseEntity<KcApiFeatureCollection> response = kcApiRestTemplate
+                    .exchange(uri, HttpMethod.GET, new HttpEntity<>(null,
+                            null), new ParameterizedTypeReference<>() {
+                    }, getJtsGeometry(point).toString(), pageSize, offset);
+
+            KcApiFeatureCollection body = response.getBody();
+            if (body == null) {
+                LOG.info("Empty response returned for collection {} and point {}", collectionId, point);
+                break;
+            }
+
+            if (body.getFeatures() == null) {
+                break;
+            }
+
+            result.addAll(List.of(body.getFeatures()));
+            if (result.size() == body.getNumberMatched()) {
+                break;
+            }
+        }
+
+        LOG.info("{} features loaded for collection {} with point {}", result.size(), collectionId, point);
+        return result;
     }
 
     private List<Feature> getCollectionItemsForBbox(
