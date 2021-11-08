@@ -12,6 +12,7 @@ jar {
 group = 'io.kontur'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '16'
+targetCompatibility = '16'
 
 repositories {
     mavenCentral()
