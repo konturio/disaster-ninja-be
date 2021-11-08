@@ -33,6 +33,9 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
      */
     @Override
     public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
+        if (geoJSON == null) {
+            return List.of();
+        }
         org.wololo.geojson.FeatureCollection urbanCoreAndSettledPeripheryLayers = insightsApiClient
             .getUrbanCoreAndSettledPeripheryLayers(geoJSON);
         return fromUrbanCoreAndPeripheryLayer(urbanCoreAndSettledPeripheryLayers, false);

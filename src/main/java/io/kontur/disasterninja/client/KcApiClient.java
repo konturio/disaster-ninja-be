@@ -47,9 +47,6 @@ public class KcApiClient {
     }
 
     public List<Feature> getHotProjectLayer(Geometry geoJSON) {
-        if (geoJSON == null) {
-            getCollectionItems(HOT_PROJECTS, null);
-        }
         return getCollectionItemsByGeometry(geoJSON, HOT_PROJECTS);
     }
 

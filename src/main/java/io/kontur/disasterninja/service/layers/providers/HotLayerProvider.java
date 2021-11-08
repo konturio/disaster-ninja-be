@@ -35,16 +35,11 @@ public class HotLayerProvider implements LayerProvider {
     }
 
     /**
-     * @param layerId equal to HOT_LAYER_ID otherwise null is returned
-     * @param eventId ignored
-     * @return Entire <b>HOT_LAYER_ID</b> layer, not limited by geometry
+     * @return null
      */
     @Override
-    public Layer obtainLayer(String layerId, UUID eventId) { //todo should it return null?
-        if (!isApplicable(layerId)) {
-            return null;
-        }
-        return fromHotProjectLayers(kcApiClient.getHotProjectLayer(null), true);
+    public Layer obtainLayer(String layerId, UUID eventId) {
+        return null; //there are too many features in this layer - so must be limited by a geometry
     }
 
     @Override

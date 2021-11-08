@@ -5,6 +5,7 @@ import io.kontur.disasterninja.domain.enums.LegendType;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
@@ -18,13 +19,20 @@ public class LegendDto {
         return legend == null ? null : new LegendDto(legend.getName(),
             legend.getType() == null ? null : legend.getType().toString(),
             legend.getSteps().stream().map(LegendStepDto::fromLegendStep).collect(Collectors.toList()),
-            legend.getBivariateColors().entrySet().stream().map(it -> new ColorDto(it.getKey(), it.getValue()))
-                .collect(Collectors.toList()));
+            bivariateColors(legend.getBivariateColors()));
     }
 
     public Legend toLegend() {
         return new Legend(name, LegendType.fromString(type), steps.stream().map(LegendStepDto::toLegendStep)
             .collect(Collectors.toList()), colors.stream().collect(Collectors
             .toMap(ColorDto::getId, ColorDto::getColor)));
+    }
+
+    private static List<ColorDto> bivariateColors(Map<String, String> input) {
+        if (input == null) {
+            return null;
+        }
+        return input.entrySet().stream().map(it -> new ColorDto(it.getKey(), it.getValue()))
+            .collect(Collectors.toList());
     }
 }

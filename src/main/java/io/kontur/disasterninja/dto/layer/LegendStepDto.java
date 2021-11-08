@@ -10,18 +10,21 @@ import java.util.Map;
 public class LegendStepDto {
     private final String paramName;
     private final String paramValue;
+    private final String axis;
+    private final Double axisValue;
     private final String stepName;
     private final String stepShape;
     private final Map<String, String> style;
 
     public static LegendStepDto fromLegendStep(LegendStep legendStep) {
         return legendStep == null ? null : new LegendStepDto(legendStep.getParamName(), legendStep.getParamValue(),
+            legendStep.getAxis(), legendStep.getAxisValue(),
             legendStep.getStepName(), legendStep.getStepShape() == null ? null : legendStep.getStepShape().toString(),
             legendStep.getStyle());
     }
 
     public LegendStep toLegendStep() {
-        return new LegendStep(paramName, paramValue, null, null, stepName,
+        return new LegendStep(paramName, paramValue, axis, axisValue, stepName,
             LayerStepShape.fromString(stepShape), style);
     }
 

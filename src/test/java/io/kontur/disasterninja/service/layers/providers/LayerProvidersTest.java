@@ -250,16 +250,16 @@ public class LayerProvidersTest {
         LegendStep xStep1 = biv.getLegend().getSteps().get(0);
         Assertions.assertEquals(0, xStep1.getOrder());
         Assertions.assertNull(xStep1.getParamName()); //axis is used instead
-        Assertions.assertNull(xStep1.getParamValue()); //value is used instead
+        Assertions.assertNull(xStep1.getParamValue()); //axisValue is used instead
         Assertions.assertEquals("X", xStep1.getAxis());
-        Assertions.assertEquals(0.0d, xStep1.getValue());
+        Assertions.assertEquals(0.0d, xStep1.getAxisValue());
         Assertions.assertNull(xStep1.getStepName());
         Assertions.assertNull(xStep1.getStepShape());
         Assertions.assertNull(xStep1.getStyle());
         //last step for Y axis
         LegendStep yStep = biv.getLegend().getSteps().get(7);
         Assertions.assertEquals("Y", yStep.getAxis());
-        Assertions.assertEquals(10000d, yStep.getValue());
+        Assertions.assertEquals(10000d, yStep.getAxisValue());
         //skipping other params
 
         //colors

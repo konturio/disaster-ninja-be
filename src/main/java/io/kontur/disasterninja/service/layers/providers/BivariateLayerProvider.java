@@ -14,6 +14,7 @@ import org.wololo.geojson.Geometry;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
@@ -25,6 +26,18 @@ public class BivariateLayerProvider implements LayerProvider {
     private static final Logger LOG = LoggerFactory.getLogger(BivariateLayerProvider.class);
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
 
+    private static String notEmptyLabel(Supplier<String> labelSupplier) {
+        if (labelSupplier.get() != null && !labelSupplier.get().isBlank()) {
+            return labelSupplier.get();
+        }
+        return null;
+    }
+
+    /**
+     * @param geoJSON not used
+     * @param eventId not used
+     * @return Bivariate layers from insights-api graphql api
+     */
     @Override
     public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
         try {
@@ -32,19 +45,6 @@ public class BivariateLayerProvider implements LayerProvider {
                 .stream().map(this::fromOverlay).collect(Collectors.toList());
         } catch (InterruptedException | ExecutionException e) {
             LOG.error("Can't load bivariate layers: {}", e.getMessage(), e);
-        }
-        return null;
-    }
-
-    @Override
-    public Layer obtainLayer(String layerId, UUID eventId) {
-        try {
-            return insightsApiGraphqlClient.getBivariateOverlays().get()
-                .stream()
-                .filter(it -> layerId.equals(it.name())).findFirst()
-                .map(this::fromOverlay).get();
-        } catch (InterruptedException | ExecutionException | NoSuchElementException e) {
-            LOG.error("Can't load bivariate layer by id {}: {}", layerId, e.getMessage(), e);
         }
         return null;
     }
@@ -68,6 +68,23 @@ public class BivariateLayerProvider implements LayerProvider {
             .build();
     }
 
+    /**
+     * @param eventId not used
+     * @return Bivariate layer by ID from insights-api graphql api
+     */
+    @Override
+    public Layer obtainLayer(String layerId, UUID eventId) {
+        try {
+            return insightsApiGraphqlClient.getBivariateOverlays().get()
+                .stream()
+                .filter(it -> layerId.equals(it.name())).findFirst()
+                .map(this::fromOverlay).get();
+        } catch (InterruptedException | ExecutionException | NoSuchElementException e) {
+            LOG.error("Can't load bivariate layer by id {}: {}", layerId, e.getMessage(), e);
+        }
+        return null;
+    }
+
     private Legend bivariateLegendFromOverlay(BivariateLayerLegendQuery.Overlay overlay) {
         if (overlay == null) {
             return null;
@@ -79,7 +96,7 @@ public class BivariateLayerProvider implements LayerProvider {
             for (int i = 0; i < x.steps().size(); i++) {
                 BivariateLayerLegendQuery.Step step = x.steps().get(i);
                 LegendStep legendStep = new LegendStep(null, null, "X", step.value(),
-                    step.label(), null, null);
+                    notEmptyLabel(step::label), null, null);
                 legendStep.setOrder(i);
                 resultingSteps.add(legendStep);
             }
@@ -90,7 +107,7 @@ public class BivariateLayerProvider implements LayerProvider {
             for (int i = 0; i < y.steps().size(); i++) {
                 BivariateLayerLegendQuery.Step1 step = y.steps().get(i);
                 LegendStep legendStep = new LegendStep(null, null, "Y", step.value(),
-                    step.label(), null, null);
+                    notEmptyLabel(step::label), null, null);
                 legendStep.setOrder(i);
                 resultingSteps.add(legendStep);
             }
