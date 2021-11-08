@@ -21,7 +21,8 @@ public class LegendStepDto {
     }
 
     public LegendStep toLegendStep() {
-        return new LegendStep(paramName, paramValue, stepName, LayerStepShape.fromString(stepShape), style);
+        return new LegendStep(paramName, paramValue, null, null, stepName,
+            LayerStepShape.fromString(stepShape), style);
     }
 
 }

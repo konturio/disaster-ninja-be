@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -18,4 +19,6 @@ public class Legend {
     private LegendType type;
     @Builder.Default
     private List<LegendStep> steps = new ArrayList<>();
+    @Builder.Default
+    private Map<String, String> bivariateColors = null;
 }

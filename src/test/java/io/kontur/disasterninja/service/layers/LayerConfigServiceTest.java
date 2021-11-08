@@ -59,6 +59,8 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("Kontur", hot.getGroup());
         Assertions.assertNotNull(hot.getLegend());
         Assertions.assertNotNull(hot.getLegend().getSteps());
+        //colors are only used for bivariate legends
+        Assertions.assertNull(hot.getLegend().getBivariateColors());
         // all 3 steps are present since there is at least one feature for each step
         Assertions.assertEquals(2, hot.getLegend().getSteps().size());
 
@@ -97,6 +99,8 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("Kontur", hot.getGroup());
         Assertions.assertNotNull(hot.getLegend());
         Assertions.assertNotNull(hot.getLegend().getSteps());
+        //colors are only used for bivariate legends
+        Assertions.assertNull(hot.getLegend().getBivariateColors());
         // just one step is present since there are no features for step 2 (Published)
         Assertions.assertEquals(1, hot.getLegend().getSteps().size());
 
@@ -169,7 +173,7 @@ public class LayerConfigServiceTest {
     @Test
     public void konturAnalyticsTest() {
         Layer analytics = Layer.builder()
-            .id("osmObjectQuantity")
+            .id("Kontur OpenStreetMap Quantity")
             .build();
         service.applyConfig(analytics);
         //layer
@@ -180,11 +184,7 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("OSM Object Quantity", analytics.getName());
         Assertions.assertEquals(OVERLAY, analytics.getCategory());
         Assertions.assertEquals("Kontur Analytical Layers", analytics.getGroup());
-        //copyrights
-        Assertions.assertEquals(2, analytics.getCopyrights().size());
-        Assertions.assertEquals("© Kontur https://kontur.io/", analytics.getCopyrights().get(0));
-        Assertions.assertEquals("© OpenStreetMap contributors https://www.openstreetmap.org/copyright",
-            analytics.getCopyrights().get(1));
+        //copyrights //todo
     }
 
     //even shape tests

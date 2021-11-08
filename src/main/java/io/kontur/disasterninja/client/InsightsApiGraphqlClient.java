@@ -7,6 +7,7 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
+import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
 import io.kontur.disasterninja.graphql.type.FunctionArgs;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +39,30 @@ public class InsightsApiGraphqlClient {
                         future.completeExceptionally(new WebApplicationException("Exception when getting data from insights-api using apollo client", HttpStatus.BAD_GATEWAY));
                     }
                 });
+        return future;
+    }
+
+    public CompletableFuture<List<BivariateLayerLegendQuery.Overlay>> getBivariateOverlays() {
+        CompletableFuture<List<BivariateLayerLegendQuery.Overlay>> future = new CompletableFuture<>();
+        apolloClient
+            .query(new BivariateLayerLegendQuery())
+            .enqueue(new ApolloCall.Callback<>() {
+                @Override
+                public void onResponse(@NotNull Response<BivariateLayerLegendQuery.Data> response) {
+                    if (response.getData() != null &&
+                        response.getData().allStatistic() != null) {
+                        future.complete(response.getData().allStatistic().overlays());
+                    }
+                    future.completeExceptionally(new WebApplicationException("Exception when getting data from " +
+                        "insights-api using apollo client: no statistic data in response", HttpStatus.NOT_FOUND));
+                }
+
+                @Override
+                public void onFailure(@NotNull ApolloException e) {
+                    future.completeExceptionally(new WebApplicationException("Exception when getting data from " +
+                        "insights-api using apollo client", HttpStatus.BAD_GATEWAY));
+                }
+            });
         return future;
     }
 }

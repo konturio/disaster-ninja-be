@@ -3,7 +3,9 @@ package io.kontur.disasterninja.service.layers.providers;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LegendStep;
 import io.kontur.disasterninja.dto.EventDto;
+import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import java.util.List;
 
 import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
+import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
 import static io.kontur.disasterninja.dto.EventType.EARTHQUAKE;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.EVENT_SHAPE_LAYER_ID;
 
@@ -36,6 +39,9 @@ public class LayerProvidersTest {
 
     @Autowired
     EventShapeLayerProvider eventShapeLayerProvider;
+
+    @Autowired
+    BivariateLayerProvider bivariateLayerProvider;
 
     @BeforeEach
     private void setup() {
@@ -204,5 +210,81 @@ public class LayerProvidersTest {
         Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.getId());
         //check source data was not loaded
         Assertions.assertNull(result.getSource());
+    }
+
+    @Test
+    public void bivariateLayerProviderTest() {
+        BivariateLayerLegendQuery.Overlay overlay = new BivariateLayerLegendQuery
+            .Overlay("Overlay", "Kontur OpenStreetMap Quantity",
+            "This map shows relative distribution of OpenStreetMap objects and Population. Last updated" +
+                " 2021-11-06T20:59:29Z",
+            new BivariateLayerLegendQuery.X("Axis", "OSM objects (n/km²)", steps(0d, 1d, 2d, 1000d),
+                List.of("count", "area_km2")),
+            new BivariateLayerLegendQuery.Y("Axis", "Population (ppl/km²)", steps1(0d, 10d, 20d, 10000d),
+                List.of("count", "area_km2")),
+            List.of(new BivariateLayerLegendQuery.Color("OverlayColor", "A1", "rgb(111,232,157)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "A2", "rgb(222,232,157)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "A3", "rgb(333,232,157)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "B1", "rgb(232,111,157)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "B2", "rgb(232,222,157)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "B3", "rgb(232,333,157)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "C1", "rgb(232,232,111)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "C2", "rgb(232,232,222)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "C3", "rgb(232,232,333)"))
+        );
+
+        Layer biv = bivariateLayerProvider.fromOverlay(overlay);
+
+        //layer
+        Assertions.assertEquals("Kontur OpenStreetMap Quantity", biv.getId());
+        Assertions.assertEquals("This map shows relative distribution of OpenStreetMap objects and Population." +
+            " Last updated 2021-11-06T20:59:29Z", biv.getDescription());
+
+        //source
+        Assertions.assertEquals(VECTOR, biv.getSource().getType());
+
+        //legend
+        Assertions.assertNotNull(biv.getLegend());
+        Assertions.assertEquals(8, biv.getLegend().getSteps().size());
+        //step1
+        LegendStep xStep1 = biv.getLegend().getSteps().get(0);
+        Assertions.assertEquals(0, xStep1.getOrder());
+        Assertions.assertNull(xStep1.getParamName()); //axis is used instead
+        Assertions.assertNull(xStep1.getParamValue()); //value is used instead
+        Assertions.assertEquals("X", xStep1.getAxis());
+        Assertions.assertEquals(0.0d, xStep1.getValue());
+        Assertions.assertNull(xStep1.getStepName());
+        Assertions.assertNull(xStep1.getStepShape());
+        Assertions.assertNull(xStep1.getStyle());
+        //last step for Y axis
+        LegendStep yStep = biv.getLegend().getSteps().get(7);
+        Assertions.assertEquals("Y", yStep.getAxis());
+        Assertions.assertEquals(10000d, yStep.getValue());
+        //skipping other params
+
+        //colors
+        Assertions.assertNotNull(biv.getLegend().getBivariateColors());
+        Assertions.assertEquals(9, biv.getLegend().getBivariateColors().entrySet().size());
+
+        String a1 = biv.getLegend().getBivariateColors().get("A1");
+        Assertions.assertEquals("rgb(111,232,157)", a1);
+        String c3 = biv.getLegend().getBivariateColors().get("C3");
+        Assertions.assertEquals("rgb(232,232,333)", c3);
+    }
+
+    private List<BivariateLayerLegendQuery.Step> steps(double d1, double d2, double d3, double d4) {
+        BivariateLayerLegendQuery.Step s1 = new BivariateLayerLegendQuery.Step("Step", null, d1);
+        BivariateLayerLegendQuery.Step s2 = new BivariateLayerLegendQuery.Step("Step", null, d2);
+        BivariateLayerLegendQuery.Step s3 = new BivariateLayerLegendQuery.Step("Step", null, d3);
+        BivariateLayerLegendQuery.Step s4 = new BivariateLayerLegendQuery.Step("Step", null, d4);
+        return List.of(s1, s2, s3, s4);
+    }
+
+    private List<BivariateLayerLegendQuery.Step1> steps1(double d1, double d2, double d3, double d4) {
+        BivariateLayerLegendQuery.Step1 s1 = new BivariateLayerLegendQuery.Step1("Step", null, d1);
+        BivariateLayerLegendQuery.Step1 s2 = new BivariateLayerLegendQuery.Step1("Step", null, d2);
+        BivariateLayerLegendQuery.Step1 s3 = new BivariateLayerLegendQuery.Step1("Step", null, d3);
+        BivariateLayerLegendQuery.Step1 s4 = new BivariateLayerLegendQuery.Step1("Step", null, d4);
+        return List.of(s1, s2, s3, s4);
     }
 }

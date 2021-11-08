@@ -1,10 +1,7 @@
 package io.kontur.disasterninja.service.layers;
 
 import io.kontur.disasterninja.domain.Layer;
-import io.kontur.disasterninja.service.layers.providers.EventShapeLayerProvider;
-import io.kontur.disasterninja.service.layers.providers.HotLayerProvider;
-import io.kontur.disasterninja.service.layers.providers.OsmLayerProvider;
-import io.kontur.disasterninja.service.layers.providers.UrbanAndPeripheryLayerProvider;
+import io.kontur.disasterninja.service.layers.providers.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +30,8 @@ public class LayerServiceTest {
     UrbanAndPeripheryLayerProvider urbanAndPeripheryLayerProvider;
     @MockBean
     EventShapeLayerProvider eventApiProvider;
+    @MockBean
+    BivariateLayerProvider bivariateLayerProvider;
 
     @Autowired
     LayerService layerService;
@@ -43,6 +42,7 @@ public class LayerServiceTest {
         when(osmLayerProvider.obtainLayers(any(), any())).thenReturn(new ArrayList<>());
         when(urbanAndPeripheryLayerProvider.obtainLayers(any(), any())).thenReturn(new ArrayList<>());
         when(eventApiProvider.obtainLayers(any(), any())).thenReturn(new ArrayList<>());
+        when(bivariateLayerProvider.obtainLayers(any(), any())).thenReturn(new ArrayList<>());
         //add other providers
     }
 
@@ -51,7 +51,7 @@ public class LayerServiceTest {
         //all providers return nothing (= no features matched by geometry), so only global overlays should be returned
         List<Layer> layers = layerService.getList(new Point(new double[]{1, 2}), null);
         //check all layers with 'globalOverlay: true' are present
-        Assertions.assertEquals(9, layers.size());
+        Assertions.assertEquals(10, layers.size());
         System.out.println(layers);
     }
 

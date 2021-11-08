@@ -110,10 +110,10 @@ public class DtoTest {
             .url("url-com.com")
             .tileSize(2d)
             .data(geoJSON).build();
-        Legend legend = new Legend("some legend", LegendType.SIMPLE, new ArrayList<>());
+        Legend legend = new Legend("some legend", LegendType.SIMPLE, new ArrayList<>(), new HashMap<>());
         Map<String, String> map = new HashMap<>();
         map.put("prop", "value");
-        legend.getSteps().add(new LegendStep("param name", "param value", "step name",
+        legend.getSteps().add(new LegendStep("param name", "param value", null, null, "step name",
             HEX, map));
 
         return Layer.builder()

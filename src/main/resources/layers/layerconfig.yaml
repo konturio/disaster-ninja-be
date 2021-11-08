@@ -275,7 +275,7 @@ layers:
     ### Group: Kontur
     - id: 'activeContributors'
       globalOverlay: true
-      displayLegendIfNoFeaturesExist: true #todo can't be filtered until MVT tiles are read
+      displayLegendIfNoFeaturesExist: true #can't be filtered until MVT tiles are read
       name: 'Active contributors'
       category: 'overlay'
       group: 'Kontur'
@@ -328,72 +328,68 @@ layers:
               icon: 'link_to_icon_3'
 
     ### Group: Kontur Analytical Layers
-    - id: 'osmObjectQuantity'
+    - id: 'Kontur OpenStreetMap Quantity'
       globalOverlay: true
       name: 'OSM Object Quantity'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
-      type: 'bivariate' #todo
-      description: 'This map shows relative distribution of OpenStreetMap objects and Population. Last updated {TODO}' #todo lastUpdated - should it be checked in geocint??
-      copyrights:
-        - '© Kontur https://kontur.io/'
-        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
+      type: 'bivariate'
+      copyrights: #todo
       source:
         type: 'vector'
         url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
         tileSize: 512
-    - id: 'osmBuildingQuantity'
+    - id: 'Kontur OpenStreetMap Building Quantity'
       globalOverlay: true
       name: 'OSM Building Quantity'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
-      type: 'bivariate' #todo
-      description: 'This map shows whether all populated houses are mapped in OpenStreetMap. Last updated {TODO}' #todo lastUpdated
-      copyrights:
-        - '© Kontur https://kontur.io/'
-        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
+      type: 'bivariate'
+      copyrights: #todo
       source:
         type: 'vector'
         url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
         tileSize: 512
-    - id: 'osmRoadLength'
+    - id: 'Kontur OpenStreetMap Road Length'
       globalOverlay: true
       name: 'OSM Road Length'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
-      type: 'bivariate' #todo
-      description: 'This map shows whether populated places have roads to visit them or escape in time of disaster. Last updated {TODO}' #todo lastUpdated
-      copyrights:
-        - '© Kontur https://kontur.io/'
-        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
+      type: 'bivariate'
+      copyrights: #todo
       source:
         type: 'vector'
         url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
         tileSize: 512
-    - id: 'osmMappingActivity'
+    - id: 'Kontur OpenStreetMap Mapping Activity'
       globalOverlay: true
       name: 'OSM Mapping Activity'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
-      type: 'bivariate' #todo
-      description: 'Greener - stronger local community, darker - more active mapping. This map shows how active mapping in the area in last two years is. All mapping hours are shown against mapping hours we can surely attribute to an active local user. Mapper is considered active if they contributed more than 30 mapping hours during last two years. Position of active mapper is estimated by region of their highest activity. A mapping hour is a hour in which an user uploaded at least one tagged object. Last updated {TODO}' #todo lastUpdated
-      copyrights:
-        - '© Kontur https://kontur.io/'
-        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
+      type: 'bivariate'
+      copyrights: #todo
       source:
         type: 'vector'
         url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
         tileSize: 512
-    - id: 'osmAntiquity'
+    - id: 'Kontur OpenStreetMap Antiquity'
       globalOverlay: true
       name: 'OSM Antiquity'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
-      type: 'bivariate' #todo
-      description: 'This map shows how old is OpenStreetMap and how many times users view in particular region of OpenStreetMap for the last 30 days. Explore to find the least edited, but the most popular areas at the same time. Last updated {TODO}' #todo lastUpdated
-      copyrights:
-        - '© Kontur https://kontur.io/'
-        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
+      type: 'bivariate'
+      copyrights: #todo
+      source:
+        type: 'vector'
+        url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        tileSize: 512
+    - id: 'Kontur Nighttime Heatwave Risk'
+      globalOverlay: true
+      name: 'Kontur Nighttime Heatwave Risk'
+      category: 'overlay'
+      group: 'Kontur Analytical Layers'
+      type: 'bivariate'
+      copyrights: #todo
       source:
         type: 'vector'
         url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'

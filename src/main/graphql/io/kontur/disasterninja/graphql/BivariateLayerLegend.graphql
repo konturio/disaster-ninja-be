@@ -1,0 +1,36 @@
+query BivariateLayerLegend {
+    allStatistic {
+        colors {
+            fallback,
+            combinations {
+                color,
+                corner,
+                color_comment
+            }
+        },
+        overlays {
+            name,
+            description,
+            x {
+                label,
+                steps {
+                  label,
+                  value
+                },
+                quotient
+            },
+            y {
+                label,
+                steps {
+                    label,
+                    value
+                },
+                quotient
+            },
+            colors {
+                id,
+                color
+            }
+        }
+    }
+}

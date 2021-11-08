@@ -12,6 +12,8 @@ import java.util.Map;
 public class LegendStep {
     private final String paramName;
     private final String paramValue;
+    private final String axis;
+    private final Double value;
     private final String stepName;
     private final LayerStepShape stepShape;
     private final Map<String, String> style;
