@@ -47,7 +47,13 @@ public class OsmLayerProvider implements LayerProvider {
 
     protected static <T> T getFeatureProperty(Feature f, String propertyName, Class<T> clazz) {
         Object value = f.getProperties() == null ? null : (f.getProperties()).get(propertyName);
-        return value == null ? null : clazz.cast(value);
+        if (value == null) {
+            return null;
+        }
+        if (clazz == Integer.class && !(value instanceof Integer)) {
+            value = ((Number) value).intValue();
+        }
+        return clazz.cast(value);
     }
 
     /**

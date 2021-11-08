@@ -9736,7 +9736,7 @@
       "properties": {
         "name": "Kontur Urban Core",
         "totalPopulation": 150665683,
-        "population": 102411536,
+        "population": 102411536.0,
         "totalAreaKm2": 1631751.6,
         "id": "kontur_urban_core",
         "percentage": "0-68",
@@ -37961,8 +37961,8 @@
       },
       "properties": {
         "name": "Kontur Settled Periphery",
-        "totalPopulation": 150665683,
-        "population": 48254147,
+        "totalPopulation": 150665683.0,
+        "population": 48254147.0,
         "totalAreaKm2": 1631751.6,
         "id": "kontur_settled_periphery",
         "percentage": "68-100",
