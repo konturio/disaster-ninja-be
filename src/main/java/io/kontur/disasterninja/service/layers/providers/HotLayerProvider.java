@@ -30,7 +30,7 @@ public class HotLayerProvider implements LayerProvider {
             return List.of();
         }
         List<Feature> hotProjectLayers = kcApiClient.getHotProjectLayer(geoJSON);
-        Layer layer = fromHotProjectLayers(hotProjectLayers, false);
+        Layer layer = fromHotProjectLayers(hotProjectLayers);
         return layer == null ? List.of() : List.of(layer);
     }
 
@@ -50,18 +50,17 @@ public class HotLayerProvider implements LayerProvider {
     /**
      * A single layer is constructed from all <b>dto</b> features
      */
-    Layer fromHotProjectLayers(List<Feature> dto, boolean includeSourceData) {
+    Layer fromHotProjectLayers(List<Feature> dto) {
         if (dto == null) {
             return null;
         }
         //The entire collection is one layer
-        Layer.LayerBuilder builder = Layer.builder().id(HOT_LAYER_ID);
-        if (includeSourceData) {
-            builder.source(LayerSource.builder()
-                .type(GEOJSON)
-                .data(new FeatureCollection(dto.toArray(new Feature[0])))
-                .build());
-        }
+        Layer.LayerBuilder builder = Layer.builder()
+            .id(HOT_LAYER_ID)
+            .source(LayerSource.builder() //source is required to calculate this layers legend
+            .type(GEOJSON)
+            .data(new FeatureCollection(dto.toArray(new Feature[0])))
+            .build());
         return builder.build();
         //the rest params are set by LayerConfigService
     }

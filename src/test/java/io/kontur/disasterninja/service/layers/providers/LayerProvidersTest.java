@@ -99,7 +99,7 @@ public class LayerProvidersTest {
                 getClass().getResource("/io/kontur/disasterninja/client/layers/hotprojects.json"),
                 FeatureCollection.class)
             .getFeatures());
-        Layer result = hotLayerProvider.fromHotProjectLayers(features, true);
+        Layer result = hotLayerProvider.fromHotProjectLayers(features);
         Assertions.assertEquals("hotProjects", result.getId());
         Assertions.assertNotNull(result.getSource());
         Assertions.assertEquals(10, result.getSource().getData().getFeatures().length);
