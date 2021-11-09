@@ -5,6 +5,7 @@ import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
@@ -17,8 +18,10 @@ import java.util.stream.Collectors;
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.NAME;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 import static io.kontur.disasterninja.service.layers.providers.OsmLayerProvider.getFeatureProperty;
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Service
+@Order(HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
 public class UrbanAndPeripheryLayerProvider implements LayerProvider {
     private static final Set<String> providedLayers = Set.of(SETTL_PERIPHERY_LAYER_ID, URBAN_CORE_LAYER_ID);

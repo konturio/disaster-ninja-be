@@ -5,6 +5,7 @@ import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
@@ -16,8 +17,10 @@ import java.util.UUID;
 
 import static io.kontur.disasterninja.client.KcApiClient.HOT_PROJECTS;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Service
+@Order(HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
 public class HotLayerProvider implements LayerProvider {
 

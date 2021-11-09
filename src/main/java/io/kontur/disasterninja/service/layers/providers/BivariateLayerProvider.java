@@ -10,6 +10,7 @@ import io.kontur.disasterninja.service.layers.LayerConfigService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Geometry;
 
@@ -21,8 +22,10 @@ import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
 import static io.kontur.disasterninja.domain.enums.LegendType.BIVARIATE;
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Service
+@Order(HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
 public class BivariateLayerProvider implements LayerProvider {
     private static final Logger LOG = LoggerFactory.getLogger(BivariateLayerProvider.class);

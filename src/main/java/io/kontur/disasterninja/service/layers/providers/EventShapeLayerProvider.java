@@ -6,6 +6,7 @@ import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.service.EventApiService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
@@ -19,8 +20,10 @@ import java.util.UUID;
 
 import static io.kontur.disasterninja.config.logging.LogHttpTraceRepository.LOG;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Service
+@Order(HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
 public class EventShapeLayerProvider implements LayerProvider {
     private final EventApiService eventApiService;
