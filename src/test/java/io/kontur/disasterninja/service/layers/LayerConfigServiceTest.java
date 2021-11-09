@@ -31,7 +31,6 @@ public class LayerConfigServiceTest {
         return new Feature(new Point(new double[]{1, 2}), properties);
     }
 
-
     @Test
     public void globalOverlaysTest() {
         Assertions.assertFalse(service.getGlobalOverlays().isEmpty());
@@ -53,6 +52,7 @@ public class LayerConfigServiceTest {
 
         Assertions.assertTrue(hot.isGlobalOverlay());
         Assertions.assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
+        Assertions.assertTrue(hot.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("Hot Projects", hot.getName());
         Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
         Assertions.assertEquals(OVERLAY, hot.getCategory());
@@ -93,6 +93,7 @@ public class LayerConfigServiceTest {
 
         Assertions.assertTrue(hot.isGlobalOverlay());
         Assertions.assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
+        Assertions.assertTrue(hot.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("Hot Projects", hot.getName());
         Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
         Assertions.assertEquals(OVERLAY, hot.getCategory());
@@ -122,6 +123,7 @@ public class LayerConfigServiceTest {
 
         Assertions.assertTrue(hot.isGlobalOverlay());
         Assertions.assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
+        Assertions.assertTrue(hot.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("Hot Projects", hot.getName());
         Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
         Assertions.assertEquals(OVERLAY, hot.getCategory());
@@ -135,12 +137,30 @@ public class LayerConfigServiceTest {
     @Test
     public void urbanTest() {
         Layer urban = Layer.builder()
+            .id("kontur_urban_core")
+            .build();
+        service.applyConfig(urban);
+
+        Assertions.assertTrue(urban.isGlobalOverlay());
+        Assertions.assertTrue(urban.isDisplayLegendIfNoFeaturesExist());
+        Assertions.assertTrue(urban.isBoundaryRequiredForRetrieval());
+        //description is not populated for this layer (it's populated by LayerProvider and not changed by configs)
+        Assertions.assertNull(urban.getDescription());
+
+        Assertions.assertNotNull(urban.getLegend());
+        Assertions.assertEquals(SIMPLE, urban.getLegend().getType());
+    }
+
+    @Test
+    public void settledPeripheryTest() {
+        Layer urban = Layer.builder()
             .id("kontur_settled_periphery")
             .build();
         service.applyConfig(urban);
 
         Assertions.assertTrue(urban.isGlobalOverlay());
         Assertions.assertTrue(urban.isDisplayLegendIfNoFeaturesExist());
+        Assertions.assertTrue(urban.isBoundaryRequiredForRetrieval());
         //description is not populated for this layer (it's populated by LayerProvider and not changed by configs)
         Assertions.assertNull(urban.getDescription());
 
@@ -158,6 +178,7 @@ public class LayerConfigServiceTest {
         //layer
         Assertions.assertTrue(activeContributors.isGlobalOverlay());
         Assertions.assertTrue(activeContributors.isDisplayLegendIfNoFeaturesExist());
+        Assertions.assertFalse(activeContributors.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("Active contributors", activeContributors.getName());
         Assertions.assertEquals("Kontur", activeContributors.getGroup());
         Assertions.assertEquals(OVERLAY, activeContributors.getCategory());
@@ -181,10 +202,15 @@ public class LayerConfigServiceTest {
             analytics.getSource().getUrl());
         Assertions.assertTrue(analytics.isGlobalOverlay());
         Assertions.assertFalse(analytics.isDisplayLegendIfNoFeaturesExist());
+        Assertions.assertFalse(analytics.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("OSM Object Quantity", analytics.getName());
         Assertions.assertEquals(OVERLAY, analytics.getCategory());
         Assertions.assertEquals("Kontur Analytical Layers", analytics.getGroup());
-        //copyrights //todo
+        //copyrights
+        Assertions.assertEquals(4, analytics.getCopyrights().size());
+        Assertions.assertEquals("© OpenStreetMap contributors https://www.openstreetmap.org/copyright",
+            analytics.getCopyrights().get(0));
+        //skipping the rest
     }
 
     //even shape tests
@@ -199,6 +225,7 @@ public class LayerConfigServiceTest {
         //layer
         Assertions.assertFalse(eventShape.isGlobalOverlay());
         Assertions.assertTrue(eventShape.isDisplayLegendIfNoFeaturesExist());
+        Assertions.assertFalse(eventShape.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("Event shape", eventShape.getName());
         Assertions.assertEquals("Layers in selected area", eventShape.getGroup());
         //legend
@@ -224,6 +251,7 @@ public class LayerConfigServiceTest {
 
         Assertions.assertNotNull(layer.getLegend());
         Assertions.assertFalse(layer.getLegend().getSteps().isEmpty());
+        Assertions.assertFalse(layer.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
         Assertions.assertEquals(1, layer.getLegend().getSteps().size());
         Assertions.assertEquals("Exposure Area", layer.getLegend().getSteps().get(0).getStepName());
@@ -254,6 +282,7 @@ public class LayerConfigServiceTest {
             .build();
 
         service.applyConfig(layer);
+        Assertions.assertFalse(layer.isBoundaryRequiredForRetrieval());
 
         Assertions.assertNotNull(layer.getLegend());
         Assertions.assertFalse(layer.getLegend().getSteps().isEmpty());
@@ -286,6 +315,7 @@ public class LayerConfigServiceTest {
             .build();
 
         service.applyConfig(layer);
+        Assertions.assertFalse(layer.isBoundaryRequiredForRetrieval());
 
         Assertions.assertNotNull(layer.getLegend());
         Assertions.assertFalse(layer.getLegend().getSteps().isEmpty());

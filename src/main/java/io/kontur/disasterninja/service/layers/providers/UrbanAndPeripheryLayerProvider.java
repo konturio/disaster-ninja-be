@@ -1,18 +1,17 @@
 package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.client.InsightsApiClient;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.NAME;
@@ -36,20 +35,32 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
         if (geoJSON == null) {
             return List.of();
         }
-        org.wololo.geojson.FeatureCollection urbanCoreAndSettledPeripheryLayers = insightsApiClient
+        org.wololo.geojson.FeatureCollection features = insightsApiClient
             .getUrbanCoreAndSettledPeripheryLayers(geoJSON);
-        return fromUrbanCoreAndPeripheryLayer(urbanCoreAndSettledPeripheryLayers, false);
+        return providedLayers.stream().map(layerId -> urbanOrPeripheryLayer(features, layerId, false))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     /**
-     * Returns null, as it's not possible to get urbanCore/settledPeriphery layers
-     * without a geoJson boundary
-     *
-     * @return null
+     * @param geoJson required to find features by intersection
+     * @param layerId layer id to retrieve
+     * @param eventId not used
+     * @return
      */
     @Override
-    public Layer obtainLayer(String layerId, UUID eventId) {
-        return null;
+    public Layer obtainLayer(Geometry geoJson, String layerId, UUID eventId) {
+        if (!isApplicable(layerId)) {
+            return null;
+        }
+        if (geoJson == null) {
+            throw new WebApplicationException("GeoJson boundary must be specified for layer " + layerId,
+                HttpStatus.BAD_REQUEST);
+        }
+        org.wololo.geojson.FeatureCollection features = insightsApiClient
+            .getUrbanCoreAndSettledPeripheryLayers(geoJson);
+
+        return urbanOrPeripheryLayer(features, layerId, true);
     }
 
     @Override
@@ -57,14 +68,16 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
         return providedLayers.contains(layerId);
     }
 
-    List<Layer> fromUrbanCoreAndPeripheryLayer(org.wololo.geojson.FeatureCollection dto, boolean includeSourceData) {
-        if (dto == null) {
-            return List.of();
+    Layer urbanOrPeripheryLayer(org.wololo.geojson.FeatureCollection dto, String layerId, boolean includeSourceData) {
+        if (dto == null || dto.getFeatures() == null || dto.getFeatures().length == 0) {
+            return null;
         }
-        return Arrays.stream(dto.getFeatures()).map(f -> {
+        return Arrays.stream(dto.getFeatures()).filter(it -> layerId.equals(it.getId()))
+            .findFirst()
+            .map(f -> {
                 Layer.LayerBuilder builder = Layer.builder()
-                    .id((String) f.getId())
-                    .name((String) f.getProperties().get(NAME))
+                    .id(layerId)
+                    .name(getFeatureProperty(f, NAME, String.class))
                     .description(description(f));
                 if (includeSourceData) {
                     builder.source(LayerSource.builder()
@@ -73,8 +86,7 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
                         .build());
                 }
                 return builder.build();
-            }
-        ).collect(Collectors.toList());
+            }).get();
     }
 
     private String description(Feature f) {

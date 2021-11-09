@@ -14,6 +14,8 @@ import org.wololo.geojson.Geometry;
 
 import java.util.List;
 
+import static io.kontur.disasterninja.client.KcApiClient.HOT_PROJECTS;
+
 @Disabled("just for local debugging")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class KcApiClientIT {
@@ -31,8 +33,8 @@ public class KcApiClientIT {
     public void kcOsmTest() throws JsonProcessingException {
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
             "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
-        List<Feature> features = kcApiClient.getOsmLayers(new ObjectMapper().readValue(json,
-            Geometry.class));
+        List<Feature> features = kcApiClient.getCollectionItemsByGeometry(new ObjectMapper().readValue(json,
+            Geometry.class), "osmlayer");
         List<Layer> layers = osmLayerProvider.fromOsmLayers(features);
         Assertions.assertFalse(layers.isEmpty());
     }
@@ -43,8 +45,8 @@ public class KcApiClientIT {
             "6.276395795],[-10.7264328,6.274774784],[-10.73141098,6.260612054],[-10.696048737,6.226739391]," +
             "[-10.656738281,6.219060146],[-10.651073456,6.246363619],[-10.649528503,6.265304567]," +
             "[-10.654764175,6.276395795]]]]}";
-        List<Feature> features = kcApiClient.getHotProjectLayer(new ObjectMapper().readValue(json,
-            Geometry.class));
+        List<Feature> features = kcApiClient.getCollectionItemsByGeometry(new ObjectMapper().readValue(json,
+            Geometry.class), HOT_PROJECTS);
         Layer layer = hotLayerProvider.fromHotProjectLayers(features);
         Assertions.assertNotNull(layer);
     }

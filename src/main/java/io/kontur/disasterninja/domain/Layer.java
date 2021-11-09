@@ -18,6 +18,7 @@ public class Layer {
     private final String id;
     private boolean globalOverlay;
     private boolean displayLegendIfNoFeaturesExist;
+    private boolean boundaryRequiredForRetrieval;
     //layer summary
     private String name;
     private String description;
@@ -40,6 +41,7 @@ public class Layer {
     public void mergeFrom(Layer other) {
         this.globalOverlay = other.isGlobalOverlay();
         this.displayLegendIfNoFeaturesExist = other.isDisplayLegendIfNoFeaturesExist();
+        this.boundaryRequiredForRetrieval = other.boundaryRequiredForRetrieval;
 
         if (other.getName() != null) {
             this.name = other.getName();

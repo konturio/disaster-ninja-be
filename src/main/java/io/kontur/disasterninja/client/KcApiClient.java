@@ -28,8 +28,8 @@ import java.util.stream.Stream;
 public class KcApiClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(KcApiClient.class);
-    private static final String HOT_PROJECTS = "hotProjects";
-    private static final String OSM_LAYERS = "osmlayer";
+    public static final String HOT_PROJECTS = "hotProjects";
+    public static final String OSM_LAYERS = "osmlayer";
     RestTemplate kcApiRestTemplate;
     GeoJSONReader reader = new GeoJSONReader();
     @Value("${kontur.platform.kcApi.pageSize}")
@@ -39,19 +39,7 @@ public class KcApiClient {
         this.kcApiRestTemplate = kcApiRestTemplate;
     }
 
-    public List<Feature> getOsmLayers(Geometry geoJSON) {
-        return getCollectionItemsByGeometry(geoJSON, OSM_LAYERS);
-    }
-
-    public Feature getOsmLayer(String featureId) {
-        return getFeatureFromCollection(featureId, OSM_LAYERS);
-    }
-
-    public List<Feature> getHotProjectLayer(Geometry geoJSON) {
-        return getCollectionItemsByGeometry(geoJSON, HOT_PROJECTS);
-    }
-
-    private Feature getFeatureFromCollection(String featureId, String collectionId) {
+    public Feature getFeatureFromCollection(Geometry geoJson, String featureId, String collectionId) {
         String uri = "/collections/{collectionId}/items/{featureId}";
 
         LOG.info("Getting feature by id {} from collection {}", featureId, collectionId);
@@ -64,6 +52,16 @@ public class KcApiClient {
         Feature body = response.getBody();
         if (body == null) {
             LOG.info("Empty response returned for collection {} and featureId {}", collectionId, featureId);
+            return null;
+        }
+
+        if (geoJson != null && body.getGeometry() != null) {
+            if (getJtsGeometry(geoJson).intersects(getJtsGeometry(body.getGeometry()))) {
+                return body;
+            } else {
+                LOG.info("Feature {} does not intersect with requested boundary {}", body.getId(), geoJson);
+                return null;
+            }
         }
 
         return body;
@@ -80,7 +78,7 @@ public class KcApiClient {
             .filter(json -> {
                 Geometry featureGeom = json.getGeometry();
                 return featureGeom == null || //include items without geometry ("global" ones)
-                    geoJsonGeometry.intersects(reader.read(featureGeom));
+                    geoJsonGeometry.intersects(getJtsGeometry(featureGeom));
             })
             .collect(Collectors.toList());
     }

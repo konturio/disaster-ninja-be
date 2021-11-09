@@ -54,6 +54,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
         Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
+        Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(), response.get(0).isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
         Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().toLegend());
     }
@@ -76,6 +77,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
         Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
+        Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(), response.get(0).isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
         Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().toLegend());
     }
@@ -100,6 +102,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
         Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
+        Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(), response.get(0).isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
         Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().toLegend());
     }

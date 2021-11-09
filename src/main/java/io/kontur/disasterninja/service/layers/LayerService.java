@@ -2,11 +2,11 @@ package io.kontur.disasterninja.service.layers;
 
 import io.kontur.disasterninja.client.InsightsApiClient;
 import io.kontur.disasterninja.client.KcApiClient;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.service.EventApiService;
 import io.kontur.disasterninja.service.GeometryTransformer;
 import io.kontur.disasterninja.service.layers.providers.LayerProvider;
-import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,25 +53,28 @@ public class LayerService {
         return new ArrayList<>(layers.values());
     }
 
-    public List<Layer> get(List<String> layerIds, UUID eventId) {
+    public List<Layer> get(GeoJSON geoJSON, List<String> layerIds, UUID eventId) {
+        Geometry boundary = geometryTransformer.getGeometryFromGeoJson(geoJSON);
         List<Layer> result = new ArrayList<>();
 
         for (String layerId : layerIds) {
             Layer layer = null;
-            //find first by layer id and use it
             for (LayerProvider provider : providers) {
-                layer = provider.obtainLayer(layerId, eventId);
-                if (layer != null) {
-                    LOG.info("Found layer by id {} by provider {}", layerId, provider.getClass().getSimpleName());
-                    layerConfigService.applyConfig(layer);
-                    result.add(layer);
+                //find first by layer id and use it
+                if (provider.isApplicable(layerId)) {
+                    layer = provider.obtainLayer(boundary, layerId, eventId);
+                    if (layer != null) {
+                        LOG.info("Found layer by id {} by provider {}", layerId, provider.getClass().getSimpleName());
+                        layerConfigService.applyConfig(layer);
+                        result.add(layer);
+                    }
                     break;
                 }
             }
             //if not found - use global overlay from config
             if (layer == null) {
                 layer = layerConfigService.getGlobalOverlays().get(layerId);
-                if (layer != null) {
+                if (layer != null && layer.getSource() != null) {
                     LOG.info("No loaded layer found by id, using a global overlay: {}", layerId);
                     result.add(layer);
                 }
@@ -79,7 +82,8 @@ public class LayerService {
         }
 
         if (result.isEmpty()) {
-            throw new WebApplicationException("Layer not found by id!", HttpStatus.NOT_FOUND);
+            throw new WebApplicationException("Layer not found / no layer data found by id and boundary!",
+                HttpStatus.NOT_FOUND);
         }
         return result;
     }

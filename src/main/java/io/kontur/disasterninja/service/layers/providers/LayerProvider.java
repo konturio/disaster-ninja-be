@@ -21,7 +21,7 @@ public interface LayerProvider {
      */
     List<Layer> obtainLayers(Geometry geoJSON, UUID eventId);
 
-    Layer obtainLayer(String layerId, UUID eventId);
+    Layer obtainLayer(Geometry geoJSON, String layerId, UUID eventId);
 
     boolean isApplicable(String layerId);
 }

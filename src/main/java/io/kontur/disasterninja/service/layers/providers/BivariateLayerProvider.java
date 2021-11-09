@@ -6,12 +6,14 @@ import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.Legend;
 import io.kontur.disasterninja.domain.LegendStep;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
+import io.kontur.disasterninja.service.layers.LayerConfigService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Geometry;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
@@ -25,6 +27,17 @@ import static io.kontur.disasterninja.domain.enums.LegendType.BIVARIATE;
 public class BivariateLayerProvider implements LayerProvider {
     private static final Logger LOG = LoggerFactory.getLogger(BivariateLayerProvider.class);
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
+    private final LayerConfigService layerConfigService;
+    private List<String> bivariateLayerIds;
+
+    @PostConstruct
+    private void init() {
+        bivariateLayerIds = layerConfigService.getGlobalOverlays().values().stream()
+            .filter(it -> {
+                return it.getLegend() != null && it.getLegend().getType() == BIVARIATE;
+            }).map(Layer::getId).collect(Collectors.toList());
+    }
+
 
     private static String notEmptyLabel(Supplier<String> labelSupplier) {
         if (labelSupplier.get() != null && !labelSupplier.get().isBlank()) {
@@ -51,7 +64,7 @@ public class BivariateLayerProvider implements LayerProvider {
 
     @Override
     public boolean isApplicable(String layerId) {
-        return false;
+        return bivariateLayerIds.contains(layerId);
     }
 
     protected Layer fromOverlay(BivariateLayerLegendQuery.Overlay overlay) {
@@ -69,11 +82,16 @@ public class BivariateLayerProvider implements LayerProvider {
     }
 
     /**
+     * @param geoJSON not used
+     * @param layerId layer id to retrieve
      * @param eventId not used
      * @return Bivariate layer by ID from insights-api graphql api
      */
     @Override
-    public Layer obtainLayer(String layerId, UUID eventId) {
+    public Layer obtainLayer(Geometry geoJSON, String layerId, UUID eventId) {
+        if (!isApplicable(layerId)) {
+            return null;
+        }
         try {
             return insightsApiGraphqlClient.getBivariateOverlays().get()
                 .stream()

@@ -11,14 +11,18 @@ import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.Geometry;
+import org.wololo.geojson.MultiPolygon;
+import org.wololo.geojson.Point;
 
 import java.io.IOException;
 import java.util.List;
 
+import static io.kontur.disasterninja.client.KcApiClient.OSM_LAYERS;
 import static io.kontur.disasterninja.util.TestUtil.readFile;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -147,9 +151,55 @@ class KcApiClientTest {
             );
 
         //when
-        Feature event = client.getOsmLayer("Benin_cotonou_pleiade_2016");
+        Feature event = client.getFeatureFromCollection(null, "Benin_cotonou_pleiade_2016",
+            OSM_LAYERS); //not limited by geoJson
 
         //then
         assertEquals("Benin_cotonou_pleiade_2016", event.getId());
+        assertEquals(MultiPolygon.class, event.getGeometry().getClass());
+        assertEquals(2, ((MultiPolygon) event.getGeometry()).getCoordinates().length);
+    }
+
+    @Test
+    public void singleFeatureFromCollectionWithBoundaryTest() {
+        //given
+        server.expect(ExpectedCount.times(1), r -> assertThat(r.getURI().toString(), endsWith(
+                "/collections/osmlayer/items/Benin_cotonou_pleiade_2016")))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(request -> {
+                    return withSuccess(readFile(this, "layers/osmlayer_feature.json"),
+                        MediaType.APPLICATION_JSON).createResponse(request);
+                }
+            );
+
+        //when geoJson intersects with layer
+        Geometry geoJson = new Point(new double[]{1.722946974, 6.266307793});
+        Feature event = client.getFeatureFromCollection(geoJson, "Benin_cotonou_pleiade_2016", OSM_LAYERS); //limited by geoJson
+
+        //then
+        assertEquals("Benin_cotonou_pleiade_2016", event.getId());
+        assertEquals(MultiPolygon.class, event.getGeometry().getClass());
+        assertEquals(2, ((MultiPolygon) event.getGeometry()).getCoordinates().length);
+    }
+
+    @Test
+    public void singleFeatureFromCollectionWithNotIntersectingBoundaryTest() {
+        //given
+        server.expect(ExpectedCount.times(1), r -> assertThat(r.getURI().toString(), endsWith(
+                "/collections/osmlayer/items/Benin_cotonou_pleiade_2016")))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(request -> {
+                    return withSuccess(readFile(this, "layers/osmlayer_feature.json"),
+                        MediaType.APPLICATION_JSON).createResponse(request);
+                }
+            );
+
+        //when
+        //1 geoJson intersects with layer
+        Geometry geoJson = new Point(new double[]{0, 0});
+        Feature event = client.getFeatureFromCollection(geoJson, "Benin_cotonou_pleiade_2016", OSM_LAYERS); //limited by geoJson
+
+        //then
+        assertNull(event);
     }
 }

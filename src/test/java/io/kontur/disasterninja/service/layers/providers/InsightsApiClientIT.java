@@ -12,7 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
-import java.util.List;
+import static io.kontur.disasterninja.service.layers.providers.LayerProvider.SETTL_PERIPHERY_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.LayerProvider.URBAN_CORE_LAYER_ID;
 
 @Disabled("just for local debugging")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -30,7 +31,9 @@ public class InsightsApiClientIT {
         FeatureCollection dto = insightsApiClient.getUrbanCoreAndSettledPeripheryLayers(new ObjectMapper().readValue(json,
             Geometry.class));
 
-        List<Layer> layers = urbanAndPeripheryLayerProvider.fromUrbanCoreAndPeripheryLayer(dto, false);
-        Assertions.assertFalse(layers.isEmpty());
+        Layer urban = urbanAndPeripheryLayerProvider.urbanOrPeripheryLayer(dto, URBAN_CORE_LAYER_ID, false);
+        Assertions.assertNotNull(urban);
+        Layer periphery = urbanAndPeripheryLayerProvider.urbanOrPeripheryLayer(dto, SETTL_PERIPHERY_LAYER_ID, false);
+        Assertions.assertNotNull(periphery);
     }
 }

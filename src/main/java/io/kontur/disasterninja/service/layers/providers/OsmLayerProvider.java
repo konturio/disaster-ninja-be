@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static io.kontur.disasterninja.client.KcApiClient.OSM_LAYERS;
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
@@ -66,7 +67,7 @@ public class OsmLayerProvider implements LayerProvider {
         if (geoJSON == null) {
             return List.of();
         }
-        List<Feature> osmLayers = kcApiClient.getOsmLayers(geoJSON);
+        List<Feature> osmLayers = kcApiClient.getCollectionItemsByGeometry(geoJSON, OSM_LAYERS);
         return fromOsmLayers(osmLayers);
     }
 
@@ -76,11 +77,11 @@ public class OsmLayerProvider implements LayerProvider {
      * @return Entire layer, not limited by geometry
      */
     @Override
-    public Layer obtainLayer(String layerId, UUID eventId) {
+    public Layer obtainLayer(Geometry geoJSON, String layerId, UUID eventId) {
         if (!isApplicable(layerId)) {
             return null;
         }
-        return fromOsmLayer(kcApiClient.getOsmLayer(layerId), true);
+        return fromOsmLayer(kcApiClient.getFeatureFromCollection(geoJSON, layerId, OSM_LAYERS), true);
     }
 
     @Override
