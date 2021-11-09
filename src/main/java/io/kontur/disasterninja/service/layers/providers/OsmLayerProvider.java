@@ -23,10 +23,10 @@ import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
-import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Service
-@Order(LOWEST_PRECEDENCE)
+@Order(HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
 public class OsmLayerProvider implements LayerProvider {
 
