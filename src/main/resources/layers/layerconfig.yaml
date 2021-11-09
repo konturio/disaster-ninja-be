@@ -246,7 +246,8 @@ layers:
     ##end of Event Shape
 
     - id: 'kontur_urban_core'
-      globalOverlay: true
+      globalOverlay: false
+      name: "Kontur Settled Periphery"
       displayLegendIfNoFeaturesExist: true
       boundaryRequiredForRetrieval: true
       group: 'Layers in selected area'
@@ -265,7 +266,8 @@ layers:
               casing-width: 3
               casing-opacity: 0.5
     - id: 'kontur_settled_periphery'
-      globalOverlay: true
+      globalOverlay: false
+      name: "Kontur Settled Periphery"
       displayLegendIfNoFeaturesExist: true
       boundaryRequiredForRetrieval: true
       group: 'Layers in selected area'
@@ -298,6 +300,7 @@ layers:
       source:
         type: 'vector'
         url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        sourceLayer: 'users' #todo 'hexagon' is the sourceLayer for geometries, 'users' for nicknames
         tileSize: 512
       legend:
         type: 'simple'
@@ -318,7 +321,7 @@ layers:
               color: '#434343' #todo use icon instead
 
     - id: 'hotProjects'
-      globalOverlay: true
+      globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: true
       name: 'Hot Projects'
@@ -360,6 +363,7 @@ layers:
       source:
         type: 'vector'
         url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        sourceLayer: 'stats'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Building Quantity'
       globalOverlay: true
@@ -377,6 +381,7 @@ layers:
       source:
         type: 'vector'
         url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        sourceLayer: 'stats'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Road Length'
       globalOverlay: true
@@ -394,6 +399,7 @@ layers:
       source:
         type: 'vector'
         url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        sourceLayer: 'stats'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Mapping Activity'
       globalOverlay: true
@@ -410,6 +416,7 @@ layers:
       source:
         type: 'vector'
         url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        sourceLayer: 'stats'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Antiquity'
       globalOverlay: true
@@ -426,6 +433,7 @@ layers:
       source:
         type: 'vector'
         url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        sourceLayer: 'stats'
         tileSize: 512
     - id: 'Kontur Nighttime Heatwave Risk'
       globalOverlay: true
@@ -449,5 +457,6 @@ layers:
       source:
         type: 'vector'
         url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        sourceLayer: 'stats'
         tileSize: 512
   ##### Category: BASELINE

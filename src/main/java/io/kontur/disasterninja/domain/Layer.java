@@ -74,7 +74,7 @@ public class Layer {
         LayerSource otherSource = other.getSource();
         if (otherSource != null) {
             this.source = new LayerSource(otherSource.getType(), otherSource.getTileSize(),
-                otherSource.getUrl(), this.source != null ? this.source.getData() : null); //sic! source.data is not replaced
+                otherSource.getUrl(), otherSource.getSourceLayer(), this.source != null ? this.source.getData() : null); //sic! source.data is not replaced
         }
     }
 

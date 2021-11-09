@@ -50,7 +50,7 @@ public class LayerConfigServiceTest {
                 )).build()).build();
         service.applyConfig(hot);
 
-        Assertions.assertTrue(hot.isGlobalOverlay());
+        Assertions.assertFalse(hot.isGlobalOverlay());
         Assertions.assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertTrue(hot.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("Hot Projects", hot.getName());
@@ -91,7 +91,7 @@ public class LayerConfigServiceTest {
                 )).build()).build();
         service.applyConfig(hot);
 
-        Assertions.assertTrue(hot.isGlobalOverlay());
+        Assertions.assertFalse(hot.isGlobalOverlay());
         Assertions.assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertTrue(hot.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("Hot Projects", hot.getName());
@@ -121,7 +121,7 @@ public class LayerConfigServiceTest {
             .build();
         service.applyConfig(hot);
 
-        Assertions.assertTrue(hot.isGlobalOverlay());
+        Assertions.assertFalse(hot.isGlobalOverlay());
         Assertions.assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertTrue(hot.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("Hot Projects", hot.getName());
@@ -141,7 +141,7 @@ public class LayerConfigServiceTest {
             .build();
         service.applyConfig(urban);
 
-        Assertions.assertTrue(urban.isGlobalOverlay());
+        Assertions.assertFalse(urban.isGlobalOverlay());
         Assertions.assertTrue(urban.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertTrue(urban.isBoundaryRequiredForRetrieval());
         //description is not populated for this layer (it's populated by LayerProvider and not changed by configs)
@@ -158,7 +158,7 @@ public class LayerConfigServiceTest {
             .build();
         service.applyConfig(urban);
 
-        Assertions.assertTrue(urban.isGlobalOverlay());
+        Assertions.assertFalse(urban.isGlobalOverlay());
         Assertions.assertTrue(urban.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertTrue(urban.isBoundaryRequiredForRetrieval());
         //description is not populated for this layer (it's populated by LayerProvider and not changed by configs)

@@ -44,11 +44,20 @@ public class LayerServiceTest {
     }
 
     @Test
-    public void globalOverlaysTest() {
+    public void globalOverlaysListTest() {
         //all providers return nothing (= no features matched by geometry), so only global overlays should be returned
         List<Layer> layers = layerService.getList(new Point(new double[]{1, 2}), null);
         //check all layers with 'globalOverlay: true' are present
-        Assertions.assertEquals(10, layers.size());
+        Assertions.assertEquals(7, layers.size());
+        System.out.println(layers);
+    }
+
+    @Test
+    public void globalOverlaysGetTest() {
+        //all providers return nothing (= no features matched by geometry), so global overlay should be returned
+        List<Layer> layers = layerService.get(new Point(new double[]{1, 2}), List.of("Kontur Nighttime Heatwave Risk"),
+            null);
+        Assertions.assertEquals(1, layers.size());
         System.out.println(layers);
     }
 }

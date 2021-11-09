@@ -5,6 +5,7 @@ import io.kontur.disasterninja.domain.DtoFeatureProperties;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
+import io.kontur.disasterninja.service.layers.LayerConfigService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
@@ -12,10 +13,8 @@ import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import javax.annotation.PostConstruct;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.client.KcApiClient.OSM_LAYERS;
@@ -31,6 +30,13 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 public class OsmLayerProvider implements LayerProvider {
 
     private final KcApiClient kcApiClient;
+    private final LayerConfigService layerConfigService;
+    private Set<String> globalOverlays;
+
+    @PostConstruct
+    private void init() {
+        globalOverlays = layerConfigService.getGlobalOverlays().keySet();
+    }
 
     private static <T> T getMapValueFromProperty(Feature f, String propertyName, Object mapKey, Class<T> clazz) {
         Map map = getFeatureProperty(f, propertyName, Map.class);
@@ -86,7 +92,7 @@ public class OsmLayerProvider implements LayerProvider {
 
     @Override
     public boolean isApplicable(String layerId) {
-        return true;
+        return !globalOverlays.contains(layerId);
     }
 
     /**
