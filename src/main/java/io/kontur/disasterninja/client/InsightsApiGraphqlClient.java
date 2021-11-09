@@ -52,10 +52,8 @@ public class InsightsApiGraphqlClient {
                     if (response.getData() != null &&
                         response.getData().allStatistic() != null) {
                         future.complete(response.getData().allStatistic().overlays());
-                    } else {
-                        future.completeExceptionally(new WebApplicationException("Exception when getting data from " +
-                            "insights-api using apollo client: no statistic data in response", HttpStatus.NOT_FOUND));
                     }
+                    future.complete(List.of());
                 }
 
                 @Override

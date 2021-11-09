@@ -47,7 +47,7 @@ public class LayerController {
     @ApiResponse(responseCode = "404", description = "Layer is not found", content = @Content(mediaType = "application/json"))
     @GetMapping(produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
     public List<LayerDetailsDto> getDetails(@Parameter(description = "List of layer ids to retrieve") @RequestParam List<String> layerIds,
-                                            @Parameter(description = "EventId for EventShape layer") @RequestParam UUID eventId) {
+                                            @Parameter(description = "EventId for EventShape layer") @RequestParam(required = false) UUID eventId) {
         return layerService.get(layerIds, eventId)
             .stream().map(LayerDetailsDto::fromLayer)
             .collect(Collectors.toList());

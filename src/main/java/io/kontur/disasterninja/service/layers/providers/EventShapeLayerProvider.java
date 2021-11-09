@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.service.layers.providers;
 
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.dto.EventDto;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static io.kontur.disasterninja.config.logging.LogHttpTraceRepository.LOG;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 
 @Service
@@ -32,11 +34,16 @@ public class EventShapeLayerProvider implements LayerProvider {
         if (eventId == null) {
             return List.of();
         }
-        Layer layer = fromEventDto(eventApiService.getEvent(eventId), false);
-        if (layer == null) {
-            return List.of();
+        EventDto eventDto;
+
+        try {
+            eventDto = eventApiService.getEvent(eventId);
+        } catch (WebApplicationException e) {
+            LOG.warn("Can't load event: {}", e.message);
+            return null;
         }
 
+        Layer layer = fromEventDto(eventDto, false);
         if (layer.getSource() != null && layer.getSource().getData() != null) {
             Feature[] filteredFeatures = filterFeaturesByGeometry(layer.getSource().getData().getFeatures(), geoJson);
             layer.getSource().setData(new FeatureCollection(filteredFeatures));
@@ -53,7 +60,13 @@ public class EventShapeLayerProvider implements LayerProvider {
         if (!isApplicable(layerId) || eventId == null) {
             return null;
         }
-        EventDto eventDto = eventApiService.getEvent(eventId);
+        EventDto eventDto;
+        try {
+            eventDto = eventApiService.getEvent(eventId);
+        } catch (WebApplicationException e) {
+            LOG.warn("Can't load event: {}", e.message);
+            return null;
+        }
         return fromEventDto(eventDto, true);
     }
 
