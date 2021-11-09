@@ -247,7 +247,7 @@ layers:
 
     - id: 'kontur_urban_core'
       globalOverlay: false
-      name: "Kontur Settled Periphery"
+      name: "Kontur Urban Core"
       displayLegendIfNoFeaturesExist: true
       boundaryRequiredForRetrieval: true
       group: 'Layers in selected area'
