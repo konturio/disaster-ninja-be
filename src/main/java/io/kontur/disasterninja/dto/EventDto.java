@@ -19,6 +19,6 @@ public class EventDto {
     private EventType eventType;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private FeatureCollection latestEpisodeGeojson;
-    private String location;
+    private String locations;
     private double settledArea;
 }
