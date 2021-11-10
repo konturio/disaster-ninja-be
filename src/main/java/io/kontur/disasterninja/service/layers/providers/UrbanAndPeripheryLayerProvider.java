@@ -1,23 +1,27 @@
 package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.client.InsightsApiClient;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSource;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
+import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.NAME;
+import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 import static io.kontur.disasterninja.service.layers.providers.OsmLayerProvider.getFeatureProperty;
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Service
+@Order(HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
 public class UrbanAndPeripheryLayerProvider implements LayerProvider {
     private static final Set<String> providedLayers = Set.of(SETTL_PERIPHERY_LAYER_ID, URBAN_CORE_LAYER_ID);
@@ -31,17 +35,35 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
      */
     @Override
     public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
-        org.wololo.geojson.FeatureCollection urbanCoreAndSettledPeripheryLayers = insightsApiClient
+        if (geoJSON == null) {
+            return List.of();
+        }
+        org.wololo.geojson.FeatureCollection features = insightsApiClient
             .getUrbanCoreAndSettledPeripheryLayers(geoJSON);
-        return fromUrbanCoreAndPeripheryLayer(urbanCoreAndSettledPeripheryLayers);
+        return providedLayers.stream().map(layerId -> urbanOrPeripheryLayer(features, layerId, false))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
+    /**
+     * @param geoJson required to find features by intersection
+     * @param layerId layer id to retrieve
+     * @param eventId not used
+     * @return
+     */
     @Override
-    public Layer obtainLayer(String layerId, UUID eventId) {
+    public Layer obtainLayer(Geometry geoJson, String layerId, UUID eventId) {
         if (!isApplicable(layerId)) {
             return null;
         }
-        throw new NotImplementedException(); //todo #7385 + javadoc
+        if (geoJson == null) {
+            throw new WebApplicationException("GeoJson boundary must be specified for layer " + layerId,
+                HttpStatus.BAD_REQUEST);
+        }
+        org.wololo.geojson.FeatureCollection features = insightsApiClient
+            .getUrbanCoreAndSettledPeripheryLayers(geoJson);
+
+        return urbanOrPeripheryLayer(features, layerId, true);
     }
 
     @Override
@@ -49,16 +71,25 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
         return providedLayers.contains(layerId);
     }
 
-    List<Layer> fromUrbanCoreAndPeripheryLayer(org.wololo.geojson.FeatureCollection dto) {
-        if (dto == null) {
-            return List.of();
+    Layer urbanOrPeripheryLayer(org.wololo.geojson.FeatureCollection dto, String layerId, boolean includeSourceData) {
+        if (dto == null || dto.getFeatures() == null || dto.getFeatures().length == 0) {
+            return null;
         }
-        return Arrays.stream(dto.getFeatures()).map(f -> Layer.builder()
-            .id((String) f.getId())
-            .name((String) f.getProperties().get(NAME))
-            .description(description(f))
-            .build()
-        ).collect(Collectors.toList());
+        return Arrays.stream(dto.getFeatures()).filter(it -> layerId.equals(it.getId()))
+            .findFirst()
+            .map(f -> {
+                Layer.LayerBuilder builder = Layer.builder()
+                    .id(layerId)
+                    .name(getFeatureProperty(f, NAME, String.class))
+                    .description(description(f));
+                if (includeSourceData) {
+                    builder.source(LayerSource.builder()
+                        .type(GEOJSON)
+                        .data(new FeatureCollection(new Feature[]{f}))
+                        .build());
+                }
+                return builder.build();
+            }).get();
     }
 
     private String description(Feature f) {

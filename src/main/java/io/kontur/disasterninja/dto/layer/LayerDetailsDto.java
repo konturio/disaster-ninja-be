@@ -7,8 +7,8 @@ import lombok.Data;
 public class LayerDetailsDto {
 
     private final String id;
-    private final Integer maxZoom;
-    private final Integer minZoom;
+    private final Integer maxZoom; //for 'vector' and 'raster' only (see source.type)
+    private final Integer minZoom; //for 'vector' and 'raster' only (see source.type)
     private final LayerSourceDto source;
 
     public static LayerDetailsDto fromLayer(Layer layer) {

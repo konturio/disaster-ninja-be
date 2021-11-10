@@ -7,6 +7,7 @@ layers:
     - id: 'eventShape'
       globalOverlay: false
       displayLegendIfNoFeaturesExist: true
+      boundaryRequiredForRetrieval: false
       name: 'Event shape'
       group: 'Layers in selected area'
       legend:
@@ -21,6 +22,7 @@ layers:
     - id: 'eventShape.CYCLONE'
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
+      boundaryRequiredForRetrieval: false
       name: 'Event shape'
       group: 'Layers in selected area'
       legend:
@@ -71,6 +73,7 @@ layers:
     - id: 'eventShape.DROUGHT'
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
+      boundaryRequiredForRetrieval: false
       name: 'Event shape'
       group: 'Layers in selected area'
       legend:
@@ -93,6 +96,7 @@ layers:
     - id: 'eventShape.EARTHQUAKE'
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
+      boundaryRequiredForRetrieval: false
       name: 'Event shape'
       group: 'Layers in selected area'
       legend:
@@ -115,6 +119,7 @@ layers:
     - id: 'eventShape.FLOOD'
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
+      boundaryRequiredForRetrieval: false
       name: 'Event shape'
       group: 'Layers in selected area'
       legend:
@@ -144,6 +149,7 @@ layers:
     - id: 'eventShape.WILDFIRE'
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
+      boundaryRequiredForRetrieval: false
       name: 'Event shape'
       group: 'Layers in selected area'
       legend:
@@ -166,6 +172,7 @@ layers:
     - id: 'eventShape.VOLCANO'
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
+      boundaryRequiredForRetrieval: false
       name: 'Event shape'
       group: 'Layers in selected area'
       legend:
@@ -216,6 +223,7 @@ layers:
     #- id: 'eventShape.'
     #  globalOverlay: false
     #  displayLegendIfNoFeaturesExist: false
+    #  boundaryRequiredForRetrieval: false
     #  name: 'Event shape'
     #  group: 'Layers in selected area'
     #  legend:
@@ -238,10 +246,13 @@ layers:
     ##end of Event Shape
 
     - id: 'kontur_urban_core'
-      globalOverlay: true
+      globalOverlay: false
+      name: "Kontur Urban Core"
       displayLegendIfNoFeaturesExist: true
+      boundaryRequiredForRetrieval: true
       group: 'Layers in selected area'
-      #todo copyright
+      copyrights:
+        - '© Kontur'
       legend:
         type: 'simple'
         steps:
@@ -255,10 +266,13 @@ layers:
               casing-width: 3
               casing-opacity: 0.5
     - id: 'kontur_settled_periphery'
-      globalOverlay: true
+      globalOverlay: false
+      name: "Kontur Settled Periphery"
       displayLegendIfNoFeaturesExist: true
+      boundaryRequiredForRetrieval: true
       group: 'Layers in selected area'
-      #todo copyright
+      copyrights:
+        - '© Kontur'
       legend:
         type: 'simple'
         steps:
@@ -273,40 +287,52 @@ layers:
 
     ##### Category: OVERLAY
     ### Group: Kontur
-    #todo: provider for active contributors layer #7385
     - id: 'activeContributors'
       globalOverlay: true
-      displayLegendIfNoFeaturesExist: true
+      displayLegendIfNoFeaturesExist: true #can't be filtered until MVT tiles are read
+      boundaryRequiredForRetrieval: false
       name: 'Active contributors'
       category: 'overlay'
       group: 'Kontur'
-      #todo copyright
+      description: 'Contributors are labeled as active based on their mapping activity in the area for the past 2 years. We consider OpenStreetMap users to be local and mark them green if most of their edits were made close to that area.'
+      copyrights:
+        - '© OpenStreetMap Contributors, © Kontur'
+      source:
+        type: 'vector'
+        url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        sourceLayer: 'users' #todo 'hexagon' is the sourceLayer for geometries, 'users' for nicknames
+        tileSize: 512
       legend:
         type: 'simple'
         steps:
           - stepName: 'Possibly local mappers'
             stepShape: 'circle'
+            text: '{top_user}'
+            paramName: 'is_local'
+            paramValue: true
+            style:
+              color: '#009100' #todo use icon instead
           - stepName: 'Active mappers'
             stepShape: 'circle'
-            #todo paramName/paramValue
+            text: '{top_user}'
+            paramName: 'is_local'
+            paramValue: false
+            style:
+              color: '#434343' #todo use icon instead
 
     - id: 'hotProjects'
-      globalOverlay: true
+      globalOverlay: false
       displayLegendIfNoFeaturesExist: false
+      boundaryRequiredForRetrieval: true
       name: 'Hot Projects'
       description: 'Projects on HOT Tasking Manager, ongoing and historical'
       category: 'overlay'
       group: 'Kontur'
-      #todo copyright
+      copyrights:
+        - '© Humanitarian OpenStreetMap Team, © Kontur'
       legend:
         type: 'simple'
         steps:
-          - stepName: 'Active'
-            stepShape: 'circle'
-            paramName: 'status'
-            paramValue: 'Active'
-            style:
-              icon: 'link_to_icon'
           - stepName: 'Published'
             stepShape: 'circle'
             paramName: 'status'
@@ -321,50 +347,116 @@ layers:
               icon: 'link_to_icon_3'
 
     ### Group: Kontur Analytical Layers
-    #todo: provider for osm analytical layers - #7385
-    - id: 'osmObjectQuantity'
+    - id: 'Kontur OpenStreetMap Quantity'
       globalOverlay: true
+      boundaryRequiredForRetrieval: false
       name: 'OSM Object Quantity'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
-      description: 'This map shows relative distribution of OpenStreetMap objects and Population. Last updated {TODO}' #todo lastUpdated
+      legend:
+        type: 'bivariate'
       copyrights:
-        - '© Kontur https://kontur.io/'
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
-    - id: 'osmBuildingQuantity'
+        - 'Concept of areas © Brahmagupta, René Descartes'
+        - '© Kontur https://kontur.io/'
+        - 'Facebook Connectivity Lab and Center for International Earth Science Information Network - CIESIN - Columbia University. 2016. High Resolution Settlement Layer (HRSL). Source imagery for HRSL © 2016 DigitalGlobe. https://dataforgood.fb.com/tools/population-density-maps/, Dataset: Schiavina, Marcello; Freire, Sergio; MacManus, Kytt (2019): GHS population grid multitemporal (1975, 1990, 2000, 2015) R2019A. European Commission, Joint Research Centre (JRC) DOI: 10.2905/42E8BE89-54FF-464E-BE7B-BF9E64DA5218 PID: http://data.europa.eu/89h/0c6b9751-a71f-4062-830b-43c9f432370f Concept & Methodology: Freire, Sergio; MacManus, Kytt; Pesaresi, Martino; Doxsey-Whitfield, Erin; Mills, Jane (2016): Development of new open and free multi-temporal global population grids at 250 m resolution. Geospatial Data in a Changing World; Association of Geographic Information Laboratories in Europe (AGILE). AGILE 2016, Copernicus Global Land Service: Land Cover 100 m: Marcel Buchhorn, Bruno Smets, Luc Bertels, Bert De Roo, MyroslavaLesiv, Nandin - Erdene Tsendbazar, … Steffen Fritz. (2020). Copernicus Global Land Service: Land Cover 100m: collection 3: epoch 2019: Globe (Version V3.0.1) Data set. Zenodo. http://doi.org/10.5281/zenodo.3939050, Microsoft Buildings: Australia, Canada, Tanzania, Uganda, USA: This data is licensed by Microsoft under the Open Data Commons Open Database License (ODbL)., NZ Building Outlines data sourced from the LINZ Data Service - https://data.linz.govt.nz/, Geoalert Urban Mapping: Chechnya, Moscow region, Tyva - https://github.com/Geoalert/urban-mapping, Unconstrained Individual countries 2020 (100m resolution): WorldPop - https://www.worldpop.org/'
+      source:
+        type: 'vector'
+        url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        sourceLayer: 'stats'
+        tileSize: 512
+    - id: 'Kontur OpenStreetMap Building Quantity'
       globalOverlay: true
+      boundaryRequiredForRetrieval: false
       name: 'OSM Building Quantity'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
-      description: 'This map shows whether all populated houses are mapped in OpenStreetMap. Last updated {TODO}' #todo lastUpdated
+      legend:
+        type: 'bivariate'
       copyrights:
-        - '© Kontur https://kontur.io/'
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
-    - id: 'osmRoadLength'
+        - 'Concept of areas © Brahmagupta, René Descartes'
+        - '© Kontur https://kontur.io/'
+        - 'Facebook Connectivity Lab and Center for International Earth Science Information Network - CIESIN - Columbia University. 2016. High Resolution Settlement Layer (HRSL). Source imagery for HRSL © 2016 DigitalGlobe. https://dataforgood.fb.com/tools/population-density-maps/, Dataset: Schiavina, Marcello; Freire, Sergio; MacManus, Kytt (2019): GHS population grid multitemporal (1975, 1990, 2000, 2015) R2019A. European Commission, Joint Research Centre (JRC) DOI: 10.2905/42E8BE89-54FF-464E-BE7B-BF9E64DA5218 PID: http://data.europa.eu/89h/0c6b9751-a71f-4062-830b-43c9f432370f Concept & Methodology: Freire, Sergio; MacManus, Kytt; Pesaresi, Martino; Doxsey-Whitfield, Erin; Mills, Jane (2016): Development of new open and free multi-temporal global population grids at 250 m resolution. Geospatial Data in a Changing World; Association of Geographic Information Laboratories in Europe (AGILE). AGILE 2016, Copernicus Global Land Service: Land Cover 100 m: Marcel Buchhorn, Bruno Smets, Luc Bertels, Bert De Roo, MyroslavaLesiv, Nandin - Erdene Tsendbazar, … Steffen Fritz. (2020). Copernicus Global Land Service: Land Cover 100m: collection 3: epoch 2019: Globe (Version V3.0.1) Data set. Zenodo. http://doi.org/10.5281/zenodo.3939050, Microsoft Buildings: Australia, Canada, Tanzania, Uganda, USA: This data is licensed by Microsoft under the Open Data Commons Open Database License (ODbL)., NZ Building Outlines data sourced from the LINZ Data Service - https://data.linz.govt.nz/, Geoalert Urban Mapping: Chechnya, Moscow region, Tyva - https://github.com/Geoalert/urban-mapping, Unconstrained Individual countries 2020 (100m resolution): WorldPop - https://www.worldpop.org/'
+      source:
+        type: 'vector'
+        url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        sourceLayer: 'stats'
+        tileSize: 512
+    - id: 'Kontur OpenStreetMap Road Length'
       globalOverlay: true
+      boundaryRequiredForRetrieval: false
       name: 'OSM Road Length'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
-      description: 'This map shows whether populated places have roads to visit them or escape in time of disaster. Last updated {TODO}' #todo lastUpdated
+      legend:
+        type: 'bivariate'
       copyrights:
-        - '© Kontur https://kontur.io/'
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
-    - id: 'osmMappingActivity'
+        - 'Concept of areas © Brahmagupta, René Descartes'
+        - '© Kontur https://kontur.io/'
+        - 'Facebook Connectivity Lab and Center for International Earth Science Information Network - CIESIN - Columbia University. 2016. High Resolution Settlement Layer (HRSL). Source imagery for HRSL © 2016 DigitalGlobe. https://dataforgood.fb.com/tools/population-density-maps/, Dataset: Schiavina, Marcello; Freire, Sergio; MacManus, Kytt (2019): GHS population grid multitemporal (1975, 1990, 2000, 2015) R2019A. European Commission, Joint Research Centre (JRC) DOI: 10.2905/42E8BE89-54FF-464E-BE7B-BF9E64DA5218 PID: http://data.europa.eu/89h/0c6b9751-a71f-4062-830b-43c9f432370f Concept & Methodology: Freire, Sergio; MacManus, Kytt; Pesaresi, Martino; Doxsey-Whitfield, Erin; Mills, Jane (2016): Development of new open and free multi-temporal global population grids at 250 m resolution. Geospatial Data in a Changing World; Association of Geographic Information Laboratories in Europe (AGILE). AGILE 2016, Copernicus Global Land Service: Land Cover 100 m: Marcel Buchhorn, Bruno Smets, Luc Bertels, Bert De Roo, MyroslavaLesiv, Nandin - Erdene Tsendbazar, … Steffen Fritz. (2020). Copernicus Global Land Service: Land Cover 100m: collection 3: epoch 2019: Globe (Version V3.0.1) Data set. Zenodo. http://doi.org/10.5281/zenodo.3939050, Microsoft Buildings: Australia, Canada, Tanzania, Uganda, USA: This data is licensed by Microsoft under the Open Data Commons Open Database License (ODbL)., NZ Building Outlines data sourced from the LINZ Data Service - https://data.linz.govt.nz/, Geoalert Urban Mapping: Chechnya, Moscow region, Tyva - https://github.com/Geoalert/urban-mapping, Unconstrained Individual countries 2020 (100m resolution): WorldPop - https://www.worldpop.org/'
+      source:
+        type: 'vector'
+        url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        sourceLayer: 'stats'
+        tileSize: 512
+    - id: 'Kontur OpenStreetMap Mapping Activity'
       globalOverlay: true
+      boundaryRequiredForRetrieval: false
       name: 'OSM Mapping Activity'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
-      description: 'Greener - stronger local community, darker - more active mapping. This map shows how active mapping in the area in last two years is. All mapping hours are shown against mapping hours we can surely attribute to an active local user. Mapper is considered active if they contributed more than 30 mapping hours during last two years. Position of active mapper is estimated by region of their highest activity. A mapping hour is a hour in which an user uploaded at least one tagged object. Last updated {TODO}' #todo lastUpdated
+      legend:
+        type: 'bivariate'
       copyrights:
         - '© Kontur https://kontur.io/'
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
-    - id: 'osmAntiquity'
+        - 'Concept of areas © Brahmagupta, René Descartes'
+      source:
+        type: 'vector'
+        url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        sourceLayer: 'stats'
+        tileSize: 512
+    - id: 'Kontur OpenStreetMap Antiquity'
       globalOverlay: true
+      boundaryRequiredForRetrieval: false
       name: 'OSM Antiquity'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
-      description: 'This map shows how old is OpenStreetMap and how many times users view in particular region of OpenStreetMap for the last 30 days. Explore to find the least edited, but the most popular areas at the same time. Last updated {TODO}' #todo lastUpdated
+      legend:
+        type: 'bivariate'
       copyrights:
-        - '© Kontur https://kontur.io/'
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
+        - 'Numbers © Muḥammad ibn Mūsā al-Khwārizmī'
+        - 'Concept of areas © Brahmagupta, René Descartes'
+      source:
+        type: 'vector'
+        url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        sourceLayer: 'stats'
+        tileSize: 512
+    - id: 'Kontur Nighttime Heatwave Risk'
+      globalOverlay: true
+      boundaryRequiredForRetrieval: false
+      name: 'Kontur Nighttime Heatwave Risk'
+      category: 'overlay'
+      group: 'Kontur Analytical Layers'
+      legend:
+        type: 'bivariate'
+      copyrights:
+        - '© 2021 Probable Futures, a Project of the SouthCoast Community Foundation. https://probablefutures.org/'
+        - 'CC BY 4.0, Numbers © Muḥammad ibn Mūsā al-Khwārizmī'
+        - '© Kontur https://kontur.io/'
+        - 'Facebook Connectivity Lab and Center for International Earth Science Information Network - CIESIN - Columbia University. 2016. High Resolution Settlement Layer (HRSL). Source imagery for HRSL © 2016 DigitalGlobe. https://dataforgood.fb.com/tools/population-density-maps/, Dataset: Schiavina, Marcello; Freire, Sergio; MacManus, Kytt (2019): GHS population grid multitemporal (1975, 1990, 2000, 2015) R2019A. European Commission, Joint Research Centre (JRC) DOI: 10.2905/42E8BE89-54FF-464E-BE7B-BF9E64DA5218 PID: http://data.europa.eu/89h/0c6b9751-a71f-4062-830b-43c9f432370f Concept & Methodology: Freire, Sergio; MacManus, Kytt; Pesaresi, Martino; Doxsey-Whitfield, Erin; Mills, Jane (2016): Development of new open and free multi-temporal global population grids at 250 m resolution. Geospatial Data in a Changing World; Association of Geographic Information Laboratories in Europe (AGILE)'
+        - 'AGILE 2016, Copernicus Global Land Service: Land Cover 100 m: Marcel Buchhorn, Bruno Smets, Luc Bertels, Bert De Roo, MyroslavaLesiv, Nandin - Erdene Tsendbazar, … Steffen Fritz. (2020)'
+        - 'Copernicus Global Land Service: Land Cover 100m: collection 3: epoch 2019: Globe (Version V3.0.1) Data set. Zenodo. http://doi.org/10.5281/zenodo.3939050, Microsoft Buildings: Australia, Canada, Tanzania, Uganda, USA: This data is licensed by Microsoft under the Open Data Commons Open Database License (ODbL)., NZ Building Outlines data sourced from the LINZ Data Service - https://data.linz.govt.nz/'
+        - 'Geoalert Urban Mapping: Chechnya, Moscow region, Tyva - https://github.com/Geoalert/urban-mapping'
+        - 'Unconstrained Individual countries 2020 (100m resolution): WorldPop - https://www.worldpop.org/'
+        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
+        - 'Concept of areas © Brahmagupta, René Descartes'
+      source:
+        type: 'vector'
+        url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        sourceLayer: 'stats'
+        tileSize: 512
   ##### Category: BASELINE

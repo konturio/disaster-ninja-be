@@ -18,6 +18,7 @@ public class Layer {
     private final String id;
     private boolean globalOverlay;
     private boolean displayLegendIfNoFeaturesExist;
+    private boolean boundaryRequiredForRetrieval;
     //layer summary
     private String name;
     private String description;
@@ -26,8 +27,8 @@ public class Layer {
     private Legend legend;
     private List<String> copyrights;
     //layer details
-    private Integer maxZoom;
-    private Integer minZoom;
+    private Integer maxZoom; //for 'vector' and 'raster' only (see source.type)
+    private Integer minZoom; //for 'vector' and 'raster' only (see source.type)
     private LayerSource source;
 
     /**
@@ -40,6 +41,7 @@ public class Layer {
     public void mergeFrom(Layer other) {
         this.globalOverlay = other.isGlobalOverlay();
         this.displayLegendIfNoFeaturesExist = other.isDisplayLegendIfNoFeaturesExist();
+        this.boundaryRequiredForRetrieval = other.boundaryRequiredForRetrieval;
 
         if (other.getName() != null) {
             this.name = other.getName();
@@ -71,8 +73,8 @@ public class Layer {
         }
         LayerSource otherSource = other.getSource();
         if (otherSource != null) {
-            this.source = new LayerSource(otherSource.getType(), otherSource.getUrl(),
-                otherSource.getTileSize(), source.getData()); //sic! source.data is not replaced
+            this.source = new LayerSource(otherSource.getType(), otherSource.getTileSize(),
+                otherSource.getUrl(), otherSource.getSourceLayer(), this.source != null ? this.source.getData() : null); //sic! source.data is not replaced
         }
     }
 
@@ -111,7 +113,8 @@ public class Layer {
                     if (value == null) {
                         continue;
                     }
-                    if (Pattern.compile(step.getParamValue()).matcher(value).matches()) {
+                    if (step.getParamValue().equalsIgnoreCase(value) ||
+                        Pattern.compile(step.getParamValue()).matcher(value).matches()) {
                         //a feature exist for this legend step
                         thisLegend.getSteps().add(step);
                         //no need to check this legend step again

@@ -1,7 +1,9 @@
 package io.kontur.disasterninja.config;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.apollographql.apollo.ApolloClient;
@@ -80,6 +82,8 @@ public class WebConfiguration {
     private static class GeoJsonDeserializerCustomizer implements Jackson2ObjectMapperBuilderCustomizer {
         @Override
         public void customize(Jackson2ObjectMapperBuilder jacksonObjectMapperBuilder) {
+            jacksonObjectMapperBuilder.featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            jacksonObjectMapperBuilder.serializationInclusion(JsonInclude.Include.NON_NULL);
             jacksonObjectMapperBuilder.deserializerByType(GeoJSON.class, new GeoJSONDeserializer());
         }
     }

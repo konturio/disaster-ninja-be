@@ -7,6 +7,8 @@ import io.kontur.disasterninja.domain.LegendStep;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LayerSourceType;
 import io.kontur.disasterninja.domain.enums.LegendType;
+import io.kontur.disasterninja.dto.layer.LayerDetailsDto;
+import io.kontur.disasterninja.dto.layer.LayerDetailsInputDto;
 import io.kontur.disasterninja.dto.layer.LayerSummaryDto;
 import io.kontur.disasterninja.dto.layer.LayerSummaryInputDto;
 import io.kontur.disasterninja.service.layers.LayerService;
@@ -38,7 +40,7 @@ public class DtoTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void serializeDeserializeFromGeometryTest() {
+    public void serializeDeserializeSummaryFromGeometryTest() {
         String url = "/layers/";
 
         String id = "123";
@@ -54,8 +56,34 @@ public class DtoTest {
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
         Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
+        Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(), response.get(0).isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
         Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().toLegend());
+    }
+
+    @Test
+    public void serializeDeserializeDetailsFromGeometryTest() {
+        String url = "/layers/details";
+
+        String id = "123";
+        Layer layer = testLayer(id, new FeatureCollection(new Feature[]{new Feature(new Point(new double[]{1d, 2d}), new HashMap<>())}));
+        Mockito.when(layerService.get(any(), any(), any())).thenReturn(List.of(layer));
+
+        LayerDetailsInputDto input = new LayerDetailsInputDto(new Point(new double[]{1, 0}), List.of(layer.getId()), UUID.randomUUID());
+        List<LayerDetailsDto> response = Arrays.asList(restTemplate.postForEntity(url, input, LayerDetailsDto[].class)
+            .getBody());
+
+        Assertions.assertEquals(layer.getId(), response.get(0).getId());
+        Assertions.assertEquals(layer.getMinZoom(), response.get(0).getMinZoom());
+        Assertions.assertEquals(layer.getMaxZoom(), response.get(0).getMaxZoom());
+
+        Assertions.assertArrayEquals(((Point) layer.getSource().getData().getFeatures()[0].getGeometry()).getCoordinates(),
+            ((Point) ((FeatureCollection) response.get(0).getSource().getData()).getFeatures()[0].getGeometry()).getCoordinates());
+
+        Assertions.assertEquals(layer.getSource().getSourceLayer(), response.get(0).getSource().getSourceLayer());
+        Assertions.assertEquals(layer.getSource().getType(), response.get(0).getSource().getType());
+        Assertions.assertEquals(layer.getSource().getTileSize(), response.get(0).getSource().getTileSize());
+        Assertions.assertEquals(layer.getSource().getUrl(), response.get(0).getSource().getUrl());
     }
 
     @Test
@@ -76,6 +104,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
         Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
+        Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(), response.get(0).isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
         Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().toLegend());
     }
@@ -100,6 +129,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
         Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
+        Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(), response.get(0).isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
         Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().toLegend());
     }
@@ -108,12 +138,13 @@ public class DtoTest {
         LayerSource source = LayerSource.builder()
             .type(LayerSourceType.RASTER)
             .url("url-com.com")
+            .sourceLayer("source-layer")
             .tileSize(2d)
             .data(geoJSON).build();
-        Legend legend = new Legend("some legend", LegendType.SIMPLE, new ArrayList<>());
+        Legend legend = new Legend("some legend", LegendType.SIMPLE, new ArrayList<>(), new HashMap<>());
         Map<String, String> map = new HashMap<>();
         map.put("prop", "value");
-        legend.getSteps().add(new LegendStep("param name", "param value", "step name",
+        legend.getSteps().add(new LegendStep("param name", "param value", null, null, "step name",
             HEX, map));
 
         return Layer.builder()
