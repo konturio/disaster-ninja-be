@@ -2,18 +2,17 @@ package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,25 +32,30 @@ public class EventApiClient {
     }
 
     public List<EventApiEventDto> getEvents(String jwtToken) {
-        String then = OffsetDateTime.now()
-            .minusDays(4)
-            .truncatedTo(ChronoUnit.MINUTES)
-            .atZoneSameInstant(ZoneOffset.UTC)
-            .toString();
+        OffsetDateTime after = OffsetDateTime.now()
+            .minusDays(4);
 
-        String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed, then);
-
+        List<EventApiEventDto> result = new ArrayList<>();
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(jwtToken);
 
-        ResponseEntity<EventApiSearchEventResponse> response = restTemplate
+        while (true) {
+            String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed, after.truncatedTo(ChronoUnit.MINUTES)
+                .atZoneSameInstant(ZoneOffset.UTC));
+
+            ResponseEntity<EventApiSearchEventResponse> response = restTemplate
                 .exchange(uri, HttpMethod.GET, new HttpEntity<>(null, headers), new ParameterizedTypeReference<>() {
                 });
-
-        if (response.getBody() == null) {
-            return List.of();
+            if (response.getStatusCode() == HttpStatus.NO_CONTENT ||
+                response.getBody() == null || response.getBody().data == null ||
+                response.getBody().data.isEmpty() ||
+                after.equals(response.getBody().pageMetadata.nextAfterValue)) { //todo workaround as can't get 204
+                break;
+            }
+            result.addAll(response.getBody().data);
+            after = response.getBody().pageMetadata.nextAfterValue;
         }
-        return response.getBody().data;
+        return result;
     }
 
     public EventApiEventDto getEvent(UUID eventId, String jwtToken) {
@@ -73,5 +77,11 @@ public class EventApiClient {
     private static class EventApiSearchEventResponse {
 
         public List<EventApiEventDto> data;
+        public PageMetadata pageMetadata;
+    }
+
+    @Data
+    private static class PageMetadata {
+        public OffsetDateTime nextAfterValue;
     }
 }

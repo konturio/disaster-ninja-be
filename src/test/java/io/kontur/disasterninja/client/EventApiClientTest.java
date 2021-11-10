@@ -11,7 +11,6 @@ import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -22,6 +21,7 @@ import static org.hamcrest.Matchers.matchesRegex;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest(EventApiClient.class)
@@ -36,17 +36,18 @@ class EventApiClientTest {
     @Test
     public void testGetEvents() throws IOException {
         //given
-        String then = LocalDate.now()
-                .minusDays(4)
-                .toString();
-
-        server.expect(r -> assertThat(r.getURI().toString(),
-                        matchesRegex(Pattern.compile(
-                                "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&after=" + then + "(t|T)\\d{2}:\\d{2}Z&episodeFilterType=LATEST&limit=1000&sortOrder=ASC"))))
-                .andExpect(method(HttpMethod.GET))
-                .andExpect(header("Authorization", "Bearer JwtTestToken"))
-                .andRespond(withSuccess(readFile(this, "EventApiClientTest.testGetEvents.response.json"),
-                        MediaType.APPLICATION_JSON));
+        server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
+                matchesRegex(Pattern.compile(
+                    "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}Z&episodeFilterType=LATEST&limit=1000&sortOrder=ASC"))))
+            .andExpect(method(HttpMethod.GET))
+            .andExpect(header("Authorization", "Bearer JwtTestToken"))
+            .andRespond(r -> {
+                if (r.getURI().toString().contains("2021-09-28T14:46")) { //last page
+                    return withNoContent().createResponse(r);
+                }
+                return withSuccess(readFile(this, "EventApiClientTest.testGetEvents.response.json"),
+                    MediaType.APPLICATION_JSON).createResponse(r);
+            });
 
         //when
         List<EventApiEventDto> events = client.getEvents("JwtTestToken");
