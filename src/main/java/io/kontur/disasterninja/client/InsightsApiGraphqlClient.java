@@ -43,10 +43,10 @@ public class InsightsApiGraphqlClient {
         return future;
     }
 
-    public CompletableFuture<List<BivariateLayerLegendQuery.Overlay>> getBivariateOverlays(Geometry geoJson) {
+    public CompletableFuture<List<BivariateLayerLegendQuery.Overlay>> getBivariateOverlays() {
         CompletableFuture<List<BivariateLayerLegendQuery.Overlay>> future = new CompletableFuture<>();
         apolloClient
-            .query(new BivariateLayerLegendQuery(Input.optional(geoJson)))
+            .query(new BivariateLayerLegendQuery(Input.optional(null)))
             .enqueue(new ApolloCall.Callback<>() {
                 @Override
                 public void onResponse(@NotNull Response<BivariateLayerLegendQuery.Data> response) {

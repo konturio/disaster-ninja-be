@@ -43,7 +43,7 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
                 new BivariateLayerLegendQuery.Color("OverlayColor", "C3", "rgb(232,232,333)"))
         );
 
-        Mockito.when(insightsApiGraphqlClient.getBivariateOverlays(any())).thenReturn(CompletableFuture
+        Mockito.when(insightsApiGraphqlClient.getBivariateOverlays()).thenReturn(CompletableFuture
             .completedFuture(List.of(overlay)));
     }
 

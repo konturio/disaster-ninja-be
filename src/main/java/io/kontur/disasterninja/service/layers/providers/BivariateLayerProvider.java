@@ -50,14 +50,14 @@ public class BivariateLayerProvider implements LayerProvider {
     }
 
     /**
-     * @param geoJSON required to find features by intersection
+     * @param geoJSON not used
      * @param eventId not used
      * @return Bivariate layers from insights-api graphql api
      */
     @Override
     public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
         try {
-            return insightsApiGraphqlClient.getBivariateOverlays(geoJSON).get()
+            return insightsApiGraphqlClient.getBivariateOverlays().get()
                 .stream().map(this::fromOverlay).collect(Collectors.toList());
         } catch (InterruptedException | ExecutionException e) {
             LOG.error("Can't load bivariate layers: {}", e.getMessage(), e);
@@ -85,7 +85,7 @@ public class BivariateLayerProvider implements LayerProvider {
     }
 
     /**
-     * @param geoJSON required to find features by intersection
+     * @param geoJSON not used
      * @param layerId layer id to retrieve
      * @param eventId not used
      * @return Bivariate layer by ID from insights-api graphql api
@@ -96,7 +96,7 @@ public class BivariateLayerProvider implements LayerProvider {
             return null;
         }
         try {
-            return insightsApiGraphqlClient.getBivariateOverlays(geoJSON).get()
+            return insightsApiGraphqlClient.getBivariateOverlays().get()
                 .stream()
                 .filter(it -> layerId.equals(it.name())).findFirst()
                 .map(this::fromOverlay).get();
