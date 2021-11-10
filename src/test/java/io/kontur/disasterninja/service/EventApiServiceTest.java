@@ -1,9 +1,10 @@
 package io.kontur.disasterninja.service;
 
 import io.kontur.disasterninja.client.EventApiClient;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
+import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.dto.EventListDto;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
-import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,6 +50,10 @@ class EventApiServiceTest {
         PodamFactory factory = new PodamFactoryImpl();
         EventApiEventDto mostPopulatedEvent = factory.manufacturePojo(EventApiEventDto.class);
         mostPopulatedEvent.getEventDetails().put("population", 100);
+        mostPopulatedEvent.getEventDetails().put("populatedAreaKm2", 10L);
+        mostPopulatedEvent.setLocation("Some city");
+        mostPopulatedEvent.setProperName("Proper name");
+        mostPopulatedEvent.setUrls(List.of("http://google.com"));
 
         EventApiEventDto oldEvent = factory.manufacturePojo(EventApiEventDto.class);
         oldEvent.getEventDetails().put("population", 50);
@@ -67,6 +72,13 @@ class EventApiServiceTest {
         assertEquals(mostPopulatedEvent.getEventId(), events.get(0).getEventId());
         assertEquals(moreRecentEvent.getEventId(), events.get(1).getEventId());
         assertEquals(oldEvent.getEventId(), events.get(2).getEventId());
+
+        //some EventListDto fields
+        assertEquals(10d, events.get(0).getSettledArea());
+        assertEquals("Some city", events.get(0).getLocation());
+        assertEquals("Proper name", events.get(0).getEventName());
+        assertEquals(1, events.get(0).getExternalUrls().size());
+        assertEquals("http://google.com", events.get(0).getExternalUrls().get(0));
     }
 
 
@@ -78,14 +90,20 @@ class EventApiServiceTest {
         PodamFactory factory = new PodamFactoryImpl();
         EventApiEventDto event = factory.manufacturePojo(EventApiEventDto.class);
         event.getEpisodes().forEach(e -> e.setGeometries(new FeatureCollection(new Feature[0])));
+        event.getEventDetails().put("populatedAreaKm2", "123234");
 
         UUID eventId = UUID.randomUUID();
         when(client.getEvent(eventId, "testToken")).thenReturn(event);
         //when
-        service.getEvent(eventId);
+        EventDto result = service.getEvent(eventId);
         //then
         verify(authorizationService, times(1)).getAccessToken();
         verify(client, times(1)).getEvent(eventId, "testToken");
+        //some EventDto fields
+        assertEquals(event.getProperName(), result.getEventName());
+        assertEquals(event.getLocation(), result.getLocation());
+        assertEquals(123234L, result.getSettledArea());
+        assertEquals(event.getUrls(), result.getExternalUrls());
     }
 
     @Test
