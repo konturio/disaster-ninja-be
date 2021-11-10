@@ -1,36 +1,41 @@
-query BivariateLayerLegend {
-    allStatistic {
-        colors {
-            fallback,
-            combinations {
-                color,
-                corner,
-                color_comment
-            }
-        },
-        overlays {
-            name,
-            description,
-            x {
-                label,
-                steps {
-                  label,
-                  value
-                },
-                quotient
-            },
-            y {
-                label,
-                steps {
+query BivariateLayerLegend($polygon: GeoJSON) {
+    polygonStatistic(polygonStatisticRequest:{
+        polygonV2: $polygon
+    }) {
+        bivariateStatistic {
+            overlays {
+                name,
+                description,
+                x {
                     label,
-                    value
+                    steps {
+                      label,
+                      value
+                    },
+                    quotient
                 },
-                quotient
+                y {
+                    label,
+                    steps {
+                        label,
+                        value
+                    },
+                    quotient
+                },
+                colors {
+                    id,
+                    color
+                }
             },
             colors {
-                id,
-                color
+                fallback,
+                combinations {
+                    color,
+                    corner,
+                    color_comment
+                }
             }
         }
     }
+
 }

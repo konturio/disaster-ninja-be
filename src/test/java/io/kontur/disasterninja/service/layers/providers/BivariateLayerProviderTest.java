@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 public class BivariateLayerProviderTest extends LayerProvidersTest {
 
@@ -42,7 +43,7 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
                 new BivariateLayerLegendQuery.Color("OverlayColor", "C3", "rgb(232,232,333)"))
         );
 
-        Mockito.when(insightsApiGraphqlClient.getBivariateOverlays()).thenReturn(CompletableFuture
+        Mockito.when(insightsApiGraphqlClient.getBivariateOverlays(any())).thenReturn(CompletableFuture
             .completedFuture(List.of(overlay)));
     }
 

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.wololo.geojson.GeoJSON;
+import org.wololo.geojson.Geometry;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -42,16 +43,17 @@ public class InsightsApiGraphqlClient {
         return future;
     }
 
-    public CompletableFuture<List<BivariateLayerLegendQuery.Overlay>> getBivariateOverlays() {
+    public CompletableFuture<List<BivariateLayerLegendQuery.Overlay>> getBivariateOverlays(Geometry geoJson) {
         CompletableFuture<List<BivariateLayerLegendQuery.Overlay>> future = new CompletableFuture<>();
         apolloClient
-            .query(new BivariateLayerLegendQuery())
+            .query(new BivariateLayerLegendQuery(Input.optional(geoJson)))
             .enqueue(new ApolloCall.Callback<>() {
                 @Override
                 public void onResponse(@NotNull Response<BivariateLayerLegendQuery.Data> response) {
                     if (response.getData() != null &&
-                        response.getData().allStatistic() != null) {
-                        future.complete(response.getData().allStatistic().overlays());
+                        response.getData().polygonStatistic() != null &&
+                        response.getData().polygonStatistic().bivariateStatistic() != null) {
+                        future.complete(response.getData().polygonStatistic().bivariateStatistic().overlays());
                     }
                     future.complete(List.of());
                 }
