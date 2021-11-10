@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.service.converter;
 
 import io.kontur.disasterninja.dto.EventListDto;
+import io.kontur.disasterninja.dto.EventType;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public class EventListEventDtoConverter {
         EventListDto dto = new EventListDto();
         dto.setEventId(event.getEventId());
 
-        dto.setEventName(event.getProperName());
+        dto.setEventName(eventName(event));
         dto.setLocation(event.getLocation());
         List<String> eventUrls = event.getUrls();
         dto.setExternalUrls(eventUrls != null ? List.copyOf(eventUrls) : List.of());
@@ -41,11 +42,29 @@ public class EventListEventDtoConverter {
         }
     }
 
-    private static double convertDouble(Object value) {
+    protected static double convertDouble(Object value) {
         if (value == null || "null".equals(String.valueOf(value))) {
             return 0L;
         } else {
             return Double.parseDouble(String.valueOf(value));
         }
+    }
+
+    protected static String eventName(EventApiEventDto event) {
+        EventType eventType;
+        try {
+            eventType = EventType.valueOf(event.getEpisodes().get(0).getType());
+        } catch (IllegalArgumentException ex) {
+            eventType = EventType.OTHER;
+        }
+        String properName = event.getProperName();
+
+        if (eventType == EventType.OTHER && properName != null) {
+            return properName;
+        }
+        if (properName != null) {
+            return eventType.getName() + " " + properName;
+        }
+        return eventType.getName();
     }
 }

@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static io.kontur.disasterninja.dto.EventType.CYCLONE;
+import static io.kontur.disasterninja.dto.EventType.OTHER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -75,6 +77,28 @@ public class EventApiConvertersTest {
     }
 
     @Test
+    public void eventDtoTestNames() {
+        EventApiEventDto event = testEvent();
+
+        //1. type = other & properName != null
+        event.setProperName("some name");
+        event.getEpisodes().get(0).setType(OTHER.toString());
+        EventDto dto = EventDtoConverter.convert(event);
+        assertEquals("some name", dto.getEventName());
+
+        //2. type != other & propername != null
+        event.setProperName("some name");
+        event.getEpisodes().get(0).setType(CYCLONE.toString());
+        dto = EventDtoConverter.convert(event);
+        assertEquals(CYCLONE.getName() + " some name", dto.getEventName());
+
+        //3. propername == null
+        event.setProperName(null);
+        dto = EventDtoConverter.convert(event);
+        assertEquals(CYCLONE.getName(), dto.getEventName());
+    }
+
+    @Test
     public void eventListDtoTestNulls() {
         EventApiEventDto event = testEvent();
         EventListDto dto = EventListEventDtoConverter.convert(event);
@@ -112,5 +136,28 @@ public class EventApiConvertersTest {
         assertEquals(100.12, dto.getSettledArea());
         assertEquals(1, dto.getExternalUrls().size());
         assertEquals("http://google.com", dto.getExternalUrls().get(0));
+    }
+
+
+    @Test
+    public void eventListDtoTestNames() {
+        EventApiEventDto event = testEvent();
+
+        //1. type = other & properName != null
+        event.setProperName("some name");
+        event.getEpisodes().get(0).setType(OTHER.toString());
+        EventListDto dto = EventListEventDtoConverter.convert(event);
+        assertEquals("some name", dto.getEventName());
+
+        //2. type != other & propername != null
+        event.setProperName("some name");
+        event.getEpisodes().get(0).setType(CYCLONE.toString());
+        dto = EventListEventDtoConverter.convert(event);
+        assertEquals(CYCLONE.getName() + " some name", dto.getEventName());
+
+        //3. propername == null
+        event.setProperName(null);
+        dto = EventListEventDtoConverter.convert(event);
+        assertEquals(CYCLONE.getName(), dto.getEventName());
     }
 }

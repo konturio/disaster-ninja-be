@@ -16,6 +16,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static io.kontur.disasterninja.service.converter.EventListEventDtoConverter.convertDouble;
+import static io.kontur.disasterninja.service.converter.EventListEventDtoConverter.eventName;
 import static java.util.Collections.emptyMap;
 
 public class EventDtoConverter {
@@ -31,7 +33,7 @@ public class EventDtoConverter {
         episodes.sort(Comparator.comparing(FeedEpisode::getUpdatedAt).reversed());
         FeedEpisode latestEpisode = episodes.get(0);
 
-        dto.setEventName(event.getProperName());
+        dto.setEventName(eventName(event));
         dto.setLocation(event.getLocation());
         List<String> eventUrls = event.getUrls();
         dto.setExternalUrls(eventUrls != null ? List.copyOf(eventUrls) : List.of());
@@ -71,13 +73,5 @@ public class EventDtoConverter {
             .createGeometryCollection(episodeGeometries.toArray(new org.locationtech.jts.geom.Geometry[0]))
             .union();
         return new FeatureCollection(new Feature[]{new Feature(geoJSONWriter.write(unitedGeometry), emptyMap())});
-    }
-
-    private static double convertDouble(Object value) {
-        if (value == null || "null".equals(String.valueOf(value))) {
-            return 0L;
-        } else {
-            return Double.parseDouble(String.valueOf(value));
-        }
     }
 }
