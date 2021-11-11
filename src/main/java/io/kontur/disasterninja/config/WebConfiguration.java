@@ -23,6 +23,8 @@ import org.wololo.geojson.GeoJSON;
 import org.wololo.geojson.GeoJSONFactory;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
@@ -30,25 +32,37 @@ public class WebConfiguration {
 
     @Bean
     public RestTemplate eventApiRestTemplate(RestTemplateBuilder builder,
-                                             @Value("${kontur.platform.event-api.url}") String eventApiUrl) {
+                                             @Value("${kontur.platform.event-api.url}") String eventApiUrl,
+                                             @Value("${kontur.platform.event-api.connectionTimeout}") Integer connectionTimeout,
+                                             @Value("${kontur.platform.event-api.readTimeout}") Integer readTimeout) {
         return builder
-                .rootUri(eventApiUrl)
+            .rootUri(eventApiUrl)
+            .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
+            .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
                 .build();
     }
 
     @Bean
     public RestTemplate kcApiRestTemplate(RestTemplateBuilder builder,
-                                          @Value("${kontur.platform.kcApi.url}") String eventApiUrl) {
+                                          @Value("${kontur.platform.kcApi.url}") String eventApiUrl,
+                                          @Value("${kontur.platform.kcApi.connectionTimeout}") Integer connectionTimeout,
+                                          @Value("${kontur.platform.kcApi.readTimeout}") Integer readTimeout) {
         return builder
             .rootUri(eventApiUrl)
+            .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
+            .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
             .build();
     }
 
     @Bean
     public RestTemplate insightsApiRestTemplate(RestTemplateBuilder builder,
-                                                @Value("${kontur.platform.insightsApi.url}") String eventApiUrl) {
+                                                @Value("${kontur.platform.insightsApi.url}") String eventApiUrl,
+                                                @Value("${kontur.platform.insightsApi.connectionTimeout}") Integer connectionTimeout,
+                                                @Value("${kontur.platform.insightsApi.readTimeout}") Integer readTimeout) {
         return builder
             .rootUri(eventApiUrl)
+            .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
+            .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
             .build();
     }
 
