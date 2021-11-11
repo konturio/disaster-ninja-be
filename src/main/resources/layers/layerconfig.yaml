@@ -301,9 +301,9 @@ layers:
         type: 'vector'
         urls:
           - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
-        sourceLayer: 'users' #todo 'hexagon' is the sourceLayer for geometries, 'users' for nicknames
         tileSize: 512
       legend:
+        sourceLayer: 'users' #todo 'hexagon' is the sourceLayer for geometries, 'users' for nicknames
         type: 'simple'
         steps:
           - stepName: 'Possibly local mappers'
@@ -355,6 +355,7 @@ layers:
       category: 'overlay'
       group: 'Kontur Analytical Layers'
       legend:
+        sourceLayer: 'stats'
         type: 'bivariate'
       copyrights:
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
@@ -365,7 +366,6 @@ layers:
         type: 'vector'
         urls:
           - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
-        sourceLayer: 'stats'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Building Quantity'
       globalOverlay: true
@@ -375,6 +375,7 @@ layers:
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
+        sourceLayer: 'stats'
       copyrights:
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
         - 'Concept of areas © Brahmagupta, René Descartes'
@@ -384,7 +385,6 @@ layers:
         type: 'vector'
         urls:
           - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
-        sourceLayer: 'stats'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Road Length'
       globalOverlay: true
@@ -394,6 +394,7 @@ layers:
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
+        sourceLayer: 'stats'
       copyrights:
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
         - 'Concept of areas © Brahmagupta, René Descartes'
@@ -403,7 +404,6 @@ layers:
         type: 'vector'
         urls:
           - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
-        sourceLayer: 'stats'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Mapping Activity'
       globalOverlay: true
@@ -413,6 +413,7 @@ layers:
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
+        sourceLayer: 'stats'
       copyrights:
         - '© Kontur https://kontur.io/'
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
@@ -421,7 +422,6 @@ layers:
         type: 'vector'
         urls:
           - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
-        sourceLayer: 'stats'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Antiquity'
       globalOverlay: true
@@ -431,6 +431,7 @@ layers:
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
+        sourceLayer: 'stats'
       copyrights:
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
         - 'Numbers © Muḥammad ibn Mūsā al-Khwārizmī'
@@ -439,7 +440,6 @@ layers:
         type: 'vector'
         urls:
           - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
-        sourceLayer: 'stats'
         tileSize: 512
     - id: 'Kontur Nighttime Heatwave Risk'
       globalOverlay: true
@@ -449,6 +449,7 @@ layers:
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
+        sourceLayer: 'stats'
       copyrights:
         - '© 2021 Probable Futures, a Project of the SouthCoast Community Foundation. https://probablefutures.org/'
         - 'CC BY 4.0, Numbers © Muḥammad ibn Mūsā al-Khwārizmī'
@@ -464,7 +465,6 @@ layers:
         type: 'vector'
         urls:
           - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
-        sourceLayer: 'stats'
         tileSize: 512
   ##### Category: BASELINE
 

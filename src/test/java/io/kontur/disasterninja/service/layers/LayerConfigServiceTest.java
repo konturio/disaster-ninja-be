@@ -186,6 +186,7 @@ public class LayerConfigServiceTest {
         //legend
         Assertions.assertNotNull(activeContributors.getLegend());
         Assertions.assertEquals(SIMPLE, activeContributors.getLegend().getType());
+        Assertions.assertEquals("users", activeContributors.getLegend().getSourceLayer());
         //steps
         //Steps are always shown since displayLegendIfNoFeaturesExist is true
         Assertions.assertEquals(2, activeContributors.getLegend().getSteps().size());
