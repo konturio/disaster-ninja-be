@@ -1,7 +1,7 @@
 analyticstab:
   fields:
     - name: Population
-      description: Population description
+      description: The number of people according to Kontur Population dataset and settled area within the selected area.
       functions:
         - id: population0
           function: sumX
@@ -14,7 +14,7 @@ analyticstab:
           arguments:
             - populated_area_km2
     - name: OSM Gaps
-      description: OSM Gaps description
+      description: '% of area, population and settled area where population > 0 and OSM objects = 0.'
       functions:
         - id: osmGaps0
           function: percentageXWhereNoY
@@ -35,7 +35,7 @@ analyticstab:
             - populated_area_km2
             - count
     - name: No buildings
-      description: No buildings description
+      description: '% of area, population and settled area where population > 0 and OSM buildings = 0.'
       functions:
         - id: noBuildings0
           function: percentageXWhereNoY
@@ -56,7 +56,7 @@ analyticstab:
             - populated_area_km2
             - building_count
     - name: No roads
-      description: No roads description
+      description: '% of area, population and settled area where population > 0 and OSM roads = 0.'
       functions:
         - id: noRoads0
           function: percentageXWhereNoY
