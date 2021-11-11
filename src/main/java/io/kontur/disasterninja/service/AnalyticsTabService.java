@@ -76,7 +76,11 @@ public class AnalyticsTabService {
                             .setScale(0, RoundingMode.HALF_UP).intValue());
                 }
                 else {
-                    text.append(functionsResultsMap.get(function.getId())).append(" ").append(function.getPostfix()).append(" ");
+                    text.append(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
+                            .setScale(2, RoundingMode.HALF_UP).doubleValue())
+                            .append(" ")
+                            .append(function.getPostfix())
+                            .append(" ");
                 }
             }
             dto.setName(field.getName());
