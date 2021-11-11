@@ -299,7 +299,8 @@ layers:
         - '© OpenStreetMap Contributors, © Kontur'
       source:
         type: 'vector'
-        url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        urls:
+          - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
         sourceLayer: 'users' #todo 'hexagon' is the sourceLayer for geometries, 'users' for nicknames
         tileSize: 512
       legend:
@@ -362,7 +363,8 @@ layers:
         - 'Facebook Connectivity Lab and Center for International Earth Science Information Network - CIESIN - Columbia University. 2016. High Resolution Settlement Layer (HRSL). Source imagery for HRSL © 2016 DigitalGlobe. https://dataforgood.fb.com/tools/population-density-maps/, Dataset: Schiavina, Marcello; Freire, Sergio; MacManus, Kytt (2019): GHS population grid multitemporal (1975, 1990, 2000, 2015) R2019A. European Commission, Joint Research Centre (JRC) DOI: 10.2905/42E8BE89-54FF-464E-BE7B-BF9E64DA5218 PID: http://data.europa.eu/89h/0c6b9751-a71f-4062-830b-43c9f432370f Concept & Methodology: Freire, Sergio; MacManus, Kytt; Pesaresi, Martino; Doxsey-Whitfield, Erin; Mills, Jane (2016): Development of new open and free multi-temporal global population grids at 250 m resolution. Geospatial Data in a Changing World; Association of Geographic Information Laboratories in Europe (AGILE). AGILE 2016, Copernicus Global Land Service: Land Cover 100 m: Marcel Buchhorn, Bruno Smets, Luc Bertels, Bert De Roo, MyroslavaLesiv, Nandin - Erdene Tsendbazar, … Steffen Fritz. (2020). Copernicus Global Land Service: Land Cover 100m: collection 3: epoch 2019: Globe (Version V3.0.1) Data set. Zenodo. http://doi.org/10.5281/zenodo.3939050, Microsoft Buildings: Australia, Canada, Tanzania, Uganda, USA: This data is licensed by Microsoft under the Open Data Commons Open Database License (ODbL)., NZ Building Outlines data sourced from the LINZ Data Service - https://data.linz.govt.nz/, Geoalert Urban Mapping: Chechnya, Moscow region, Tyva - https://github.com/Geoalert/urban-mapping, Unconstrained Individual countries 2020 (100m resolution): WorldPop - https://www.worldpop.org/'
       source:
         type: 'vector'
-        url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        urls:
+          - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
         sourceLayer: 'stats'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Building Quantity'
@@ -380,7 +382,8 @@ layers:
         - 'Facebook Connectivity Lab and Center for International Earth Science Information Network - CIESIN - Columbia University. 2016. High Resolution Settlement Layer (HRSL). Source imagery for HRSL © 2016 DigitalGlobe. https://dataforgood.fb.com/tools/population-density-maps/, Dataset: Schiavina, Marcello; Freire, Sergio; MacManus, Kytt (2019): GHS population grid multitemporal (1975, 1990, 2000, 2015) R2019A. European Commission, Joint Research Centre (JRC) DOI: 10.2905/42E8BE89-54FF-464E-BE7B-BF9E64DA5218 PID: http://data.europa.eu/89h/0c6b9751-a71f-4062-830b-43c9f432370f Concept & Methodology: Freire, Sergio; MacManus, Kytt; Pesaresi, Martino; Doxsey-Whitfield, Erin; Mills, Jane (2016): Development of new open and free multi-temporal global population grids at 250 m resolution. Geospatial Data in a Changing World; Association of Geographic Information Laboratories in Europe (AGILE). AGILE 2016, Copernicus Global Land Service: Land Cover 100 m: Marcel Buchhorn, Bruno Smets, Luc Bertels, Bert De Roo, MyroslavaLesiv, Nandin - Erdene Tsendbazar, … Steffen Fritz. (2020). Copernicus Global Land Service: Land Cover 100m: collection 3: epoch 2019: Globe (Version V3.0.1) Data set. Zenodo. http://doi.org/10.5281/zenodo.3939050, Microsoft Buildings: Australia, Canada, Tanzania, Uganda, USA: This data is licensed by Microsoft under the Open Data Commons Open Database License (ODbL)., NZ Building Outlines data sourced from the LINZ Data Service - https://data.linz.govt.nz/, Geoalert Urban Mapping: Chechnya, Moscow region, Tyva - https://github.com/Geoalert/urban-mapping, Unconstrained Individual countries 2020 (100m resolution): WorldPop - https://www.worldpop.org/'
       source:
         type: 'vector'
-        url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        urls:
+          - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
         sourceLayer: 'stats'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Road Length'
@@ -398,7 +401,8 @@ layers:
         - 'Facebook Connectivity Lab and Center for International Earth Science Information Network - CIESIN - Columbia University. 2016. High Resolution Settlement Layer (HRSL). Source imagery for HRSL © 2016 DigitalGlobe. https://dataforgood.fb.com/tools/population-density-maps/, Dataset: Schiavina, Marcello; Freire, Sergio; MacManus, Kytt (2019): GHS population grid multitemporal (1975, 1990, 2000, 2015) R2019A. European Commission, Joint Research Centre (JRC) DOI: 10.2905/42E8BE89-54FF-464E-BE7B-BF9E64DA5218 PID: http://data.europa.eu/89h/0c6b9751-a71f-4062-830b-43c9f432370f Concept & Methodology: Freire, Sergio; MacManus, Kytt; Pesaresi, Martino; Doxsey-Whitfield, Erin; Mills, Jane (2016): Development of new open and free multi-temporal global population grids at 250 m resolution. Geospatial Data in a Changing World; Association of Geographic Information Laboratories in Europe (AGILE). AGILE 2016, Copernicus Global Land Service: Land Cover 100 m: Marcel Buchhorn, Bruno Smets, Luc Bertels, Bert De Roo, MyroslavaLesiv, Nandin - Erdene Tsendbazar, … Steffen Fritz. (2020). Copernicus Global Land Service: Land Cover 100m: collection 3: epoch 2019: Globe (Version V3.0.1) Data set. Zenodo. http://doi.org/10.5281/zenodo.3939050, Microsoft Buildings: Australia, Canada, Tanzania, Uganda, USA: This data is licensed by Microsoft under the Open Data Commons Open Database License (ODbL)., NZ Building Outlines data sourced from the LINZ Data Service - https://data.linz.govt.nz/, Geoalert Urban Mapping: Chechnya, Moscow region, Tyva - https://github.com/Geoalert/urban-mapping, Unconstrained Individual countries 2020 (100m resolution): WorldPop - https://www.worldpop.org/'
       source:
         type: 'vector'
-        url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        urls:
+          - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
         sourceLayer: 'stats'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Mapping Activity'
@@ -415,7 +419,8 @@ layers:
         - 'Concept of areas © Brahmagupta, René Descartes'
       source:
         type: 'vector'
-        url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        urls:
+          - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
         sourceLayer: 'stats'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Antiquity'
@@ -432,7 +437,8 @@ layers:
         - 'Concept of areas © Brahmagupta, René Descartes'
       source:
         type: 'vector'
-        url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        urls:
+          - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
         sourceLayer: 'stats'
         tileSize: 512
     - id: 'Kontur Nighttime Heatwave Risk'
@@ -456,7 +462,8 @@ layers:
         - 'Concept of areas © Brahmagupta, René Descartes'
       source:
         type: 'vector'
-        url: '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+        urls:
+          - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
         sourceLayer: 'stats'
         tileSize: 512
   ##### Category: BASELINE
@@ -464,4 +471,12 @@ layers:
     - id: 'Bing'
       source:
         type: 'raster'
-        url: 'http://ecn.t0.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+        urls:
+          - 'http://ecn.t0.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+          - 'http://ecn.t1.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+          - 'http://ecn.t2.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+          - 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+          - 'http://ecn.t4.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+          - 'http://ecn.t5.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+          - 'http://ecn.t6.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+          - 'http://ecn.t7.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'

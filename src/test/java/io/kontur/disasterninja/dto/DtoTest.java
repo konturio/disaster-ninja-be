@@ -80,10 +80,9 @@ public class DtoTest {
         Assertions.assertArrayEquals(((Point) layer.getSource().getData().getFeatures()[0].getGeometry()).getCoordinates(),
             ((Point) ((FeatureCollection) response.get(0).getSource().getData()).getFeatures()[0].getGeometry()).getCoordinates());
 
-        Assertions.assertEquals(layer.getSource().getSourceLayer(), response.get(0).getSource().getSourceLayer());
         Assertions.assertEquals(layer.getSource().getType(), response.get(0).getSource().getType());
         Assertions.assertEquals(layer.getSource().getTileSize(), response.get(0).getSource().getTileSize());
-        Assertions.assertEquals(layer.getSource().getUrl(), response.get(0).getSource().getUrl());
+        Assertions.assertEquals(layer.getSource().getUrls(), response.get(0).getSource().getUrls());
     }
 
     @Test
@@ -137,11 +136,10 @@ public class DtoTest {
     private Layer testLayer(String id, FeatureCollection geoJSON) {
         LayerSource source = LayerSource.builder()
             .type(LayerSourceType.RASTER)
-            .url("url-com.com")
-            .sourceLayer("source-layer")
+            .urls(List.of("url-com.com"))
             .tileSize(2d)
             .data(geoJSON).build();
-        Legend legend = new Legend("some legend", LegendType.SIMPLE, new ArrayList<>(), new HashMap<>());
+        Legend legend = new Legend("some legend", LegendType.SIMPLE, "source-layer", new ArrayList<>(), new HashMap<>());
         Map<String, String> map = new HashMap<>();
         map.put("prop", "value");
         legend.getSteps().add(new LegendStep("param name", "param value", null, null, "step name",

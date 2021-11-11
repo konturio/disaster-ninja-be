@@ -74,7 +74,7 @@ public class Layer {
         LayerSource otherSource = other.getSource();
         if (otherSource != null) {
             this.source = new LayerSource(otherSource.getType(), otherSource.getTileSize(),
-                otherSource.getUrl(), otherSource.getSourceLayer(), this.source != null ? this.source.getData() : null); //sic! source.data is not replaced
+                otherSource.getUrls(), this.source != null ? this.source.getData() : null); //sic! source.data is not replaced
         }
     }
 
@@ -91,6 +91,9 @@ public class Layer {
         }
         if (prototype.getType() != null) {
             thisLegend.setType(prototype.getType());
+        }
+        if (prototype.getSourceLayer() != null) {
+            thisLegend.setSourceLayer(prototype.getSourceLayer());
         }
         thisLegend.setSteps(new ArrayList<>());
 

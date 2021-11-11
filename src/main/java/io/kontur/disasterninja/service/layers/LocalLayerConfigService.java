@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.service.layers;
 
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.LegendStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class LocalLayerConfigService implements LayerConfigService {
@@ -24,11 +26,17 @@ public class LocalLayerConfigService implements LayerConfigService {
             localLayersConfig.getConfigs().forEach(this::setLegendStepsOrder);
 
             localLayersConfig.getConfigs().forEach((config) -> {
-                //todo spring messages?
-                if (config.getSource() != null && config.getSource().getUrl() != null && config.getSource().getUrl()
-                    .contains("{tilesHost}")) {
-                    config.getSource().setUrl(config.getSource().getUrl().replaceAll("\\{tilesHost}",
-                        tilesHost));
+                LayerSource source = config.getSource();
+                if (source != null && source.getUrls() != null) {
+                    source.setUrls(source.getUrls().stream()
+                        .map(it -> {
+                            //todo spring messages?
+                            if (it.contains("{tilesHost}")) {
+                                return it.replaceAll("\\{tilesHost}", tilesHost);
+                            } else {
+                                return it;
+                            }
+                        }).collect(Collectors.toList()));
                 }
                 if (config.isGlobalOverlay()) {
                     globalOverlays.put(config.getId(), config);

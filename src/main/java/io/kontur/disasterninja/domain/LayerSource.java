@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import org.wololo.geojson.FeatureCollection;
 
+import java.util.List;
+
 @Data
 @Builder
 public class LayerSource {
     private final LayerSourceType type;
     private final Double tileSize; //for 'vector' and 'raster' only
-    private String url; //for 'vector' and 'raster' only
-    private String sourceLayer; //for 'vector' and 'raster' only //layer name within a tile
+    private List<String> urls; //for 'vector' and 'raster' only
     private FeatureCollection data; //for geoJson only
 }

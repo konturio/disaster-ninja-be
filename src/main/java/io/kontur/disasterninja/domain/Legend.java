@@ -17,6 +17,7 @@ import java.util.Map;
 public class Legend {
     private String name;
     private LegendType type;
+    private String sourceLayer; //for 'vector' and 'raster' only
     @Builder.Default
     private List<LegendStep> steps = new ArrayList<>();
     @Builder.Default
