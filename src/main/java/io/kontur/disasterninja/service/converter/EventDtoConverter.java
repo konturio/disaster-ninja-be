@@ -16,6 +16,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static io.kontur.disasterninja.service.converter.EventListEventDtoConverter.convertDouble;
+import static io.kontur.disasterninja.service.converter.EventListEventDtoConverter.eventName;
 import static java.util.Collections.emptyMap;
 
 public class EventDtoConverter {
@@ -30,6 +32,12 @@ public class EventDtoConverter {
         List<FeedEpisode> episodes = event.getEpisodes();
         episodes.sort(Comparator.comparing(FeedEpisode::getUpdatedAt).reversed());
         FeedEpisode latestEpisode = episodes.get(0);
+
+        dto.setEventName(eventName(event));
+        dto.setLocations(event.getLocation());
+        List<String> eventUrls = event.getUrls();
+        dto.setExternalUrls(eventUrls != null ? List.copyOf(eventUrls) : List.of());
+
         EventType eventType;
         try {
             eventType = EventType.valueOf(latestEpisode.getType());
@@ -37,8 +45,13 @@ public class EventDtoConverter {
             eventType = EventType.OTHER;
         }
         dto.setEventType(eventType);
-        dto.setEventName(eventType.getName()); //TODO add properName
         dto.setSeverity(latestEpisode.getSeverity());
+
+        if (event.getEventDetails() != null) {
+            dto.setSettledArea(convertDouble(event.getEventDetails().get("populatedAreaKm2")));
+        } else {
+            dto.setSettledArea(0d);
+        }
 
         dto.setGeojson(uniteGeometry(latestEpisode)); //todo isn't this event's geometries? -- check in eventApi!
         dto.setLatestEpisodeGeojson(latestEpisode.getGeometries());
@@ -57,8 +70,8 @@ public class EventDtoConverter {
 
         GeometryFactory geometryFactory = new GeometryFactory(episodeGeometries.get(0).getPrecisionModel());
         org.locationtech.jts.geom.Geometry unitedGeometry = geometryFactory
-                .createGeometryCollection(episodeGeometries.toArray(new org.locationtech.jts.geom.Geometry[0]))
-                .union();
-        return new FeatureCollection(new Feature[] {new Feature(geoJSONWriter.write(unitedGeometry), emptyMap())});
+            .createGeometryCollection(episodeGeometries.toArray(new org.locationtech.jts.geom.Geometry[0]))
+            .union();
+        return new FeatureCollection(new Feature[]{new Feature(geoJSONWriter.write(unitedGeometry), emptyMap())});
     }
 }

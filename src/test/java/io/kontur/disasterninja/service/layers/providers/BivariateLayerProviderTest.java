@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 public class BivariateLayerProviderTest extends LayerProvidersTest {
 
