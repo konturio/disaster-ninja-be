@@ -1,13 +1,15 @@
 package io.kontur.disasterninja.config;
 
+import com.apollographql.apollo.ApolloClient;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.apollographql.apollo.ApolloClient;
 import io.kontur.disasterninja.config.metrics.ParamLessRestTemplateExchangeTagsProvider;
+import okhttp3.ConnectionPool;
+import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.web.client.RestTemplateExchangeTagsProvider;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -21,6 +23,7 @@ import org.wololo.geojson.GeoJSON;
 import org.wololo.geojson.GeoJSONFactory;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class WebConfiguration {
@@ -88,9 +91,18 @@ public class WebConfiguration {
         }
     }
     @Bean
-    public ApolloClient insightsApiApolloClient(@Value("${kontur.platform.insightsApi.url}") String insightsApiUrl){
+    public ApolloClient insightsApiApolloClient(@Value("${kontur.platform.insightsApi.url}") String insightsApiUrl,
+                                                @Value("${graphql.apollo.maxIdleConnections}") Integer maxIdleConnections,
+                                                @Value("${graphql.apollo.keepAliveDuration}") Integer keepAliveDuration,
+                                                @Value("${graphql.apollo.connectionTimeout}") Integer connectionTimeout,
+                                                @Value("${graphql.apollo.readTimeout}") Integer readTimeout){
         return ApolloClient.builder()
                 .serverUrl(insightsApiUrl+"/graphql")
+                .okHttpClient(new OkHttpClient().newBuilder()
+                        .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                        .readTimeout(readTimeout, TimeUnit.SECONDS)
+                        .connectionPool(new ConnectionPool(maxIdleConnections, keepAliveDuration, TimeUnit.SECONDS))
+                        .build())
                 .build();
     }
 
