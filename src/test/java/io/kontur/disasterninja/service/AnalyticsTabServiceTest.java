@@ -64,7 +64,7 @@ class AnalyticsTabServiceTest {
         analyticsField.setName("name");
 
         List<AnalyticsTabQuery.Function> functionsResults = List.of(new AnalyticsTabQuery.Function("", "functionId", 1.1),
-                new AnalyticsTabQuery.Function("", "functionId1", 2.2));
+                new AnalyticsTabQuery.Function("", "functionId1", 2.233333));
 
         CompletableFuture<List<AnalyticsTabQuery.Function>> completableFuture = new CompletableFuture();
         completableFuture.complete(functionsResults);
@@ -102,7 +102,7 @@ class AnalyticsTabServiceTest {
         assertEquals("name", result1.getName());
         assertEquals("description", result1.getDescription());
         assertEquals(1, result1.getPercentValue());
-        assertEquals("2.2 people on ", result1.getText());
+        assertEquals("2.23 people on ", result1.getText());
     }
 
     @Test
