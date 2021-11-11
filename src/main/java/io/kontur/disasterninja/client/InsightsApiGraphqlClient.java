@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.wololo.geojson.GeoJSON;
-import org.wololo.geojson.Geometry;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -32,7 +31,12 @@ public class InsightsApiGraphqlClient {
                 .enqueue(new ApolloCall.Callback<AnalyticsTabQuery.Data>() {
                     @Override
                     public void onResponse(@NotNull Response<AnalyticsTabQuery.Data> response) {
-                        future.complete(response.getData().polygonStatistic().analytics().functions());
+                        if (response.getData() != null && response.getData().polygonStatistic() != null &&
+                                response.getData().polygonStatistic().analytics() != null &&
+                                response.getData().polygonStatistic().analytics().functions() != null) {
+                            future.complete(response.getData().polygonStatistic().analytics().functions());
+                        }
+                        future.complete(List.of());
                     }
 
                     @Override
@@ -46,24 +50,24 @@ public class InsightsApiGraphqlClient {
     public CompletableFuture<List<BivariateLayerLegendQuery.Overlay>> getBivariateOverlays() {
         CompletableFuture<List<BivariateLayerLegendQuery.Overlay>> future = new CompletableFuture<>();
         apolloClient
-            .query(new BivariateLayerLegendQuery(Input.optional(null)))
-            .enqueue(new ApolloCall.Callback<>() {
-                @Override
-                public void onResponse(@NotNull Response<BivariateLayerLegendQuery.Data> response) {
-                    if (response.getData() != null &&
-                        response.getData().polygonStatistic() != null &&
-                        response.getData().polygonStatistic().bivariateStatistic() != null) {
-                        future.complete(response.getData().polygonStatistic().bivariateStatistic().overlays());
+                .query(new BivariateLayerLegendQuery(Input.optional(null)))
+                .enqueue(new ApolloCall.Callback<>() {
+                    @Override
+                    public void onResponse(@NotNull Response<BivariateLayerLegendQuery.Data> response) {
+                        if (response.getData() != null &&
+                                response.getData().polygonStatistic() != null &&
+                                response.getData().polygonStatistic().bivariateStatistic() != null) {
+                            future.complete(response.getData().polygonStatistic().bivariateStatistic().overlays());
+                        }
+                        future.complete(List.of());
                     }
-                    future.complete(List.of());
-                }
 
-                @Override
-                public void onFailure(@NotNull ApolloException e) {
-                    future.completeExceptionally(new WebApplicationException("Exception when getting data from " +
-                        "insights-api using apollo client", HttpStatus.BAD_GATEWAY));
-                }
-            });
+                    @Override
+                    public void onFailure(@NotNull ApolloException e) {
+                        future.completeExceptionally(new WebApplicationException("Exception when getting data from " +
+                                "insights-api using apollo client", HttpStatus.BAD_GATEWAY));
+                    }
+                });
         return future;
     }
 }

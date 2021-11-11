@@ -142,4 +142,49 @@ class AnalyticsTabServiceTest {
             assertEquals("Exception when getting data from insights-api using apollo client", e.getMessage());
         }
     }
+
+    @Test
+    public void calculateAnalyticsTestZeroResults(){
+        //given
+        String geoJsonString = """
+                {"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[27.2021484375,54.13347814286039],[26.9989013671875,53.82335438174398],[27.79541015625,53.70321053273598],[27.960205078125,53.90110181472825],[28.004150390625,54.081951104880396],[27.6470947265625,54.21707306629117],[27.2021484375,54.13347814286039]]]}}]}";
+                """;
+
+        AnalyticsField analyticsField = new AnalyticsField();
+        Function function = new Function();
+        function.setId("functionId");
+        function.setPostfix("%");
+        function.setFunction("percentageXWhereNoY");
+        function.setArguments(List.of("populated_area_km2", "count"));
+
+        Function function1 = new Function();
+        function1.setId("functionId1");
+        function1.setPostfix("people on");
+        function1.setFunction("sumXWhereNoY");
+        function1.setArguments(List.of("population", "count"));
+
+        analyticsField.setFunctions(List.of(function, function1));
+        analyticsField.setDescription("description");
+        analyticsField.setName("name");
+
+        List<AnalyticsTabQuery.Function> functionsResults = List.of(new AnalyticsTabQuery.Function("", "functionId", 0.0),
+                new AnalyticsTabQuery.Function("", "functionId1", null));
+
+        CompletableFuture<List<AnalyticsTabQuery.Function>> completableFuture = new CompletableFuture();
+        completableFuture.complete(functionsResults);
+
+        when(configuration.getFields()).thenReturn(List.of(analyticsField));
+        when(insightsApiGraphqlClient.analyticsTabQuery(any(GeoJSON.class), anyList())).thenReturn(completableFuture);
+
+        //when
+        List<AnalyticsDto> result = service.calculateAnalytics(geoJsonString);
+
+        //then
+        assertEquals(1, result.size());
+        AnalyticsDto result1 = result.get(0);
+        assertEquals("name", result1.getName());
+        assertEquals("description", result1.getDescription());
+        assertEquals(0, result1.getPercentValue());
+        assertEquals("0.0 people on ", result1.getText());
+    }
 }
