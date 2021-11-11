@@ -42,7 +42,7 @@ public class EventApiConvertersTest {
         EventDto dto = EventDtoConverter.convert(event);
 
         assertEquals(event.getProperName(), dto.getEventName());
-        assertEquals(event.getLocation(), dto.getLocations());
+        assertEquals(event.getLocation(), dto.getLocation());
         assertEquals(0L, dto.getSettledArea());
         assertTrue(dto.getExternalUrls().isEmpty());
     }
@@ -55,7 +55,7 @@ public class EventApiConvertersTest {
         EventDto dto = EventDtoConverter.convert(event);
 
         assertEquals(event.getProperName(), dto.getEventName());
-        assertEquals(event.getLocation(), dto.getLocations());
+        assertEquals(event.getLocation(), dto.getLocation());
         assertEquals(0L, dto.getSettledArea());
         assertTrue(dto.getExternalUrls().isEmpty());
     }
@@ -70,7 +70,7 @@ public class EventApiConvertersTest {
         EventDto dto = EventDtoConverter.convert(event);
 
         assertEquals(event.getProperName(), dto.getEventName());
-        assertEquals(event.getLocation(), dto.getLocations());
+        assertEquals(event.getLocation(), dto.getLocation());
         assertEquals(100.12, dto.getSettledArea());
         assertEquals(1, dto.getExternalUrls().size());
         assertEquals("http://google.com", dto.getExternalUrls().get(0));
@@ -104,7 +104,7 @@ public class EventApiConvertersTest {
         EventListDto dto = EventListEventDtoConverter.convert(event);
 
         assertEquals(event.getProperName(), dto.getEventName());
-        assertEquals(event.getLocation(), dto.getLocations());
+        assertEquals(event.getLocation(), dto.getLocation());
         assertEquals(0L, dto.getSettledArea());
         assertTrue(dto.getExternalUrls().isEmpty());
     }
@@ -117,7 +117,7 @@ public class EventApiConvertersTest {
         EventListDto dto = EventListEventDtoConverter.convert(event);
 
         assertEquals(event.getProperName(), dto.getEventName());
-        assertEquals(event.getLocation(), dto.getLocations());
+        assertEquals(event.getLocation(), dto.getLocation());
         assertEquals(0L, dto.getSettledArea());
         assertTrue(dto.getExternalUrls().isEmpty());
     }
@@ -132,7 +132,7 @@ public class EventApiConvertersTest {
         EventListDto dto = EventListEventDtoConverter.convert(event);
 
         assertEquals(event.getProperName(), dto.getEventName());
-        assertEquals(event.getLocation(), dto.getLocations());
+        assertEquals(event.getLocation(), dto.getLocation());
         assertEquals(100.12, dto.getSettledArea());
         assertEquals(1, dto.getExternalUrls().size());
         assertEquals("http://google.com", dto.getExternalUrls().get(0));

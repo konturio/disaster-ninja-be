@@ -34,7 +34,7 @@ public class EventDtoConverter {
         FeedEpisode latestEpisode = episodes.get(0);
 
         dto.setEventName(eventName(event));
-        dto.setLocations(event.getLocation());
+        dto.setLocation(event.getLocation());
         List<String> eventUrls = event.getUrls();
         dto.setExternalUrls(eventUrls != null ? List.copyOf(eventUrls) : List.of());
 

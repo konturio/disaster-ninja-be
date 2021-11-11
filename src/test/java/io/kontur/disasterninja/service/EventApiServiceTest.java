@@ -75,7 +75,7 @@ class EventApiServiceTest {
 
         //some EventListDto fields
         assertEquals(10d, events.get(0).getSettledArea());
-        assertEquals("Some city", events.get(0).getLocations());
+        assertEquals("Some city", events.get(0).getLocation());
         assertEquals("Proper name", events.get(0).getEventName());
         assertEquals(1, events.get(0).getExternalUrls().size());
         assertEquals("http://google.com", events.get(0).getExternalUrls().get(0));
@@ -101,7 +101,7 @@ class EventApiServiceTest {
         verify(client, times(1)).getEvent(eventId, "testToken");
         //some EventDto fields
         assertEquals(event.getProperName(), result.getEventName());
-        assertEquals(event.getLocation(), result.getLocations());
+        assertEquals(event.getLocation(), result.getLocation());
         assertEquals(123234L, result.getSettledArea());
         assertEquals(event.getUrls(), result.getExternalUrls());
     }

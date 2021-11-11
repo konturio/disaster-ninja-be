@@ -10,7 +10,7 @@ import java.util.UUID;
 public class EventListDto {
     private UUID eventId;
     private String eventName;
-    private String locations;
+    private String location;
     private Severity severity;
     private Long affectedPopulation;
     private Double settledArea;
