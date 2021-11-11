@@ -18,6 +18,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -64,7 +65,8 @@ public class AnalyticsTabService {
         List<AnalyticsDto> result = new ArrayList<>();
 
         Map<String, Double> functionsResultsMap = functionsResults.stream()
-                .collect(Collectors.toMap(AnalyticsTabQuery.Function::id, AnalyticsTabQuery.Function::result));
+                .collect(Collectors.toMap(AnalyticsTabQuery.Function::id,
+                        value -> Optional.ofNullable(value.result()).orElse(0.0)));
 
         fields.forEach(field -> {
             AnalyticsDto dto = new AnalyticsDto();
@@ -74,8 +76,7 @@ public class AnalyticsTabService {
                 if (function.getPostfix().equals("%")) {
                     dto.setPercentValue(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
                             .setScale(0, RoundingMode.HALF_UP).intValue());
-                }
-                else {
+                } else {
                     text.append(functionsResultsMap.get(function.getId())).append(" ").append(function.getPostfix()).append(" ");
                 }
             }
