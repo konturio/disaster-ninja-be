@@ -460,3 +460,8 @@ layers:
         sourceLayer: 'stats'
         tileSize: 512
   ##### Category: BASELINE
+
+    - id: 'Bing'
+      source:
+        type: 'raster'
+        url: 'http://ecn.t0.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'

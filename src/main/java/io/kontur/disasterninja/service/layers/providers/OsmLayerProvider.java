@@ -21,7 +21,7 @@ import static io.kontur.disasterninja.client.KcApiClient.OSM_LAYERS;
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
-import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
+import static io.kontur.disasterninja.domain.enums.LayerSourceType.RASTER;
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 @Service
@@ -126,7 +126,11 @@ public class OsmLayerProvider implements LayerProvider {
 
         if (includeSourceData) {
             builder.source(LayerSource.builder()
-                .type(GEOJSON)
+                .type(RASTER) //todo agreed to hardcode for now
+//                    .tileSize() //todo
+                .url(getFeatureProperty(f, URL, String.class))
+//                    .sourceLayer() //todo
+
                 .data(new FeatureCollection(new Feature[]{f}))
                 .build());
         }

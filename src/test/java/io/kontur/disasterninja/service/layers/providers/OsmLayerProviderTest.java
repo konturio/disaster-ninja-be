@@ -15,6 +15,7 @@ import java.util.UUID;
 
 import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
+import static io.kontur.disasterninja.domain.enums.LayerSourceType.RASTER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -52,6 +53,10 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
         assertEquals("Benin_cotonou_pleiade_2016", layer.getId());
         //source
         assertTrue(layer.getSource().getData().getFeatures().length > 0);
+        assertEquals(RASTER, layer.getSource().getType());
+        assertEquals("https://geoxxx.agrocampus-ouest.fr/owsifl/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetTile&" +
+            "VERSION=1.0.0&LAYER=Benin:cotonou_pleiade_2016&STYLE=&FORMAT=image/jpeg&tileMatrixSet=EPSG:3857&tileMatrix=" +
+            "EPSG:3857:{zoom}&tileRow={y}&tileCol={x}", layer.getSource().getUrl());
     }
 
     @Test
@@ -98,6 +103,11 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
         assertEquals(21, layer1.getMaxZoom());
         assertEquals(6, layer1.getMinZoom());
         //source
+        assertEquals(RASTER, layer1.getSource().getType());
+        assertEquals("https://geoxxx.agrocampus-ouest.fr/owsifl/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetTile&" +
+            "VERSION=1.0.0&LAYER=Benin:cotonou_pleiade_2016&STYLE=&FORMAT=image/jpeg&tileMatrixSet=EPSG:3857&tileMatrix=" +
+            "EPSG:3857:{zoom}&tileRow={y}&tileCol={x}", layer1.getSource().getUrl());
+
         assertNotNull(layer1.getSource().getData().getFeatures());
         assertTrue(layer1.getSource().getData().getFeatures()[0].getGeometry() instanceof MultiPolygon);
         assertEquals(51, ((MultiPolygon) layer1.getSource().getData().getFeatures()[0].getGeometry())
