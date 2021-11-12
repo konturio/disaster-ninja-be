@@ -11,6 +11,7 @@ import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Point;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
@@ -185,10 +186,18 @@ public class LayerConfigServiceTest {
         //legend
         Assertions.assertNotNull(activeContributors.getLegend());
         Assertions.assertEquals(SIMPLE, activeContributors.getLegend().getType());
+        Assertions.assertEquals("users", activeContributors.getLegend().getSourceLayer());
         //steps
         //Steps are always shown since displayLegendIfNoFeaturesExist is true
         Assertions.assertEquals(2, activeContributors.getLegend().getSteps().size());
         //skipping other fields
+    }
+
+    @Test
+    public void bingUrlsTest() {
+        Layer bing = Layer.builder().id("Bing").build();
+        service.applyConfig(bing);
+        Assertions.assertEquals(8, bing.getSource().getUrls().size());
     }
 
     @Test
@@ -198,8 +207,8 @@ public class LayerConfigServiceTest {
             .build();
         service.applyConfig(analytics);
         //layer
-        Assertions.assertEquals("https://test-apps02.konturlabs.com/tiles/stats/{x}/{y}/{z}.mvt",
-            analytics.getSource().getUrl());
+        Assertions.assertEquals(List.of("https://test-apps02.konturlabs.com/tiles/stats/{x}/{y}/{z}.mvt"),
+            analytics.getSource().getUrls());
         Assertions.assertTrue(analytics.isGlobalOverlay());
         Assertions.assertFalse(analytics.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertFalse(analytics.isBoundaryRequiredForRetrieval());

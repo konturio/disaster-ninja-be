@@ -125,11 +125,12 @@ public class OsmLayerProvider implements LayerProvider {
             .minZoom(getFeatureProperty(f, MIN_ZOOM, Integer.class));
 
         if (includeSourceData) {
+            String url = getFeatureProperty(f, URL, String.class);
+
             builder.source(LayerSource.builder()
                 .type(RASTER) //todo agreed to hardcode for now
 //                    .tileSize() //todo
-                .url(getFeatureProperty(f, URL, String.class))
-//                    .sourceLayer() //todo
+                .urls(url != null ? List.of(url) : null)
 
                 .data(new FeatureCollection(new Feature[]{f}))
                 .build());
