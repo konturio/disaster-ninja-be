@@ -53,7 +53,9 @@ public class HotLayerProvider implements LayerProvider {
             throw new WebApplicationException("GeoJson boundary must be specified for layer " + layerId,
                 HttpStatus.BAD_REQUEST);
         }
-        List<Feature> hotProjectLayers = kcApiClient.getCollectionItemsByGeometry(geoJson, HOT_PROJECTS);
+        //todo now only features whose Centroid intersects with requested geoJson are included (same as in DN1) #7768
+        //it's possible that the centroid does intersect with the geoJson, but geometries themselves do not!
+        List<Feature> hotProjectLayers = kcApiClient.getCollectionItemsByCentroidGeometry(geoJson, HOT_PROJECTS);
         return fromHotProjectLayers(hotProjectLayers);
     }
 
