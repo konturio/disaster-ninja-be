@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.UUID;
 
 import static io.kontur.disasterninja.client.KcApiClient.HOT_PROJECTS;
+import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
+import static io.kontur.disasterninja.service.layers.providers.OsmLayerProvider.getFeatureProperty;
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Service
@@ -71,8 +73,16 @@ public class HotLayerProvider implements LayerProvider {
         Layer.LayerBuilder builder = Layer.builder()
             .id(HOT_LAYER_ID)
             .source(LayerSource.builder() //source is required to calculate this layers legend
-            .type(GEOJSON)
-            .data(new FeatureCollection(dto.toArray(new Feature[0])))
+                .type(GEOJSON)
+                //enrich features with HOT Project URL
+                .data(new FeatureCollection(dto.stream().peek(f -> {
+                    if (f.getProperties() != null) {
+                        Integer projectId = getFeatureProperty(f, PROJECT_ID, Integer.class);
+                        if (projectId != null) {
+                            f.getProperties().put(PROJECT_LINK, HOT_PROJECTS_URL + projectId);
+                        }
+                    }
+                }).toArray(Feature[]::new)))
             .build());
         return builder.build();
         //the rest params are set by LayerConfigService

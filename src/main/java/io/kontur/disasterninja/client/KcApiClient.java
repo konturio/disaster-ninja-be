@@ -2,6 +2,7 @@ package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import lombok.Getter;
 import org.locationtech.jts.geom.Envelope;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -68,7 +70,13 @@ public class KcApiClient {
     }
 
     public List<Feature> getCollectionItemsByGeometry(Geometry geoJson, String collectionId) {
-        org.locationtech.jts.geom.Geometry geoJsonGeometry = getJtsGeometry(geoJson);
+        org.locationtech.jts.geom.Geometry geoJsonGeometry;
+        try {
+            geoJsonGeometry = getJtsGeometry(geoJson);
+        } catch (Exception e) {
+            LOG.warn("Caught exception while building JTS geometry from geojson: {}", e.getMessage(), e);
+            throw new WebApplicationException(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
 
         //1 get items by bbox
         List<Feature> features = getCollectionItems(collectionId, geoJsonGeometry);

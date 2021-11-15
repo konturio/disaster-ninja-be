@@ -8,7 +8,8 @@ import java.util.Arrays;
 public enum LayerStepShape {
     SQUARE("square"),
     CIRCLE("circle"),
-    HEX("hex");
+    HEX("hex"),
+    ICON("icon");
 
     private final String value;
 

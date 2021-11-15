@@ -333,19 +333,22 @@ layers:
         - '© Humanitarian OpenStreetMap Team, © Kontur'
       legend:
         type: 'simple'
+        linkProperty: 'projectLink'
         steps:
           - stepName: 'Published'
-            stepShape: 'circle'
+            stepShape: 'icon'
             paramName: 'status'
-            paramValue: 'Published'
+            paramValue: 'PUBLISHED'
             style:
-              icon: 'link_to_icon_2'
+              icon: 'hot-red'
+              text: '{projectId} - {projectPriority}'
           - stepName: 'Archived'
-            stepShape: 'circle'
+            stepShape: 'icon'
             paramName: 'status'
-            paramValue: 'Archived'
+            paramValue: 'ARCHIVED'
             style:
-              icon: 'link_to_icon_3'
+              icon: 'hot-gray'
+              text: '{projectId} - {projectPriority}'
 
     ### Group: Kontur Analytical Layers
     - id: 'Kontur OpenStreetMap Quantity'

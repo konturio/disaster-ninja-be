@@ -18,6 +18,7 @@ public class Legend {
     private String name;
     private LegendType type;
     private String sourceLayer; //for 'vector' and 'raster' only
+    private String linkProperty;
     @Builder.Default
     private List<LegendStep> steps = new ArrayList<>();
     @Builder.Default

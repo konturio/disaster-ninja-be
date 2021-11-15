@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -83,5 +84,9 @@ public class HotLayerProviderTest extends LayerProvidersTest {
         Assertions.assertEquals("Polygon", result.getSource().getData().getFeatures()[0].getGeometry()
             .getType());
         Assertions.assertNull(result.getDescription()); //defaults are set later by LayerConfigService
+        Assertions.assertEquals(100, result.getSource().getData().getFeatures()[0].getProperties()
+            .get(PROJECT_ID));
+        Assertions.assertEquals(HOT_PROJECTS_URL + 100, result.getSource().getData().getFeatures()[0].getProperties()
+            .get(PROJECT_LINK));
     }
 }
