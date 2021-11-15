@@ -34,11 +34,12 @@ class EventApiClientTest {
     private MockRestServiceServer server;
 
     @Test
-    public void testGetEvents() throws IOException {
+    public void testGetEvents() {
         //given
         server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
                 matchesRegex(Pattern.compile(
-                    "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}Z&episodeFilterType=LATEST&limit=1000&sortOrder=ASC"))))
+                    "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&after=\\d{4}-\\d{2}-\\d{2}[tT]" +
+                        "\\d{2}:\\d{2}:\\d{2}.?\\d{0,3}Z&episodeFilterType=LATEST&limit=1000&sortOrder=ASC"))))
             .andExpect(method(HttpMethod.GET))
             .andExpect(header("Authorization", "Bearer JwtTestToken"))
             .andRespond(r -> {

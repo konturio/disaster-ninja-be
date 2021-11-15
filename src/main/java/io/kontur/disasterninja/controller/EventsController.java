@@ -47,7 +47,11 @@ public class EventsController {
         if (offset >= events.size()) {
             throw new WebApplicationException("Offset is larger than resultset size", HttpStatus.NO_CONTENT);
         }
-        return events.subList(offset, offset + limit);
+        int maxIndex = offset + limit;
+        if (events.size() < maxIndex) {
+            maxIndex = events.size();
+        }
+        return events.subList(offset, maxIndex);
     }
 
     @Operation(tags = "Events", summary = "Returns event by its Id")
