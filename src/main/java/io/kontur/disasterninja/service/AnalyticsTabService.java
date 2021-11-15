@@ -73,12 +73,16 @@ public class AnalyticsTabService {
             StringBuilder text = new StringBuilder();
             List<Function> currentFunctionsList = field.getFunctions();
             for (Function function : currentFunctionsList) {
-                if (function.getPostfix().equals("%")) {
-                    dto.setPercentValue(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
+                switch (function.getPostfix()) {
+                    case ("%") -> dto.setPercentValue(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
                             .setScale(0, RoundingMode.HALF_UP).intValue());
-                } else {
-                    text.append(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
-                            .setScale(2, RoundingMode.HALF_UP).doubleValue())
+                    case ("people on") -> text.append(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
+                                    .setScale(0, RoundingMode.HALF_UP).longValue())
+                            .append(" ")
+                            .append(function.getPostfix())
+                            .append(" ");
+                    default -> text.append(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
+                                    .setScale(2, RoundingMode.HALF_UP).doubleValue())
                             .append(" ")
                             .append(function.getPostfix())
                             .append(" ");
