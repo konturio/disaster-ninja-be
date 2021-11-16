@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 @Data
 public class LegendDto {
-    private final String name;
     private final String type;
     private final String sourceLayer; //for 'vector' and 'raster' only
     private final String linkProperty;
@@ -18,8 +17,7 @@ public class LegendDto {
     private final List<ColorDto> colors;
 
     public static LegendDto fromLegend(Legend legend) {
-        return legend == null ? null : new LegendDto(legend.getName(),
-            legend.getType() == null ? null : legend.getType().toString(),
+        return legend == null ? null : new LegendDto(legend.getType() == null ? null : legend.getType().toString(),
             legend.getSourceLayer(),
             legend.getLinkProperty(),
             legend.getSteps().stream().map(LegendStepDto::fromLegendStep).collect(Collectors.toList()),
@@ -27,7 +25,7 @@ public class LegendDto {
     }
 
     public Legend toLegend() {
-        return new Legend(name, LegendType.fromString(type), sourceLayer, linkProperty,
+        return new Legend(LegendType.fromString(type), sourceLayer, linkProperty,
             steps.stream().map(LegendStepDto::toLegendStep)
                 .collect(Collectors.toList()), colors.stream().collect(Collectors
             .toMap(ColorDto::getId, ColorDto::getColor)));

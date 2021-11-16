@@ -15,7 +15,6 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Legend {
-    private String name;
     private LegendType type;
     private String sourceLayer; //for 'vector' and 'raster' only
     private String linkProperty;
