@@ -15,21 +15,23 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Component
 public class EventApiClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventApiClient.class);
-    private static final String EVENT_API_EVENT_LIST_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&after=%s&episodeFilterType=LATEST&limit=1000&sortOrder=ASC";
+    private static final String EVENT_API_EVENT_LIST_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&after=%s&episodeFilterType=LATEST&limit=%s&sortOrder=ASC";
     private static final String EVENT_API_EVENT_ID_URI = "/v1/event?feed=%s&eventId=%s";
 
     private final RestTemplate restTemplate;
 
     @Value("${kontur.platform.event-api.feed}")
     private String eventApiFeed;
-    @Value("${kontur.platform.event-api.url}")
-    private String eventApiUrl;
+    @Value("${kontur.platform.event-api.pageSize}")
+    private int pageSize;
 
     public EventApiClient(RestTemplate eventApiRestTemplate) {
         this.restTemplate = eventApiRestTemplate;
@@ -45,18 +47,22 @@ public class EventApiClient {
 
         while (true) {
             String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed, after.atZoneSameInstant(ZoneOffset.UTC)
-                    .truncatedTo(ChronoUnit.MILLIS)
-                .format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
-            LOG.info("Requesting events list from EventAPI: {}", eventApiUrl + uri);
+                .truncatedTo(ChronoUnit.MILLIS).format(DateTimeFormatter.ISO_ZONED_DATE_TIME), pageSize);
             ResponseEntity<EventApiSearchEventResponse> response = restTemplate
                 .exchange(uri, HttpMethod.GET, new HttpEntity<>(null, headers), new ParameterizedTypeReference<>() {
                 });
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                LOG.info("Received {} response from eventapi. Request uri: {}", response.getStatusCode(), uri);
+            }
             if (response.getStatusCode() == HttpStatus.NO_CONTENT ||
                 response.getBody() == null || response.getBody().data == null ||
                 response.getBody().data.isEmpty()) {
                 break;
             }
             result.addAll(response.getBody().data);
+            if (response.getBody().data.size() < pageSize) { //last page
+                break;
+            }
             after = response.getBody().pageMetadata.nextAfterValue;
         }
         return result;
@@ -69,10 +75,12 @@ public class EventApiClient {
         String uri = String.format(EVENT_API_EVENT_ID_URI, eventApiFeed, eventId);
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(jwtToken);
-        LOG.info("Requesting event from EventAPI: {}", eventApiUrl + uri);
         ResponseEntity<EventApiEventDto> response = restTemplate
             .exchange(uri, HttpMethod.GET, new HttpEntity<>(null, headers), new ParameterizedTypeReference<>() {
             });
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            LOG.info("Received {} response from eventapi. Request uri: {}", response.getStatusCode(), uri);
+        }
 
         return response.getBody();
     }

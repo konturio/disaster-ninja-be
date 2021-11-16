@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,7 +27,7 @@ public class HotLayerProviderTest extends LayerProvidersTest {
 
     @BeforeEach
     public void init() throws IOException {
-        Mockito.when(kcApiClient.getCollectionItemsByGeometry(any(), any())).thenReturn(
+        Mockito.when(kcApiClient.getCollectionItemsByCentroidGeometry(any(), any())).thenReturn(
             List.of(objectMapper.readValue(
                     getClass().getResource("/io/kontur/disasterninja/client/layers/hotprojects.json"),
                     FeatureCollection.class)
@@ -63,14 +64,14 @@ public class HotLayerProviderTest extends LayerProvidersTest {
 
     @Test
     public void listNoIntersection() {
-        Mockito.when(kcApiClient.getCollectionItemsByGeometry(any(), any())).thenReturn(List.of());
-        List<Layer> results = hotLayerProvider.obtainLayers(new Point(new double[]{-90d, -90d}), null);
+        Mockito.when(kcApiClient.getCollectionItemsByCentroidGeometry(any(), any())).thenReturn(List.of());
+        List<Layer> results = hotLayerProvider.obtainLayers(new Point(new double[]{-900d, -900d}), null);
         assertEquals(0, results.size());
     }
 
     @Test
     public void getNoIntersection() {
-        Mockito.when(kcApiClient.getCollectionItemsByGeometry(any(), any())).thenReturn(List.of());
+        Mockito.when(kcApiClient.getCollectionItemsByCentroidGeometry(any(), any())).thenReturn(List.of());
         Layer result = hotLayerProvider.obtainLayer(new Point(new double[]{10d, 20d}), HOT_LAYER_ID, null);
         assertNull(result);
     }
@@ -83,5 +84,9 @@ public class HotLayerProviderTest extends LayerProvidersTest {
         Assertions.assertEquals("Polygon", result.getSource().getData().getFeatures()[0].getGeometry()
             .getType());
         Assertions.assertNull(result.getDescription()); //defaults are set later by LayerConfigService
+        Assertions.assertEquals(100, result.getSource().getData().getFeatures()[0].getProperties()
+            .get(PROJECT_ID));
+        Assertions.assertEquals(HOT_PROJECTS_URL + 100, result.getSource().getData().getFeatures()[0].getProperties()
+            .get(PROJECT_LINK));
     }
 }

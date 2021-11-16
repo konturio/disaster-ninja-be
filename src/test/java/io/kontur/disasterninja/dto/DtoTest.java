@@ -139,7 +139,7 @@ public class DtoTest {
             .urls(List.of("url-com.com"))
             .tileSize(2d)
             .data(geoJSON).build();
-        Legend legend = new Legend("some legend", LegendType.SIMPLE, "source-layer", new ArrayList<>(), new HashMap<>());
+        Legend legend = new Legend("some legend", LegendType.SIMPLE, "source-layer", null, new ArrayList<>(), new HashMap<>());
         Map<String, String> map = new HashMap<>();
         map.put("prop", "value");
         legend.getSteps().add(new LegendStep("param name", "param value", null, null, "step name",

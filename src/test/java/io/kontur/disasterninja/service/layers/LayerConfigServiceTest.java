@@ -62,6 +62,7 @@ public class LayerConfigServiceTest {
         Assertions.assertNotNull(hot.getLegend().getSteps());
         //colors are only used for bivariate legends
         Assertions.assertNull(hot.getLegend().getBivariateColors());
+        Assertions.assertEquals("projectLink", hot.getLegend().getLinkProperty());
         // all 3 steps are present since there is at least one feature for each step
         Assertions.assertEquals(2, hot.getLegend().getSteps().size());
 
@@ -70,13 +71,13 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(1).getStepName());
         //step 1
         Assertions.assertEquals("status", hot.getLegend().getSteps().get(0).getParamName());
-        Assertions.assertEquals("Published", hot.getLegend().getSteps().get(0).getParamValue());
+        Assertions.assertEquals("PUBLISHED", hot.getLegend().getSteps().get(0).getParamValue());
         //step 2
         Assertions.assertEquals("status", hot.getLegend().getSteps().get(1).getParamName());
-        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(1).getParamValue());
+        Assertions.assertEquals("ARCHIVED", hot.getLegend().getSteps().get(1).getParamValue());
 
-        Assertions.assertEquals("link_to_icon_2", hot.getLegend().getSteps().get(0).getStyle().get("icon"));
-        Assertions.assertEquals("link_to_icon_3", hot.getLegend().getSteps().get(1).getStyle().get("icon"));
+        Assertions.assertEquals("hot-red", hot.getLegend().getSteps().get(0).getStyle().get("icon"));
+        Assertions.assertEquals("hot-gray", hot.getLegend().getSteps().get(1).getStyle().get("icon"));
     }
 
     @Test
@@ -100,6 +101,7 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals(OVERLAY, hot.getCategory());
         Assertions.assertEquals("Kontur", hot.getGroup());
         Assertions.assertNotNull(hot.getLegend());
+        Assertions.assertEquals("projectLink", hot.getLegend().getLinkProperty());
         Assertions.assertNotNull(hot.getLegend().getSteps());
         //colors are only used for bivariate legends
         Assertions.assertNull(hot.getLegend().getBivariateColors());
@@ -110,9 +112,9 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(0).getStepName());
         //step 1
         Assertions.assertEquals("status", hot.getLegend().getSteps().get(0).getParamName());
-        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(0).getParamValue());
+        Assertions.assertEquals("ARCHIVED", hot.getLegend().getSteps().get(0).getParamValue());
 
-        Assertions.assertEquals("link_to_icon_3", hot.getLegend().getSteps().get(0).getStyle().get("icon"));
+        Assertions.assertEquals("hot-gray", hot.getLegend().getSteps().get(0).getStyle().get("icon"));
     }
 
     @Test
@@ -130,6 +132,7 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals(OVERLAY, hot.getCategory());
         Assertions.assertEquals("Kontur", hot.getGroup());
         Assertions.assertNotNull(hot.getLegend());
+        Assertions.assertEquals("projectLink", hot.getLegend().getLinkProperty());
         Assertions.assertNotNull(hot.getLegend().getSteps());
         //empty Legend since no features exist for defined steps
         Assertions.assertEquals(0, hot.getLegend().getSteps().size());
@@ -187,6 +190,7 @@ public class LayerConfigServiceTest {
         Assertions.assertNotNull(activeContributors.getLegend());
         Assertions.assertEquals(SIMPLE, activeContributors.getLegend().getType());
         Assertions.assertEquals("users", activeContributors.getLegend().getSourceLayer());
+        Assertions.assertNull(activeContributors.getLegend().getLinkProperty()); //not used in this layer
         //steps
         //Steps are always shown since displayLegendIfNoFeaturesExist is true
         Assertions.assertEquals(2, activeContributors.getLegend().getSteps().size());

@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,12 @@ import org.wololo.geojson.Point;
 import java.io.IOException;
 import java.util.List;
 
+import static io.kontur.disasterninja.client.KcApiClient.HOT_PROJECTS;
 import static io.kontur.disasterninja.client.KcApiClient.OSM_LAYERS;
 import static io.kontur.disasterninja.util.TestUtil.readFile;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -35,6 +36,30 @@ class KcApiClientTest {
     private KcApiClient client;
     @Autowired
     private MockRestServiceServer server;
+
+    @Test
+    public void collectionItemsByCentroidGeometryTest() throws JsonProcessingException {
+        String json = "{\"type\":\"Polygon\",\"coordinates\":[[[-1,-1],[-1,1],[1,1],[1,-1],[-1,-1]]]}";
+
+        //given
+        server.expect(ExpectedCount.times(1), r -> assertThat(r.getURI().toString(), containsString(
+                "/collections/hotProjects/items?limit=10&offset=0&bbox=-1.0,-1.0,1.0,1.0")))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(request -> withSuccess(readFile(this, "layers/hotprojects.json")
+                    .replaceAll("\"numberMatched\": 8305,", "\"numberMatched\": 10,")
+                    .replaceAll("\"numberReturned\": 10", "\"numberReturned\": 10"),
+                MediaType.APPLICATION_JSON).createResponse(request));
+
+        //when
+        List<Feature> features = client.getCollectionItemsByCentroidGeometry(objectMapper.readValue(json,
+            Geometry.class), HOT_PROJECTS);
+
+        //then
+        assertEquals(1, features.size());
+        Feature feature = features.get(0);
+        assertTrue(feature.getGeometry() instanceof Point);
+        assertArrayEquals(new double[]{-0.25d, -0.25d}, ((Point) feature.getGeometry()).getCoordinates());
+    }
 
     @Test
     public void collectionByGeometryOnePageTest() throws IOException {

@@ -6,13 +6,13 @@ import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.service.EventApiService;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
-import org.wololo.jts2geojson.GeoJSONReader;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +20,8 @@ import java.util.UUID;
 
 import static io.kontur.disasterninja.config.logging.LogHttpTraceRepository.LOG;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
+import static io.kontur.disasterninja.service.converter.GeometryConverter.getJtsGeometry;
+import static io.kontur.disasterninja.service.converter.GeometryConverter.getPreparedGeometryFromRequest;
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Service
@@ -27,7 +29,6 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 @RequiredArgsConstructor
 public class EventShapeLayerProvider implements LayerProvider {
     private final EventApiService eventApiService;
-    private final GeoJSONReader reader = new GeoJSONReader();
 
     /**
      * @param geoJson if specified - used to filter Event features by intersection
@@ -101,10 +102,6 @@ public class EventShapeLayerProvider implements LayerProvider {
         return EVENT_SHAPE_LAYER_ID.equals(layerId);
     }
 
-    private org.locationtech.jts.geom.Geometry getJtsGeometry(Geometry geoJson) {
-        return reader.read(geoJson);
-    }
-
     private Feature[] filterFeaturesByGeometry(Feature[] input, Geometry geoJson) {
         if (input == null) {
             return new Feature[]{};
@@ -112,14 +109,14 @@ public class EventShapeLayerProvider implements LayerProvider {
         if (geoJson == null) {
             return input;
         }
-        org.locationtech.jts.geom.Geometry jtsGeometry = getJtsGeometry(geoJson);
+        PreparedGeometry jtsGeometry = getPreparedGeometryFromRequest(geoJson);
 
         //filter items by geoJson Geometry
         return Arrays.stream(input)
             .filter(json -> {
                 Geometry featureGeom = json.getGeometry();
                 return featureGeom == null || //include items without geometry ("global" ones)
-                    jtsGeometry.intersects(reader.read(featureGeom));
+                    jtsGeometry.intersects(getJtsGeometry(featureGeom));
             })
             .toArray(Feature[]::new);
     }

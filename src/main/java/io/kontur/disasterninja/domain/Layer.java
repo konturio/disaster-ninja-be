@@ -95,6 +95,9 @@ public class Layer {
         if (prototype.getSourceLayer() != null) {
             thisLegend.setSourceLayer(prototype.getSourceLayer());
         }
+        if (prototype.getLinkProperty() != null) {
+            thisLegend.setLinkProperty(prototype.getLinkProperty());
+        }
         thisLegend.setSteps(new ArrayList<>());
 
         //return empty legend if no features exist
