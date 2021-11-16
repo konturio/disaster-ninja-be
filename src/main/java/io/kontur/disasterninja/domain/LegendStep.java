@@ -17,6 +17,7 @@ public class LegendStep {
     private final String stepName;
     private final LayerStepShape stepShape;
     private final Map<String, String> style;
+    private final String sourceLayer;
     @JsonIgnore
     private int order;
 }

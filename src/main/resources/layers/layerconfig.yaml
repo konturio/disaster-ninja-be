@@ -324,10 +324,10 @@ layers:
           - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
         tileSize: 512
       legend:
-        sourceLayer: 'users' #todo 'hexagon' is the sourceLayer for geometries, 'users' for nicknames
         type: 'simple'
         steps:
           - stepName: 'Possibly local mappers'
+            sourceLayer: 'users'
             stepShape: 'circle'
             text: '{top_user}'
             paramName: 'is_local'
@@ -335,12 +335,18 @@ layers:
             style:
               color: '#009100' #todo use icon instead
           - stepName: 'Active mappers'
+            sourceLayer: 'users'
             stepShape: 'circle'
             text: '{top_user}'
             paramName: 'is_local'
             paramValue: false
             style:
               color: '#434343' #todo use icon instead
+          - sourceLayer: 'hexagon'
+            style:
+              color: 'black'
+              width: 1
+              opacity: 0.2
 
     - id: 'hotProjects'
       globalOverlay: false
@@ -379,7 +385,6 @@ layers:
       category: 'overlay'
       group: 'Kontur Analytical Layers'
       legend:
-        sourceLayer: 'stats'
         type: 'bivariate'
       copyrights:
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
@@ -399,7 +404,6 @@ layers:
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
-        sourceLayer: 'stats'
       copyrights:
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
         - 'Concept of areas © Brahmagupta, René Descartes'
@@ -418,7 +422,6 @@ layers:
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
-        sourceLayer: 'stats'
       copyrights:
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
         - 'Concept of areas © Brahmagupta, René Descartes'
@@ -437,7 +440,6 @@ layers:
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
-        sourceLayer: 'stats'
       copyrights:
         - '© Kontur https://kontur.io/'
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
@@ -455,7 +457,6 @@ layers:
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
-        sourceLayer: 'stats'
       copyrights:
         - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
         - 'Numbers © Muḥammad ibn Mūsā al-Khwārizmī'
@@ -473,7 +474,6 @@ layers:
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
-        sourceLayer: 'stats'
       copyrights:
         - '© 2021 Probable Futures, a Project of the SouthCoast Community Foundation. https://probablefutures.org/'
         - 'CC BY 4.0, Numbers © Muḥammad ibn Mūsā al-Khwārizmī'

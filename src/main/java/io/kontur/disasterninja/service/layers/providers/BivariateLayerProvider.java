@@ -117,7 +117,7 @@ public class BivariateLayerProvider implements LayerProvider {
             for (int i = 0; i < x.steps().size(); i++) {
                 BivariateLayerLegendQuery.Step step = x.steps().get(i);
                 LegendStep legendStep = new LegendStep(null, null, "X", step.value(),
-                    notEmptyLabel(step::label), null, null);
+                    notEmptyLabel(step::label), null, null, null);
                 legendStep.setOrder(i);
                 resultingSteps.add(legendStep);
             }
@@ -128,7 +128,7 @@ public class BivariateLayerProvider implements LayerProvider {
             for (int i = 0; i < y.steps().size(); i++) {
                 BivariateLayerLegendQuery.Step1 step = y.steps().get(i);
                 LegendStep legendStep = new LegendStep(null, null, "Y", step.value(),
-                    notEmptyLabel(step::label), null, null);
+                    notEmptyLabel(step::label), null, null, null);
                 legendStep.setOrder(i);
                 resultingSteps.add(legendStep);
             }

@@ -15,17 +15,18 @@ public class LegendStepDto {
     private final String stepName;
     private final String stepShape;
     private final Map<String, String> style;
+    private final String sourceLayer;
 
     public static LegendStepDto fromLegendStep(LegendStep legendStep) {
         return legendStep == null ? null : new LegendStepDto(legendStep.getParamName(), legendStep.getParamValue(),
             legendStep.getAxis(), legendStep.getAxisValue(),
             legendStep.getStepName(), legendStep.getStepShape() == null ? null : legendStep.getStepShape().toString(),
-            legendStep.getStyle());
+            legendStep.getStyle(), legendStep.getSourceLayer());
     }
 
     public LegendStep toLegendStep() {
         return new LegendStep(paramName, paramValue, axis, axisValue, stepName,
-            LayerStepShape.fromString(stepShape), style);
+            LayerStepShape.fromString(stepShape), style, sourceLayer);
     }
 
 }
