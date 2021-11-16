@@ -59,12 +59,19 @@ class AnalyticsTabServiceTest {
         function1.setFunction("sumXWhereNoY");
         function1.setArguments(List.of("population", "count"));
 
-        analyticsField.setFunctions(List.of(function, function1));
+        Function function2 = new Function();
+        function2.setId("functionId2");
+        function2.setPostfix("km2");
+        function2.setFunction("sumXWhereNoY");
+        function2.setArguments(List.of("populated_area_km2", "count"));
+
+        analyticsField.setFunctions(List.of(function, function1, function2));
         analyticsField.setDescription("description");
         analyticsField.setName("name");
 
         List<AnalyticsTabQuery.Function> functionsResults = List.of(new AnalyticsTabQuery.Function("", "functionId", 1.1),
-                new AnalyticsTabQuery.Function("", "functionId1", 2.233333));
+                new AnalyticsTabQuery.Function("", "functionId1", 2.233333),
+                new AnalyticsTabQuery.Function("", "functionId2", 4.433333));
 
         CompletableFuture<List<AnalyticsTabQuery.Function>> completableFuture = new CompletableFuture();
         completableFuture.complete(functionsResults);
@@ -83,7 +90,7 @@ class AnalyticsTabServiceTest {
         assertEquals(GeoJSONFactory.create(geoJsonString).toString(), geoJSONCaptorValue.toString());
 
         List<FunctionArgs> functionArgsCaptorValue = functionArgsArgumentCaptor.getValue();
-        assertEquals(2, functionArgsCaptorValue.size());
+        assertEquals(3, functionArgsCaptorValue.size());
 
         FunctionArgs functionArgs = functionArgsCaptorValue.get(0);
         assertEquals("functionId", functionArgs.id());
@@ -102,7 +109,7 @@ class AnalyticsTabServiceTest {
         assertEquals("name", result1.getName());
         assertEquals("description", result1.getDescription());
         assertEquals(1, result1.getPercentValue());
-        assertEquals("2.23 people on ", result1.getText());
+        assertEquals("2 people on 4.43 km2 ", result1.getText());
     }
 
     @Test
@@ -185,6 +192,6 @@ class AnalyticsTabServiceTest {
         assertEquals("name", result1.getName());
         assertEquals("description", result1.getDescription());
         assertEquals(0, result1.getPercentValue());
-        assertEquals("0.0 people on ", result1.getText());
+        assertEquals("0 people on ", result1.getText());
     }
 }
