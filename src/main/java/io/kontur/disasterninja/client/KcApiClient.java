@@ -2,19 +2,18 @@ package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import lombok.Getter;
 import org.locationtech.jts.algorithm.Centroid;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -22,7 +21,6 @@ import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 import org.wololo.geojson.Point;
-import org.wololo.jts2geojson.GeoJSONReader;
 import org.wololo.jts2geojson.GeoJSONWriter;
 
 import java.util.ArrayList;
@@ -31,6 +29,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.kontur.disasterninja.service.converter.GeometryConverter.*;
+
 @Component
 public class KcApiClient {
 
@@ -38,7 +38,6 @@ public class KcApiClient {
     public static final String HOT_PROJECTS = "hotProjects";
     public static final String OSM_LAYERS = "osmlayer";
     private final RestTemplate kcApiRestTemplate;
-    private final GeoJSONReader reader = new GeoJSONReader();
     private final GeoJSONWriter writer = new GeoJSONWriter();
     private final GeometryFactory geometryFactory = new GeometryFactory();
     @Value("${kontur.platform.kcApi.pageSize}")
@@ -65,7 +64,8 @@ public class KcApiClient {
         }
 
         if (geoJson != null && body.getGeometry() != null) {
-            if (getJtsGeometry(geoJson).intersects(getJtsGeometry(body.getGeometry()))) {
+            if (getPreparedGeometryFromRequest(geoJson).intersects(
+                getJtsGeometry(body.getGeometry()))) {
                 return body;
             } else {
                 LOG.info("Feature {} does not intersect with requested boundary {}", body.getId(), geoJson);
@@ -77,10 +77,10 @@ public class KcApiClient {
     }
 
     public List<Feature> getCollectionItemsByGeometry(Geometry geoJson, String collectionId) {
-        org.locationtech.jts.geom.Geometry geoJsonGeometry = getJtsGeometryFromRequest(geoJson);
+        PreparedGeometry geoJsonGeometry = getPreparedGeometryFromRequest(geoJson);
 
         //1 get items by bbox
-        List<Feature> features = getCollectionItems(collectionId, geoJsonGeometry);
+        List<Feature> features = getCollectionItems(collectionId, geoJsonGeometry.getGeometry());
 
         //2 filter items by geoJson Geometry
         return features.stream()
@@ -97,9 +97,9 @@ public class KcApiClient {
      * with their centroids
      */
     public List<Feature> getCollectionItemsByCentroidGeometry(Geometry geoJson, String collectionId) {
-        org.locationtech.jts.geom.Geometry geoJsonGeometry = getJtsGeometryFromRequest(geoJson);
+        PreparedGeometry geoJsonGeometry = getPreparedGeometryFromRequest(geoJson);
         //1 get items by bbox
-        List<Feature> features = getCollectionItems(collectionId, geoJsonGeometry);
+        List<Feature> features = getCollectionItems(collectionId, geoJsonGeometry.getGeometry());
 
         //2 filter items by geoJson Geometry
         return features.stream()
@@ -213,23 +213,6 @@ public class KcApiClient {
             LOG.info("{} features loaded for collection {} with bbox {}", result.size(), collectionId, bbox);
         }
         return result;
-    }
-
-
-    private org.locationtech.jts.geom.Geometry getJtsGeometryFromRequest(Geometry geoJson) {
-        try {
-            return getJtsGeometry(geoJson);
-        } catch (Exception e) {
-            LOG.warn("Caught exception while building JTS geometry from geojson: {}", e.getMessage(), e);
-            throw new WebApplicationException(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    private org.locationtech.jts.geom.Geometry getJtsGeometry(Geometry geoJson) {
-        if (geoJson == null) {
-            return null;
-        }
-        return reader.read(geoJson);
     }
 
     @Getter
