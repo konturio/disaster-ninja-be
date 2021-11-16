@@ -15,8 +15,8 @@ layers:
         steps:
           - stepName: 'Exposure Area'
             style:
-              line-width: '3px'
-              line-color: '#051626'
+              width: '3px'
+              color: '#051626'
 
     ## Event Shape: configs per event type
     - id: 'eventShape.CYCLONE'
@@ -32,27 +32,27 @@ layers:
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
-              fill: '#051626'
-              line-width: 3px
-              line-color: '#fff'
+              fill-color: '#051626'
+              width: 3px
+              color: '#fff'
           - stepName: 'Exposure Area 60 km/h'
             paramName: 'Class'
             paramValue: 'Poly_Green'
             style:
-              line-width: 3px
-              line-color: '#F5A663'
+              width: 3px
+              color: '#F5A663'
           - stepName: 'Exposure Area 90 km/h'
             paramName: 'Class'
             paramValue: 'Poly_Orange'
             style:
-              line-width: 3px
-              line-color: '#DA5080'
+              width: 3px
+              color: '#DA5080'
           - stepName: 'Exposure Area 120 km/h'
             paramName: 'Class'
             paramValue: 'Poly_Red'
             style:
-              line-width: 2px
-              line-color: '#830909'
+              width: 2px
+              color: '#830909'
           - stepName: 'Line Track'
             paramName: 'Class'
             paramValue: 'Line_Line_[0-9]+'
@@ -67,8 +67,8 @@ layers:
             paramName: 'Class'
             paramValue: 'Poly_Cones'
             style:
-              line-width: 1px
-              line-color: '#646F78'
+              width: 1px
+              color: '#646F78'
 
     - id: 'eventShape.DROUGHT'
       globalOverlay: false
@@ -83,15 +83,15 @@ layers:
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
-              fill: '#051626'
-              line-width: 3px
-              line-color: '#fff'
+              fill-color: '#051626'
+              width: 3px
+              color: '#fff'
           - stepName: 'Exposure Area'
             paramName: 'Class'
             paramValue: 'Poly_area'
             style:
-              line-width: 3px
-              line-color: '#051626'
+              width: 3px
+              color: '#051626'
 
     - id: 'eventShape.EARTHQUAKE'
       globalOverlay: false
@@ -106,15 +106,15 @@ layers:
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
-              fill: '#051626'
-              line-width: 3px
-              line-color: '#fff'
+              fill-color: '#051626'
+              width: 3px
+              color: '#fff'
           - stepName: 'Exposure Area 100km'
             paramName: 'Class'
             paramValue: 'Poly_Circle'
             style:
-              line-width: 3px
-              line-color: '#646F78'
+              width: 3px
+              color: '#646F78'
 
     - id: 'eventShape.FLOOD'
       globalOverlay: false
@@ -129,22 +129,22 @@ layers:
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
-              fill: '#051626'
-              line-width: 3px
-              line-color: '#fff'
+              fill-color: '#051626'
+              width: 3px
+              color: '#fff'
           - stepName: 'Exposure Area'
             paramName: 'Class'
             paramValue: 'Poly_Affected'
             style:
-              line-width: 3px
-              line-color: '#051626'
+              width: 3px
+              color: '#051626'
           - stepName: 'Alert Area'
             paramName: 'Class'
             paramValue: 'Poly_Global'
             style:
-              line-width: 2px
-              line-color: '#051626'
-              line-opacity: 50%
+              width: 2px
+              color: '#051626'
+              opacity: 50%
 
     - id: 'eventShape.WILDFIRE'
       globalOverlay: false
@@ -159,15 +159,15 @@ layers:
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
-              fill: '#051626'
-              line-width: 3px
-              line-color: '#fff'
+              fill-color: '#051626'
+              width: 3px
+              color: '#fff'
           - stepName: 'Exposure Area'
             paramName: 'Class'
             paramValue: 'Poly_area'
             style:
-              line-width: 3px
-              line-color: '#051626'
+              width: 3px
+              color: '#051626'
 
     - id: 'eventShape.VOLCANO'
       globalOverlay: false
@@ -182,42 +182,42 @@ layers:
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
-              fill: '#051626'
-              line-width: 3px
-              line-color: '#fff'
+              fill-color: '#051626'
+              width: 3px
+              color: '#fff'
           - stepName: 'Exposure Area 100Km'
             paramName: 'Class'
             paramValue: 'Poly_Circle'
             style:
-              line-width: 3px
-              line-color: '#051626'
+              width: 3px
+              color: '#051626'
           - stepName: 'Exposure Area'
             paramName: 'Class'
             paramValue: 'Poly_Cones_0'
             style:
-              line-width: 3px
-              line-color: '#051626'
+              width: 3px
+              color: '#051626'
           - stepName: '6 hours Forecast'
             paramName: 'Class'
             paramValue: 'Poly_Cones_6'
             style:
-              line-width: 2px
-              line-color: '#051626'
-              line-opacity: 70%
+              width: 2px
+              color: '#051626'
+              opacity: 70%
           - stepName: '12 hours Forecast'
             paramName: 'Class'
             paramValue: 'Poly_Cones_12'
             style:
-              line-width: 2px
-              line-color: '#051626'
-              line-opacity: 50%
+              width: 2px
+              color: '#051626'
+              opacity: 50%
           - stepName: '18 hours Forecast'
             paramName: 'Class'
             paramValue: 'Poly_Cones_18'
             style:
-              line-width: 2px
-              line-color: '#051626'
-              line-opacity: 30%
+              width: 2px
+              color: '#051626'
+              opacity: 30%
 
     # --- empty template ---
     #- id: 'eventShape.'
@@ -237,10 +237,8 @@ layers:
     #        paramValue: 'Poly_Affected'
     #        paramValue: 'Poly_Global'
     #        style:
-    #          fill: '#051626'
-    #          line-width: 3px
-    #          line-color: '#fff'
-    #          line-opacity: 50%
+    #          fill-color: '#051626'
+    #          width: 3px
     #          color: '#fff'
 
     ##end of Event Shape
