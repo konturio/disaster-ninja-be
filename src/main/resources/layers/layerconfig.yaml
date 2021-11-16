@@ -14,6 +14,7 @@ layers:
         type: 'simple'
         steps:
           - stepName: 'Exposure Area'
+            stepShape: 'circle'
             style:
               width: '3px'
               color: '#051626'
@@ -29,6 +30,7 @@ layers:
         type: 'simple'
         steps:
           - stepName: 'Centroid'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
@@ -36,34 +38,40 @@ layers:
               width: 3px
               color: '#fff'
           - stepName: 'Exposure Area 60 km/h'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Green'
             style:
               width: 3px
               color: '#F5A663'
           - stepName: 'Exposure Area 90 km/h'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Orange'
             style:
               width: 3px
               color: '#DA5080'
           - stepName: 'Exposure Area 120 km/h'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Red'
             style:
               width: 2px
               color: '#830909'
           - stepName: 'Line Track'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Line_Line_[0-9]+'
             style:
               color: '#8C949B'
           - stepName: 'Point Track'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Point_Polygon_Point_[0-9]+'
             style:
               color: '#8C949B'
           - stepName: 'Uncertainty Cones'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Cones'
             style:
@@ -80,6 +88,7 @@ layers:
         type: 'simple'
         steps:
           - stepName: 'Centroid'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
@@ -87,6 +96,7 @@ layers:
               width: 3px
               color: '#fff'
           - stepName: 'Exposure Area'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_area'
             style:
@@ -103,6 +113,7 @@ layers:
         type: 'simple'
         steps:
           - stepName: 'Centroid'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
@@ -110,6 +121,7 @@ layers:
               width: 3px
               color: '#fff'
           - stepName: 'Exposure Area 100km'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Circle'
             style:
@@ -126,6 +138,7 @@ layers:
         type: 'simple'
         steps:
           - stepName: 'Centroid'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
@@ -133,12 +146,14 @@ layers:
               width: 3px
               color: '#fff'
           - stepName: 'Exposure Area'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Affected'
             style:
               width: 3px
               color: '#051626'
           - stepName: 'Alert Area'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Global'
             style:
@@ -156,6 +171,7 @@ layers:
         type: 'simple'
         steps:
           - stepName: 'Centroid'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
@@ -163,6 +179,7 @@ layers:
               width: 3px
               color: '#fff'
           - stepName: 'Exposure Area'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_area'
             style:
@@ -179,6 +196,7 @@ layers:
         type: 'simple'
         steps:
           - stepName: 'Centroid'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
@@ -186,18 +204,21 @@ layers:
               width: 3px
               color: '#fff'
           - stepName: 'Exposure Area 100Km'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Circle'
             style:
               width: 3px
               color: '#051626'
           - stepName: 'Exposure Area'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Cones_0'
             style:
               width: 3px
               color: '#051626'
           - stepName: '6 hours Forecast'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Cones_6'
             style:
@@ -205,6 +226,7 @@ layers:
               color: '#051626'
               opacity: 70%
           - stepName: '12 hours Forecast'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Cones_12'
             style:
@@ -212,6 +234,7 @@ layers:
               color: '#051626'
               opacity: 50%
           - stepName: '18 hours Forecast'
+            stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Cones_18'
             style:
