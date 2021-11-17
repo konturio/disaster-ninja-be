@@ -323,7 +323,7 @@ layers:
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/users/{x}/{y}/{z}.mvt'
+          - '{tilesHost}/tiles/users/{z}/{x}/{y}.mvt'
         tileSize: 512
       legend:
         type: 'simple'
@@ -396,7 +396,7 @@ layers:
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Building Quantity'
       globalOverlay: true
@@ -414,7 +414,7 @@ layers:
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Road Length'
       globalOverlay: true
@@ -432,7 +432,7 @@ layers:
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Mapping Activity'
       globalOverlay: true
@@ -449,7 +449,7 @@ layers:
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Antiquity'
       globalOverlay: true
@@ -466,7 +466,7 @@ layers:
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
     - id: 'Kontur Nighttime Heatwave Risk'
       globalOverlay: true
@@ -490,7 +490,7 @@ layers:
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
   ##### Category: BASELINE
 
