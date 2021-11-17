@@ -75,9 +75,9 @@ public class AnalyticsTabService {
             for (Function function : currentFunctionsList) {
                 switch (function.getPostfix()) {
                     case ("%") -> dto.setPercentValue(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
-                            .setScale(0, RoundingMode.HALF_UP).intValue());
+                            .setScale(0, RoundingMode.UP).intValue());
                     case ("people on") -> text.append(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
-                                    .setScale(0, RoundingMode.HALF_UP).longValue())
+                                    .setScale(0, RoundingMode.UP).longValue())
                             .append(" ")
                             .append(function.getPostfix())
                             .append(" ");

@@ -108,8 +108,8 @@ class AnalyticsTabServiceTest {
         AnalyticsDto result1 = result.get(0);
         assertEquals("name", result1.getName());
         assertEquals("description", result1.getDescription());
-        assertEquals(1, result1.getPercentValue());
-        assertEquals("2 people on 4.43 km2 ", result1.getText());
+        assertEquals(2, result1.getPercentValue());
+        assertEquals("3 people on 4.43 km2 ", result1.getText());
     }
 
     @Test
