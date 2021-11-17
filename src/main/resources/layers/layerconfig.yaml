@@ -309,6 +309,8 @@ layers:
     ##### Category: OVERLAY
     ### Group: Kontur
     - id: 'activeContributors'
+      minZoom: 0
+      maxZoom: 8
       globalOverlay: true
       displayLegendIfNoFeaturesExist: true #can't be filtered until MVT tiles are read
       boundaryRequiredForRetrieval: false
@@ -321,7 +323,7 @@ layers:
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/stats/{x}/{y}/{z}.mvt'
+          - '{tilesHost}/tiles/users/{x}/{y}/{z}.mvt'
         tileSize: 512
       legend:
         type: 'simple'
@@ -333,7 +335,7 @@ layers:
             paramName: 'is_local'
             paramValue: true
             style:
-              color: '#009100' #todo use icon instead
+              text-color: '#009100'
           - stepName: 'Active mappers'
             sourceLayer: 'users'
             stepShape: 'circle'
@@ -341,7 +343,7 @@ layers:
             paramName: 'is_local'
             paramValue: false
             style:
-              color: '#434343' #todo use icon instead
+              text-color: '#434343'
           - sourceLayer: 'hexagon'
             style:
               color: 'black'

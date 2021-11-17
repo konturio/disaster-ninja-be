@@ -113,8 +113,9 @@ public class Layer {
                     if (value == null) {
                         continue;
                     }
-                    if (step.getParamValue().equalsIgnoreCase(value) ||
-                        Pattern.compile(step.getParamValue()).matcher(value).matches()) {
+                    String paramValue = (String) step.getParamValue(); //nulls not allowed
+                    if (paramValue.equalsIgnoreCase(value) ||
+                        Pattern.compile(paramValue).matcher(value).matches()) {
                         //a feature exist for this legend step
                         thisLegend.getSteps().add(step);
                         //no need to check this legend step again
