@@ -16,7 +16,6 @@ import java.util.Map;
 @NoArgsConstructor
 public class Legend {
     private LegendType type;
-    private String sourceLayer; //for 'vector' and 'raster' only
     private String linkProperty;
     @Builder.Default
     private List<LegendStep> steps = new ArrayList<>();

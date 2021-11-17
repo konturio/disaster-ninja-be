@@ -89,9 +89,6 @@ public class Layer {
         if (prototype.getType() != null) {
             thisLegend.setType(prototype.getType());
         }
-        if (prototype.getSourceLayer() != null) {
-            thisLegend.setSourceLayer(prototype.getSourceLayer());
-        }
         if (prototype.getLinkProperty() != null) {
             thisLegend.setLinkProperty(prototype.getLinkProperty());
         }
@@ -104,7 +101,7 @@ public class Layer {
             return thisLegend;
         }
 
-        if (prototype.getSteps() != null) {
+        if (prototype.getSteps() != null) { //sourceLayer not taken into account as its related to tiles only
             List<LegendStep> stepsToCheck = new ArrayList<>(prototype.getSteps());
             for (Feature feature : this.getSource().getData().getFeatures()) {
                 if (stepsToCheck.isEmpty()) {
