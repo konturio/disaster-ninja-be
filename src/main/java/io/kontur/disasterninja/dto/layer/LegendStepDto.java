@@ -9,12 +9,12 @@ import java.util.Map;
 @Data
 public class LegendStepDto {
     private final String paramName;
-    private final String paramValue;
+    private final Object paramValue;
     private final String axis;
     private final Double axisValue;
     private final String stepName;
     private final String stepShape;
-    private final Map<String, String> style;
+    private final Map<String, Object> style;
     private final String sourceLayer;
 
     public static LegendStepDto fromLegendStep(LegendStep legendStep) {

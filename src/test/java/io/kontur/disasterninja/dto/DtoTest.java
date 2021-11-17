@@ -140,7 +140,7 @@ public class DtoTest {
             .tileSize(2d)
             .data(geoJSON).build();
         Legend legend = new Legend(LegendType.SIMPLE, null, new ArrayList<>(), new HashMap<>());
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("prop", "value");
         legend.getSteps().add(new LegendStep("param name", "param value", null, null, "step name",
             HEX, map, "source-layer"));

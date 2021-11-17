@@ -11,12 +11,12 @@ import java.util.Map;
 @ConstructorBinding
 public class LegendStep {
     private final String paramName;
-    private final String paramValue;
+    private final Object paramValue; //null not allowed
     private final String axis;
     private final Double axisValue;
     private final String stepName;
     private final LayerStepShape stepShape;
-    private final Map<String, String> style;
+    private final Map<String, Object> style;
     private final String sourceLayer;
     @JsonIgnore
     private int order;
