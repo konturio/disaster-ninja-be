@@ -211,7 +211,7 @@ public class LayerConfigServiceTest {
             .build();
         service.applyConfig(analytics);
         //layer
-        Assertions.assertEquals(List.of("https://test-apps02.konturlabs.com/tiles/stats/{x}/{y}/{z}.mvt"),
+        Assertions.assertEquals(List.of("https://test-apps02.konturlabs.com/tiles/stats/{z}/{x}/{y}.mvt"),
             analytics.getSource().getUrls());
         Assertions.assertTrue(analytics.isGlobalOverlay());
         Assertions.assertFalse(analytics.isDisplayLegendIfNoFeaturesExist());
