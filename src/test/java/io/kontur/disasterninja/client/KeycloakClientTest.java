@@ -32,7 +32,7 @@ class KeycloakClientTest {
     public void testGetAccessToken() throws IOException {
         //given
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("client_id", "event-api");
+        formData.add("client_id", "testClientId");
         formData.add("username", "testUsername");
         formData.add("password", "testPassword");
         formData.add("grant_type", "password");
