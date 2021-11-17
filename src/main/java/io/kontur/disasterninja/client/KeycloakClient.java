@@ -21,6 +21,8 @@ public class KeycloakClient {
 
     @Value("${kontur.platform.keycloak.realm}")
     private String keycloakRealm;
+    @Value("${kontur.platform.keycloak.clientId}")
+    private String keycloakClientId;
     @Value("${kontur.platform.keycloak.username}")
     private String keycloakUsername;
     @Value("${kontur.platform.keycloak.password}")
@@ -32,7 +34,7 @@ public class KeycloakClient {
 
     public TokenResponse getToken() {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("client_id", "event-api");
+        params.add("client_id", keycloakClientId);
         params.add("username", keycloakUsername);
         params.add("password", keycloakPassword);
         params.add("grant_type", "password");
