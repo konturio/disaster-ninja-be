@@ -37,6 +37,7 @@ public class KcApiClient {
     private static final Logger LOG = LoggerFactory.getLogger(KcApiClient.class);
     public static final String HOT_PROJECTS = "hotProjects";
     public static final String OSM_LAYERS = "osmlayer";
+    public static final String OSM_COMMUNITIES = "osmcomm";
     private final RestTemplate kcApiRestTemplate;
     private final GeoJSONWriter writer = new GeoJSONWriter();
     private final GeometryFactory geometryFactory = new GeometryFactory();
