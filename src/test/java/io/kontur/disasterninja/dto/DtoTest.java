@@ -12,6 +12,7 @@ import io.kontur.disasterninja.dto.layer.LayerDetailsInputDto;
 import io.kontur.disasterninja.dto.layer.LayerSummaryDto;
 import io.kontur.disasterninja.dto.layer.LayerSummaryInputDto;
 import io.kontur.disasterninja.service.layers.LayerService;
+import io.prometheus.client.CollectorRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -31,7 +32,8 @@ import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class DtoTest {
-
+    @MockBean
+    CollectorRegistry collectorRegistry;
     @MockBean
     LayerService layerService;
     @LocalServerPort

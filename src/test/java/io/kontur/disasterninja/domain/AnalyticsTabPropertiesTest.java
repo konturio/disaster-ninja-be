@@ -1,10 +1,12 @@
 package io.kontur.disasterninja.domain;
 
 import io.kontur.disasterninja.dto.AnalyticsField;
+import io.prometheus.client.CollectorRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -14,7 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class AnalyticsTabPropertiesTest {
-
+    @MockBean
+    CollectorRegistry collectorRegistry;
     @Autowired
     private AnalyticsTabProperties configuration;
 
@@ -24,7 +27,7 @@ class AnalyticsTabPropertiesTest {
     }
 
     @Test
-    public void populationTest(){
+    public void populationTest() {
         List<AnalyticsField> fieldList = configuration.getFields().stream()
                 .filter(field -> field.getName().equals("Population")).toList();
         assertEquals(1, fieldList.size());

@@ -3,6 +3,7 @@ package io.kontur.disasterninja.service.layers.providers;
 import io.kontur.disasterninja.client.InsightsApiClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
+import io.prometheus.client.CollectorRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,7 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
-
+    @MockBean
+    CollectorRegistry collectorRegistry;
     @MockBean
     InsightsApiClient insightsApiClient;
 

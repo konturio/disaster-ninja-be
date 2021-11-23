@@ -4,6 +4,7 @@ import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.service.EventApiService;
+import io.prometheus.client.CollectorRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 public class EventShapeLayerProvTest extends LayerProvidersTest {
-
+    @MockBean
+    CollectorRegistry collectorRegistry;
     @MockBean
     EventApiService eventApiService;
 

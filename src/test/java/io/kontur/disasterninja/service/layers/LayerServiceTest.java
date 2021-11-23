@@ -2,6 +2,7 @@ package io.kontur.disasterninja.service.layers;
 
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.service.layers.providers.*;
+import io.prometheus.client.CollectorRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,8 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class LayerServiceTest {
-
+    @MockBean
+    CollectorRegistry collectorRegistry;
     @MockBean
     HotLayerProvider hotLayerProvider;
     @MockBean

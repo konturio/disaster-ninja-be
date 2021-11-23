@@ -2,10 +2,12 @@ package io.kontur.disasterninja.service.layers;
 
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
+import io.prometheus.client.CollectorRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Point;
@@ -23,6 +25,8 @@ import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT
 
 @SpringBootTest
 public class LayerConfigServiceTest {
+    @MockBean
+    CollectorRegistry collectorRegistry;
     @Autowired
     LocalLayerConfigService service;
 

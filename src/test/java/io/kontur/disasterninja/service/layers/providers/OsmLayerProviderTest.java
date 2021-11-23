@@ -2,6 +2,7 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.client.KcApiClient;
 import io.kontur.disasterninja.domain.Layer;
+import io.prometheus.client.CollectorRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 public class OsmLayerProviderTest extends LayerProvidersTest {
-
+    @MockBean
+    CollectorRegistry collectorRegistry;
     @MockBean
     KcApiClient kcApiClient;
 
