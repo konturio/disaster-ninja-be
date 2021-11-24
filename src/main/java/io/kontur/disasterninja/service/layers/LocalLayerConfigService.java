@@ -58,6 +58,9 @@ public class LocalLayerConfigService implements LayerConfigService {
                 localizeField(ENGLISH, () -> config.getCategory() != null ? config.getCategory().toString() : null,
                     v -> config.setCategory(LayerCategory.fromString(v)));
                 localizeField(ENGLISH, config::getGroup, config::setGroup);
+                if (config.getLegend() != null && config.getLegend().getSteps() != null) {
+                    config.getLegend().getSteps().forEach(it -> localizeField(ENGLISH, it::getStepName, it::setStepName));
+                }
 
                 if (config.isGlobalOverlay()) {
                     globalOverlays.put(config.getId(), config);

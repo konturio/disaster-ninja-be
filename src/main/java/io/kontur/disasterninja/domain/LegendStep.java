@@ -14,10 +14,22 @@ public class LegendStep {
     private final Object paramValue; //null not allowed
     private final String axis;
     private final Double axisValue;
-    private final String stepName;
+    private String stepName; //might be changed when applying localization
     private final LayerStepShape stepShape;
     private final Map<String, Object> style;
     private final String sourceLayer;
     @JsonIgnore
     private int order;
+
+    public LegendStep(String paramName, Object paramValue, String axis, Double axisValue, String stepName,
+                      LayerStepShape stepShape, Map<String, Object> style, String sourceLayer) {
+        this.paramName = paramName;
+        this.paramValue = paramValue;
+        this.axis = axis;
+        this.axisValue = axisValue;
+        this.stepName = stepName;
+        this.stepShape = stepShape;
+        this.style = style;
+        this.sourceLayer = sourceLayer;
+    }
 }
