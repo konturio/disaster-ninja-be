@@ -354,7 +354,7 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: true
-      name: 'Hot Projects'
+      name: '#{hotProjects.name}'
       description: 'Projects on HOT Tasking Manager, ongoing and historical'
       category: 'overlay'
       group: 'Kontur'

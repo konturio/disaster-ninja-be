@@ -17,6 +17,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.client.RestTemplate;
 import org.wololo.geojson.GeoJSON;
@@ -25,10 +26,19 @@ import org.wololo.geojson.GeoJSONFactory;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class WebConfiguration {
+
+    @Bean
+    public ResourceBundleMessageSource messageSource() {
+        ResourceBundleMessageSource source = new ResourceBundleMessageSource();
+        source.setBasenames("layers/messages/layers");
+        source.setDefaultLocale(Locale.ENGLISH);
+        return source;
+    }
 
     @Bean
     public RestTemplate eventApiRestTemplate(RestTemplateBuilder builder,

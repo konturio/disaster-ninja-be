@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.MessageSource;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Point;
@@ -29,6 +30,8 @@ public class LayerConfigServiceTest {
     CollectorRegistry collectorRegistry;
     @Autowired
     LocalLayerConfigService service;
+    @Autowired
+    MessageSource messageSource;
 
     private static Feature feature(String paramName, Object paramValue) {
         Map<String, Object> properties = new HashMap<>();
