@@ -32,7 +32,6 @@ public class LocalLayerConfigService implements LayerConfigService {
     private final MessageSource messageSource;
 
     public LocalLayerConfigService(LocalLayersConfig localLayersConfig,
-                                   @Value("${kontur.platform.tiles.host}") String tilesHost,
                                    MessageSource messageSource) {
         this.messageSource = messageSource;
         try {
@@ -43,12 +42,8 @@ public class LocalLayerConfigService implements LayerConfigService {
                 if (source != null && source.getUrls() != null) {
                     source.setUrls(source.getUrls().stream()
                         .map(it -> {
-                            //todo spring messages?
-                            if (it.contains("{tilesHost}")) {
-                                return it.replaceAll("\\{tilesHost}", tilesHost);
-                            } else {
-                                return it;
-                            }
+                            String resolved = localizeField(ENGLISH, it);
+                            return resolved != null ? resolved : it;
                         }).collect(Collectors.toList()));
                 }
 
@@ -89,7 +84,13 @@ public class LocalLayerConfigService implements LayerConfigService {
     }
 
     private void localizeField(Locale locale, Supplier<String> getter, Consumer<String> setter) {
-        String value = getter.get();
+        String localized = localizeField(locale, getter.get());
+        if (localized != null) {
+            setter.accept(localized);
+        }
+    }
+
+    private String localizeField(Locale locale, String value) {
         if (toBeReplaced(value)) {
             StringBuilder name = new StringBuilder(value);
             Matcher matcher = Pattern.compile("#\\{[^{]+}").matcher(name);
@@ -101,8 +102,9 @@ public class LocalLayerConfigService implements LayerConfigService {
                 name.replace(matchResult.start(), matchResult.end(), messageSource.getMessage(key, null, locale));
                 matcher = Pattern.compile("#\\{[^{]+}").matcher(name);
             }
-            setter.accept(name.toString());
+            return name.toString();
         }
+        return null;
     }
 
     private boolean toBeReplaced(String value) {

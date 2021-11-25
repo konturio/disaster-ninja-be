@@ -35,7 +35,7 @@ public class WebConfiguration {
     @Bean
     public ResourceBundleMessageSource messageSource() {
         ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-        source.setBasenames("layers/messages/layers");
+        source.setBasenames("languages/messages");
         source.setDefaultLocale(Locale.ENGLISH);
         return source;
     }

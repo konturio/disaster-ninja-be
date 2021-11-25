@@ -8,12 +8,12 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: true
       boundaryRequiredForRetrieval: false
-      name: '#{eventShape.name}'
-      group: '#{group.layersInSelectedArea}'
+      name: '#{layers.eventShape.name}'
+      group: '#{layers.group.layersInSelectedArea}'
       legend:
         type: 'simple'
         steps:
-          - stepName: '#{exposureArea}'
+          - stepName: '#{layers.exposureArea}'
             stepShape: 'circle'
             style:
               width: 3
@@ -24,12 +24,12 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
-      name: '#{eventShape.name}'
-      group: '#{group.layersInSelectedArea}'
+      name: '#{layers.eventShape.name}'
+      group: '#{layers.group.layersInSelectedArea}'
       legend:
         type: 'simple'
         steps:
-          - stepName: '#{centroid}'
+          - stepName: '#{layers.centroid}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Point_Centroid'
@@ -37,40 +37,40 @@ layers:
               fill-color: '#051626'
               width: 3
               color: '#fff'
-          - stepName: '#{exposureArea60}'
+          - stepName: '#{layers.exposureArea60}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Green'
             style:
               width: 3
               color: '#F5A663'
-          - stepName: '#{exposureArea90}'
+          - stepName: '#{layers.exposureArea90}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Orange'
             style:
               width: 3
               color: '#DA5080'
-          - stepName: '#{exposureArea120}'
+          - stepName: '#{layers.exposureArea120}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Red'
             style:
               width: 2
               color: '#830909'
-          - stepName: '#{lineTrack}'
+          - stepName: '#{layers.lineTrack}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Line_Line_[0-9]+'
             style:
               color: '#8C949B'
-          - stepName: '#{pointTrack}'
+          - stepName: '#{layers.pointTrack}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Point_Polygon_Point_[0-9]+'
             style:
               color: '#8C949B'
-          - stepName: '#{uncertaintyCones}'
+          - stepName: '#{layers.uncertaintyCones}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Cones'
@@ -82,12 +82,12 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
-      name: '#{eventShape.name}'
-      group: '#{group.layersInSelectedArea}'
+      name: '#{layers.eventShape.name}'
+      group: '#{layers.group.layersInSelectedArea}'
       legend:
         type: 'simple'
         steps:
-          - stepName: '#{centroid}'
+          - stepName: '#{layers.centroid}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Point_Centroid'
@@ -95,7 +95,7 @@ layers:
               fill-color: '#051626'
               width: 3
               color: '#fff'
-          - stepName: '#{exposureArea}'
+          - stepName: '#{layers.exposureArea}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_area'
@@ -107,12 +107,12 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
-      name: '#{eventShape.name}'
-      group: '#{group.layersInSelectedArea}'
+      name: '#{layers.eventShape.name}'
+      group: '#{layers.group.layersInSelectedArea}'
       legend:
         type: 'simple'
         steps:
-          - stepName: '#{centroid}'
+          - stepName: '#{layers.centroid}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Point_Centroid'
@@ -120,7 +120,7 @@ layers:
               fill-color: '#051626'
               width: 3
               color: '#fff'
-          - stepName: '#{exposureArea100km}'
+          - stepName: '#{layers.exposureArea100km}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Circle'
@@ -132,12 +132,12 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
-      name: '#{eventShape.name}'
-      group: '#{group.layersInSelectedArea}'
+      name: '#{layers.eventShape.name}'
+      group: '#{layers.group.layersInSelectedArea}'
       legend:
         type: 'simple'
         steps:
-          - stepName: '#{centroid}'
+          - stepName: '#{layers.centroid}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Point_Centroid'
@@ -145,14 +145,14 @@ layers:
               fill-color: '#051626'
               width: 3
               color: '#fff'
-          - stepName: '#{exposureArea}'
+          - stepName: '#{layers.exposureArea}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Affected'
             style:
               width: 3
               color: '#051626'
-          - stepName: '#{alertArea}'
+          - stepName: '#{layers.alertArea}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Global'
@@ -165,12 +165,12 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
-      name: '#{eventShape.name}'
-      group: '#{group.layersInSelectedArea}'
+      name: '#{layers.eventShape.name}'
+      group: '#{layers.group.layersInSelectedArea}'
       legend:
         type: 'simple'
         steps:
-          - stepName: '#{centroid}'
+          - stepName: '#{layers.centroid}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Point_Centroid'
@@ -178,7 +178,7 @@ layers:
               fill-color: '#051626'
               width: 3
               color: '#fff'
-          - stepName: '#{exposureArea}'
+          - stepName: '#{layers.exposureArea}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_area'
@@ -190,12 +190,12 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
-      name: '#{eventShape.name}'
-      group: '#{group.layersInSelectedArea}'
+      name: '#{layers.eventShape.name}'
+      group: '#{layers.group.layersInSelectedArea}'
       legend:
         type: 'simple'
         steps:
-          - stepName: '#{centroid}'
+          - stepName: '#{layers.centroid}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Point_Centroid'
@@ -203,21 +203,21 @@ layers:
               fill-color: '#051626'
               width: 3
               color: '#fff'
-          - stepName: '#{exposureArea100km}'
+          - stepName: '#{layers.exposureArea100km}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Circle'
             style:
               width: 3
               color: '#051626'
-          - stepName: '#{exposureArea}'
+          - stepName: '#{layers.exposureArea}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Cones_0'
             style:
               width: 3
               color: '#051626'
-          - stepName: '#{6hoursForecast}'
+          - stepName: '#{layers.6hoursForecast}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Cones_6'
@@ -225,7 +225,7 @@ layers:
               width: 2
               color: '#051626'
               opacity: 0.7
-          - stepName: '#{12hoursForecast}'
+          - stepName: '#{layers.12hoursForecast}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Cones_12'
@@ -233,7 +233,7 @@ layers:
               width: 2
               color: '#051626'
               opacity: 0.5
-          - stepName: '#{18hoursForecast}'
+          - stepName: '#{layers.18hoursForecast}'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Cones_18'
@@ -247,12 +247,12 @@ layers:
     #  globalOverlay: false
     #  displayLegendIfNoFeaturesExist: false
     #  boundaryRequiredForRetrieval: false
-    #  name: '#{eventShape.name}'
-    #  group: '#{group.layersInSelectedArea}'
+    #  name: '#{layers.eventShape.name}'
+    #  group: '#{layers.group.layersInSelectedArea}'
     #  legend:
     #    type: 'simple'
     #    steps:
-    #      - stepName: '#{centroid}'
+    #      - stepName: '#{layers.centroid}'
     #        paramName: 'Class'
     #        paramValue: 'Point_Centroid'
     #        paramValue: 'Poly_area'
@@ -268,10 +268,10 @@ layers:
 
     - id: 'kontur_urban_core'
       globalOverlay: false
-      name: "#{kontur_urban_core.name}"
+      name: "#{layers.kontur_urban_core.name}"
       displayLegendIfNoFeaturesExist: true
       boundaryRequiredForRetrieval: true
-      group: '#{group.layersInSelectedArea}'
+      group: '#{layers.group.layersInSelectedArea}'
       copyrights:
         - '© Kontur'
       legend:
@@ -288,10 +288,10 @@ layers:
               casing-opacity: 0.5
     - id: 'kontur_settled_periphery'
       globalOverlay: false
-      name: "#{kontur_settled_periphery.name}"
+      name: "#{layers.kontur_settled_periphery.name}"
       displayLegendIfNoFeaturesExist: true
       boundaryRequiredForRetrieval: true
-      group: '#{group.layersInSelectedArea}'
+      group: '#{layers.group.layersInSelectedArea}'
       copyrights:
         - '© Kontur'
       legend:
@@ -314,21 +314,21 @@ layers:
       globalOverlay: true
       displayLegendIfNoFeaturesExist: true #can't be filtered until MVT tiles are read
       boundaryRequiredForRetrieval: false
-      name: '#{activeContributors.name}'
+      name: '#{layers.activeContributors.name}'
       category: 'overlay'
       group: 'Kontur'
-      description: '#{activeContributors.description}'
+      description: '#{layers.activeContributors.description}'
       copyrights:
         - '© OpenStreetMap Contributors, © Kontur'
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/users/{z}/{x}/{y}.mvt'
+          - '#{layers.tilesHost}/tiles/users/{z}/{x}/{y}.mvt'
         tileSize: 512
       legend:
         type: 'simple'
         steps:
-          - stepName: '#{possiblyLocalMappers}'
+          - stepName: '#{layers.possiblyLocalMappers}'
             sourceLayer: 'users'
             stepShape: 'circle'
             text: '{top_user}'
@@ -336,7 +336,7 @@ layers:
             paramValue: true
             style:
               text-color: '#009100'
-          - stepName: '#{activeMappers}'
+          - stepName: '#{layers.activeMappers}'
             sourceLayer: 'users'
             stepShape: 'circle'
             text: '{top_user}'
@@ -354,8 +354,8 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: true
-      name: '#{hotProjects.name}'
-      description: '#{hotProjects.description}'
+      name: '#{layers.hotProjects.name}'
+      description: '#{layers.hotProjects.description}'
       category: 'overlay'
       group: 'Kontur'
       copyrights:
@@ -364,14 +364,14 @@ layers:
         type: 'simple'
         linkProperty: 'projectLink'
         steps:
-          - stepName: '#{published}'
+          - stepName: '#{layers.published}'
             stepShape: 'icon'
             paramName: 'status'
             paramValue: 'PUBLISHED'
             style:
               icon: 'hot-red'
               text: '{projectId} - {projectPriority}'
-          - stepName: '#{archived}'
+          - stepName: '#{layers.archived}'
             stepShape: 'icon'
             paramName: 'status'
             paramValue: 'ARCHIVED'
@@ -383,9 +383,9 @@ layers:
     - id: 'Kontur OpenStreetMap Quantity'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
-      name: '#{osmObjectQuantity}'
+      name: '#{layers.osmObjectQuantity}'
       category: 'overlay'
-      group: '#{group.konturAnalyticalLayers}'
+      group: '#{layers.group.konturAnalyticalLayers}'
       legend:
         type: 'bivariate'
       copyrights:
@@ -396,14 +396,14 @@ layers:
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
+          - '#{layers.tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Building Quantity'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
-      name: '#{osmBuildingQuantity}'
+      name: '#{layers.osmBuildingQuantity}'
       category: 'overlay'
-      group: '#{group.konturAnalyticalLayers}'
+      group: '#{layers.group.konturAnalyticalLayers}'
       legend:
         type: 'bivariate'
       copyrights:
@@ -414,14 +414,14 @@ layers:
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
+          - '#{layers.tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Road Length'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
-      name: '#{osmRoadLength}'
+      name: '#{layers.osmRoadLength}'
       category: 'overlay'
-      group: '#{group.konturAnalyticalLayers}'
+      group: '#{layers.group.konturAnalyticalLayers}'
       legend:
         type: 'bivariate'
       copyrights:
@@ -432,14 +432,14 @@ layers:
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
+          - '#{layers.tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Mapping Activity'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
-      name: '#{osmMappingActivity}'
+      name: '#{layers.osmMappingActivity}'
       category: 'overlay'
-      group: '#{group.konturAnalyticalLayers}'
+      group: '#{layers.group.konturAnalyticalLayers}'
       legend:
         type: 'bivariate'
       copyrights:
@@ -449,14 +449,14 @@ layers:
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
+          - '#{layers.tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Antiquity'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
-      name: '#{osmAntiquity}'
+      name: '#{layers.osmAntiquity}'
       category: 'overlay'
-      group: '#{group.konturAnalyticalLayers}'
+      group: '#{layers.group.konturAnalyticalLayers}'
       legend:
         type: 'bivariate'
       copyrights:
@@ -466,14 +466,14 @@ layers:
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
+          - '#{layers.tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
     - id: 'Kontur Nighttime Heatwave Risk'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
-      name: '#{konturNighttimeHeatwaveRisk}'
+      name: '#{layers.konturNighttimeHeatwaveRisk}'
       category: 'overlay'
-      group: '#{group.konturAnalyticalLayers}'
+      group: '#{layers.group.konturAnalyticalLayers}'
       legend:
         type: 'bivariate'
       copyrights:
@@ -490,7 +490,7 @@ layers:
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
+          - '#{layers.tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
   ##### Category: BASELINE
 
