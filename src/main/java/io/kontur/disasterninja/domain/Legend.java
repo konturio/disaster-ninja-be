@@ -21,4 +21,6 @@ public class Legend {
     private List<LegendStep> steps = new ArrayList<>();
     @Builder.Default
     private Map<String, String> bivariateColors = null;
+    @Builder.Default
+    private BivariateLegendAxises bivariateAxises = null;
 }

@@ -6,6 +6,7 @@ import com.apollographql.apollo.api.Input;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
+import io.kontur.disasterninja.dto.BivariateStatisticDto;
 import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
 import io.kontur.disasterninja.graphql.type.FunctionArgs;
@@ -33,13 +34,13 @@ public class InsightsApiGraphqlClient {
     public InsightsApiGraphqlClient(ApolloClient apolloClient, MeterRegistry meterRegistry) {
         this.apolloClient = apolloClient;
         Summary.Builder metricsBuilder = Summary.build()
-            .quantile(0.5, 0.01)
-            .quantile(1, 0.01) //max
-            .labelNames("outcome")
-            .name("http_client_insights_api_graphql_requests_seconds")
-            .help("Requests with insights-api GraphQl.")
-            .maxAgeSeconds(120) //same as in micrometer (for spring restTemplates)
-            .ageBuckets(1); //same as in micrometer (for spring restTemplates)
+                .quantile(0.5, 0.01)
+                .quantile(1, 0.01) //max
+                .labelNames("outcome")
+                .name("http_client_insights_api_graphql_requests_seconds")
+                .help("Requests with insights-api GraphQl.")
+                .maxAgeSeconds(120) //same as in micrometer (for spring restTemplates)
+                .ageBuckets(1); //same as in micrometer (for spring restTemplates)
 
         if (meterRegistry instanceof PrometheusMeterRegistry) {
             CollectorRegistry collectorRegistry = ((PrometheusMeterRegistry) meterRegistry).getPrometheusRegistry();
@@ -54,45 +55,16 @@ public class InsightsApiGraphqlClient {
         CompletableFuture<List<AnalyticsTabQuery.Function>> future = new CompletableFuture<>();
         SimpleTimer timer = new SimpleTimer();
         apolloClient
-            .query(new AnalyticsTabQuery(Input.optional(polygon), Input.optional(functionArgs)))
-            .enqueue(new ApolloCall.Callback<>() {
-                @Override
-                public void onResponse(@NotNull Response<AnalyticsTabQuery.Data> response) {
-                    metrics.labels(SUCCESS).observe(timer.elapsedSeconds());
-
-                    if (response.getData() != null && response.getData().polygonStatistic() != null &&
-                        response.getData().polygonStatistic().analytics() != null &&
-                        response.getData().polygonStatistic().analytics().functions() != null) {
-                        future.complete(response.getData().polygonStatistic().analytics().functions());
-                    }
-                    future.complete(List.of());
-                }
-
-                @Override
-                public void onFailure(@NotNull ApolloException e) {
-                    metrics.labels(FAILED).observe(timer.elapsedSeconds());
-
-                    future.completeExceptionally(new WebApplicationException("Exception when getting data from " +
-                        "insights-api using apollo client", HttpStatus.BAD_GATEWAY));
-                }
-            });
-        return future;
-    }
-
-    public CompletableFuture<List<BivariateLayerLegendQuery.Overlay>> getBivariateOverlays() {
-        CompletableFuture<List<BivariateLayerLegendQuery.Overlay>> future = new CompletableFuture<>();
-        SimpleTimer timer = new SimpleTimer();
-        apolloClient
-                .query(new BivariateLayerLegendQuery(Input.optional(null)))
+                .query(new AnalyticsTabQuery(Input.optional(polygon), Input.optional(functionArgs)))
                 .enqueue(new ApolloCall.Callback<>() {
                     @Override
-                    public void onResponse(@NotNull Response<BivariateLayerLegendQuery.Data> response) {
+                    public void onResponse(@NotNull Response<AnalyticsTabQuery.Data> response) {
                         metrics.labels(SUCCESS).observe(timer.elapsedSeconds());
 
-                        if (response.getData() != null &&
-                            response.getData().polygonStatistic() != null &&
-                            response.getData().polygonStatistic().bivariateStatistic() != null) {
-                            future.complete(response.getData().polygonStatistic().bivariateStatistic().overlays());
+                        if (response.getData() != null && response.getData().polygonStatistic() != null &&
+                                response.getData().polygonStatistic().analytics() != null &&
+                                response.getData().polygonStatistic().analytics().functions() != null) {
+                            future.complete(response.getData().polygonStatistic().analytics().functions());
                         }
                         future.complete(List.of());
                     }
@@ -102,7 +74,42 @@ public class InsightsApiGraphqlClient {
                         metrics.labels(FAILED).observe(timer.elapsedSeconds());
 
                         future.completeExceptionally(new WebApplicationException("Exception when getting data from " +
-                            "insights-api using apollo client", HttpStatus.BAD_GATEWAY));
+                                "insights-api using apollo client", HttpStatus.BAD_GATEWAY));
+                    }
+                });
+        return future;
+    }
+
+    public CompletableFuture<BivariateStatisticDto> getBivariateStatistic() {
+        CompletableFuture<BivariateStatisticDto> future = new CompletableFuture<>();
+        SimpleTimer timer = new SimpleTimer();
+        apolloClient
+                .query(new BivariateLayerLegendQuery(Input.optional(null)))
+                .enqueue(new ApolloCall.Callback<>() {
+                    @Override
+                    public void onResponse(@NotNull Response<BivariateLayerLegendQuery.Data> response) {
+                        metrics.labels(SUCCESS).observe(timer.elapsedSeconds());
+
+                        if (response.getData() != null &&
+                                response.getData().polygonStatistic() != null &&
+                                response.getData().polygonStatistic().bivariateStatistic() != null &&
+                                response.getData().polygonStatistic().bivariateStatistic().overlays() != null &&
+                                response.getData().polygonStatistic().bivariateStatistic().indicators() != null) {
+                            BivariateStatisticDto bivariateStatisticDto = BivariateStatisticDto.builder()
+                                    .overlays(response.getData().polygonStatistic().bivariateStatistic().overlays())
+                                    .indicators(response.getData().polygonStatistic().bivariateStatistic().indicators())
+                                    .build();
+                            future.complete(bivariateStatisticDto);
+                        }
+                        future.complete(new BivariateStatisticDto());
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull ApolloException e) {
+                        metrics.labels(FAILED).observe(timer.elapsedSeconds());
+
+                        future.completeExceptionally(new WebApplicationException("Exception when getting data from " +
+                                "insights-api using apollo client", HttpStatus.BAD_GATEWAY));
                     }
                 });
         return future;

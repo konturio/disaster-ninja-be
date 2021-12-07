@@ -1,9 +1,6 @@
 package io.kontur.disasterninja.dto;
 
-import io.kontur.disasterninja.domain.Layer;
-import io.kontur.disasterninja.domain.LayerSource;
-import io.kontur.disasterninja.domain.Legend;
-import io.kontur.disasterninja.domain.LegendStep;
+import io.kontur.disasterninja.domain.*;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LayerSourceType;
 import io.kontur.disasterninja.domain.enums.LegendType;
@@ -139,7 +136,7 @@ public class DtoTest {
             .urls(List.of("url-com.com"))
             .tileSize(2d)
             .data(geoJSON).build();
-        Legend legend = new Legend(LegendType.SIMPLE, null, new ArrayList<>(), new HashMap<>());
+        Legend legend = new Legend(LegendType.SIMPLE, null, new ArrayList<>(), new HashMap<>(), new BivariateLegendAxises());
         Map<String, Object> map = new HashMap<>();
         map.put("prop", "value");
         legend.getSteps().add(new LegendStep("param name", "param value", null, null, "step name",

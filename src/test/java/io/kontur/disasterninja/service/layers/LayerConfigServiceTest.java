@@ -214,15 +214,11 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals(List.of("https://test-apps02.konturlabs.com/tiles/stats/{z}/{x}/{y}.mvt"),
             analytics.getSource().getUrls());
         Assertions.assertTrue(analytics.isGlobalOverlay());
-        Assertions.assertFalse(analytics.isDisplayLegendIfNoFeaturesExist());
+        Assertions.assertTrue(analytics.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertFalse(analytics.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("OSM Object Quantity", analytics.getName());
         Assertions.assertEquals(OVERLAY, analytics.getCategory());
         Assertions.assertEquals("Kontur Analytical Layers", analytics.getGroup());
-        //copyrights
-        Assertions.assertEquals(4, analytics.getCopyrights().size());
-        Assertions.assertEquals("© OpenStreetMap contributors https://www.openstreetmap.org/copyright",
-            analytics.getCopyrights().get(0));
         //skipping the rest
     }
 
