@@ -383,16 +383,12 @@ layers:
     - id: 'Kontur OpenStreetMap Quantity'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
+      displayLegendIfNoFeaturesExist: true
       name: 'OSM Object Quantity'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
-      copyrights:
-        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
-        - 'Concept of areas © Brahmagupta, René Descartes'
-        - '© Kontur https://kontur.io/'
-        - 'Facebook Connectivity Lab and Center for International Earth Science Information Network - CIESIN - Columbia University. 2016. High Resolution Settlement Layer (HRSL). Source imagery for HRSL © 2016 DigitalGlobe. https://dataforgood.fb.com/tools/population-density-maps/, Dataset: Schiavina, Marcello; Freire, Sergio; MacManus, Kytt (2019): GHS population grid multitemporal (1975, 1990, 2000, 2015) R2019A. European Commission, Joint Research Centre (JRC) DOI: 10.2905/42E8BE89-54FF-464E-BE7B-BF9E64DA5218 PID: http://data.europa.eu/89h/0c6b9751-a71f-4062-830b-43c9f432370f Concept & Methodology: Freire, Sergio; MacManus, Kytt; Pesaresi, Martino; Doxsey-Whitfield, Erin; Mills, Jane (2016): Development of new open and free multi-temporal global population grids at 250 m resolution. Geospatial Data in a Changing World; Association of Geographic Information Laboratories in Europe (AGILE). AGILE 2016, Copernicus Global Land Service: Land Cover 100 m: Marcel Buchhorn, Bruno Smets, Luc Bertels, Bert De Roo, MyroslavaLesiv, Nandin - Erdene Tsendbazar, … Steffen Fritz. (2020). Copernicus Global Land Service: Land Cover 100m: collection 3: epoch 2019: Globe (Version V3.0.1) Data set. Zenodo. http://doi.org/10.5281/zenodo.3939050, Microsoft Buildings: Australia, Canada, Tanzania, Uganda, USA: This data is licensed by Microsoft under the Open Data Commons Open Database License (ODbL)., NZ Building Outlines data sourced from the LINZ Data Service - https://data.linz.govt.nz/, Geoalert Urban Mapping: Chechnya, Moscow region, Tyva - https://github.com/Geoalert/urban-mapping, Unconstrained Individual countries 2020 (100m resolution): WorldPop - https://www.worldpop.org/'
       source:
         type: 'vector'
         urls:
@@ -401,16 +397,12 @@ layers:
     - id: 'Kontur OpenStreetMap Building Quantity'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
+      displayLegendIfNoFeaturesExist: true
       name: 'OSM Building Quantity'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
-      copyrights:
-        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
-        - 'Concept of areas © Brahmagupta, René Descartes'
-        - '© Kontur https://kontur.io/'
-        - 'Facebook Connectivity Lab and Center for International Earth Science Information Network - CIESIN - Columbia University. 2016. High Resolution Settlement Layer (HRSL). Source imagery for HRSL © 2016 DigitalGlobe. https://dataforgood.fb.com/tools/population-density-maps/, Dataset: Schiavina, Marcello; Freire, Sergio; MacManus, Kytt (2019): GHS population grid multitemporal (1975, 1990, 2000, 2015) R2019A. European Commission, Joint Research Centre (JRC) DOI: 10.2905/42E8BE89-54FF-464E-BE7B-BF9E64DA5218 PID: http://data.europa.eu/89h/0c6b9751-a71f-4062-830b-43c9f432370f Concept & Methodology: Freire, Sergio; MacManus, Kytt; Pesaresi, Martino; Doxsey-Whitfield, Erin; Mills, Jane (2016): Development of new open and free multi-temporal global population grids at 250 m resolution. Geospatial Data in a Changing World; Association of Geographic Information Laboratories in Europe (AGILE). AGILE 2016, Copernicus Global Land Service: Land Cover 100 m: Marcel Buchhorn, Bruno Smets, Luc Bertels, Bert De Roo, MyroslavaLesiv, Nandin - Erdene Tsendbazar, … Steffen Fritz. (2020). Copernicus Global Land Service: Land Cover 100m: collection 3: epoch 2019: Globe (Version V3.0.1) Data set. Zenodo. http://doi.org/10.5281/zenodo.3939050, Microsoft Buildings: Australia, Canada, Tanzania, Uganda, USA: This data is licensed by Microsoft under the Open Data Commons Open Database License (ODbL)., NZ Building Outlines data sourced from the LINZ Data Service - https://data.linz.govt.nz/, Geoalert Urban Mapping: Chechnya, Moscow region, Tyva - https://github.com/Geoalert/urban-mapping, Unconstrained Individual countries 2020 (100m resolution): WorldPop - https://www.worldpop.org/'
       source:
         type: 'vector'
         urls:
@@ -419,16 +411,12 @@ layers:
     - id: 'Kontur OpenStreetMap Road Length'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
+      displayLegendIfNoFeaturesExist: true
       name: 'OSM Road Length'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
-      copyrights:
-        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
-        - 'Concept of areas © Brahmagupta, René Descartes'
-        - '© Kontur https://kontur.io/'
-        - 'Facebook Connectivity Lab and Center for International Earth Science Information Network - CIESIN - Columbia University. 2016. High Resolution Settlement Layer (HRSL). Source imagery for HRSL © 2016 DigitalGlobe. https://dataforgood.fb.com/tools/population-density-maps/, Dataset: Schiavina, Marcello; Freire, Sergio; MacManus, Kytt (2019): GHS population grid multitemporal (1975, 1990, 2000, 2015) R2019A. European Commission, Joint Research Centre (JRC) DOI: 10.2905/42E8BE89-54FF-464E-BE7B-BF9E64DA5218 PID: http://data.europa.eu/89h/0c6b9751-a71f-4062-830b-43c9f432370f Concept & Methodology: Freire, Sergio; MacManus, Kytt; Pesaresi, Martino; Doxsey-Whitfield, Erin; Mills, Jane (2016): Development of new open and free multi-temporal global population grids at 250 m resolution. Geospatial Data in a Changing World; Association of Geographic Information Laboratories in Europe (AGILE). AGILE 2016, Copernicus Global Land Service: Land Cover 100 m: Marcel Buchhorn, Bruno Smets, Luc Bertels, Bert De Roo, MyroslavaLesiv, Nandin - Erdene Tsendbazar, … Steffen Fritz. (2020). Copernicus Global Land Service: Land Cover 100m: collection 3: epoch 2019: Globe (Version V3.0.1) Data set. Zenodo. http://doi.org/10.5281/zenodo.3939050, Microsoft Buildings: Australia, Canada, Tanzania, Uganda, USA: This data is licensed by Microsoft under the Open Data Commons Open Database License (ODbL)., NZ Building Outlines data sourced from the LINZ Data Service - https://data.linz.govt.nz/, Geoalert Urban Mapping: Chechnya, Moscow region, Tyva - https://github.com/Geoalert/urban-mapping, Unconstrained Individual countries 2020 (100m resolution): WorldPop - https://www.worldpop.org/'
       source:
         type: 'vector'
         urls:
@@ -437,15 +425,12 @@ layers:
     - id: 'Kontur OpenStreetMap Mapping Activity'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
+      displayLegendIfNoFeaturesExist: true
       name: 'OSM Mapping Activity'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
-      copyrights:
-        - '© Kontur https://kontur.io/'
-        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
-        - 'Concept of areas © Brahmagupta, René Descartes'
       source:
         type: 'vector'
         urls:
@@ -454,15 +439,12 @@ layers:
     - id: 'Kontur OpenStreetMap Antiquity'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
+      displayLegendIfNoFeaturesExist: true
       name: 'OSM Antiquity'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
-      copyrights:
-        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
-        - 'Numbers © Muḥammad ibn Mūsā al-Khwārizmī'
-        - 'Concept of areas © Brahmagupta, René Descartes'
       source:
         type: 'vector'
         urls:
@@ -471,22 +453,12 @@ layers:
     - id: 'Kontur Nighttime Heatwave Risk'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
+      displayLegendIfNoFeaturesExist: true
       name: 'Kontur Nighttime Heatwave Risk'
       category: 'overlay'
       group: 'Kontur Analytical Layers'
       legend:
         type: 'bivariate'
-      copyrights:
-        - '© 2021 Probable Futures, a Project of the SouthCoast Community Foundation. https://probablefutures.org/'
-        - 'CC BY 4.0, Numbers © Muḥammad ibn Mūsā al-Khwārizmī'
-        - '© Kontur https://kontur.io/'
-        - 'Facebook Connectivity Lab and Center for International Earth Science Information Network - CIESIN - Columbia University. 2016. High Resolution Settlement Layer (HRSL). Source imagery for HRSL © 2016 DigitalGlobe. https://dataforgood.fb.com/tools/population-density-maps/, Dataset: Schiavina, Marcello; Freire, Sergio; MacManus, Kytt (2019): GHS population grid multitemporal (1975, 1990, 2000, 2015) R2019A. European Commission, Joint Research Centre (JRC) DOI: 10.2905/42E8BE89-54FF-464E-BE7B-BF9E64DA5218 PID: http://data.europa.eu/89h/0c6b9751-a71f-4062-830b-43c9f432370f Concept & Methodology: Freire, Sergio; MacManus, Kytt; Pesaresi, Martino; Doxsey-Whitfield, Erin; Mills, Jane (2016): Development of new open and free multi-temporal global population grids at 250 m resolution. Geospatial Data in a Changing World; Association of Geographic Information Laboratories in Europe (AGILE)'
-        - 'AGILE 2016, Copernicus Global Land Service: Land Cover 100 m: Marcel Buchhorn, Bruno Smets, Luc Bertels, Bert De Roo, MyroslavaLesiv, Nandin - Erdene Tsendbazar, … Steffen Fritz. (2020)'
-        - 'Copernicus Global Land Service: Land Cover 100m: collection 3: epoch 2019: Globe (Version V3.0.1) Data set. Zenodo. http://doi.org/10.5281/zenodo.3939050, Microsoft Buildings: Australia, Canada, Tanzania, Uganda, USA: This data is licensed by Microsoft under the Open Data Commons Open Database License (ODbL)., NZ Building Outlines data sourced from the LINZ Data Service - https://data.linz.govt.nz/'
-        - 'Geoalert Urban Mapping: Chechnya, Moscow region, Tyva - https://github.com/Geoalert/urban-mapping'
-        - 'Unconstrained Individual countries 2020 (100m resolution): WorldPop - https://www.worldpop.org/'
-        - '© OpenStreetMap contributors https://www.openstreetmap.org/copyright'
-        - 'Concept of areas © Brahmagupta, René Descartes'
       source:
         type: 'vector'
         urls:

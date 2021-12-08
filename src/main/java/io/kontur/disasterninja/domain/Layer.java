@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.domain;
 
 import io.kontur.disasterninja.domain.enums.LayerCategory;
+import io.kontur.disasterninja.domain.enums.LegendType;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConstructorBinding;
@@ -57,7 +58,9 @@ public class Layer {
         }
         if (other.getLegend() != null) {
             if (other.isDisplayLegendIfNoFeaturesExist()) {
-                this.legend = other.getLegend();
+                if (!other.getLegend().getType().equals(LegendType.BIVARIATE)) {
+                    this.legend = other.getLegend();
+                }
             } else {
                 this.legend = getLegendWithStepsForWhichFeaturesExist(other.getLegend());
             }
@@ -74,7 +77,7 @@ public class Layer {
         LayerSource otherSource = other.getSource();
         if (otherSource != null) {
             this.source = new LayerSource(otherSource.getType(), otherSource.getTileSize(),
-                otherSource.getUrls(), this.source != null ? this.source.getData() : null); //sic! source.data is not replaced
+                    otherSource.getUrls(), this.source != null ? this.source.getData() : null); //sic! source.data is not replaced
         }
     }
 
@@ -96,8 +99,8 @@ public class Layer {
 
         //return empty legend if no features exist
         if (this.getSource() == null
-            || this.getSource().getData() == null
-            || this.getSource().getData().getFeatures() == null) {
+                || this.getSource().getData() == null
+                || this.getSource().getData().getFeatures() == null) {
             return thisLegend;
         }
 
@@ -109,13 +112,13 @@ public class Layer {
                 }
                 for (LegendStep step : stepsToCheck) {
                     String value = feature.getProperties() == null ? null
-                        : (String) (feature.getProperties()).get(step.getParamName());
+                            : (String) (feature.getProperties()).get(step.getParamName());
                     if (value == null) {
                         continue;
                     }
                     String paramValue = (String) step.getParamValue(); //nulls not allowed
                     if (paramValue.equalsIgnoreCase(value) ||
-                        Pattern.compile(paramValue).matcher(value).matches()) {
+                            Pattern.compile(paramValue).matcher(value).matches()) {
                         //a feature exist for this legend step
                         thisLegend.getSteps().add(step);
                         //no need to check this legend step again

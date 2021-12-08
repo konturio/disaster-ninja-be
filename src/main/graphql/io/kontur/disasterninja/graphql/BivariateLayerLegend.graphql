@@ -9,8 +9,8 @@ query BivariateLayerLegend($polygon: GeoJSON) {
                 x {
                     label,
                     steps {
-                      label,
-                      value
+                        label,
+                        value
                     },
                     quotient
                 },
@@ -31,11 +31,16 @@ query BivariateLayerLegend($polygon: GeoJSON) {
                 fallback,
                 combinations {
                     color,
-                    corner,
-                    color_comment
+                    color_comment,
+                    corner
                 }
+            },
+            indicators {
+                name,
+                label,
+                direction,
+                copyrights
             }
         }
     }
-
 }

@@ -1,11 +1,10 @@
 package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
-import io.kontur.disasterninja.domain.Layer;
-import io.kontur.disasterninja.domain.LayerSource;
-import io.kontur.disasterninja.domain.Legend;
-import io.kontur.disasterninja.domain.LegendStep;
+import io.kontur.disasterninja.domain.*;
+import io.kontur.disasterninja.dto.BivariateStatisticDto;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
+import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery.Step1;
 import io.kontur.disasterninja.service.layers.LayerConfigService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -17,11 +16,11 @@ import org.wololo.geojson.Geometry;
 import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
 import static io.kontur.disasterninja.domain.enums.LegendType.BIVARIATE;
+import static java.util.Objects.requireNonNull;
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Service
@@ -36,17 +35,9 @@ public class BivariateLayerProvider implements LayerProvider {
     @PostConstruct
     private void init() {
         bivariateLayerIds = layerConfigService.getGlobalOverlays().values().stream()
-            .filter(it -> {
-                return it.getLegend() != null && it.getLegend().getType() == BIVARIATE;
-            }).map(Layer::getId).collect(Collectors.toList());
-    }
-
-
-    private static String notEmptyLabel(Supplier<String> labelSupplier) {
-        if (labelSupplier.get() != null && !labelSupplier.get().isBlank()) {
-            return labelSupplier.get();
-        }
-        return null;
+                .filter(it -> {
+                    return it.getLegend() != null && it.getLegend().getType() == BIVARIATE;
+                }).map(Layer::getId).collect(Collectors.toList());
     }
 
     /**
@@ -57,8 +48,10 @@ public class BivariateLayerProvider implements LayerProvider {
     @Override
     public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
         try {
-            return insightsApiGraphqlClient.getBivariateOverlays().get()
-                .stream().map(this::fromOverlay).collect(Collectors.toList());
+            BivariateStatisticDto bivariateStatisticDto = insightsApiGraphqlClient.getBivariateStatistic().get();
+            return bivariateStatisticDto.getOverlays().stream()
+                    .map(overlay -> fromOverlay(overlay, bivariateStatisticDto.getIndicators()))
+                    .collect(Collectors.toList());
         } catch (InterruptedException | ExecutionException e) {
             LOG.error("Can't load bivariate layers: {}", e.getMessage(), e);
         }
@@ -70,18 +63,23 @@ public class BivariateLayerProvider implements LayerProvider {
         return bivariateLayerIds.contains(layerId);
     }
 
-    protected Layer fromOverlay(BivariateLayerLegendQuery.Overlay overlay) {
+    protected Layer fromOverlay(BivariateLayerLegendQuery.Overlay overlay, List<BivariateLayerLegendQuery.Indicator> indicators) {
         if (overlay == null) {
             return null;
         }
+        Legend legend = bivariateLegendFromOverlay(overlay);
+
+        List<String> copyrights = copyrightsFromIndicators(legend, indicators);
+
         return Layer.builder()
-            .id(overlay.name())
-            .description(overlay.description())
-            .source(LayerSource.builder()
-                .type(VECTOR)
-                .build())
-            .legend(bivariateLegendFromOverlay(overlay))
-            .build();
+                .id(overlay.name())
+                .description(overlay.description())
+                .source(LayerSource.builder()
+                        .type(VECTOR)
+                        .build())
+                .legend(legend)
+                .copyrights(copyrights)
+                .build();
     }
 
     /**
@@ -96,10 +94,11 @@ public class BivariateLayerProvider implements LayerProvider {
             return null;
         }
         try {
-            return insightsApiGraphqlClient.getBivariateOverlays().get()
-                .stream()
-                .filter(it -> layerId.equals(it.name())).findFirst()
-                .map(this::fromOverlay).get();
+            BivariateStatisticDto bivariateStatisticDto = insightsApiGraphqlClient.getBivariateStatistic().get();
+            return bivariateStatisticDto.getOverlays().stream()
+                    .filter(it -> layerId.equals(it.name())).findFirst()
+                    .map(overlay -> fromOverlay(overlay, bivariateStatisticDto.getIndicators()))
+                    .orElseGet(() -> null);
         } catch (InterruptedException | ExecutionException | NoSuchElementException e) {
             LOG.error("Can't load bivariate layer by id {}: {}", layerId, e.getMessage(), e);
         }
@@ -110,37 +109,59 @@ public class BivariateLayerProvider implements LayerProvider {
         if (overlay == null) {
             return null;
         }
-        List<LegendStep> resultingSteps = new ArrayList<>();
+
         //AXIS 1
+        BivariateLegendAxisDescription xAxis = new BivariateLegendAxisDescription();
         BivariateLayerLegendQuery.X x = overlay.x();
-        if (x != null && x.steps() != null) {
-            for (int i = 0; i < x.steps().size(); i++) {
-                BivariateLayerLegendQuery.Step step = x.steps().get(i);
-                LegendStep legendStep = new LegendStep(null, null, "X", step.value(),
-                    notEmptyLabel(step::label), null, null, null);
-                legendStep.setOrder(i);
-                resultingSteps.add(legendStep);
+        if (x != null) {
+            if (x.steps() != null) {
+                List<Double> steps = requireNonNull(x.steps()).stream()
+                        .map(BivariateLayerLegendQuery.Step::value).toList();
+                xAxis.setSteps(steps);
             }
+            xAxis.setLabel(x.label());
+            xAxis.setQuotient(x.quotient());
         }
         //AXIS 2
+        BivariateLegendAxisDescription yAxis = new BivariateLegendAxisDescription();
         BivariateLayerLegendQuery.Y y = overlay.y();
-        if (y != null && y.steps() != null) {
-            for (int i = 0; i < y.steps().size(); i++) {
-                BivariateLayerLegendQuery.Step1 step = y.steps().get(i);
-                LegendStep legendStep = new LegendStep(null, null, "Y", step.value(),
-                    notEmptyLabel(step::label), null, null, null);
-                legendStep.setOrder(i);
-                resultingSteps.add(legendStep);
+        if (y != null) {
+            if (y.steps() != null) {
+                List<Double> steps = requireNonNull(y.steps()).stream()
+                        .map(Step1::value).toList();
+                yAxis.setSteps(steps);
             }
+            yAxis.setLabel(y.label());
+            yAxis.setQuotient(y.quotient());
         }
         //colors matrix
-        Map<String, String> colors = overlay.colors().stream().collect(Collectors.toMap(color -> color.id(),
-            color -> color.color()));
+        Map<String, String> colors = requireNonNull(overlay.colors()).stream()
+                .collect(Collectors.toMap(BivariateLayerLegendQuery.Color::id,
+                        c -> requireNonNull(c.color())));
 
         return Legend.builder()
-            .type(BIVARIATE)
-            .steps(resultingSteps)
-            .bivariateColors(colors)
-            .build();
+                .type(BIVARIATE)
+                .bivariateColors(colors)
+                .bivariateAxises(BivariateLegendAxises.builder()
+                        .x(xAxis)
+                        .y(yAxis)
+                        .build())
+                .build();
+    }
+
+    private List<String> copyrightsFromIndicators(Legend legend, List<BivariateLayerLegendQuery.Indicator> indicators) {
+        Set<String> quotient = new HashSet<>();
+        quotient.addAll(legend.getBivariateAxises().getX().getQuotient());
+        quotient.addAll(legend.getBivariateAxises().getY().getQuotient());
+
+        Set<String> copyrights = new HashSet<>();
+        quotient.forEach(q ->
+                indicators.stream()
+                        .filter(indicator -> Objects.equals(indicator.name(), q))
+                        .findFirst()
+                        .map(BivariateLayerLegendQuery.Indicator::copyrights)
+                        .ifPresent(copyrights::addAll)
+        );
+        return copyrights.stream().toList();
     }
 }
