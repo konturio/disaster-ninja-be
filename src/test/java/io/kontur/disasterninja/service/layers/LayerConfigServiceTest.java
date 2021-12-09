@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 import static io.kontur.disasterninja.domain.enums.LegendType.SIMPLE;
@@ -54,10 +55,10 @@ public class LayerConfigServiceTest {
         Assertions.assertFalse(hot.isGlobalOverlay());
         Assertions.assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertTrue(hot.isBoundaryRequiredForRetrieval());
-        Assertions.assertEquals("Hot Projects", hot.getName());
+        Assertions.assertEquals("HOT Projects", hot.getName());
         Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
-        Assertions.assertEquals(OVERLAY, hot.getCategory());
-        Assertions.assertEquals("Kontur", hot.getGroup());
+        Assertions.assertNull(hot.getCategory());
+        Assertions.assertEquals("Layers in selected area", hot.getGroup());
         Assertions.assertNotNull(hot.getLegend());
         Assertions.assertNotNull(hot.getLegend().getSteps());
         //colors are only used for bivariate legends
@@ -96,10 +97,10 @@ public class LayerConfigServiceTest {
         Assertions.assertFalse(hot.isGlobalOverlay());
         Assertions.assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertTrue(hot.isBoundaryRequiredForRetrieval());
-        Assertions.assertEquals("Hot Projects", hot.getName());
+        Assertions.assertEquals("HOT Projects", hot.getName());
         Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
-        Assertions.assertEquals(OVERLAY, hot.getCategory());
-        Assertions.assertEquals("Kontur", hot.getGroup());
+        Assertions.assertNull(hot.getCategory());
+        Assertions.assertEquals("Layers in selected area", hot.getGroup());
         Assertions.assertNotNull(hot.getLegend());
         Assertions.assertEquals("projectLink", hot.getLegend().getLinkProperty());
         Assertions.assertNotNull(hot.getLegend().getSteps());
@@ -127,10 +128,10 @@ public class LayerConfigServiceTest {
         Assertions.assertFalse(hot.isGlobalOverlay());
         Assertions.assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertTrue(hot.isBoundaryRequiredForRetrieval());
-        Assertions.assertEquals("Hot Projects", hot.getName());
+        Assertions.assertEquals("HOT Projects", hot.getName());
         Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
-        Assertions.assertEquals(OVERLAY, hot.getCategory());
-        Assertions.assertEquals("Kontur", hot.getGroup());
+        Assertions.assertNull(hot.getCategory());
+        Assertions.assertEquals("Layers in selected area", hot.getGroup());
         Assertions.assertNotNull(hot.getLegend());
         Assertions.assertEquals("projectLink", hot.getLegend().getLinkProperty());
         Assertions.assertNotNull(hot.getLegend().getSteps());
@@ -184,7 +185,7 @@ public class LayerConfigServiceTest {
         Assertions.assertTrue(activeContributors.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertFalse(activeContributors.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("Active contributors", activeContributors.getName());
-        Assertions.assertEquals("Kontur", activeContributors.getGroup());
+        Assertions.assertEquals("Other", activeContributors.getGroup());
         Assertions.assertEquals(OVERLAY, activeContributors.getCategory());
         //legend
         Assertions.assertNotNull(activeContributors.getLegend());
@@ -198,10 +199,12 @@ public class LayerConfigServiceTest {
     }
 
     @Test
-    public void bingUrlsTest() {
+    public void bingTest() {
         Layer bing = Layer.builder().id("Bing").build();
         service.applyConfig(bing);
         Assertions.assertEquals(8, bing.getSource().getUrls().size());
+        Assertions.assertEquals(BASE, bing.getCategory());
+        Assertions.assertEquals("Photo", bing.getGroup());
     }
 
     @Test
