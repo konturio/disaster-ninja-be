@@ -84,7 +84,7 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
         Layer layer2 = result.stream().filter(it -> "EOXAT2018CLOUDLESS".equals(it.getId())).findAny().get();
         assertEquals("Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH" +
             " (Contains modified Copernicus Sentinel data 2017 & 2018)", layer2.getCopyrights().get(0));
-        assertEquals("Photo", layer2.getGroup());
+        assertEquals("photo", layer2.getGroup());
 
         Layer layer3 = result.stream().filter(it -> "OSM_Inspector-Addresses".equals(it.getId())).findAny().get();
         assertEquals(OVERLAY, layer3.getCategory());
@@ -97,7 +97,7 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
 
         assertEquals("Benin: Cotonou Pleiade 2016", layer1.getName());
         assertEquals(BASE, layer1.getCategory());
-        assertEquals("Photo", layer1.getGroup()); // test in layer2
+        assertEquals("photo", layer1.getGroup()); // test in layer2
         Assertions.assertNull(layer1.getLegend());
         Assertions.assertNull(layer1.getCopyrights());
         assertEquals(21, layer1.getMaxZoom());

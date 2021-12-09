@@ -58,7 +58,7 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("HOT Projects", hot.getName());
         Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
         Assertions.assertNull(hot.getCategory());
-        Assertions.assertEquals("Layers in selected area", hot.getGroup());
+        Assertions.assertEquals("layersInSelectedArea", hot.getGroup());
         Assertions.assertNotNull(hot.getLegend());
         Assertions.assertNotNull(hot.getLegend().getSteps());
         //colors are only used for bivariate legends
@@ -100,7 +100,7 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("HOT Projects", hot.getName());
         Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
         Assertions.assertNull(hot.getCategory());
-        Assertions.assertEquals("Layers in selected area", hot.getGroup());
+        Assertions.assertEquals("layersInSelectedArea", hot.getGroup());
         Assertions.assertNotNull(hot.getLegend());
         Assertions.assertEquals("projectLink", hot.getLegend().getLinkProperty());
         Assertions.assertNotNull(hot.getLegend().getSteps());
@@ -131,7 +131,7 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("HOT Projects", hot.getName());
         Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
         Assertions.assertNull(hot.getCategory());
-        Assertions.assertEquals("Layers in selected area", hot.getGroup());
+        Assertions.assertEquals("layersInSelectedArea", hot.getGroup());
         Assertions.assertNotNull(hot.getLegend());
         Assertions.assertEquals("projectLink", hot.getLegend().getLinkProperty());
         Assertions.assertNotNull(hot.getLegend().getSteps());
@@ -185,7 +185,7 @@ public class LayerConfigServiceTest {
         Assertions.assertTrue(activeContributors.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertFalse(activeContributors.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("Active contributors", activeContributors.getName());
-        Assertions.assertEquals("Other", activeContributors.getGroup());
+        Assertions.assertEquals("other", activeContributors.getGroup());
         Assertions.assertEquals(OVERLAY, activeContributors.getCategory());
         //legend
         Assertions.assertNotNull(activeContributors.getLegend());
@@ -204,7 +204,7 @@ public class LayerConfigServiceTest {
         service.applyConfig(bing);
         Assertions.assertEquals(8, bing.getSource().getUrls().size());
         Assertions.assertEquals(BASE, bing.getCategory());
-        Assertions.assertEquals("Photo", bing.getGroup());
+        Assertions.assertEquals("photo", bing.getGroup());
     }
 
     @Test
@@ -221,7 +221,7 @@ public class LayerConfigServiceTest {
         Assertions.assertFalse(analytics.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("OSM Object Quantity", analytics.getName());
         Assertions.assertEquals(OVERLAY, analytics.getCategory());
-        Assertions.assertEquals("Kontur Analytical Layers", analytics.getGroup());
+        Assertions.assertEquals("bivariate", analytics.getGroup());
         //skipping the rest
     }
 
@@ -239,7 +239,7 @@ public class LayerConfigServiceTest {
         Assertions.assertTrue(eventShape.isDisplayLegendIfNoFeaturesExist());
         Assertions.assertFalse(eventShape.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("Event shape", eventShape.getName());
-        Assertions.assertEquals("Layers in selected area", eventShape.getGroup());
+        Assertions.assertEquals("layersInSelectedArea", eventShape.getGroup());
         //legend
         Assertions.assertNotNull(eventShape.getLegend());
         Assertions.assertEquals(SIMPLE, eventShape.getLegend().getType());

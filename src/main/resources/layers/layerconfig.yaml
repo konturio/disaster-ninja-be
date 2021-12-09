@@ -9,7 +9,7 @@ layers:
       displayLegendIfNoFeaturesExist: true
       boundaryRequiredForRetrieval: false
       name: 'Event shape'
-      group: 'Layers in selected area'
+      group: 'layersInSelectedArea'
       legend:
         type: 'simple'
         steps:
@@ -25,7 +25,7 @@ layers:
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
       name: 'Event shape'
-      group: 'Layers in selected area'
+      group: 'layersInSelectedArea'
       legend:
         type: 'simple'
         steps:
@@ -83,7 +83,7 @@ layers:
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
       name: 'Event shape'
-      group: 'Layers in selected area'
+      group: 'layersInSelectedArea'
       legend:
         type: 'simple'
         steps:
@@ -108,7 +108,7 @@ layers:
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
       name: 'Event shape'
-      group: 'Layers in selected area'
+      group: 'layersInSelectedArea'
       legend:
         type: 'simple'
         steps:
@@ -133,7 +133,7 @@ layers:
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
       name: 'Event shape'
-      group: 'Layers in selected area'
+      group: 'layersInSelectedArea'
       legend:
         type: 'simple'
         steps:
@@ -166,7 +166,7 @@ layers:
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
       name: 'Event shape'
-      group: 'Layers in selected area'
+      group: 'layersInSelectedArea'
       legend:
         type: 'simple'
         steps:
@@ -191,7 +191,7 @@ layers:
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
       name: 'Event shape'
-      group: 'Layers in selected area'
+      group: 'layersInSelectedArea'
       legend:
         type: 'simple'
         steps:
@@ -248,7 +248,7 @@ layers:
     #  displayLegendIfNoFeaturesExist: false
     #  boundaryRequiredForRetrieval: false
     #  name: 'Event shape'
-    #  group: 'Layers in selected area'
+    #  group: 'layersInSelectedArea'
     #  legend:
     #    type: 'simple'
     #    steps:
@@ -271,7 +271,7 @@ layers:
       name: "Kontur Urban Core"
       displayLegendIfNoFeaturesExist: true
       boundaryRequiredForRetrieval: true
-      group: 'Layers in selected area'
+      group: 'layersInSelectedArea'
       copyrights:
         - '© Kontur'
       legend:
@@ -291,7 +291,7 @@ layers:
       name: "Kontur Settled Periphery"
       displayLegendIfNoFeaturesExist: true
       boundaryRequiredForRetrieval: true
-      group: 'Layers in selected area'
+      group: 'layersInSelectedArea'
       copyrights:
         - '© Kontur'
       legend:
@@ -316,7 +316,7 @@ layers:
       boundaryRequiredForRetrieval: false
       name: 'Active contributors'
       category: 'overlay'
-      group: 'Other'
+      group: 'other'
       description: 'Contributors are labeled as active based on their mapping activity in the area for the past 2 years. We consider OpenStreetMap users to be local and mark them green if most of their edits were made close to that area.'
       copyrights:
         - '© OpenStreetMap Contributors, © Kontur'
@@ -356,7 +356,7 @@ layers:
       boundaryRequiredForRetrieval: true
       name: 'HOT Projects'
       description: 'Projects on HOT Tasking Manager, ongoing and historical'
-      group: 'Layers in selected area'
+      group: 'layersInSelectedArea'
       copyrights:
         - '© Humanitarian OpenStreetMap Team, © Kontur'
       legend:
@@ -385,7 +385,7 @@ layers:
       displayLegendIfNoFeaturesExist: true
       name: 'OSM Object Quantity'
       category: 'overlay'
-      group: 'Kontur Analytical Layers'
+      group: 'bivariate'
       legend:
         type: 'bivariate'
       source:
@@ -399,7 +399,7 @@ layers:
       displayLegendIfNoFeaturesExist: true
       name: 'OSM Building Quantity'
       category: 'overlay'
-      group: 'Kontur Analytical Layers'
+      group: 'bivariate'
       legend:
         type: 'bivariate'
       source:
@@ -413,7 +413,7 @@ layers:
       displayLegendIfNoFeaturesExist: true
       name: 'OSM Road Length'
       category: 'overlay'
-      group: 'Kontur Analytical Layers'
+      group: 'bivariate'
       legend:
         type: 'bivariate'
       source:
@@ -427,7 +427,7 @@ layers:
       displayLegendIfNoFeaturesExist: true
       name: 'OSM Mapping Activity'
       category: 'overlay'
-      group: 'Kontur Analytical Layers'
+      group: 'bivariate'
       legend:
         type: 'bivariate'
       source:
@@ -441,7 +441,7 @@ layers:
       displayLegendIfNoFeaturesExist: true
       name: 'OSM Antiquity'
       category: 'overlay'
-      group: 'Kontur Analytical Layers'
+      group: 'bivariate'
       legend:
         type: 'bivariate'
       source:
@@ -455,7 +455,7 @@ layers:
       displayLegendIfNoFeaturesExist: true
       name: 'Kontur Nighttime Heatwave Risk'
       category: 'overlay'
-      group: 'Kontur Analytical Layers'
+      group: 'bivariate'
       legend:
         type: 'bivariate'
       source:
@@ -467,7 +467,7 @@ layers:
 
     - id: 'Bing'
       category: 'base'
-      group: 'Photo'
+      group: 'photo'
       source:
         type: 'raster'
         urls:
