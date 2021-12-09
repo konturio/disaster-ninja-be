@@ -48,10 +48,6 @@ public class OsmLayerProvider implements LayerProvider {
         return (isOverlay != null && isOverlay) ? OVERLAY : BASE;
     }
 
-    private static String caseFormat(String input) {
-        return input == null ? null : input.toLowerCase().replace(input.substring(0, 1), input.substring(0, 1).toUpperCase());
-    }
-
     protected static <T> T getFeatureProperty(Feature f, String propertyName, Class<T> clazz) {
         Object value = f.getProperties() == null ? null : (f.getProperties()).get(propertyName);
         if (value == null) {
@@ -119,7 +115,7 @@ public class OsmLayerProvider implements LayerProvider {
             .name(getFeatureProperty(f, NAME, String.class))
             .description(getFeatureProperty(f, DESCRIPTION, String.class))
             .category(layerCategory(f))
-            .group(caseFormat(getFeatureProperty(f, CATEGORY, String.class)))
+            .group(getFeatureProperty(f, CATEGORY, String.class))
             .copyrights(copyright == null ? null : List.of(copyright))
             .maxZoom(getFeatureProperty(f, MAX_ZOOM, Integer.class))
             .minZoom(getFeatureProperty(f, MIN_ZOOM, Integer.class));
