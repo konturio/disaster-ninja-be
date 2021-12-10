@@ -382,7 +382,7 @@ layers:
       testOnly: true
       globalOverlay: true
       boundaryRequiredForRetrieval: false
-      name: '--HOT Projects Tile Layer (test only)--'
+      name: 'HOT Project outlines'
       category: 'overlay'
       group: 'other'
       legend:
