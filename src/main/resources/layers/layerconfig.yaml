@@ -378,6 +378,22 @@ layers:
               icon: 'hot-gray'
               text: '{projectId} - {projectPriority}'
 
+    - id: 'hotProjectsTileLayer'
+      globalOverlay: true
+      boundaryRequiredForRetrieval: false
+      name: '--HOT Projects Tile Layer--'
+      category: 'overlay'
+      group: 'other'
+      legend:
+        type: 'simple'
+      copyrights:
+        - '© Humanitarian OpenStreetMap Team, © Kontur'
+      source:
+        type: 'vector'
+        urls:
+          - '{tilesHost}/tiles/public.hot_projects/{z}/{x}/{y}.pbf'
+        tileSize: 512
+
     ### Group: Kontur Analytical Layers
     - id: 'Kontur OpenStreetMap Quantity'
       globalOverlay: true
