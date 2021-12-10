@@ -31,6 +31,8 @@ public class Layer {
     private Integer maxZoom; //for 'vector' and 'raster' only (see source.type)
     private Integer minZoom; //for 'vector' and 'raster' only (see source.type)
     private LayerSource source;
+    //test-only layers
+    private boolean testOnly;
 
     /**
      * Overrides all non-final fields with values from <b>other</b>, except for <b>this.source.data</b> as it's the
