@@ -379,9 +379,10 @@ layers:
               text: '{projectId} - {projectPriority}'
 
     - id: 'hotProjectsTileLayer'
+      testOnly: true
       globalOverlay: true
       boundaryRequiredForRetrieval: false
-      name: '--HOT Projects Tile Layer--'
+      name: '--HOT Projects Tile Layer (test only)--'
       category: 'overlay'
       group: 'other'
       legend:
