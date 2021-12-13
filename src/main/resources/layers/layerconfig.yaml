@@ -327,23 +327,34 @@ layers:
         tileSize: 512
       legend:
         type: 'simple'
+        linkProperty: 'profile'
         steps:
           - stepName: 'Possibly local mappers'
             sourceLayer: 'users'
             stepShape: 'circle'
-            text: '{top_user}'
             paramName: 'is_local'
             paramValue: true
             style:
-              text-color: '#009100'
+              text: '{top_user}'
+              text-color: 'rgb(0, 145, 0)'
+              text-halo-color: 'rgba(255, 255, 255, 0.3)'
+              text-halo-radius: 2
+              text-size: 14
+              text-letter-spacing: 0.05
+              font-family: 'Noto Sans Bold'
           - stepName: 'Active mappers'
             sourceLayer: 'users'
             stepShape: 'circle'
-            text: '{top_user}'
             paramName: 'is_local'
             paramValue: false
             style:
-              text-color: '#434343'
+              text: '{top_user}'
+              text-color: 'rgb(45, 45, 45)'
+              text-halo-color: 'rgba(255, 255, 255, 0.3)'
+              text-halo-radius: 2
+              text-size: 12
+              text-letter-spacing: 0.05
+              font-family: 'Noto Sans Regular'
           - sourceLayer: 'hexagon'
             style:
               color: 'black'
