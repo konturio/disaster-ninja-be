@@ -190,7 +190,7 @@ public class LayerConfigServiceTest {
         //legend
         Assertions.assertNotNull(activeContributors.getLegend());
         Assertions.assertEquals(SIMPLE, activeContributors.getLegend().getType());
-        Assertions.assertNull(activeContributors.getLegend().getLinkProperty()); //not used in this layer
+        Assertions.assertEquals("profile", activeContributors.getLegend().getLinkProperty()); //not used in this layer
         //steps
         //Steps are always shown since displayLegendIfNoFeaturesExist is true
         Assertions.assertEquals(3, activeContributors.getLegend().getSteps().size());
