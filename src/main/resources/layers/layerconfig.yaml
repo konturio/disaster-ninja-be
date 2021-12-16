@@ -94,9 +94,8 @@ layers:
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
-              fill-color: '#051626'
-              width: 3
-              color: '#fff'
+              circle-radius: 3
+              circle-color: '#051626'
           - stepName: 'Exposure Area'
             stepShape: 'circle'
             paramName: 'Class'
@@ -119,9 +118,8 @@ layers:
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
-              fill-color: '#051626'
-              width: 3
-              color: '#fff'
+              circle-radius: 3
+              circle-color: '#051626'
           - stepName: 'Exposure Area 100km'
             stepShape: 'circle'
             paramName: 'Class'
@@ -144,9 +142,8 @@ layers:
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
-              fill-color: '#051626'
-              width: 3
-              color: '#fff'
+              circle-radius: 3
+              circle-color: '#051626'
           - stepName: 'Exposure Area'
             stepShape: 'circle'
             paramName: 'Class'
@@ -177,9 +174,8 @@ layers:
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
-              fill-color: '#051626'
-              width: 3
-              color: '#fff'
+              circle-radius: 3
+              circle-color: '#051626'
           - stepName: 'Exposure Area'
             stepShape: 'circle'
             paramName: 'Class'
@@ -202,9 +198,8 @@ layers:
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
-              fill-color: '#051626'
-              width: 3
-              color: '#fff'
+              circle-radius: 3
+              circle-color: '#051626'
           - stepName: 'Exposure Area 100Km'
             stepShape: 'circle'
             paramName: 'Class'
