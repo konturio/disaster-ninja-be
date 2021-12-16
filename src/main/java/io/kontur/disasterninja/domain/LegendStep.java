@@ -11,6 +11,11 @@ import java.util.Map;
 @ConstructorBinding
 public class LegendStep {
     private final String paramName;
+    /**
+     * nullable, internal (not disclosed to DTO). If specified - it's used in features filtering but
+     * paramValue is set to dto (single paramValue value into all paramPattern matches)
+     */
+    private final String paramPattern;
     private final Object paramValue; //null not allowed
     private final String axis;
     private final Double axisValue;

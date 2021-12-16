@@ -108,6 +108,7 @@ public class Layer {
 
         if (prototype.getSteps() != null) { //sourceLayer not taken into account as its related to tiles only
             List<LegendStep> stepsToCheck = new ArrayList<>(prototype.getSteps());
+            //save only steps for each at least one feature exist
             for (Feature feature : this.getSource().getData().getFeatures()) {
                 if (stepsToCheck.isEmpty()) {
                     break;
@@ -118,14 +119,29 @@ public class Layer {
                     if (value == null) {
                         continue;
                     }
-                    String paramValue = (String) step.getParamValue(); //nulls not allowed
-                    if (paramValue.equalsIgnoreCase(value) ||
-                            Pattern.compile(paramValue).matcher(value).matches()) {
-                        //a feature exist for this legend step
-                        thisLegend.getSteps().add(step);
-                        //no need to check this legend step again
-                        stepsToCheck.remove(step);
-                        break;
+                    String paramPattern = step.getParamPattern();
+                    //if step.paramPattern is set - filter by pattern and replace feature's value with step.paramValue
+                    if (paramPattern != null) {
+                        if (Pattern.compile(paramPattern).matcher(value).matches()) {
+                            //a feature exists for this legend step
+                            if (!thisLegend.getSteps().contains(step)) {
+                                thisLegend.getSteps().add(step);
+                            }
+                            //we don't remove step from stepsToCheck as we'll need to replace matched values with step.paramValue in all further features
+                            feature.getProperties().replace(step.getParamName(), step.getParamValue());
+                            break;
+                        }
+
+                    //otherwise filter by paramValue
+                    } else {
+                        String paramValue = (String) step.getParamValue(); //nulls not allowed
+                        if (paramValue.equalsIgnoreCase(value)) {
+                            //a feature exists for this legend step
+                            thisLegend.getSteps().add(step);
+                            //no need to check this legend step again
+                            stepsToCheck.remove(step);
+                            break;
+                        }
                     }
                 }
             }

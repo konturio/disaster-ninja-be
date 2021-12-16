@@ -34,9 +34,8 @@ layers:
             paramName: 'Class'
             paramValue: 'Point_Centroid'
             style:
-              fill-color: '#051626'
-              width: 3
-              color: '#fff'
+              circle-radius: 3
+              circle-color: '#051626'
           - stepName: 'Exposure Area 60 km/h'
             stepShape: 'circle'
             paramName: 'Class'
@@ -61,15 +60,18 @@ layers:
           - stepName: 'Line Track'
             stepShape: 'circle'
             paramName: 'Class'
-            paramValue: 'Line_Line_[0-9]+'
+            paramPattern: 'Line_Line_[0-9]+' #all matches to be merged into single step
+            paramValue: 'Line_Line'
             style:
               color: '#8C949B'
           - stepName: 'Point Track'
             stepShape: 'circle'
             paramName: 'Class'
-            paramValue: 'Point_Polygon_Point_[0-9]+'
+            paramPattern: 'Point_Polygon_Point_[0-9]+' #all matches to be merged into single step
+            paramValue: 'Point_Polygon_Point'
             style:
-              color: '#8C949B'
+              circle-radius: 2
+              circle-color: '#051626'
           - stepName: 'Uncertainty Cones'
             stepShape: 'circle'
             paramName: 'Class'
