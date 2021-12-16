@@ -11,7 +11,7 @@ import java.util.List;
 public class LayerSourceDto {
     private final LayerSourceType type;
     private final List<String> urls;//for 'vector' and 'raster' only
-    private final Double tileSize;//for 'vector' and 'raster' only
+    private final Integer tileSize;//for 'vector' and 'raster' only
     private final GeoJSON data; //for geoJson only
 
     public static LayerSourceDto fromLayerSource(LayerSource layerSource) {

@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 public class LayerSource {
     private final LayerSourceType type;
-    private final Double tileSize; //for 'vector' and 'raster' only
+    private final Integer tileSize; //for 'vector' and 'raster' only
     private List<String> urls; //for 'vector' and 'raster' only
     private FeatureCollection data; //for geoJson only
 }
