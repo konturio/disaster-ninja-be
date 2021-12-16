@@ -320,6 +320,7 @@ public class LayerConfigServiceTest {
                 .data(new FeatureCollection(new Feature[]{
                     //random order, some duplicates
                     feature("Class", "Point_Centroid"),
+                    feature("Class", "Line_Line_666"),
                     feature("Class", "Point_Polygon_Point_777"),
                     feature("Class", "Poly_Cones")}
                 ))
@@ -332,10 +333,13 @@ public class LayerConfigServiceTest {
         Assertions.assertNotNull(layer.getLegend());
         Assertions.assertFalse(layer.getLegend().getSteps().isEmpty());
         Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
-        Assertions.assertEquals(3, layer.getLegend().getSteps().size());
+        Assertions.assertEquals(4, layer.getLegend().getSteps().size());
         Assertions.assertEquals("Centroid", layer.getLegend().getSteps().get(0).getStepName());
-        Assertions.assertEquals("Point Track", layer.getLegend().getSteps().get(1).getStepName());
-        Assertions.assertEquals("Uncertainty Cones", layer.getLegend().getSteps().get(2).getStepName());
+        Assertions.assertEquals("Line Track", layer.getLegend().getSteps().get(1).getStepName());
+        Assertions.assertEquals("Line_Line", layer.getLegend().getSteps().get(1).getParamValue());
+        Assertions.assertEquals("Point Track", layer.getLegend().getSteps().get(2).getStepName());
+        Assertions.assertEquals("Point_Polygon_Point", layer.getLegend().getSteps().get(2).getParamValue());
+        Assertions.assertEquals("Uncertainty Cones", layer.getLegend().getSteps().get(3).getStepName());
         //skipping other fields
     }
 
