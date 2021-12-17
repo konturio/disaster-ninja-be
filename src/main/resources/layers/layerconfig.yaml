@@ -395,6 +395,33 @@ layers:
       group: 'other'
       legend:
         type: 'simple'
+        steps:
+          - sourceLayer: 'hotProjects'
+            paramName: 'k_type'
+            paramValue: 'callout'
+            style:
+              color: 'black'
+              width: 1
+          - sourceLayer: 'hotProjects'
+            paramName: 'k_type'
+            paramValue: 'label'
+            style:
+              text: '{percentValidated}%'
+              text-size: 14
+              text-color: 'white'
+              text-anchor: 'center'
+              font-family: 'Noto Sans Regular'
+              circle-color: 'black'
+              circle-radius: 28
+              circle-opacity: 0.4
+          - stepName: 'Project'
+            stepShape: 'square'
+            sourceLayer: 'hotProjects'
+            paramName: 'k_type'
+            paramValue: 'polygon'
+            style:
+              fill-color: 'black'
+              fill-opacity: 0.3 
       copyrights:
         - '© Humanitarian OpenStreetMap Team, © Kontur'
       source:
