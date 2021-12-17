@@ -155,7 +155,7 @@ public class DtoTest {
         LayerSource source = LayerSource.builder()
             .type(LayerSourceType.RASTER)
             .urls(List.of("url-com.com"))
-            .tileSize(2d)
+            .tileSize(2)
             .data(geoJSON).build();
         Legend legend = new Legend(LegendType.SIMPLE, null, new ArrayList<>(), new HashMap<>(),
             new BivariateLegendAxises());
@@ -201,7 +201,7 @@ public class DtoTest {
         LayerSource source = LayerSource.builder()
             .type(LayerSourceType.RASTER)
             .urls(List.of("url-com.com"))
-            .tileSize(2d)
+            .tileSize(2)
             .data(geoJSON).build();
         Legend legend = new Legend(LegendType.SIMPLE, null, new ArrayList<>(), new HashMap<>(), new BivariateLegendAxises());
         Map<String, Object> map = new HashMap<>();

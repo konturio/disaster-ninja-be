@@ -427,7 +427,8 @@ layers:
       source:
         type: 'vector'
         urls:
-          - '{tilesHost}/tiles/public.hot_projects/{z}/{x}/{y}.pbf'
+          #layer is now available only at pg_tileserv at test-api02
+          - 'https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf'
         tileSize: 512
 
     ### Group: Kontur Analytical Layers
