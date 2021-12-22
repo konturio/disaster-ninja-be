@@ -371,20 +371,32 @@ layers:
         type: 'simple'
         linkProperty: 'projectLink'
         steps:
-          - stepName: 'Published'
-            stepShape: 'icon'
-            paramName: 'status'
-            paramValue: 'PUBLISHED'
+          - paramName: status
+            paramValue: PUBLISHED
+            stepName: Published
+            stepShape: circle
             style:
-              icon: 'hot-red'
-              text: '{projectId} - {projectPriority}'
-          - stepName: 'Archived'
-            stepShape: 'icon'
-            paramName: 'status'
-            paramValue: 'ARCHIVED'
+              icon-image: hot-red
+              text: "{projectId} - {projectPriority}"
+              font-family: Noto Sans Regular
+              text-offset: 0, 0.6
+              text-anchor: top
+              symbol-z-order: viewport-y
+              icon-allow-overlap: true
+              fill-color: red
+          - paramName: status
+            paramValue: ARCHIVED
+            stepName: Archived
+            stepShape: circle
             style:
-              icon: 'hot-gray'
-              text: '{projectId} - {projectPriority}'
+              icon-image: hot-gray
+              text: "{projectId} - {projectPriority}"
+              font-family: Noto Sans Regular
+              text-offset: 0, 0.6
+              text-anchor: top
+              symbol-z-order: viewport-y
+              icon-allow-overlap: true
+              fill-color: gray
 
     - id: 'hotProjectsTileLayer'
       testOnly: true
