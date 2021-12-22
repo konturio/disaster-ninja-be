@@ -115,7 +115,7 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("status", hot.getLegend().getSteps().get(0).getParamName());
         Assertions.assertEquals("ARCHIVED", hot.getLegend().getSteps().get(0).getParamValue());
 
-        Assertions.assertEquals("hot-gray", hot.getLegend().getSteps().get(0).getStyle().get("icon"));
+        Assertions.assertEquals("hot-gray", hot.getLegend().getSteps().get(0).getStyle().get("icon-image"));
     }
 
     @Test
