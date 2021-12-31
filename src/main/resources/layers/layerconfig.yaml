@@ -338,7 +338,11 @@ layers:
               text-halo-radius: 2
               text-size: 14
               text-letter-spacing: 0.05
+              text-padding: 0
               font-family: 'Noto Sans Bold'
+              icon-image: 'osm-user-shield'
+              icon-text-fit: 'both'
+              icon-allow-overlap: true
           - stepName: 'Active mappers'
             sourceLayer: 'users'
             stepShape: 'circle'
@@ -351,7 +355,11 @@ layers:
               text-halo-radius: 2
               text-size: 12
               text-letter-spacing: 0.05
+              text-padding: 0
               font-family: 'Noto Sans Regular'
+              icon-image: 'osm-user-shield'
+              icon-text-fit: 'both'
+              icon-allow-overlap: true
           - sourceLayer: 'hexagon'
             style:
               color: 'black'
