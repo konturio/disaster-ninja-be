@@ -16,13 +16,15 @@ public class LayerSummaryDto {
     private final String category;
     private final String group;
     private final boolean boundaryRequiredForRetrieval;
+    private final boolean eventIdRequiredForRetrieval;
     private final LegendDto legend;
     private final List<String> copyrights;
 
     public static LayerSummaryDto fromLayer(Layer layer) {
         return layer == null ? null : new LayerSummaryDto(shortenEventShapeId(layer.getId()), layer.getName(),
             layer.getDescription(), layer.getCategory() == null ? null : layer.getCategory().toString(),
-            layer.getGroup(), layer.isBoundaryRequiredForRetrieval(), LegendDto.fromLegend(layer.getLegend()),
+            layer.getGroup(), layer.isBoundaryRequiredForRetrieval(), layer.isEventIdRequiredForRetrieval(),
+            LegendDto.fromLegend(layer.getLegend()),
             layer.getCopyrights());
     }
 

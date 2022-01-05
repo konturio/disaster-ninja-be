@@ -49,6 +49,7 @@ public class DtoTest {
             .getBody());
 
         Assertions.assertEquals(layer.getId(), response.get(0).getId());
+        Assertions.assertEquals(layer.isEventIdRequiredForRetrieval(), response.get(0).isEventIdRequiredForRetrieval());
         Assertions.assertEquals(layer.getName(), response.get(0).getName());
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
         Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
@@ -96,6 +97,7 @@ public class DtoTest {
             .getBody());
 
         Assertions.assertEquals(layer.getId(), response.get(0).getId());
+        Assertions.assertEquals(layer.isEventIdRequiredForRetrieval(), response.get(0).isEventIdRequiredForRetrieval());
         Assertions.assertEquals(layer.getName(), response.get(0).getName());
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
         Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
@@ -121,6 +123,7 @@ public class DtoTest {
             .getBody());
 
         Assertions.assertEquals(layer.getId(), response.get(0).getId());
+        Assertions.assertEquals(layer.isEventIdRequiredForRetrieval(), response.get(0).isEventIdRequiredForRetrieval());
         Assertions.assertEquals(layer.getName(), response.get(0).getName());
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
         Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
