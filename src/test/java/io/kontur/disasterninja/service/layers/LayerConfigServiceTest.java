@@ -21,6 +21,8 @@ import static io.kontur.disasterninja.domain.enums.LegendType.SIMPLE;
 import static io.kontur.disasterninja.dto.EventType.CYCLONE;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.EVENT_SHAPE_LAYER_ID;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class LayerConfigServiceTest {
@@ -35,7 +37,7 @@ public class LayerConfigServiceTest {
 
     @Test
     public void globalOverlaysTest() {
-        Assertions.assertFalse(service.getGlobalOverlays().isEmpty());
+        assertFalse(service.getGlobalOverlays().isEmpty());
     }
 
     @Test
@@ -52,15 +54,16 @@ public class LayerConfigServiceTest {
                 )).build()).build();
         service.applyConfig(hot);
 
-        Assertions.assertFalse(hot.isGlobalOverlay());
-        Assertions.assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
-        Assertions.assertTrue(hot.isBoundaryRequiredForRetrieval());
+        assertFalse(hot.isGlobalOverlay());
+        assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
+        assertTrue(hot.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("HOT Projects", hot.getName());
         Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
         Assertions.assertNull(hot.getCategory());
         Assertions.assertEquals("layersInSelectedArea", hot.getGroup());
         Assertions.assertNotNull(hot.getLegend());
         Assertions.assertNotNull(hot.getLegend().getSteps());
+        assertFalse(hot.isEventIdRequiredForRetrieval());
         //colors are only used for bivariate legends
         Assertions.assertNull(hot.getLegend().getBivariateColors());
         Assertions.assertEquals("projectLink", hot.getLegend().getLinkProperty());
@@ -94,9 +97,9 @@ public class LayerConfigServiceTest {
                 )).build()).build();
         service.applyConfig(hot);
 
-        Assertions.assertFalse(hot.isGlobalOverlay());
-        Assertions.assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
-        Assertions.assertTrue(hot.isBoundaryRequiredForRetrieval());
+        assertFalse(hot.isGlobalOverlay());
+        assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
+        assertTrue(hot.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("HOT Projects", hot.getName());
         Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
         Assertions.assertNull(hot.getCategory());
@@ -125,9 +128,9 @@ public class LayerConfigServiceTest {
             .build();
         service.applyConfig(hot);
 
-        Assertions.assertFalse(hot.isGlobalOverlay());
-        Assertions.assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
-        Assertions.assertTrue(hot.isBoundaryRequiredForRetrieval());
+        assertFalse(hot.isGlobalOverlay());
+        assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
+        assertTrue(hot.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("HOT Projects", hot.getName());
         Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
         Assertions.assertNull(hot.getCategory());
@@ -146,14 +149,15 @@ public class LayerConfigServiceTest {
             .build();
         service.applyConfig(urban);
 
-        Assertions.assertFalse(urban.isGlobalOverlay());
-        Assertions.assertTrue(urban.isDisplayLegendIfNoFeaturesExist());
-        Assertions.assertTrue(urban.isBoundaryRequiredForRetrieval());
+        assertFalse(urban.isGlobalOverlay());
+        assertTrue(urban.isDisplayLegendIfNoFeaturesExist());
+        assertTrue(urban.isBoundaryRequiredForRetrieval());
         //description is not populated for this layer (it's populated by LayerProvider and not changed by configs)
         Assertions.assertNull(urban.getDescription());
 
         Assertions.assertNotNull(urban.getLegend());
         Assertions.assertEquals(SIMPLE, urban.getLegend().getType());
+        assertFalse(urban.isEventIdRequiredForRetrieval());
     }
 
     @Test
@@ -163,14 +167,15 @@ public class LayerConfigServiceTest {
             .build();
         service.applyConfig(urban);
 
-        Assertions.assertFalse(urban.isGlobalOverlay());
-        Assertions.assertTrue(urban.isDisplayLegendIfNoFeaturesExist());
-        Assertions.assertTrue(urban.isBoundaryRequiredForRetrieval());
+        assertFalse(urban.isGlobalOverlay());
+        assertTrue(urban.isDisplayLegendIfNoFeaturesExist());
+        assertTrue(urban.isBoundaryRequiredForRetrieval());
         //description is not populated for this layer (it's populated by LayerProvider and not changed by configs)
         Assertions.assertNull(urban.getDescription());
 
         Assertions.assertNotNull(urban.getLegend());
         Assertions.assertEquals(SIMPLE, urban.getLegend().getType());
+        assertFalse(urban.isEventIdRequiredForRetrieval());
     }
 
     @Test
@@ -181,9 +186,9 @@ public class LayerConfigServiceTest {
             .build();
         service.applyConfig(activeContributors);
         //layer
-        Assertions.assertTrue(activeContributors.isGlobalOverlay());
-        Assertions.assertTrue(activeContributors.isDisplayLegendIfNoFeaturesExist());
-        Assertions.assertFalse(activeContributors.isBoundaryRequiredForRetrieval());
+        assertTrue(activeContributors.isGlobalOverlay());
+        assertTrue(activeContributors.isDisplayLegendIfNoFeaturesExist());
+        assertFalse(activeContributors.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("Active contributors", activeContributors.getName());
         Assertions.assertEquals("other", activeContributors.getGroup());
         Assertions.assertEquals(OVERLAY, activeContributors.getCategory());
@@ -196,6 +201,7 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals(3, activeContributors.getLegend().getSteps().size());
         Assertions.assertEquals("users", activeContributors.getLegend().getSteps().get(0).getSourceLayer());
         //skipping other fields
+        assertFalse(activeContributors.isEventIdRequiredForRetrieval());
     }
 
     @Test
@@ -205,6 +211,7 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals(8, bing.getSource().getUrls().size());
         Assertions.assertEquals(BASE, bing.getCategory());
         Assertions.assertEquals("photo", bing.getGroup());
+        assertFalse(bing.isEventIdRequiredForRetrieval());
     }
 
     @Test
@@ -216,12 +223,13 @@ public class LayerConfigServiceTest {
         //layer
         Assertions.assertEquals(List.of("https://test-apps02.konturlabs.com/tiles/stats/{z}/{x}/{y}.mvt"),
             analytics.getSource().getUrls());
-        Assertions.assertTrue(analytics.isGlobalOverlay());
-        Assertions.assertTrue(analytics.isDisplayLegendIfNoFeaturesExist());
-        Assertions.assertFalse(analytics.isBoundaryRequiredForRetrieval());
+        assertTrue(analytics.isGlobalOverlay());
+        assertTrue(analytics.isDisplayLegendIfNoFeaturesExist());
+        assertFalse(analytics.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(OVERLAY, analytics.getCategory());
         Assertions.assertEquals("bivariate", analytics.getGroup());
         //skipping the rest
+        assertFalse(analytics.isEventIdRequiredForRetrieval());
     }
 
     //even shape tests
@@ -234,9 +242,9 @@ public class LayerConfigServiceTest {
             .build();
         service.applyConfig(eventShape);
         //layer
-        Assertions.assertFalse(eventShape.isGlobalOverlay());
-        Assertions.assertTrue(eventShape.isDisplayLegendIfNoFeaturesExist());
-        Assertions.assertFalse(eventShape.isBoundaryRequiredForRetrieval());
+        assertFalse(eventShape.isGlobalOverlay());
+        assertTrue(eventShape.isDisplayLegendIfNoFeaturesExist());
+        assertFalse(eventShape.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("Event shape", eventShape.getName());
         Assertions.assertEquals("layersInSelectedArea", eventShape.getGroup());
         //legend
@@ -246,6 +254,7 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals(1, eventShape.getLegend().getSteps().size());
         Assertions.assertEquals("Exposure Area", eventShape.getLegend().getSteps().get(0).getStepName());
         //skipping other fields
+        assertTrue(eventShape.isEventIdRequiredForRetrieval());
     }
 
     @Test
@@ -261,12 +270,13 @@ public class LayerConfigServiceTest {
         service.applyConfig(layer);
 
         Assertions.assertNotNull(layer.getLegend());
-        Assertions.assertFalse(layer.getLegend().getSteps().isEmpty());
-        Assertions.assertFalse(layer.isBoundaryRequiredForRetrieval());
+        assertFalse(layer.getLegend().getSteps().isEmpty());
+        assertFalse(layer.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
         Assertions.assertEquals(1, layer.getLegend().getSteps().size());
         Assertions.assertEquals("Exposure Area", layer.getLegend().getSteps().get(0).getStepName());
         //skipping other fields
+        assertTrue(layer.isEventIdRequiredForRetrieval());
     }
 
     @Test
@@ -293,10 +303,10 @@ public class LayerConfigServiceTest {
             .build();
 
         service.applyConfig(layer);
-        Assertions.assertFalse(layer.isBoundaryRequiredForRetrieval());
+        assertFalse(layer.isBoundaryRequiredForRetrieval());
 
         Assertions.assertNotNull(layer.getLegend());
-        Assertions.assertFalse(layer.getLegend().getSteps().isEmpty());
+        assertFalse(layer.getLegend().getSteps().isEmpty());
         Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
         Assertions.assertEquals(7, layer.getLegend().getSteps().size());
         Assertions.assertEquals("Centroid", layer.getLegend().getSteps().get(0).getStepName());
@@ -327,10 +337,10 @@ public class LayerConfigServiceTest {
             .build();
 
         service.applyConfig(layer);
-        Assertions.assertFalse(layer.isBoundaryRequiredForRetrieval());
+        assertFalse(layer.isBoundaryRequiredForRetrieval());
 
         Assertions.assertNotNull(layer.getLegend());
-        Assertions.assertFalse(layer.getLegend().getSteps().isEmpty());
+        assertFalse(layer.getLegend().getSteps().isEmpty());
         Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
         Assertions.assertEquals(4, layer.getLegend().getSteps().size());
         Assertions.assertEquals("Centroid", layer.getLegend().getSteps().get(0).getStepName());
@@ -340,6 +350,7 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("Point_Polygon_Point", layer.getLegend().getSteps().get(2).getParamValue());
         Assertions.assertEquals("Uncertainty Cones", layer.getLegend().getSteps().get(3).getStepName());
         //skipping other fields
+        assertTrue(layer.isEventIdRequiredForRetrieval());
     }
 
 
