@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BivariateLegendAxises {
+public class BivariateLegendAxisStep {
 
-    private BivariateLegendAxisDescription x;
+    private Double value;
 
-    private BivariateLegendAxisDescription y;
+    private String label;
 }

@@ -1,6 +1,6 @@
 package io.kontur.disasterninja.dto.layer;
 
-import io.kontur.disasterninja.domain.BivariateLegendAxises;
+import io.kontur.disasterninja.domain.BivariateLegendAxes;
 import io.kontur.disasterninja.domain.Legend;
 import io.kontur.disasterninja.domain.enums.LegendType;
 import lombok.Data;
@@ -15,14 +15,14 @@ public class LegendDto {
     private final String linkProperty;
     private final List<LegendStepDto> steps;
     private final List<ColorDto> colors;
-    private final BivariateLegendAxises axises;
+    private final BivariateLegendAxes axes;
 
     public static LegendDto fromLegend(Legend legend) {
         return legend == null ? null : new LegendDto(legend.getType() == null ? null : legend.getType().toString(),
                 legend.getLinkProperty(),
                 legend.getSteps().stream().map(LegendStepDto::fromLegendStep).collect(Collectors.toList()),
                 bivariateColors(legend.getBivariateColors()),
-                legend.getBivariateAxises());
+                legend.getBivariateAxes());
     }
 
     public Legend toLegend() {
@@ -34,7 +34,7 @@ public class LegendDto {
                         .collect(Collectors.toList()),
                 colors.stream()
                         .collect(Collectors.toMap(ColorDto::getId, ColorDto::getColor)),
-                axises
+                axes
                 );
     }
 

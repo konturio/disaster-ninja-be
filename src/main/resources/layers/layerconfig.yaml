@@ -453,10 +453,10 @@ layers:
 
     ### Group: Kontur Analytical Layers
     - id: 'Kontur OpenStreetMap Quantity'
+      orderIndex: 1
       globalOverlay: true
       boundaryRequiredForRetrieval: false
       displayLegendIfNoFeaturesExist: true
-      name: 'OSM Object Quantity'
       category: 'overlay'
       group: 'bivariate'
       legend:
@@ -467,10 +467,10 @@ layers:
           - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Building Quantity'
+      orderIndex: 2
       globalOverlay: true
       boundaryRequiredForRetrieval: false
       displayLegendIfNoFeaturesExist: true
-      name: 'OSM Building Quantity'
       category: 'overlay'
       group: 'bivariate'
       legend:
@@ -481,10 +481,10 @@ layers:
           - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Road Length'
+      orderIndex: 3
       globalOverlay: true
       boundaryRequiredForRetrieval: false
       displayLegendIfNoFeaturesExist: true
-      name: 'OSM Road Length'
       category: 'overlay'
       group: 'bivariate'
       legend:
@@ -495,10 +495,10 @@ layers:
           - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Mapping Activity'
+      orderIndex: 4
       globalOverlay: true
       boundaryRequiredForRetrieval: false
       displayLegendIfNoFeaturesExist: true
-      name: 'OSM Mapping Activity'
       category: 'overlay'
       group: 'bivariate'
       legend:
@@ -509,10 +509,10 @@ layers:
           - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
     - id: 'Kontur OpenStreetMap Antiquity'
+      orderIndex: 5
       globalOverlay: true
       boundaryRequiredForRetrieval: false
       displayLegendIfNoFeaturesExist: true
-      name: 'OSM Antiquity'
       category: 'overlay'
       group: 'bivariate'
       legend:
@@ -523,10 +523,10 @@ layers:
           - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
         tileSize: 512
     - id: 'Kontur Nighttime Heatwave Risk'
+      orderIndex: 6
       globalOverlay: true
       boundaryRequiredForRetrieval: false
       displayLegendIfNoFeaturesExist: true
-      name: 'Kontur Nighttime Heatwave Risk'
       category: 'overlay'
       group: 'bivariate'
       legend:

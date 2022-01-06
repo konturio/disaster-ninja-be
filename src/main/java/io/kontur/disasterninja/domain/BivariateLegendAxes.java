@@ -5,17 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BivariateLegendAxisDescription {
+public class BivariateLegendAxes {
 
-    private String label;
+    private BivariateLegendAxisDescription x;
 
-    private List<String> quotient;
-
-    private List<BivariateLegendAxisStep> steps;
+    private BivariateLegendAxisDescription y;
 }
