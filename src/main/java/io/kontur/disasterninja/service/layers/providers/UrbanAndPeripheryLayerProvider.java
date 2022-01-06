@@ -75,7 +75,9 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
         if (dto == null || dto.getFeatures() == null || dto.getFeatures().length == 0) {
             return null;
         }
-        return Arrays.stream(dto.getFeatures()).filter(it -> layerId.equals(it.getId()))
+        return Arrays.stream(dto.getFeatures())
+            .filter(Objects::nonNull)
+            .filter(it -> layerId.equals(it.getId()))
             .findFirst()
             .map(f -> {
                 Layer.LayerBuilder builder = Layer.builder()
@@ -89,7 +91,7 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
                         .build());
                 }
                 return builder.build();
-            }).get();
+            }).orElse(null);
     }
 
     private String description(Feature f) {
