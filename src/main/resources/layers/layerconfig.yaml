@@ -8,6 +8,7 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: true
       boundaryRequiredForRetrieval: false
+      eventIdRequiredForRetrieval: true
       name: 'Event shape'
       group: 'layersInSelectedArea'
       legend:
@@ -24,6 +25,7 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
+      eventIdRequiredForRetrieval: true
       name: 'Event shape'
       group: 'layersInSelectedArea'
       legend:
@@ -84,6 +86,7 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
+      eventIdRequiredForRetrieval: true
       name: 'Event shape'
       group: 'layersInSelectedArea'
       legend:
@@ -108,6 +111,7 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
+      eventIdRequiredForRetrieval: true
       name: 'Event shape'
       group: 'layersInSelectedArea'
       legend:
@@ -132,6 +136,7 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
+      eventIdRequiredForRetrieval: true
       name: 'Event shape'
       group: 'layersInSelectedArea'
       legend:
@@ -164,6 +169,7 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
+      eventIdRequiredForRetrieval: true
       name: 'Event shape'
       group: 'layersInSelectedArea'
       legend:
@@ -188,6 +194,7 @@ layers:
       globalOverlay: false
       displayLegendIfNoFeaturesExist: false
       boundaryRequiredForRetrieval: false
+      eventIdRequiredForRetrieval: true
       name: 'Event shape'
       group: 'layersInSelectedArea'
       legend:
@@ -244,6 +251,7 @@ layers:
     #  globalOverlay: false
     #  displayLegendIfNoFeaturesExist: false
     #  boundaryRequiredForRetrieval: false
+    #  eventIdRequiredForRetrieval: true
     #  name: 'Event shape'
     #  group: 'layersInSelectedArea'
     #  legend:
@@ -311,6 +319,7 @@ layers:
       globalOverlay: true
       displayLegendIfNoFeaturesExist: true #can't be filtered until MVT tiles are read
       boundaryRequiredForRetrieval: false
+      eventIdRequiredForRetrieval: false
       name: 'Active contributors'
       category: 'overlay'
       group: 'other'
@@ -410,6 +419,7 @@ layers:
       testOnly: true
       globalOverlay: true
       boundaryRequiredForRetrieval: false
+      eventIdRequiredForRetrieval: false
       name: 'HOT Project outlines'
       category: 'overlay'
       group: 'other'
@@ -455,6 +465,7 @@ layers:
     - id: 'Kontur OpenStreetMap Quantity'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
+      eventIdRequiredForRetrieval: false
       displayLegendIfNoFeaturesExist: true
       name: 'OSM Object Quantity'
       category: 'overlay'
@@ -469,6 +480,7 @@ layers:
     - id: 'Kontur OpenStreetMap Building Quantity'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
+      eventIdRequiredForRetrieval: false
       displayLegendIfNoFeaturesExist: true
       name: 'OSM Building Quantity'
       category: 'overlay'
@@ -483,6 +495,7 @@ layers:
     - id: 'Kontur OpenStreetMap Road Length'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
+      eventIdRequiredForRetrieval: false
       displayLegendIfNoFeaturesExist: true
       name: 'OSM Road Length'
       category: 'overlay'
@@ -497,6 +510,7 @@ layers:
     - id: 'Kontur OpenStreetMap Mapping Activity'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
+      eventIdRequiredForRetrieval: false
       displayLegendIfNoFeaturesExist: true
       name: 'OSM Mapping Activity'
       category: 'overlay'
@@ -511,6 +525,7 @@ layers:
     - id: 'Kontur OpenStreetMap Antiquity'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
+      eventIdRequiredForRetrieval: false
       displayLegendIfNoFeaturesExist: true
       name: 'OSM Antiquity'
       category: 'overlay'
@@ -525,6 +540,7 @@ layers:
     - id: 'Kontur Nighttime Heatwave Risk'
       globalOverlay: true
       boundaryRequiredForRetrieval: false
+      eventIdRequiredForRetrieval: false
       displayLegendIfNoFeaturesExist: true
       name: 'Kontur Nighttime Heatwave Risk'
       category: 'overlay'

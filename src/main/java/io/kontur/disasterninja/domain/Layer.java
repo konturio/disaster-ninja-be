@@ -20,6 +20,7 @@ public class Layer {
     private boolean globalOverlay;
     private boolean displayLegendIfNoFeaturesExist;
     private boolean boundaryRequiredForRetrieval;
+    private boolean eventIdRequiredForRetrieval;
     //layer summary
     private String name;
     private String description;
@@ -45,6 +46,7 @@ public class Layer {
         this.globalOverlay = other.isGlobalOverlay();
         this.displayLegendIfNoFeaturesExist = other.isDisplayLegendIfNoFeaturesExist();
         this.boundaryRequiredForRetrieval = other.boundaryRequiredForRetrieval;
+        this.eventIdRequiredForRetrieval = other.isEventIdRequiredForRetrieval();
 
         if (other.getName() != null) {
             this.name = other.getName();
