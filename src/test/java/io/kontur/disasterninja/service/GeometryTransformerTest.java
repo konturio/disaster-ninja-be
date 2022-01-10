@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.service;
 
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -46,7 +47,8 @@ class GeometryTransformerTest {
         Geometry geometry = geometryTransformer.getGeometryFromGeoJson(fc);
         try {
             geometryTransformer.getPointFromGeometry(geometry);
-        } catch (IllegalArgumentException e){
+            throw new RuntimeException("expected exception was not thrown");
+        } catch (WebApplicationException e){
             assertEquals("Geometry contains more than one element", e.getMessage());
         }
     }
@@ -58,7 +60,8 @@ class GeometryTransformerTest {
         Geometry geometry = geometryTransformer.getGeometryFromGeoJson(fc);
         try {
             geometryTransformer.getPointFromGeometry(geometry);
-        } catch (IllegalArgumentException e){
+            throw new RuntimeException("expected exception was not thrown");
+        } catch (WebApplicationException e){
             assertEquals("Geometry is not a point", e.getMessage());
         }
     }

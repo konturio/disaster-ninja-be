@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.*;
 import io.kontur.disasterninja.dto.BivariateStatisticDto;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
@@ -10,12 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Geometry;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
@@ -52,10 +53,10 @@ public class BivariateLayerProvider implements LayerProvider {
             return bivariateStatisticDto.getOverlays().stream()
                     .map(overlay -> fromOverlay(overlay, bivariateStatisticDto.getIndicators()))
                     .collect(Collectors.toList());
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (Exception e) {
             LOG.error("Can't load bivariate layers: {}", e.getMessage(), e);
+            throw new WebApplicationException("Can't load bivariate layers", HttpStatus.BAD_GATEWAY);
         }
-        return null;
     }
 
     @Override
@@ -99,10 +100,11 @@ public class BivariateLayerProvider implements LayerProvider {
                     .filter(it -> layerId.equals(it.name())).findFirst()
                     .map(overlay -> fromOverlay(overlay, bivariateStatisticDto.getIndicators()))
                     .orElseGet(() -> null);
-        } catch (InterruptedException | ExecutionException | NoSuchElementException e) {
-            LOG.error("Can't load bivariate layer by id {}: {}", layerId, e.getMessage(), e);
+        } catch (Exception e) {
+            LOG.error("Can't load bivariate layer by id {}: {}",
+                layerId, e.getMessage(), e);
+            throw new WebApplicationException("Can't load bivariate layer", HttpStatus.BAD_GATEWAY);
         }
-        return null;
     }
 
     private Legend bivariateLegendFromOverlay(BivariateLayerLegendQuery.Overlay overlay) {

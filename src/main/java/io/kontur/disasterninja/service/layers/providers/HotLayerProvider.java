@@ -35,14 +35,16 @@ public class HotLayerProvider implements LayerProvider {
     @Override
     public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
         if (geoJSON == null) {
-            return List.of();
+            return null;
         }
         Layer layer = obtainLayer(geoJSON, HOT_LAYER_ID, eventId);
-        return layer == null ? List.of() : List.of(layer);
+        return layer == null ? null : List.of(layer);
     }
 
     /**
-     * @return null
+     * @param geoJson required to find features by intersection
+     * @param eventId not used
+     * @return layer containing features whose Centroid intersects with requested geoJson (same as in DN1)
      */
     @Override
     public Layer obtainLayer(Geometry geoJson, String layerId, UUID eventId) {

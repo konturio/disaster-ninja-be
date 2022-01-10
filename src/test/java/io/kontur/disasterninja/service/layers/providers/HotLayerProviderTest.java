@@ -37,8 +37,7 @@ public class HotLayerProviderTest extends LayerProvidersTest {
 
     @Test
     public void list_emptyGeojson() {
-        List<Layer> result = hotLayerProvider.obtainLayers(null, UUID.randomUUID());
-        assertTrue(result.isEmpty());
+        assertNull(hotLayerProvider.obtainLayers(null, UUID.randomUUID()));
     }
 
     @Test
@@ -65,8 +64,7 @@ public class HotLayerProviderTest extends LayerProvidersTest {
     @Test
     public void listNoIntersection() {
         Mockito.when(kcApiClient.getCollectionItemsByCentroidGeometry(any(), any())).thenReturn(List.of());
-        List<Layer> results = hotLayerProvider.obtainLayers(new Point(new double[]{-900d, -900d}), null);
-        assertEquals(0, results.size());
+        assertNull(hotLayerProvider.obtainLayers(new Point(new double[]{-900d, -900d}), null));
     }
 
     @Test

@@ -34,7 +34,16 @@ public class LayerService {
         Geometry boundary = geometryTransformer.getGeometryFromGeoJson(geoJSON);
 
         //load layers from providers
-        providers.stream().map(it -> it.obtainLayers(boundary, eventId))
+        providers.stream().map(it -> {
+                try {
+                    return it.obtainLayers(boundary, eventId);
+                } catch (Exception e) {
+                    LOG.error("Caught exception while obtaining layers from {}: {}", it.getClass().getSimpleName(),
+                        e.getMessage(), e);
+                    return null;
+                }
+            })
+            .filter(Objects::nonNull)
             .reduce(new ArrayList<>(), (a, b) -> {
                 a.addAll(b);
                 return a;

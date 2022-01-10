@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.wololo.geojson.FeatureCollection;
+import org.wololo.geojson.GeoJSON;
 
 @Tag(name = "Boundaries", description = "Boundaries API")
 @RestController
@@ -29,7 +30,7 @@ public class BoundariesController {
     @PostMapping
     public FeatureCollection getBoundaries(@io.swagger.v3.oas.annotations.parameters.RequestBody(description =
             "Point in GeoJSON format. Send point as FeatureCollection or Feature or Point")
-                                           @RequestBody String geoJsonString) {
-        return boundariesService.getBoundaries(geoJsonString);
+                                           @RequestBody GeoJSON geoJSON) {
+        return boundariesService.getBoundaries(geoJSON);
     }
 }

@@ -43,7 +43,7 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
     @Test
     public void list_emptyGeoJson() {
         //no geojson => no result
-        Assertions.assertTrue(osmLayerProvider.obtainLayers(null, UUID.randomUUID()).isEmpty());
+        assertNull(osmLayerProvider.obtainLayers(null, UUID.randomUUID()));
     }
 
     @Test
