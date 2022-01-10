@@ -34,12 +34,26 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
     }
 
     @Test
-    public void list_emptyGeojson() {
+    public void listOneLayerNotPresentTest() throws IOException {
+        //#8516
+        FeatureCollection fc = objectMapper.readValue(
+            getClass().getResource("/io/kontur/disasterninja/client/layers/population.json"),
+            FeatureCollection.class);
+        fc.getFeatures()[1] = null; //remove one of layers
+
+        Mockito.when(insightsApiClient.getUrbanCoreAndSettledPeripheryLayers(any()))
+            .thenReturn(fc);
+        List<Layer> layers = urbanAndPeripheryLayerProvider.obtainLayers(new Point(new double[]{0d, 0d}), null);
+        assertEquals(1, layers.size());
+    }
+
+    @Test
+    public void listEmptyGeojsonTest() {
         assertTrue(urbanAndPeripheryLayerProvider.obtainLayers(null, UUID.randomUUID()).isEmpty());
     }
 
     @Test
-    public void get_emptyGeoJson() {
+    public void getEmptyGeoJsonTest() {
         assertThrows(WebApplicationException.class, () -> {
             urbanAndPeripheryLayerProvider.obtainLayer(null, URBAN_CORE_LAYER_ID, UUID.randomUUID());
         });
@@ -49,7 +63,7 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
     }
 
     @Test
-    public void list() throws IOException {
+    public void listTest() throws IOException {
         List<Layer> results = urbanAndPeripheryLayerProvider.obtainLayers(new Point(new double[]{0d, 0d}), null);
         Layer urbanCore = results.stream().filter(it -> URBAN_CORE_LAYER_ID.equals(it.getId())).findAny().get();
         Layer periphery = results.stream().filter(it -> SETTL_PERIPHERY_LAYER_ID.equals(it.getId())).findAny().get();
@@ -69,7 +83,7 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
     }
 
     @Test
-    public void get_Periphery() throws IOException {
+    public void getPeripheryTest() throws IOException {
         Layer periphery = urbanAndPeripheryLayerProvider.obtainLayer(new Point(new double[]{-0.096666164, 6.286422267})
             , SETTL_PERIPHERY_LAYER_ID, null);
 
@@ -90,7 +104,7 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
     }
 
     @Test
-    public void get_Urban() throws IOException {
+    public void getUrbanTest() throws IOException {
         Layer urban = urbanAndPeripheryLayerProvider.obtainLayer(new Point(new double[]{2.512246911, 49.914386015})
             , URBAN_CORE_LAYER_ID, null);
 
