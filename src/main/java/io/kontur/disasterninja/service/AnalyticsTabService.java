@@ -9,9 +9,11 @@ import io.kontur.disasterninja.dto.Function;
 import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
 import io.kontur.disasterninja.graphql.type.FunctionArgs;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.wololo.geojson.GeoJSONFactory;
+import org.wololo.geojson.GeoJSON;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,25 +21,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AnalyticsTabService {
-
+    private static final Logger LOG = LoggerFactory.getLogger(AnalyticsTabService.class);
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
 
     private final AnalyticsTabProperties configuration;
 
-    public List<AnalyticsDto> calculateAnalytics(String geoJsonString) {
+    public List<AnalyticsDto> calculateAnalytics(GeoJSON geoJSON) {
         List<AnalyticsField> fields = configuration.getFields();
         List<AnalyticsTabQuery.Function> functionsResults = null;
+        List<FunctionArgs> functionArgs = createFunctionArgsList(fields);
         try {
-            functionsResults = insightsApiGraphqlClient.analyticsTabQuery(GeoJSONFactory.create(geoJsonString),
-                    createFunctionArgsList(fields)).get();
-        } catch (InterruptedException | ExecutionException | WebApplicationException e) {
-            throw new WebApplicationException("Exception when getting data from insights-api using apollo client", HttpStatus.BAD_GATEWAY);
+            functionsResults = insightsApiGraphqlClient.analyticsTabQuery(geoJSON, functionArgs).get();
+        } catch (Exception e) {
+            LOG.error("Can't load analytics data due to exception in graphql call: {}", e.getMessage(), e);
+            throw new WebApplicationException("Exception when getting data from insights-api using apollo client",
+                HttpStatus.BAD_GATEWAY);
         }
         return createResultDto(fields, functionsResults);
     }

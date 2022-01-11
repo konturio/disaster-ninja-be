@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.disasterninja.config.metrics.ParamLessRestTemplateExchangeTagsProvider;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,12 +18,12 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.client.RestTemplate;
 import org.wololo.geojson.GeoJSON;
 import org.wololo.geojson.GeoJSONFactory;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
@@ -87,12 +88,16 @@ public class WebConfiguration {
 
     private static class GeoJSONDeserializer extends JsonDeserializer<GeoJSON> {
         @Override
-        public GeoJSON deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            ObjectNode node = p.getCodec().readTree(p);
-            if (node == null) {
-                return null;
+        public GeoJSON deserialize(JsonParser p, DeserializationContext ctxt) {
+            try {
+                ObjectNode node = p.getCodec().readTree(p);
+                if (node == null) {
+                    return null;
+                }
+                return GeoJSONFactory.create(node.toString());
+            } catch (Exception e) {
+                throw new WebApplicationException("Can't parse GeoJSON", HttpStatus.BAD_REQUEST);
             }
-            return GeoJSONFactory.create(node.toString());
         }
     }
 

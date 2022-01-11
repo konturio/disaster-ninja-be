@@ -37,10 +37,10 @@ public class EventShapeLayerProvider implements LayerProvider {
     @Override
     public List<Layer> obtainLayers(Geometry geoJson, UUID eventId) {
         if (eventId == null) {
-            return List.of();
+            return null;
         }
         Layer layer = obtainLayer(geoJson, EVENT_SHAPE_LAYER_ID, eventId);
-        return layer == null ? List.of() : List.of(layer);
+        return layer == null ? null : List.of(layer);
     }
 
     /**
@@ -57,13 +57,8 @@ public class EventShapeLayerProvider implements LayerProvider {
             throw new WebApplicationException("EventId must be provided when requesting layer " + layerId,
                 HttpStatus.BAD_REQUEST);
         }
-        EventDto eventDto;
-        try {
-            eventDto = eventApiService.getEvent(eventId);
-        } catch (WebApplicationException e) {
-            LOG.warn("Can't load event: {}", e.message);
-            return null;
-        }
+        EventDto eventDto = eventApiService.getEvent(eventId);
+
         Layer layer = fromEventDto(eventDto);
         if (layer != null && layer.getSource() != null && layer.getSource().getData() != null) {
             Feature[] filteredFeatures = filterFeaturesByGeometry(layer.getSource().getData().getFeatures(), geoJSON);

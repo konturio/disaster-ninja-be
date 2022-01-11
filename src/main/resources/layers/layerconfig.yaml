@@ -124,7 +124,7 @@ layers:
             style:
               circle-radius: 3
               circle-color: '#051626'
-          - stepName: 'Exposure Area 100km'
+          - stepName: 'Exposure Area 100 km'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Circle'
@@ -207,7 +207,7 @@ layers:
             style:
               circle-radius: 3
               circle-color: '#051626'
-          - stepName: 'Exposure Area 100Km'
+          - stepName: 'Exposure Area 100 km'
             stepShape: 'circle'
             paramName: 'Class'
             paramValue: 'Poly_Circle'

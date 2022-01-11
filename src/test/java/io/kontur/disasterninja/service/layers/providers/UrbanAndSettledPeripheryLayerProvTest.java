@@ -49,7 +49,7 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
 
     @Test
     public void listEmptyGeojsonTest() {
-        assertTrue(urbanAndPeripheryLayerProvider.obtainLayers(null, UUID.randomUUID()).isEmpty());
+        assertNull(urbanAndPeripheryLayerProvider.obtainLayers(null, UUID.randomUUID()));
     }
 
     @Test

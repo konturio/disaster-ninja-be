@@ -39,9 +39,6 @@ public class Layer {
     /**
      * Overrides all non-final fields with values from <b>other</b>, except for <b>this.source.data</b> as it's the
      * layer data and <b>this.legend</b> - it's merged depending on other.displayLegendIfNoFeaturesExist
-     *
-     * @param other
-     * @return
      */
     public void mergeFrom(Layer other) {
         this.globalOverlay = other.isGlobalOverlay();

@@ -1,5 +1,7 @@
 package io.kontur.disasterninja.service;
 
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.*;
 
@@ -36,15 +38,15 @@ public class GeometryTransformer {
         if (geometry instanceof GeometryCollection) {
             Geometry[] geometries = ((GeometryCollection) geometry).getGeometries();
             if (geometries.length > 1) {
-                throw new IllegalArgumentException("Geometry contains more than one element");
+                throw new WebApplicationException("Geometry contains more than one element", HttpStatus.BAD_REQUEST);
             }
             if (!geometries[0].getType().equals("Point")) {
-                throw new IllegalArgumentException("Geometry is not a point");
+                throw new WebApplicationException("Geometry is not a point", HttpStatus.BAD_REQUEST);
             }
             return (Point) geometries[0];
         }
         if (!(geometry instanceof Point)) {
-            throw new IllegalArgumentException("Geometry is not a point");
+            throw new WebApplicationException("Geometry is not a point", HttpStatus.BAD_REQUEST);
         }
         return (Point) geometry;
     }

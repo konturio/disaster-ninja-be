@@ -36,7 +36,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
 
     @Test
     public void list_emptyEventId() {
-        assertEquals(0, eventShapeLayerProvider.obtainLayers(null, null).size());
+        assertNull(eventShapeLayerProvider.obtainLayers(null, null));
     }
 
     @Test
@@ -118,8 +118,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
 
     @Test
     public void list_NoIntersection() {
-        List<Layer> result = eventShapeLayerProvider.obtainLayers(new Point(new double[]{0d, 0d}), UUID.randomUUID());
-        assertEquals(0, result.size());
+        assertNull(eventShapeLayerProvider.obtainLayers(new Point(new double[]{0d, 0d}), UUID.randomUUID()));
     }
 
     @Test

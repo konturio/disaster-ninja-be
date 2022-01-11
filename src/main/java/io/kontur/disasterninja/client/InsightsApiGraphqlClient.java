@@ -5,7 +5,6 @@ import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Input;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
-import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.dto.BivariateStatisticDto;
 import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
@@ -16,7 +15,6 @@ import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.SimpleTimer;
 import io.prometheus.client.Summary;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.wololo.geojson.GeoJSON;
 
@@ -71,10 +69,7 @@ public class InsightsApiGraphqlClient {
 
                     @Override
                     public void onFailure(@NotNull ApolloException e) {
-                        metrics.labels(FAILED).observe(timer.elapsedSeconds());
-
-                        future.completeExceptionally(new WebApplicationException("Exception when getting data from " +
-                                "insights-api using apollo client", HttpStatus.BAD_GATEWAY));
+                        observeMetricsAndCompleteExceptionally(e, future, timer);
                     }
                 });
         return future;
@@ -106,12 +101,16 @@ public class InsightsApiGraphqlClient {
 
                     @Override
                     public void onFailure(@NotNull ApolloException e) {
-                        metrics.labels(FAILED).observe(timer.elapsedSeconds());
-
-                        future.completeExceptionally(new WebApplicationException("Exception when getting data from " +
-                                "insights-api using apollo client", HttpStatus.BAD_GATEWAY));
+                        observeMetricsAndCompleteExceptionally(e, future, timer);
                     }
                 });
         return future;
+    }
+
+    public <T> void observeMetricsAndCompleteExceptionally(@NotNull ApolloException e,
+                                                                  @NotNull CompletableFuture<T> future,
+                                                                  @NotNull SimpleTimer timer) {
+        metrics.labels(FAILED).observe(timer.elapsedSeconds());
+        future.completeExceptionally(e);
     }
 }

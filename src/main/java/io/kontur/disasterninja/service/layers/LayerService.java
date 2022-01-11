@@ -34,11 +34,20 @@ public class LayerService {
         Geometry boundary = geometryTransformer.getGeometryFromGeoJson(geoJSON);
 
         //load layers from providers
-        providers.stream().map(it -> it.obtainLayers(boundary, eventId))
-                .reduce(new ArrayList<>(), (a, b) -> {
-                    a.addAll(b);
-                    return a;
-                }).forEach(l -> layers.put(l.getId(), l)); //if there are multiple layers with same id - just one of them will be kept
+        providers.stream().map(it -> {
+                try {
+                    return it.obtainLayers(boundary, eventId);
+                } catch (Exception e) {
+                    LOG.error("Caught exception while obtaining layers from {}: {}", it.getClass().getSimpleName(),
+                        e.getMessage(), e);
+                    return null;
+                }
+            })
+            .filter(Objects::nonNull)
+            .reduce(new ArrayList<>(), (a, b) -> {
+                a.addAll(b);
+                return a;
+            }).forEach(l -> layers.put(l.getId(), l)); //if there are multiple layers with same id - just one of them will be kept
 
         //apply layer configs
         layers.values().forEach(layerConfigService::applyConfig);

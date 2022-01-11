@@ -83,7 +83,7 @@ class AnalyticsTabServiceTest {
         when(insightsApiGraphqlClient.analyticsTabQuery(geoJSONArgumentCaptor.capture(), functionArgsArgumentCaptor.capture())).thenReturn(completableFuture);
 
         //when
-        List<AnalyticsDto> result = service.calculateAnalytics(geoJsonString);
+        List<AnalyticsDto> result = service.calculateAnalytics(GeoJSONFactory.create(geoJsonString));
 
         //then
         GeoJSON geoJSONCaptorValue = geoJSONArgumentCaptor.getValue();
@@ -144,7 +144,8 @@ class AnalyticsTabServiceTest {
 
         //when
         try {
-            service.calculateAnalytics(geoJsonString);
+            service.calculateAnalytics(GeoJSONFactory.create(geoJsonString));
+            throw new RuntimeException("expected exception was not thrown");
         } catch (WebApplicationException e) {
             assertEquals("Exception when getting data from insights-api using apollo client", e.getMessage());
         }
@@ -184,7 +185,7 @@ class AnalyticsTabServiceTest {
         when(insightsApiGraphqlClient.analyticsTabQuery(any(GeoJSON.class), anyList())).thenReturn(completableFuture);
 
         //when
-        List<AnalyticsDto> result = service.calculateAnalytics(geoJsonString);
+        List<AnalyticsDto> result = service.calculateAnalytics(GeoJSONFactory.create(geoJsonString));
 
         //then
         assertEquals(1, result.size());

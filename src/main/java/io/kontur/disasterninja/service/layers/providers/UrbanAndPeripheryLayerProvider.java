@@ -31,12 +31,11 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
     /**
      * @param geoJSON required to find features by intersection
      * @param eventId not used
-     * @return
      */
     @Override
     public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
         if (geoJSON == null) {
-            return List.of();
+            return null;
         }
         org.wololo.geojson.FeatureCollection features = insightsApiClient
             .getUrbanCoreAndSettledPeripheryLayers(geoJSON);
@@ -49,7 +48,6 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
      * @param geoJson required to find features by intersection
      * @param layerId layer id to retrieve
      * @param eventId not used
-     * @return
      */
     @Override
     public Layer obtainLayer(Geometry geoJson, String layerId, UUID eventId) {

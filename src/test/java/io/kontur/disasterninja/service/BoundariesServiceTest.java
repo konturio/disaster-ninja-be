@@ -39,7 +39,8 @@ class BoundariesServiceTest {
                   }
                 }
                 """;
-        Geometry geometry = ((Feature) GeoJSONFactory.create(geoJsonString)).getGeometry();
+        GeoJSON geoJSON = GeoJSONFactory.create(geoJsonString);
+        Geometry geometry = ((Feature) geoJSON).getGeometry();
         Point point = new Point(new double[]{-3.6749267578125, 41.166249339092});
 
         ArgumentCaptor<GeoJSON> geoJSONArgumentCaptor = ArgumentCaptor.forClass(GeoJSON.class);
@@ -49,11 +50,11 @@ class BoundariesServiceTest {
         when(kcApiClient.getCollectionItemsByPoint(point, "bounds")).thenReturn(Lists.newArrayList());
 
         //when
-        boundariesService.getBoundaries(geoJsonString);
+        boundariesService.getBoundaries(geoJSON);
 
         //then
         GeoJSON geoJSONCaptorValue = geoJSONArgumentCaptor.getValue();
-        assertEquals(GeoJSONFactory.create(geoJsonString).toString(), geoJSONCaptorValue.toString());
+        assertEquals(geoJSON.toString(), geoJSONCaptorValue.toString());
 
         verify(geometryTransformer).getGeometryFromGeoJson(any(GeoJSON.class));
         verify(geometryTransformer).getPointFromGeometry(geometry);

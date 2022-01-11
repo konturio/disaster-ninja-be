@@ -1,6 +1,8 @@
 package io.kontur.disasterninja.service.layers.providers;
 
+import com.apollographql.apollo.exception.ApolloException;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.BivariateLegendAxisDescription;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.dto.BivariateStatisticDto;
@@ -15,8 +17,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 public class BivariateLayerProviderTest extends LayerProvidersTest {
 
@@ -63,13 +65,37 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
     }
 
     @Test
-    public void list() {
+    public void bivariateListExceptionTest() {
+        when(insightsApiGraphqlClient.getBivariateStatistic()).thenThrow(new ApolloException("hello world"));
+
+        try {
+            bivariateLayerProvider.obtainLayers(null, null);
+            throw new RuntimeException("expected exception was not thrown");
+        } catch (WebApplicationException e) {
+            assertEquals("Can't load bivariate layers", e.getMessage());
+        }
+    }
+
+    @Test
+    public void bivariateLayerExceptionTest() {
+        when(insightsApiGraphqlClient.getBivariateStatistic()).thenThrow(new ApolloException("hello world"));
+
+        try {
+            bivariateLayerProvider.obtainLayer(null, "Kontur Nighttime Heatwave Risk", null);
+            throw new RuntimeException("expected exception was not thrown");
+        } catch (WebApplicationException e) {
+            assertEquals("Can't load bivariate layer", e.getMessage());
+        }
+    }
+
+    @Test
+    public void listTest() {
         List<Layer> layers = bivariateLayerProvider.obtainLayers(null, null);
         assertEquals(1, layers.size());
     }
 
     @Test
-    public void get() {
+    public void getTest() {
         Layer biv = bivariateLayerProvider.obtainLayer(new Point(new double[]{0d, 0d}),
                 "Kontur OpenStreetMap Quantity", null);
         //layer

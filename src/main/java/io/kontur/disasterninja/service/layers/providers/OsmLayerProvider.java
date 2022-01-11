@@ -62,12 +62,11 @@ public class OsmLayerProvider implements LayerProvider {
     /**
      * @param geoJSON required to find features by intersection
      * @param eventId not used
-     * @return
      */
     @Override
     public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
         if (geoJSON == null) {
-            return List.of();
+            return null;
         }
         List<Feature> osmLayers = kcApiClient.getCollectionItemsByGeometry(geoJSON, OSM_LAYERS);
         return fromOsmLayers(osmLayers);
@@ -96,7 +95,7 @@ public class OsmLayerProvider implements LayerProvider {
      */
     List<Layer> fromOsmLayers(List<Feature> dto) {
         if (dto == null) {
-            return List.of();
+            return null;
         }
         return dto.stream().filter(Objects::nonNull).map(it -> fromOsmLayer(it, false))
             .collect(Collectors.toList());
