@@ -226,7 +226,6 @@ public class LayerConfigServiceTest {
         assertTrue(analytics.isGlobalOverlay());
         assertTrue(analytics.isDisplayLegendIfNoFeaturesExist());
         assertFalse(analytics.isBoundaryRequiredForRetrieval());
-        Assertions.assertEquals("OSM Object Quantity", analytics.getName());
         Assertions.assertEquals(OVERLAY, analytics.getCategory());
         Assertions.assertEquals("bivariate", analytics.getGroup());
         //skipping the rest

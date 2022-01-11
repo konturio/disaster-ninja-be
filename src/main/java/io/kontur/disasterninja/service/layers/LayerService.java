@@ -59,7 +59,10 @@ public class LayerService {
             }
         });
 
-        return new ArrayList<>(layers.values());
+        return layers.values().stream()
+                .sorted(Comparator.comparing(layer -> Optional.ofNullable(layer.getOrderIndex())
+                        .orElse(Integer.MAX_VALUE)))
+                .toList();
     }
 
     public List<Layer> get(GeoJSON geoJSON, List<String> layerIds, UUID eventId) {
@@ -92,7 +95,7 @@ public class LayerService {
 
         if (result.isEmpty()) {
             throw new WebApplicationException("Layer not found / no layer data found by id and boundary!",
-                HttpStatus.NOT_FOUND);
+                    HttpStatus.NOT_FOUND);
         }
         return result;
     }
