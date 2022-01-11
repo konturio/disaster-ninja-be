@@ -34,6 +34,7 @@ public class Layer {
     private LayerSource source;
     //test-only layers
     private boolean testOnly;
+    private Integer orderIndex; //for sorting bivariate presets
 
     /**
      * Overrides all non-final fields with values from <b>other</b>, except for <b>this.source.data</b> as it's the
@@ -48,6 +49,9 @@ public class Layer {
         this.boundaryRequiredForRetrieval = other.boundaryRequiredForRetrieval;
         this.eventIdRequiredForRetrieval = other.isEventIdRequiredForRetrieval();
 
+        if (other.orderIndex != null) {
+            this.orderIndex = other.orderIndex;
+        }
         if (other.getName() != null) {
             this.name = other.getName();
         }
@@ -134,7 +138,7 @@ public class Layer {
                             break;
                         }
 
-                    //otherwise filter by paramValue
+                        //otherwise filter by paramValue
                     } else {
                         String paramValue = (String) step.getParamValue(); //nulls not allowed
                         if (paramValue.equalsIgnoreCase(value)) {

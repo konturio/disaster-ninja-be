@@ -22,5 +22,5 @@ public class Legend {
     @Builder.Default
     private Map<String, String> bivariateColors = null;
     @Builder.Default
-    private BivariateLegendAxises bivariateAxises = null;
+    private BivariateLegendAxes bivariateAxes = null;
 }

@@ -4,7 +4,6 @@ import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.domain.*;
 import io.kontur.disasterninja.dto.BivariateStatisticDto;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
-import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery.Step1;
 import io.kontur.disasterninja.service.layers.LayerConfigService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -73,6 +72,7 @@ public class BivariateLayerProvider implements LayerProvider {
 
         return Layer.builder()
                 .id(overlay.name())
+                .name(overlay.name())
                 .description(overlay.description())
                 .source(LayerSource.builder()
                         .type(VECTOR)
@@ -115,8 +115,12 @@ public class BivariateLayerProvider implements LayerProvider {
         BivariateLayerLegendQuery.X x = overlay.x();
         if (x != null) {
             if (x.steps() != null) {
-                List<Double> steps = requireNonNull(x.steps()).stream()
-                        .map(BivariateLayerLegendQuery.Step::value).toList();
+                List<BivariateLegendAxisStep> steps = requireNonNull(x.steps()).stream()
+                        .map(step -> BivariateLegendAxisStep.builder()
+                                .value(step.value())
+                                .label(step.label())
+                                .build())
+                        .toList();
                 xAxis.setSteps(steps);
             }
             xAxis.setLabel(x.label());
@@ -127,8 +131,11 @@ public class BivariateLayerProvider implements LayerProvider {
         BivariateLayerLegendQuery.Y y = overlay.y();
         if (y != null) {
             if (y.steps() != null) {
-                List<Double> steps = requireNonNull(y.steps()).stream()
-                        .map(Step1::value).toList();
+                List<BivariateLegendAxisStep> steps = requireNonNull(y.steps()).stream()
+                        .map(step1 -> BivariateLegendAxisStep.builder()
+                                .value(step1.value())
+                                .label(step1.label())
+                                .build()).toList();
                 yAxis.setSteps(steps);
             }
             yAxis.setLabel(y.label());
@@ -142,7 +149,7 @@ public class BivariateLayerProvider implements LayerProvider {
         return Legend.builder()
                 .type(BIVARIATE)
                 .bivariateColors(colors)
-                .bivariateAxises(BivariateLegendAxises.builder()
+                .bivariateAxes(BivariateLegendAxes.builder()
                         .x(xAxis)
                         .y(yAxis)
                         .build())
@@ -151,8 +158,8 @@ public class BivariateLayerProvider implements LayerProvider {
 
     private List<String> copyrightsFromIndicators(Legend legend, List<BivariateLayerLegendQuery.Indicator> indicators) {
         Set<String> quotient = new HashSet<>();
-        quotient.addAll(legend.getBivariateAxises().getX().getQuotient());
-        quotient.addAll(legend.getBivariateAxises().getY().getQuotient());
+        quotient.addAll(legend.getBivariateAxes().getX().getQuotient());
+        quotient.addAll(legend.getBivariateAxes().getY().getQuotient());
 
         Set<String> copyrights = new HashSet<>();
         quotient.forEach(q ->

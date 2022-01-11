@@ -161,7 +161,7 @@ public class DtoTest {
             .tileSize(2)
             .data(geoJSON).build();
         Legend legend = new Legend(LegendType.SIMPLE, null, new ArrayList<>(), new HashMap<>(),
-            new BivariateLegendAxises());
+            new BivariateLegendAxes());
         Map<String, Object> map = new HashMap<>();
         map.put("prop", "value");
 
@@ -206,7 +206,7 @@ public class DtoTest {
             .urls(List.of("url-com.com"))
             .tileSize(2)
             .data(geoJSON).build();
-        Legend legend = new Legend(LegendType.SIMPLE, null, new ArrayList<>(), new HashMap<>(), new BivariateLegendAxises());
+        Legend legend = new Legend(LegendType.SIMPLE, null, new ArrayList<>(), new HashMap<>(), new BivariateLegendAxes());
         Map<String, Object> map = new HashMap<>();
         map.put("prop", "value");
         legend.getSteps().add(new LegendStep("param name", null, "param value", null, null, "step name",
