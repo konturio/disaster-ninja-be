@@ -27,7 +27,7 @@ public class LayersApiClient {
     private static final String GET_LAYER_URI = "/collections/%s";
 
     private final RestTemplate layersApiRestTemplate;
-    @Value("${kontur.platform.kcApi.pageSize}")
+    @Value("${kontur.platform.layersApi.pageSize}")
     private int pageSize;
 
     public LayersApiClient(RestTemplate layersApiRestTemplate) {
