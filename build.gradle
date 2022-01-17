@@ -37,6 +37,7 @@ dependencies {
     testImplementation 'commons-io:commons-io:2.11.0'
     testImplementation 'org.hamcrest:hamcrest:2.2'
     testImplementation 'uk.co.jemos.podam:podam:7.2.7.RELEASE'
+    testImplementation 'com.jayway.jsonpath:json-path-assert:2.6.0'
 }
 
 test {

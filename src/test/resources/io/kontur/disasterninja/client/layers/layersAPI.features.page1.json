@@ -1,0 +1,1417 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                16.428508756,
+                8.230858613
+              ],
+              [
+                16.560344694,
+                8.231198399
+              ],
+              [
+                16.563091276,
+                8.1068173
+              ],
+              [
+                16.563091276,
+                8.103078472
+              ],
+              [
+                16.430568693,
+                8.103418367
+              ],
+              [
+                16.428508756,
+                8.230858613
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "teams": [],
+        "author": "SeverinGeo",
+        "k_type": "polygon",
+        "status": "ARCHIVED",
+        "aoiBBOX": [
+          16.4285087562573,
+          8.10307847185412,
+          16.5630912757697,
+          8.23119839945904
+        ],
+        "created": "2012-12-01T12:14:12.186123Z",
+        "dueDate": null,
+        "imagery": "",
+        "private": false,
+        "campaigns": [],
+        "idPresets": null,
+        "interests": [
+          {
+            "id": 2,
+            "name": "OSM community"
+          }
+        ],
+        "licenseId": null,
+        "projectId": 100,
+        "countryTag": [
+          "Chad"
+        ],
+        "lastUpdated": "2020-02-06T03:02:50.248067Z",
+        "mapperLevel": "BEGINNER",
+        "projectInfo": {
+          "name": "Eurosha Chad, Southern Moundou, Dossey camp, Konde, Timberi and outskirts",
+          "locale": "en",
+          "description": "Eurosha mapping project of Dossey Camp and its outskirts (Konde, Timberi) in Southern Chad\r\n\r\n\r\n=============\r\n\r\nProjet Eurosha de cartographie du camp Dossey et des alentours (Konde, Timberi) dans le Sud du Tchad",
+          "instructions": "Map buidlings and roads using Bing imagery.\r\n\r\n===================================\r\n\r\nCartographier les bâtiments et les routes à partir de l'imagerie Bing.\r\n\r\n\r\n",
+          "shortDescription": "Eurosha mapping project of Dossey Camp and its outskirts (Konde, Timberi) in Southern Chad\r\n\r\n\r\n=============\r\n\r\nProjet Eurosha de cartographie du camp Dossey et des alentours (Konde, Timberi) dans le Sud du Tchad\r\n\r\n",
+          "perTaskInstructions": ""
+        },
+        "mappingTypes": [],
+        "organisation": null,
+        "activeMappers": 0,
+        "defaultLocale": "en",
+        "percentMapped": 100,
+        "priorityAreas": null,
+        "mappingEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2",
+          "FIELD_PAPERS"
+        ],
+        "osmchaFilterId": null,
+        "projectPriority": "MEDIUM",
+        "allowedUsernames": [],
+        "changesetComment": "#hotosm-task-100",
+        "organisationLogo": null,
+        "organisationName": null,
+        "organisationSlug": null,
+        "percentValidated": 0,
+        "taskCreationMode": "GRID",
+        "mappingPermission": "ANY",
+        "percentBadImagery": 0,
+        "validationEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2",
+          "FIELD_PAPERS"
+        ],
+        "validationPermission": "ANY",
+        "enforceRandomTaskSelection": null
+      },
+      "id": "100",
+      "links": [
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items/100",
+          "rel": "self",
+          "type": "application/geo+json"
+        },
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "title": "HOT Tasking Manager Projects"
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                9.874182681,
+                2.438291771
+              ],
+              [
+                9.716495061,
+                2.404771174
+              ],
+              [
+                9.89095796,
+                2.297499786
+              ],
+              [
+                9.874182681,
+                2.438291771
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "teams": [],
+        "author": "edvac",
+        "k_type": "polygon",
+        "status": "ARCHIVED",
+        "aoiBBOX": [
+          9.25685242575,
+          0.89902060087,
+          11.30008136787,
+          2.4382917714
+        ],
+        "created": "2015-04-25T16:19:49.111860Z",
+        "dueDate": null,
+        "imagery": "",
+        "private": false,
+        "campaigns": [],
+        "idPresets": null,
+        "interests": [
+          {
+            "id": 12,
+            "name": "environment"
+          }
+        ],
+        "licenseId": null,
+        "projectId": 1000,
+        "countryTag": [
+          "Equatorial Guinea"
+        ],
+        "lastUpdated": "2020-02-12T09:08:22.176511Z",
+        "mapperLevel": "BEGINNER",
+        "projectInfo": {
+          "name": "Equatorial Guinea WRI forestry tracks import",
+          "locale": "en",
+          "description": "**PLEASE: DON'T WORK IN THIS IMPORT UNLESS YOU HAVE READ AND UNDERSTAND THE IMPORT WORKFLOW**\r\n\r\nThis import is described in two wikipages. Please, read the [import wiki](https://wiki.openstreetmap.org/wiki/Import_WRI_Congo_Basin_Forestry_Roads) and (specially) the [workflow wiki](https://wiki.openstreetmap.org/wiki/Import_WRI_Congo_Basin_Forestry_Roads_Workflow) to get all information.",
+          "instructions": "Please, read the [import wiki](https://wiki.openstreetmap.org/wiki/Import_WRI_Congo_Basin_Forestry_Roads) and (specially) the [workflow wiki](https://wiki.openstreetmap.org/wiki/Import_WRI_Congo_Basin_Forestry_Roads_Workflow) to get all information before you attemp to start importing data.",
+          "shortDescription": "The intent of this project is to import onto OpenStreetMap WRI’s extensive logging road dataset covering the Congo Basin region.",
+          "perTaskInstructions": "Click [here](http://localhost:8111/import?new_layer=true&url=http://build.osmsharp.com:815/data/{x}/{y}/{z}/WRI_ForestryRoadsGNQ.osm) to load the WRI data into JOSM. If you like, you can download the .osm file clicking [here](http://build.osmsharp.com:815/data/{x}/{y}/{z}/WRI_ForestryRoadsGNQ.osm)."
+        },
+        "mappingTypes": [],
+        "organisation": null,
+        "activeMappers": 0,
+        "defaultLocale": "en",
+        "percentMapped": 100,
+        "priorityAreas": null,
+        "mappingEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2",
+          "FIELD_PAPERS"
+        ],
+        "osmchaFilterId": null,
+        "projectPriority": "LOW",
+        "allowedUsernames": [],
+        "changesetComment": "WRI Forestry Roads import. GNQ #project-1000",
+        "organisationLogo": null,
+        "organisationName": null,
+        "organisationSlug": null,
+        "percentValidated": 3,
+        "taskCreationMode": "GRID",
+        "mappingPermission": "ANY",
+        "percentBadImagery": 0,
+        "validationEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2",
+          "FIELD_PAPERS"
+        ],
+        "validationPermission": "ANY",
+        "enforceRandomTaskSelection": null
+      },
+      "id": "1000",
+      "links": [
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items/1000",
+          "rel": "self",
+          "type": "application/geo+json"
+        },
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "title": "HOT Tasking Manager Projects"
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                14.917272037,
+                27.397527002
+              ],
+              [
+                14.969950957,
+                27.412380351
+              ],
+              [
+                14.826981538,
+                27.345067755
+              ],
+              [
+                14.835863699,
+                27.376845068
+              ],
+              [
+                14.917272037,
+                27.397527002
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "teams": [
+          {
+            "name": "OSM Libya Mappers ",
+            "role": "MAPPER",
+            "teamId": 112
+          },
+          {
+            "name": "OSM Libya Project Managers",
+            "role": "PROJECT_MANAGER",
+            "teamId": 113
+          },
+          {
+            "name": "OSM Libya Validators ",
+            "role": "VALIDATOR",
+            "teamId": 102
+          }
+        ],
+        "author": "Ahmed Ahmouda",
+        "k_type": "polygon",
+        "status": "PUBLISHED",
+        "aoiBBOX": [
+          14.5213225980522,
+          26.9529237186225,
+          15.1442247784147,
+          27.4371936198836
+        ],
+        "created": "2020-12-09T04:37:29.908510Z",
+        "dueDate": "2021-12-30T23:00:00.000000Z",
+        "imagery": "Bing",
+        "private": false,
+        "campaigns": [
+          {
+            "id": 12,
+            "name": "#GISDay"
+          },
+          {
+            "id": 39,
+            "name": "CommonSensing"
+          },
+          {
+            "id": 67,
+            "name": "AF_CityMap"
+          },
+          {
+            "id": 113,
+            "name": "Capacity Building"
+          },
+          {
+            "id": 116,
+            "name": "HOT Youth Mappers"
+          },
+          {
+            "id": 120,
+            "name": "#car_mortality_survey"
+          },
+          {
+            "id": 135,
+            "name": "Crowdsourcing Non-Camp Refugee Data"
+          },
+          {
+            "id": 237,
+            "name": "COVID-19"
+          },
+          {
+            "id": 242,
+            "name": "#dataforevidencedecision"
+          },
+          {
+            "id": 284,
+            "name": "#car"
+          }
+        ],
+        "idPresets": null,
+        "interests": [
+          {
+            "id": 2,
+            "name": "OSM community"
+          },
+          {
+            "id": 1,
+            "name": "refugee response"
+          },
+          {
+            "id": 3,
+            "name": "disaster response"
+          },
+          {
+            "id": 4,
+            "name": "transportation"
+          },
+          {
+            "id": 5,
+            "name": "other"
+          },
+          {
+            "id": 6,
+            "name": "disaster preparedness"
+          },
+          {
+            "id": 7,
+            "name": "public health"
+          },
+          {
+            "id": 8,
+            "name": "water & sanitation"
+          },
+          {
+            "id": 9,
+            "name": "sustainable cities"
+          },
+          {
+            "id": 10,
+            "name": "agriculture"
+          },
+          {
+            "id": 11,
+            "name": "poverty elimination"
+          },
+          {
+            "id": 12,
+            "name": "environment"
+          },
+          {
+            "id": 13,
+            "name": "gender equality"
+          },
+          {
+            "id": 14,
+            "name": "clean energy"
+          }
+        ],
+        "licenseId": null,
+        "projectId": 10003,
+        "countryTag": [
+          "Libya"
+        ],
+        "lastUpdated": "2021-09-11T01:44:03.592660Z",
+        "mapperLevel": "BEGINNER",
+        "projectInfo": {
+          "name": " Wadi Albwanis   Digital Base Map  Project 2021",
+          "locale": "en",
+          "description": "The aim of this project is to contribute to the reconstruction of the base map for WEST Mountain 3 as a layer and dataset of LNSDI to support LNDTI.\nIn this project, several map features and entities will be digitized and delined, such as built environment or man-made, Buildings, Roads, Bridges, Dams  Railways, Infrastructure City furniture.\nThe natural environment, soil, water, and air digital representation.\nVegetation, Land Use, and Land Cover \nNational Borders and administrative boundaries     \n ",
+          "instructions": "**التوجيهات والملاحظات:**\n- تأكد من استخدام المصدر الصحيح لصور الستالايت والتي يجب ان تكون حديثة وتحوي جميع المنشئات والموارد الطبيعية الجغرافية لبلدية وادي البوانيس لذلك يستحسن التبديل بين المصادر المتوفرة لمعرفة ايها أحدث وأفضل للاستخدام. في البداية قم باستخدام Bing aerial imagery وفي حالة عدم وجود منشأ معين على هذا المصدر يمكنك استخدام المصادر التالية:\no Esri World Imagery\no Mapbox Satellite\n- بعض المربعات قد تحتوي على منشئات مخرطة من قبل فلذلك يرجى التأكد من صحة تخريطها وصحة بياناتها.\n- قد تجد بعض المنشئات والمباني ليست مطابقة للصور الجوية المستخدمة لأنها قد تكون خرطت بناء على صور قديمة او بناء على مصادر مختلفة لذلك تأكد من مطابقتها لمصدر Bing aerial imagery.\n- عند الانتهاء من العمل على مربع مهمة معينة لا تنسى اختيار الخيار الصحيح لحالة المهمة إذا كان قد تم انهائها المهمة كلها او لا داخل المربع المختار.\n\n**ادخال المباني:**\n- يرجى عدم ادراج ضلال المباني عند تخريط المباني.\n- يرجى ادخال المعلومات الصحيحة لكل مبنى وفي حالة عدم التأكد من المعلومات يرجى الوصول الى أحد المدربين او اترك المبنى من غير بيانات إذا تعسر الوصول الى أحد المدربين مع تدوين ملاحظات حول المبنى وموقعه لتتمكن من العودة للعمل على ادخال بياناته عندما يكون المدرب متاح.\n- يرجى استخدام التصنيفات التالية عند ادخال بيانات المباني وذلك طبقا لنوع المبنى:\n\no عمارة سكنية (building=apartments)\n \no منزل مزرعة (building=farm)\n\no فندق (building=hotel)\n\no منزل (building=house)\n\no مجمع سكني (building=residential)\n\no مبنى تجاري (building=commercial)\n\no مبنى صناعي (building=industrial)\n\no مكتب (building=office)\n\no سوبر ماركت (building=supermarket)\n\no مخزن (building=warehouse)\n\no مسجد (building=mosque)\n\no مبنى حكومي (building=government)\n\no مستشفى (building=hospital)\n\no مبنى عام (building=public)\n\no روضة (building=kindergarten)\n\no مدرسة (building=school)\n\no جامعة (building=university)\n\no معهد او كلية (building=college)\n\no صالة رياضية (building=sports_hall)\n\no هنقر (building=hanger)\n\no مبنى خدمي (building=service)\n\no جراج (building=garage)\n\t\no خزان مياه (building=water_tower)\n\no مركز إطفاء حريق (building=fire_station)\n\no صيدلية (building=yes) و (amenity=pharmacy)\n\no مركز شرطة (building=yes) و (amenity=police)\n\no بريد (building=yes) و (amenity=post_office)\n\t\no عيادة (building=yes) و (amenity=clinic)\n\no مصرف او بنك (building=yes) و (amenity=bank)\n\no غسيل سيارات (building=yes) و (amenity=car_wash)\n\no مطعم (building=yes) و (amenity=restaurant)\n\no محل (building=yes) و (shop=yes)\n\no نادي رياضي (building=yes) و (leisure=sports_center)\t\t\n\t\t\t\no مبنى تحت الانشاء (building=construction)\n\n- في حالة عدم معرفة نوع المبنى يرجى ادخال (building=yes).\t\n- يرجى ادخال عدد طوابق كل مبنى باستخدام (building:levels=2) هذا مثال لمبنى من طابقين.\n- يرجى إضافة أسماء المباني باللغة العربية في حالة توفرها.\n- يرجى إضافة الهاش تاق #WadiAlbwanisMapathon الى خانة ملاحظات مجموعة التغيرات changeset.",
+          "shortDescription": "OpenStreetMap Libya launches this project In the context of the Libya National Spatial Data Infrastructure LNSDI project and Libya National Digital Transformation Initiative LNDTI,",
+          "perTaskInstructions": "Use street-level imagery and local knowledge to map features and learn about landmarks to be drawn or digitized "
+        },
+        "mappingTypes": [
+          "ROADS",
+          "BUILDINGS",
+          "WATERWAYS",
+          "LAND_USE",
+          "OTHER"
+        ],
+        "organisation": 149,
+        "activeMappers": 0,
+        "defaultLocale": "en",
+        "percentMapped": 0,
+        "priorityAreas": null,
+        "mappingEditors": [
+          "ID",
+          "JOSM",
+          "CUSTOM",
+          "POTLATCH_2",
+          "FIELD_PAPERS"
+        ],
+        "osmchaFilterId": null,
+        "projectPriority": "LOW",
+        "allowedUsernames": [],
+        "changesetComment": "#hotosm-project-10003 #MapLibya #WadiAlbwanis #OSMGeoWeek #MapLibya #LNSDI #LNDTI #missingmaps #Vegetation #LandUseLandCover #Buildings #Infrastructure #StreetsRoads #Water #Soil #Air",
+        "organisationLogo": "https://cdn.hotosm.org/tasking-manager/uploads/1611315964185_652492997034215367765651483437190997344256o.png",
+        "organisationName": "OSM Libya",
+        "organisationSlug": "osm-libya",
+        "percentValidated": 0,
+        "taskCreationMode": "GRID",
+        "mappingPermission": "TEAMS",
+        "percentBadImagery": 0,
+        "validationEditors": [
+          "ID",
+          "JOSM",
+          "CUSTOM",
+          "FIELD_PAPERS",
+          "POTLATCH_2"
+        ],
+        "validationPermission": "TEAMS",
+        "enforceRandomTaskSelection": false
+      },
+      "id": "10003",
+      "links": [
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items/10003",
+          "rel": "self",
+          "type": "application/geo+json"
+        },
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "title": "HOT Tasking Manager Projects"
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                20.632994063,
+                -24.393242714
+              ],
+              [
+                20.362549586,
+                -25.026385017
+              ],
+              [
+                19.99961281,
+                -24.500940321
+              ],
+              [
+                19.999998095,
+                -24.140531538
+              ],
+              [
+                20.632994063,
+                -24.393242714
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "teams": [
+          {
+            "name": "Validator Trainees",
+            "role": "VALIDATOR",
+            "teamId": 1
+          },
+          {
+            "name": "HOT Global Validators",
+            "role": "VALIDATOR",
+            "teamId": 7
+          }
+        ],
+        "author": "SColchester",
+        "k_type": "polygon",
+        "status": "ARCHIVED",
+        "aoiBBOX": [
+          19.9996128102161,
+          -25.0263850171314,
+          20.6329940625883,
+          -24.1405315375157
+        ],
+        "created": "2020-12-09T08:06:26.033129Z",
+        "dueDate": null,
+        "imagery": "",
+        "private": false,
+        "campaigns": [
+          {
+            "id": 237,
+            "name": "COVID-19"
+          }
+        ],
+        "idPresets": [
+          "building"
+        ],
+        "interests": [],
+        "licenseId": null,
+        "projectId": 10004,
+        "countryTag": [
+          "Botswana"
+        ],
+        "lastUpdated": "2021-06-16T12:43:10.291298Z",
+        "mapperLevel": "BEGINNER",
+        "projectInfo": {
+          "name": "COVID-19 Gemsbok District-01, Botswana",
+          "locale": "en",
+          "description": "HOT has been requested by the Botswana Institute of Geomatics (BIG) to map buildings in Botswana. This data will provide a basemap for COVID-19 monitoring tools used by the Government of Botswana.  Please join our global effort to help control this disease by mapping on this project. \n\nGlobally HOT is committed to fighting [COVID-19](https://wiki.openstreetmap.org/wiki/COVID19) by providing 3 critical services:\n1. Helping government agencies and responders with basic data needs: we’re providing this through the  [UN’s Humanitarian Data Exchange](https://data.humdata.org/), among other ways.\n2. Helping to Identify populations living in places most at risk: prioritizing our existing queue of mapping projects to get volunteers immediately mapping areas with high proportions of COVID-19 cases, or of greater vulnerability.\n3. Creating new mapping projects in highest risk places; which is what this project does. Every feature you map will help in this objective!\n\nThe goal of this project is to digitize the buildings using **Bing Imagery**. While other services may have more recent imagery, Bing imagery for this area is the highest quality available for digitization. While this task is ideal for beginner level mappers with a low density of buildings, please split or unlock the task and move on to something you are more comfortable with if needed.",
+          "instructions": "Project Specific Mapping Notes\n=========================\n* **Imagery:** Please use **Bing Imagery**, the default imagery in the iD editor. You may switch to MAXAR, ESRI or others for comparison but Bing has been chosen for this area due to resolution and clarity. \n* Many of these squares will already be partially or fully mapped, map in more if needed or fix up the existing mapping, or just mark it \"Completely Mapped\" if it is already complete.\n* **Existing mapping does not match imagery** - This happens in some areas, when different imagery sources are used. If this occurs, check to make sure you are using Bing imagery. If necessary, adjust existing mapping to align with Bing, then continue mapping. \n* **Alternative imagery is better** - Sometimes due to shadows, alignment and other factors it may be easier to trace features using other imagery. That is fine as long as you adjust for any offset. When finished please leave a comment in the Tasking Manager when you mark done/stop mapping to say you used alternative imagery.  See [LearnOSM](https://learnosm.org/en/josm/correcting-imagery-offset/) for detailed instructions on handling imagery offset, or [Aerial Imagery & Alignment](https://learnosm.org/en/hot-tips/imagery/) for adjusting in the iD editor.\n\nBuildings\n=======\n* Buildings tutorial - https://youtu.be/nswUcgMfKTM?t=131\n* Please accurately outline all the buildings you can find. The outline should be for the full size of the building even if it is partly covered by trees in the imagery.\n* Take care to not include the building shadow in the building outline.\n* After drawing the outline and tagging as a building, **use the 'Q' key in the iD & JOSM editors to \"square\" the corners**. We suggest using the Buildings plug-in in JOSM to make building tracing more efficient. \n* Buildings may be very close, but do not actually touch each other, try to map them close to each other without letting them connect or share nodes with each other, roads or residential area outlines. In the iD web editor, holding down the \"alt\" key will keep nodes from \"snapping\" to each other and accidentally connecting.\n* In the iD web editor, you will only have the option to tag new features as buildings, see below for editing or adding other features.\n\n**Only if you have personal knowledge of a building**, please add that information to the building, like the name or type of building (hospital, school, gas station, etc)\n\n### Roads and Other Features\n* Roads are being done in another project, only adjust roads if they are incorrect and affecting your ability to map buildings (i.e. crossing); otherwise leave alone.\n* Other features such as waterways, landuse, etc. can be mapped but please do not do so via this Tasking Manager project as the other mappers will likely not continue a waterway you start (as example). Map these 'traditionally' through [OpenStreetMap.org](http://www.openstreetmap.org)",
+          "shortDescription": "HOT has been requested to map areas in Botswana susceptible to, or identified as impacted, by the COVID-19 outbreak. Please join our global effort to help control this disease by mapping on this project.\n\nThe goal of this project is to digitize the buildings using **Bing** imagery.",
+          "perTaskInstructions": ""
+        },
+        "mappingTypes": [
+          "BUILDINGS"
+        ],
+        "organisation": 73,
+        "activeMappers": 0,
+        "defaultLocale": "en",
+        "percentMapped": 100,
+        "priorityAreas": null,
+        "mappingEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "osmchaFilterId": null,
+        "projectPriority": "LOW",
+        "allowedUsernames": [],
+        "changesetComment": "#hotosm-project-10004 #covid19 #COVBots",
+        "organisationLogo": "https://cdn.hotosm.org/tasking-manager/uploads/1588741335578_hot-logo.png",
+        "organisationName": "HOT",
+        "organisationSlug": "hot",
+        "percentValidated": 100,
+        "taskCreationMode": "GRID",
+        "mappingPermission": "ANY",
+        "percentBadImagery": 0,
+        "validationEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "validationPermission": "TEAMS",
+        "enforceRandomTaskSelection": false
+      },
+      "id": "10004",
+      "links": [
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items/10004",
+          "rel": "self",
+          "type": "application/geo+json"
+        },
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "title": "HOT Tasking Manager Projects"
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                21.128278645,
+                -24.588625586
+              ],
+              [
+                20.674436818,
+                -25.457324474
+              ],
+              [
+                20.674430849,
+                -25.457180021
+              ],
+              [
+                20.362549586,
+                -25.026385017
+              ],
+              [
+                20.632994063,
+                -24.393242714
+              ],
+              [
+                21.128278645,
+                -24.588625586
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "teams": [
+          {
+            "name": "Validator Trainees",
+            "role": "VALIDATOR",
+            "teamId": 1
+          },
+          {
+            "name": "HOT Global Validators",
+            "role": "VALIDATOR",
+            "teamId": 7
+          }
+        ],
+        "author": "SColchester",
+        "k_type": "polygon",
+        "status": "ARCHIVED",
+        "aoiBBOX": [
+          20.3625495857459,
+          -25.4645099618071,
+          21.1282786448162,
+          -24.393242714302
+        ],
+        "created": "2020-12-09T08:09:47.594260Z",
+        "dueDate": null,
+        "imagery": "",
+        "private": false,
+        "campaigns": [
+          {
+            "id": 237,
+            "name": "COVID-19"
+          }
+        ],
+        "idPresets": [
+          "building"
+        ],
+        "interests": [],
+        "licenseId": null,
+        "projectId": 10005,
+        "countryTag": [
+          "Botswana"
+        ],
+        "lastUpdated": "2021-06-16T12:45:23.298743Z",
+        "mapperLevel": "BEGINNER",
+        "projectInfo": {
+          "name": "COVID-19 Gemsbok District-02, Botswana",
+          "locale": "en",
+          "description": "HOT has been requested by the Botswana Institute of Geomatics (BIG) to map buildings in Botswana. This data will provide a basemap for COVID-19 monitoring tools used by the Government of Botswana.  Please join our global effort to help control this disease by mapping on this project. \n\nGlobally HOT is committed to fighting [COVID-19](https://wiki.openstreetmap.org/wiki/COVID19) by providing 3 critical services:\n1. Helping government agencies and responders with basic data needs: we’re providing this through the  [UN’s Humanitarian Data Exchange](https://data.humdata.org/), among other ways.\n2. Helping to Identify populations living in places most at risk: prioritizing our existing queue of mapping projects to get volunteers immediately mapping areas with high proportions of COVID-19 cases, or of greater vulnerability.\n3. Creating new mapping projects in highest risk places; which is what this project does. Every feature you map will help in this objective!\n\nThe goal of this project is to digitize the buildings using **Bing Imagery**. While other services may have more recent imagery, Bing imagery for this area is the highest quality available for digitization. While this task is ideal for beginner level mappers with a low density of buildings, please split or unlock the task and move on to something you are more comfortable with if needed.",
+          "instructions": "Project Specific Mapping Notes\n=========================\n* **Imagery:** Please use **Bing Imagery**, the default imagery in the iD editor. You may switch to MAXAR, ESRI or others for comparison but Bing has been chosen for this area due to resolution and clarity. \n* Many of these squares will already be partially or fully mapped, map in more if needed or fix up the existing mapping, or just mark it \"Completely Mapped\" if it is already complete.\n* **Existing mapping does not match imagery** - This happens in some areas, when different imagery sources are used. If this occurs, check to make sure you are using Bing imagery. If necessary, adjust existing mapping to align with Bing, then continue mapping. \n* **Alternative imagery is better** - Sometimes due to shadows, alignment and other factors it may be easier to trace features using other imagery. That is fine as long as you adjust for any offset. When finished please leave a comment in the Tasking Manager when you mark done/stop mapping to say you used alternative imagery.  See [LearnOSM](https://learnosm.org/en/josm/correcting-imagery-offset/) for detailed instructions on handling imagery offset, or [Aerial Imagery & Alignment](https://learnosm.org/en/hot-tips/imagery/) for adjusting in the iD editor.\n\nBuildings\n=======\n* Buildings tutorial - https://youtu.be/nswUcgMfKTM?t=131\n* Please accurately outline all the buildings you can find. The outline should be for the full size of the building even if it is partly covered by trees in the imagery.\n* Take care to not include the building shadow in the building outline.\n* After drawing the outline and tagging as a building, **use the 'Q' key in the iD & JOSM editors to \"square\" the corners**. We suggest using the Buildings plug-in in JOSM to make building tracing more efficient. \n* Buildings may be very close, but do not actually touch each other, try to map them close to each other without letting them connect or share nodes with each other, roads or residential area outlines. In the iD web editor, holding down the \"alt\" key will keep nodes from \"snapping\" to each other and accidentally connecting.\n* In the iD web editor, you will only have the option to tag new features as buildings, see below for editing or adding other features.\n\n**Only if you have personal knowledge of a building**, please add that information to the building, like the name or type of building (hospital, school, gas station, etc)\n\n### Roads and Other Features\n* Roads are being done in another project, only adjust roads if they are incorrect and affecting your ability to map buildings (i.e. crossing); otherwise leave alone.\n* Other features such as waterways, landuse, etc. can be mapped but please do not do so via this Tasking Manager project as the other mappers will likely not continue a waterway you start (as example). Map these 'traditionally' through [OpenStreetMap.org](http://www.openstreetmap.org)",
+          "shortDescription": "HOT has been requested to map areas in Botswana susceptible to, or identified as impacted, by the COVID-19 outbreak. Please join our global effort to help control this disease by mapping on this project.\n\nThe goal of this project is to digitize the buildings using **Bing** imagery.",
+          "perTaskInstructions": ""
+        },
+        "mappingTypes": [
+          "BUILDINGS"
+        ],
+        "organisation": 73,
+        "activeMappers": 0,
+        "defaultLocale": "en",
+        "percentMapped": 100,
+        "priorityAreas": null,
+        "mappingEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "osmchaFilterId": null,
+        "projectPriority": "LOW",
+        "allowedUsernames": [],
+        "changesetComment": "#hotosm-project-10005 #covid19 #COVBots",
+        "organisationLogo": "https://cdn.hotosm.org/tasking-manager/uploads/1588741335578_hot-logo.png",
+        "organisationName": "HOT",
+        "organisationSlug": "hot",
+        "percentValidated": 100,
+        "taskCreationMode": "GRID",
+        "mappingPermission": "ANY",
+        "percentBadImagery": 0,
+        "validationEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "validationPermission": "TEAMS",
+        "enforceRandomTaskSelection": false
+      },
+      "id": "10005",
+      "links": [
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items/10005",
+          "rel": "self",
+          "type": "application/geo+json"
+        },
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "title": "HOT Tasking Manager Projects"
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                21.56323209,
+                -25.289785133
+              ],
+              [
+                20.837047357,
+                -25.148034114
+              ],
+              [
+                21.128278645,
+                -24.588625586
+              ],
+              [
+                21.329035146,
+                -24.667229396
+              ],
+              [
+                21.56323209,
+                -25.289785133
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "teams": [
+          {
+            "name": "Validator Trainees",
+            "role": "VALIDATOR",
+            "teamId": 1
+          },
+          {
+            "name": "HOT Global Validators",
+            "role": "VALIDATOR",
+            "teamId": 7
+          }
+        ],
+        "author": "SColchester",
+        "k_type": "polygon",
+        "status": "ARCHIVED",
+        "aoiBBOX": [
+          20.8370473569094,
+          -25.2897851331844,
+          21.5632320896083,
+          -24.5886255855981
+        ],
+        "created": "2020-12-09T08:10:51.869310Z",
+        "dueDate": null,
+        "imagery": "",
+        "private": false,
+        "campaigns": [
+          {
+            "id": 237,
+            "name": "COVID-19"
+          }
+        ],
+        "idPresets": [
+          "building"
+        ],
+        "interests": [],
+        "licenseId": null,
+        "projectId": 10006,
+        "countryTag": [
+          "Botswana"
+        ],
+        "lastUpdated": "2021-06-16T12:45:49.977650Z",
+        "mapperLevel": "BEGINNER",
+        "projectInfo": {
+          "name": "COVID-19 Gemsbok District-03, Botswana",
+          "locale": "en",
+          "description": "HOT has been requested by the Botswana Institute of Geomatics (BIG) to map buildings in Botswana. This data will provide a basemap for COVID-19 monitoring tools used by the Government of Botswana.  Please join our global effort to help control this disease by mapping on this project. \n\nGlobally HOT is committed to fighting [COVID-19](https://wiki.openstreetmap.org/wiki/COVID19) by providing 3 critical services:\n1. Helping government agencies and responders with basic data needs: we’re providing this through the  [UN’s Humanitarian Data Exchange](https://data.humdata.org/), among other ways.\n2. Helping to Identify populations living in places most at risk: prioritizing our existing queue of mapping projects to get volunteers immediately mapping areas with high proportions of COVID-19 cases, or of greater vulnerability.\n3. Creating new mapping projects in highest risk places; which is what this project does. Every feature you map will help in this objective!\n\nThe goal of this project is to digitize the buildings using **Bing Imagery**. While other services may have more recent imagery, Bing imagery for this area is the highest quality available for digitization. While this task is ideal for beginner level mappers with a low density of buildings, please split or unlock the task and move on to something you are more comfortable with if needed.",
+          "instructions": "Project Specific Mapping Notes\n=========================\n* **Imagery:** Please use **Bing Imagery**, the default imagery in the iD editor. You may switch to MAXAR, ESRI or others for comparison but Bing has been chosen for this area due to resolution and clarity. \n* Many of these squares will already be partially or fully mapped, map in more if needed or fix up the existing mapping, or just mark it \"Completely Mapped\" if it is already complete.\n* **Existing mapping does not match imagery** - This happens in some areas, when different imagery sources are used. If this occurs, check to make sure you are using Bing imagery. If necessary, adjust existing mapping to align with Bing, then continue mapping. \n* **Alternative imagery is better** - Sometimes due to shadows, alignment and other factors it may be easier to trace features using other imagery. That is fine as long as you adjust for any offset. When finished please leave a comment in the Tasking Manager when you mark done/stop mapping to say you used alternative imagery.  See [LearnOSM](https://learnosm.org/en/josm/correcting-imagery-offset/) for detailed instructions on handling imagery offset, or [Aerial Imagery & Alignment](https://learnosm.org/en/hot-tips/imagery/) for adjusting in the iD editor.\n\nBuildings\n=======\n* Buildings tutorial - https://youtu.be/nswUcgMfKTM?t=131\n* Please accurately outline all the buildings you can find. The outline should be for the full size of the building even if it is partly covered by trees in the imagery.\n* Take care to not include the building shadow in the building outline.\n* After drawing the outline and tagging as a building, **use the 'Q' key in the iD & JOSM editors to \"square\" the corners**. We suggest using the Buildings plug-in in JOSM to make building tracing more efficient. \n* Buildings may be very close, but do not actually touch each other, try to map them close to each other without letting them connect or share nodes with each other, roads or residential area outlines. In the iD web editor, holding down the \"alt\" key will keep nodes from \"snapping\" to each other and accidentally connecting.\n* In the iD web editor, you will only have the option to tag new features as buildings, see below for editing or adding other features.\n\n**Only if you have personal knowledge of a building**, please add that information to the building, like the name or type of building (hospital, school, gas station, etc)\n\n### Roads and Other Features\n* Roads are being done in another project, only adjust roads if they are incorrect and affecting your ability to map buildings (i.e. crossing); otherwise leave alone.\n* Other features such as waterways, landuse, etc. can be mapped but please do not do so via this Tasking Manager project as the other mappers will likely not continue a waterway you start (as example). Map these 'traditionally' through [OpenStreetMap.org](http://www.openstreetmap.org)",
+          "shortDescription": "HOT has been requested to map areas in Botswana susceptible to, or identified as impacted, by the COVID-19 outbreak. Please join our global effort to help control this disease by mapping on this project.\n\nThe goal of this project is to digitize the buildings using **Bing** imagery.",
+          "perTaskInstructions": ""
+        },
+        "mappingTypes": [
+          "BUILDINGS"
+        ],
+        "organisation": 73,
+        "activeMappers": 0,
+        "defaultLocale": "en",
+        "percentMapped": 100,
+        "priorityAreas": null,
+        "mappingEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "osmchaFilterId": null,
+        "projectPriority": "LOW",
+        "allowedUsernames": [],
+        "changesetComment": "#hotosm-project-10006 #covid19 #COVBots",
+        "organisationLogo": "https://cdn.hotosm.org/tasking-manager/uploads/1588741335578_hot-logo.png",
+        "organisationName": "HOT",
+        "organisationSlug": "hot",
+        "percentValidated": 100,
+        "taskCreationMode": "GRID",
+        "mappingPermission": "ANY",
+        "percentBadImagery": 0,
+        "validationEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "validationPermission": "TEAMS",
+        "enforceRandomTaskSelection": false
+      },
+      "id": "10006",
+      "links": [
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items/10006",
+          "rel": "self",
+          "type": "application/geo+json"
+        },
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "title": "HOT Tasking Manager Projects"
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                20.837047357,
+                -25.148034114
+              ],
+              [
+                21.56323209,
+                -25.289785133
+              ],
+              [
+                21.68470405,
+                -25.610779944
+              ],
+              [
+                20.674436818,
+                -25.457324474
+              ],
+              [
+                20.837047357,
+                -25.148034114
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "teams": [
+          {
+            "name": "Validator Trainees",
+            "role": "VALIDATOR",
+            "teamId": 1
+          },
+          {
+            "name": "HOT Global Validators",
+            "role": "VALIDATOR",
+            "teamId": 7
+          }
+        ],
+        "author": "SColchester",
+        "k_type": "polygon",
+        "status": "ARCHIVED",
+        "aoiBBOX": [
+          20.6356993298185,
+          -25.6731440312931,
+          21.6847040503429,
+          -25.1480341144047
+        ],
+        "created": "2020-12-09T08:13:07.142259Z",
+        "dueDate": null,
+        "imagery": "",
+        "private": false,
+        "campaigns": [
+          {
+            "id": 237,
+            "name": "COVID-19"
+          }
+        ],
+        "idPresets": [
+          "building"
+        ],
+        "interests": [],
+        "licenseId": null,
+        "projectId": 10007,
+        "countryTag": [
+          "Botswana"
+        ],
+        "lastUpdated": "2021-06-16T12:46:41.131631Z",
+        "mapperLevel": "BEGINNER",
+        "projectInfo": {
+          "name": "COVID-19 Gemsbok District-04, Botswana",
+          "locale": "en",
+          "description": "HOT has been requested by the Botswana Institute of Geomatics (BIG) to map buildings in Botswana. This data will provide a basemap for COVID-19 monitoring tools used by the Government of Botswana.  Please join our global effort to help control this disease by mapping on this project. \n\nGlobally HOT is committed to fighting [COVID-19](https://wiki.openstreetmap.org/wiki/COVID19) by providing 3 critical services:\n1. Helping government agencies and responders with basic data needs: we’re providing this through the  [UN’s Humanitarian Data Exchange](https://data.humdata.org/), among other ways.\n2. Helping to Identify populations living in places most at risk: prioritizing our existing queue of mapping projects to get volunteers immediately mapping areas with high proportions of COVID-19 cases, or of greater vulnerability.\n3. Creating new mapping projects in highest risk places; which is what this project does. Every feature you map will help in this objective!\n\nThe goal of this project is to digitize the buildings using **Bing Imagery**. While other services may have more recent imagery, Bing imagery for this area is the highest quality available for digitization. While this task is ideal for beginner level mappers with a low density of buildings, please split or unlock the task and move on to something you are more comfortable with if needed.",
+          "instructions": "Project Specific Mapping Notes\n=========================\n* **Imagery:** Please use **Bing Imagery**, the default imagery in the iD editor. You may switch to MAXAR, ESRI or others for comparison but Bing has been chosen for this area due to resolution and clarity. \n* Many of these squares will already be partially or fully mapped, map in more if needed or fix up the existing mapping, or just mark it \"Completely Mapped\" if it is already complete.\n* **Existing mapping does not match imagery** - This happens in some areas, when different imagery sources are used. If this occurs, check to make sure you are using Bing imagery. If necessary, adjust existing mapping to align with Bing, then continue mapping. \n* **Alternative imagery is better** - Sometimes due to shadows, alignment and other factors it may be easier to trace features using other imagery. That is fine as long as you adjust for any offset. When finished please leave a comment in the Tasking Manager when you mark done/stop mapping to say you used alternative imagery.  See [LearnOSM](https://learnosm.org/en/josm/correcting-imagery-offset/) for detailed instructions on handling imagery offset, or [Aerial Imagery & Alignment](https://learnosm.org/en/hot-tips/imagery/) for adjusting in the iD editor.\n\nBuildings\n=======\n* Buildings tutorial - https://youtu.be/nswUcgMfKTM?t=131\n* Please accurately outline all the buildings you can find. The outline should be for the full size of the building even if it is partly covered by trees in the imagery.\n* Take care to not include the building shadow in the building outline.\n* After drawing the outline and tagging as a building, **use the 'Q' key in the iD & JOSM editors to \"square\" the corners**. We suggest using the Buildings plug-in in JOSM to make building tracing more efficient. \n* Buildings may be very close, but do not actually touch each other, try to map them close to each other without letting them connect or share nodes with each other, roads or residential area outlines. In the iD web editor, holding down the \"alt\" key will keep nodes from \"snapping\" to each other and accidentally connecting.\n* In the iD web editor, you will only have the option to tag new features as buildings, see below for editing or adding other features.\n\n**Only if you have personal knowledge of a building**, please add that information to the building, like the name or type of building (hospital, school, gas station, etc)\n\n### Roads and Other Features\n* Roads are being done in another project, only adjust roads if they are incorrect and affecting your ability to map buildings (i.e. crossing); otherwise leave alone.\n* Other features such as waterways, landuse, etc. can be mapped but please do not do so via this Tasking Manager project as the other mappers will likely not continue a waterway you start (as example). Map these 'traditionally' through [OpenStreetMap.org](http://www.openstreetmap.org)",
+          "shortDescription": "HOT has been requested to map areas in Botswana susceptible to, or identified as impacted, by the COVID-19 outbreak. Please join our global effort to help control this disease by mapping on this project.\n\nThe goal of this project is to digitize the buildings using **Bing** imagery.",
+          "perTaskInstructions": ""
+        },
+        "mappingTypes": [
+          "BUILDINGS"
+        ],
+        "organisation": 73,
+        "activeMappers": 0,
+        "defaultLocale": "en",
+        "percentMapped": 100,
+        "priorityAreas": null,
+        "mappingEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "osmchaFilterId": null,
+        "projectPriority": "LOW",
+        "allowedUsernames": [],
+        "changesetComment": "#hotosm-project-10007 #covid19 #COVBots",
+        "organisationLogo": "https://cdn.hotosm.org/tasking-manager/uploads/1588741335578_hot-logo.png",
+        "organisationName": "HOT",
+        "organisationSlug": "hot",
+        "percentValidated": 100,
+        "taskCreationMode": "GRID",
+        "mappingPermission": "ANY",
+        "percentBadImagery": 0,
+        "validationEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "validationPermission": "TEAMS",
+        "enforceRandomTaskSelection": false
+      },
+      "id": "10007",
+      "links": [
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items/10007",
+          "rel": "self",
+          "type": "application/geo+json"
+        },
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "title": "HOT Tasking Manager Projects"
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                21.68470405,
+                -25.610779944
+              ],
+              [
+                21.329035146,
+                -24.667229396
+              ],
+              [
+                21.879980089,
+                -24.881179807
+              ],
+              [
+                22.176450731,
+                -24.877349851
+              ],
+              [
+                22.178670885,
+                -25.370727537
+              ],
+              [
+                21.861192705,
+                -25.375530241
+              ],
+              [
+                21.68470405,
+                -25.610779944
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "teams": [
+          {
+            "name": "Validator Trainees",
+            "role": "VALIDATOR",
+            "teamId": 1
+          },
+          {
+            "name": "HOT Global Validators",
+            "role": "VALIDATOR",
+            "teamId": 7
+          }
+        ],
+        "author": "SColchester",
+        "k_type": "polygon",
+        "status": "ARCHIVED",
+        "aoiBBOX": [
+          21.3290351459845,
+          -25.610779943629,
+          22.1786708848945,
+          -24.6672293964355
+        ],
+        "created": "2020-12-09T08:14:36.844030Z",
+        "dueDate": null,
+        "imagery": "",
+        "private": false,
+        "campaigns": [
+          {
+            "id": 237,
+            "name": "COVID-19"
+          }
+        ],
+        "idPresets": [
+          "building"
+        ],
+        "interests": [],
+        "licenseId": null,
+        "projectId": 10008,
+        "countryTag": [
+          "Botswana"
+        ],
+        "lastUpdated": "2021-06-16T12:48:30.776835Z",
+        "mapperLevel": "BEGINNER",
+        "projectInfo": {
+          "name": "COVID-19 Gemsbok District-05, Botswana",
+          "locale": "en",
+          "description": "HOT has been requested by the Botswana Institute of Geomatics (BIG) to map buildings in Botswana. This data will provide a basemap for COVID-19 monitoring tools used by the Government of Botswana.  Please join our global effort to help control this disease by mapping on this project. \n\nGlobally HOT is committed to fighting [COVID-19](https://wiki.openstreetmap.org/wiki/COVID19) by providing 3 critical services:\n1. Helping government agencies and responders with basic data needs: we’re providing this through the  [UN’s Humanitarian Data Exchange](https://data.humdata.org/), among other ways.\n2. Helping to Identify populations living in places most at risk: prioritizing our existing queue of mapping projects to get volunteers immediately mapping areas with high proportions of COVID-19 cases, or of greater vulnerability.\n3. Creating new mapping projects in highest risk places; which is what this project does. Every feature you map will help in this objective!\n\nThe goal of this project is to digitize the buildings using **Bing Imagery**. While other services may have more recent imagery, Bing imagery for this area is the highest quality available for digitization. While this task is ideal for beginner level mappers with a low density of buildings, please split or unlock the task and move on to something you are more comfortable with if needed.",
+          "instructions": "Project Specific Mapping Notes\n=========================\n* **Imagery:** Please use **Bing Imagery**, the default imagery in the iD editor. You may switch to MAXAR, ESRI or others for comparison but Bing has been chosen for this area due to resolution and clarity. \n* Many of these squares will already be partially or fully mapped, map in more if needed or fix up the existing mapping, or just mark it \"Completely Mapped\" if it is already complete.\n* **Existing mapping does not match imagery** - This happens in some areas, when different imagery sources are used. If this occurs, check to make sure you are using Bing imagery. If necessary, adjust existing mapping to align with Bing, then continue mapping. \n* **Alternative imagery is better** - Sometimes due to shadows, alignment and other factors it may be easier to trace features using other imagery. That is fine as long as you adjust for any offset. When finished please leave a comment in the Tasking Manager when you mark done/stop mapping to say you used alternative imagery.  See [LearnOSM](https://learnosm.org/en/josm/correcting-imagery-offset/) for detailed instructions on handling imagery offset, or [Aerial Imagery & Alignment](https://learnosm.org/en/hot-tips/imagery/) for adjusting in the iD editor.\n\nBuildings\n=======\n* Buildings tutorial - https://youtu.be/nswUcgMfKTM?t=131\n* Please accurately outline all the buildings you can find. The outline should be for the full size of the building even if it is partly covered by trees in the imagery.\n* Take care to not include the building shadow in the building outline.\n* After drawing the outline and tagging as a building, **use the 'Q' key in the iD & JOSM editors to \"square\" the corners**. We suggest using the Buildings plug-in in JOSM to make building tracing more efficient. \n* Buildings may be very close, but do not actually touch each other, try to map them close to each other without letting them connect or share nodes with each other, roads or residential area outlines. In the iD web editor, holding down the \"alt\" key will keep nodes from \"snapping\" to each other and accidentally connecting.\n* In the iD web editor, you will only have the option to tag new features as buildings, see below for editing or adding other features.\n\n**Only if you have personal knowledge of a building**, please add that information to the building, like the name or type of building (hospital, school, gas station, etc)\n\n### Roads and Other Features\n* Roads are being done in another project, only adjust roads if they are incorrect and affecting your ability to map buildings (i.e. crossing); otherwise leave alone.\n* Other features such as waterways, landuse, etc. can be mapped but please do not do so via this Tasking Manager project as the other mappers will likely not continue a waterway you start (as example). Map these 'traditionally' through [OpenStreetMap.org](http://www.openstreetmap.org)",
+          "shortDescription": "HOT has been requested to map areas in Botswana susceptible to, or identified as impacted, by the COVID-19 outbreak. Please join our global effort to help control this disease by mapping on this project.\n\nThe goal of this project is to digitize the buildings using **Bing** imagery.",
+          "perTaskInstructions": ""
+        },
+        "mappingTypes": [
+          "BUILDINGS"
+        ],
+        "organisation": 73,
+        "activeMappers": 0,
+        "defaultLocale": "en",
+        "percentMapped": 100,
+        "priorityAreas": null,
+        "mappingEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "osmchaFilterId": null,
+        "projectPriority": "LOW",
+        "allowedUsernames": [],
+        "changesetComment": "#hotosm-project-10008 #covid19 #COVBots",
+        "organisationLogo": "https://cdn.hotosm.org/tasking-manager/uploads/1588741335578_hot-logo.png",
+        "organisationName": "HOT",
+        "organisationSlug": "hot",
+        "percentValidated": 100,
+        "taskCreationMode": "GRID",
+        "mappingPermission": "ANY",
+        "percentBadImagery": 0,
+        "validationEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "validationPermission": "TEAMS",
+        "enforceRandomTaskSelection": false
+      },
+      "id": "10008",
+      "links": [
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items/10008",
+          "rel": "self",
+          "type": "application/geo+json"
+        },
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "title": "HOT Tasking Manager Projects"
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                21.351214759,
+                -26.05171222
+              ],
+              [
+                20.825477654,
+                -25.99303579
+              ],
+              [
+                20.674779894,
+                -25.673144031
+              ],
+              [
+                21.651972635,
+                -25.654264808
+              ],
+              [
+                21.351214759,
+                -26.05171222
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "teams": [
+          {
+            "name": "Validator Trainees",
+            "role": "VALIDATOR",
+            "teamId": 1
+          },
+          {
+            "name": "HOT Global Validators",
+            "role": "VALIDATOR",
+            "teamId": 7
+          }
+        ],
+        "author": "SColchester",
+        "k_type": "polygon",
+        "status": "PUBLISHED",
+        "aoiBBOX": [
+          20.6747798939694,
+          -26.0517122203816,
+          21.6519726346905,
+          -25.6542648079841
+        ],
+        "created": "2020-12-09T08:15:53.151038Z",
+        "dueDate": null,
+        "imagery": "",
+        "private": false,
+        "campaigns": [
+          {
+            "id": 237,
+            "name": "COVID-19"
+          }
+        ],
+        "idPresets": [
+          "building"
+        ],
+        "interests": [],
+        "licenseId": null,
+        "projectId": 10009,
+        "countryTag": [
+          "Botswana"
+        ],
+        "lastUpdated": "2021-04-05T10:31:29.480162Z",
+        "mapperLevel": "BEGINNER",
+        "projectInfo": {
+          "name": "COVID-19 Gemsbok District-06, Botswana",
+          "locale": "en",
+          "description": "HOT has been requested by the Botswana Institute of Geomatics (BIG) to map buildings in Botswana. This data will provide a basemap for COVID-19 monitoring tools used by the Government of Botswana.  Please join our global effort to help control this disease by mapping on this project. \n\nGlobally HOT is committed to fighting [COVID-19](https://wiki.openstreetmap.org/wiki/COVID19) by providing 3 critical services:\n1. Helping government agencies and responders with basic data needs: we’re providing this through the  [UN’s Humanitarian Data Exchange](https://data.humdata.org/), among other ways.\n2. Helping to Identify populations living in places most at risk: prioritizing our existing queue of mapping projects to get volunteers immediately mapping areas with high proportions of COVID-19 cases, or of greater vulnerability.\n3. Creating new mapping projects in highest risk places; which is what this project does. Every feature you map will help in this objective!\n\nThe goal of this project is to digitize the buildings using **Bing Imagery**. While other services may have more recent imagery, Bing imagery for this area is the highest quality available for digitization. While this task is ideal for beginner level mappers with a low density of buildings, please split or unlock the task and move on to something you are more comfortable with if needed.",
+          "instructions": "Project Specific Mapping Notes\n=========================\n* **Imagery:** Please use **Bing Imagery**, the default imagery in the iD editor. You may switch to MAXAR, ESRI or others for comparison but Bing has been chosen for this area due to resolution and clarity. \n* Many of these squares will already be partially or fully mapped, map in more if needed or fix up the existing mapping, or just mark it \"Completely Mapped\" if it is already complete.\n* **Existing mapping does not match imagery** - This happens in some areas, when different imagery sources are used. If this occurs, check to make sure you are using Bing imagery. If necessary, adjust existing mapping to align with Bing, then continue mapping. \n* **Alternative imagery is better** - Sometimes due to shadows, alignment and other factors it may be easier to trace features using other imagery. That is fine as long as you adjust for any offset. When finished please leave a comment in the Tasking Manager when you mark done/stop mapping to say you used alternative imagery.  See [LearnOSM](https://learnosm.org/en/josm/correcting-imagery-offset/) for detailed instructions on handling imagery offset, or [Aerial Imagery & Alignment](https://learnosm.org/en/hot-tips/imagery/) for adjusting in the iD editor.\n\nBuildings\n=======\n* Buildings tutorial - https://youtu.be/nswUcgMfKTM?t=131\n* Please accurately outline all the buildings you can find. The outline should be for the full size of the building even if it is partly covered by trees in the imagery.\n* Take care to not include the building shadow in the building outline.\n* After drawing the outline and tagging as a building, **use the 'Q' key in the iD & JOSM editors to \"square\" the corners**. We suggest using the Buildings plug-in in JOSM to make building tracing more efficient. \n* Buildings may be very close, but do not actually touch each other, try to map them close to each other without letting them connect or share nodes with each other, roads or residential area outlines. In the iD web editor, holding down the \"alt\" key will keep nodes from \"snapping\" to each other and accidentally connecting.\n* In the iD web editor, you will only have the option to tag new features as buildings, see below for editing or adding other features.\n\n**Only if you have personal knowledge of a building**, please add that information to the building, like the name or type of building (hospital, school, gas station, etc)\n\n### Roads and Other Features\n* Roads are being done in another project, only adjust roads if they are incorrect and affecting your ability to map buildings (i.e. crossing); otherwise leave alone.\n* Other features such as waterways, landuse, etc. can be mapped but please do not do so via this Tasking Manager project as the other mappers will likely not continue a waterway you start (as example). Map these 'traditionally' through [OpenStreetMap.org](http://www.openstreetmap.org)",
+          "shortDescription": "HOT has been requested to map areas in Botswana susceptible to, or identified as impacted, by the COVID-19 outbreak. Please join our global effort to help control this disease by mapping on this project.\n\nThe goal of this project is to digitize the buildings using **Bing** imagery.",
+          "perTaskInstructions": ""
+        },
+        "mappingTypes": [
+          "BUILDINGS"
+        ],
+        "organisation": 73,
+        "activeMappers": 0,
+        "defaultLocale": "en",
+        "percentMapped": 100,
+        "priorityAreas": null,
+        "mappingEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "osmchaFilterId": null,
+        "projectPriority": "MEDIUM",
+        "allowedUsernames": [],
+        "changesetComment": "#hotosm-project-10009 #covid19 #COVBots",
+        "organisationLogo": "https://cdn.hotosm.org/tasking-manager/uploads/1588741335578_hot-logo.png",
+        "organisationName": "HOT",
+        "organisationSlug": "hot",
+        "percentValidated": 0,
+        "taskCreationMode": "GRID",
+        "mappingPermission": "ANY",
+        "percentBadImagery": 0,
+        "validationEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "validationPermission": "TEAMS",
+        "enforceRandomTaskSelection": false
+      },
+      "id": "10009",
+      "links": [
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items/10009",
+          "rel": "self",
+          "type": "application/geo+json"
+        },
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "title": "HOT Tasking Manager Projects"
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                84.549581426,
+                27.762071796
+              ],
+              [
+                84.548703489,
+                27.992385849
+              ],
+              [
+                84.113205157,
+                28.226619899
+              ],
+              [
+                84.11300446,
+                27.762219214
+              ],
+              [
+                84.549581426,
+                27.762071796
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "teams": [],
+        "author": "PierZen",
+        "k_type": "polygon",
+        "status": "ARCHIVED",
+        "aoiBBOX": [
+          84.11300446029,
+          27.76207179602,
+          84.54958142571,
+          28.535021251006
+        ],
+        "created": "2015-04-25T17:50:09.816528Z",
+        "dueDate": null,
+        "imagery": "",
+        "private": false,
+        "campaigns": [],
+        "idPresets": null,
+        "interests": [
+          {
+            "id": 3,
+            "name": "disaster response"
+          }
+        ],
+        "licenseId": null,
+        "projectId": 1001,
+        "countryTag": [
+          "Nepal"
+        ],
+        "lastUpdated": "2015-10-09T10:27:55.864089Z",
+        "mapperLevel": "BEGINNER",
+        "projectInfo": {
+          "name": "Nepal Earthquake, 2015, Road Network - task 3",
+          "locale": "en",
+          "description": "** DO NOT DO THIS TASK ANYMORE, we are on the 2nd pass of mapping, please go to [Task 1018](http://tasks.hotosm.org/project/1018) **\r\n\r\nThe international community is responding rapidly. The international charter has activated. We are also coordinating with international organizations and the DHnetwork. \r\n\r\nHundred of deaths reported after a few hours.Communications are hard at this point.\r\n\r\nFirst priority established in the first hours after the Earthquake, is the road network to connect to remote areas.\r\n",
+          "instructions": "Trace all roads. Often in the mountains, only paths exist. Trace these paths and assure to connect them to the road network.\r\n\r\n**Do not trace all the paths in the fields or small paths of a few hundred meters that do not connect to road networks**. This make more difficult to read the map and identify the important paths.\r\n\r\nImagery \r\n\r\n    Comment  source=Bing Imagery\r\n    If any problem with Bing Imagery, verify if MapBox covers the area.\r\n    \r\n**Road tagging guide**\r\n\r\nFrom [Nepal roads page on the wiki](http://wiki.openstreetmap.org/wiki/Nepal/Roads)\r\n\r\n- highway=primary Road corridors that carries a huge volume of traffic between arterial roads and has a high density of public transport services. These roads often connect two relatively distant localities in urban areas. \r\n- highway=secondary Collector roads that carry lower volume of traffic and has either no public transport service or a lower density of public transport service. These roads often connect two neighboring/nearby localities in urban areas. \r\n- highway=road Roads traced from satellite imagery for which a classification has not been determined yet. This is a temporary tag indicating further ground survey work is required.\t\t\t\r\n- highway=residential General residential roads in a planned locality. Wide enough to carry slow moving residential traffic. \r\n- highway=service Generally for access to (or inside) a building, industrial estate, universities, parks, etc. \r\n- highway=pedestrian Roads that are almost exclusively used by pedestrians and are out of bounds of motor vehicles in normal conditions, such as plazas and squares.\t\t\r\n- highway=track Unpaved motorable tracks \r\n\r\nAlso, look out for pedestrian suspension bridges. They are common and [can look like this](https://twitter.com/pedrito1414/status/591976319153524738). Tag as: bridge=suspension /  highway=footway / layer=1",
+          "shortDescription": "** DO NOT DO THIS TASK ANYMORE, we are on the 2nd pass of mapping, please go to [Task 1018](http://tasks.hotosm.org/project/1018) **\r\n\r\nThe international community is responding rapidly. The international charter has activated. We are also coordinating with international organizations and the DHnetwork. \r\n\r\nHundred of deaths reported after a few hours.Communications are hard at this point.\r\n\r\nFirst priority established in the first hours after the Earthquake, is the road network to connect to remote areas.\r\n",
+          "perTaskInstructions": ""
+        },
+        "mappingTypes": [],
+        "organisation": null,
+        "activeMappers": 0,
+        "defaultLocale": "en",
+        "percentMapped": 100,
+        "priorityAreas": [
+          {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  84.3132019042969,
+                  28.1046921119907
+                ],
+                [
+                  84.3132019042969,
+                  28.3744854656123
+                ],
+                [
+                  84.4642639160156,
+                  28.3744854656123
+                ],
+                [
+                  84.4642639160156,
+                  28.1046921119907
+                ],
+                [
+                  84.3132019042969,
+                  28.1046921119907
+                ]
+              ]
+            ]
+          }
+        ],
+        "mappingEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2",
+          "FIELD_PAPERS"
+        ],
+        "osmchaFilterId": null,
+        "projectPriority": "MEDIUM",
+        "allowedUsernames": [],
+        "changesetComment": "#hotosm-Nepal-Earthquake-1001",
+        "organisationLogo": null,
+        "organisationName": null,
+        "organisationSlug": null,
+        "percentValidated": 11,
+        "taskCreationMode": "GRID",
+        "mappingPermission": "ANY",
+        "percentBadImagery": 0,
+        "validationEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2",
+          "FIELD_PAPERS"
+        ],
+        "validationPermission": "ANY",
+        "enforceRandomTaskSelection": null
+      },
+      "id": "1001",
+      "links": [
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items/1001",
+          "rel": "self",
+          "type": "application/geo+json"
+        },
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "title": "HOT Tasking Manager Projects"
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items?limit=10&offset=0",
+      "rel": "self",
+      "type": "application/geo+json",
+      "title": "HOT Tasking Manager Projects"
+    },
+    {
+      "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items?limit=10&offset=10",
+      "rel": "next",
+      "type": "application/geo+json",
+      "title": "HOT Tasking Manager Projects"
+    }
+  ],
+  "timeStamp": "2022-01-14T11:55:22Z",
+  "numberMatched": 12,
+  "numberReturned": 10
+}
