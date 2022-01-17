@@ -16,6 +16,7 @@ import org.wololo.geojson.Geometry;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
@@ -28,6 +29,8 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 @RequiredArgsConstructor
 public class BivariateLayerProvider implements LayerProvider {
     private static final Logger LOG = LoggerFactory.getLogger(BivariateLayerProvider.class);
+    private static final String MARKDOWN_LINK_PATTERN = "[%s](%s)";
+    private static final Pattern URL_SEARCH_PATTERN = Pattern.compile("(http|ftp|https):\\/\\/([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-])");
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
     private final LayerConfigService layerConfigService;
     private List<String> bivariateLayerIds;
@@ -169,7 +172,12 @@ public class BivariateLayerProvider implements LayerProvider {
                         .filter(indicator -> Objects.equals(indicator.name(), q))
                         .findFirst()
                         .map(BivariateLayerLegendQuery.Indicator::copyrights)
-                        .ifPresent(copyrights::addAll)
+                        .orElseGet(ArrayList::new)
+                        .stream()
+                        .map(str -> URL_SEARCH_PATTERN.matcher(str)
+                                .replaceAll(matchResult ->
+                                        String.format(MARKDOWN_LINK_PATTERN, matchResult.group(0), matchResult.group(0))))
+                        .forEach(copyrights::add)
         );
         return copyrights.stream().toList();
     }
