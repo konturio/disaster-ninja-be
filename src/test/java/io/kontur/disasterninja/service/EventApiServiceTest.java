@@ -81,7 +81,7 @@ class EventApiServiceTest {
         //given
         when(authorizationService.getAccessToken()).thenReturn("testToken");
         //when
-        service.getEvents(null);
+        service.getEvents(null, null);
         //then
         verify(authorizationService, times(1)).getAccessToken();
         verify(client, times(1)).getEvents("testToken", null);
@@ -109,7 +109,7 @@ class EventApiServiceTest {
         when(client.getEvents(any(), any())).thenReturn(List.of(moreRecentEvent, oldEvent, mostPopulatedEvent));
 
         //when
-        List<EventListDto> events = service.getEvents(null);
+        List<EventListDto> events = service.getEvents(null, null);
 
         //then
         assertEquals(mostPopulatedEvent.getEventId(), events.get(0).getEventId());
@@ -138,7 +138,7 @@ class EventApiServiceTest {
         UUID eventId = UUID.randomUUID();
         when(client.getEvent(eventId, "testToken", null)).thenReturn(event);
         //when
-        EventDto result = service.getEvent(eventId);
+        EventDto result = service.getEvent(eventId, null, null);
         //then
         verify(authorizationService, times(1)).getAccessToken();
         verify(client, times(1)).getEvent(eventId, "testToken", null);
@@ -154,7 +154,7 @@ class EventApiServiceTest {
         //given
         when(authorizationService.getAccessToken()).thenReturn("testToken");
         //when,then
-        Assertions.assertThrows(WebApplicationException.class, () -> service.getEvent(UUID.randomUUID()));
+        Assertions.assertThrows(WebApplicationException.class, () -> service.getEvent(UUID.randomUUID(), null, null));
     }
 
     private List<EventFeedDto> publicFeeds() {

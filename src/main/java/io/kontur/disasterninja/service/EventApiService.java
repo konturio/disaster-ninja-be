@@ -28,21 +28,17 @@ public class EventApiService {
         this.authorizationService = authorizationService;
     }
 
-    public List<EventListDto> getEvents(String feed) {
-        String accessToken = authorizationService.getAccessToken();
-        List<EventApiEventDto> events = client.getEvents(accessToken, feed);
+    public List<EventListDto> getEvents(String feed, String userToken) {
+        String token = getUserTokenOrDefaultAccessToken(userToken);
+        List<EventApiEventDto> events = client.getEvents(token, feed);
         List<EventListDto> eventList = convertListOfEvents(events);
         sort(eventList);
         return eventList;
     }
 
-    public EventDto getEvent(UUID eventId) { //todo will be removed. feed will be provided in all FE requests
-        return getEvent(eventId, null);
-    }
-
-    public EventDto getEvent(UUID eventId, String feed) {
-        String accessToken = authorizationService.getAccessToken();
-        EventApiEventDto event = client.getEvent(eventId, accessToken, feed);
+    public EventDto getEvent(UUID eventId, String feed, String userToken) {
+        String token = getUserTokenOrDefaultAccessToken(userToken);
+        EventApiEventDto event = client.getEvent(eventId, token, feed);
         if (event == null) {
             throw new WebApplicationException("Event " + eventId + " is not found", HttpStatus.NOT_FOUND);
         }
@@ -50,10 +46,15 @@ public class EventApiService {
     }
 
     public List<EventFeedDto> getUserFeeds(String userToken) {
+        String token = getUserTokenOrDefaultAccessToken(userToken);
+        return client.getUserFeeds(token);
+    }
+
+    private String getUserTokenOrDefaultAccessToken(String userToken) {
         if (userToken == null || userToken.isBlank()) {
-            return client.getUserFeeds(authorizationService.getAccessToken()); //default DN2 token - for public users
+            return authorizationService.getAccessToken();
         }
-        return client.getUserFeeds(userToken);
+        return userToken;
     }
 
     private List<EventListDto> convertListOfEvents(List<EventApiEventDto> events) {

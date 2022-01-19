@@ -28,7 +28,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
 
     @BeforeEach
     private void init() throws IOException {
-        Mockito.when(eventApiService.getEvent(any())).thenReturn(
+        Mockito.when(eventApiService.getEvent(any(), any(), any())).thenReturn(
             objectMapper.readValue(
                 getClass().getResource("/io/kontur/disasterninja/client/layers/eventdto.json"),
                 EventDto.class));
@@ -85,7 +85,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
                 feature.getProperties().remove("Class");
             }
         });
-        Mockito.when(eventApiService.getEvent(any())).thenReturn(eventDto);
+        Mockito.when(eventApiService.getEvent(any(), any(), any())).thenReturn(eventDto);
 
         Layer result = eventShapeLayerProvider.obtainLayer(null, EVENT_SHAPE_LAYER_ID, UUID.randomUUID());
         //"Class" property is absent from features properties => the default template is used
@@ -108,7 +108,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
                 feature.getProperties().remove("Class");
             }
         });
-        Mockito.when(eventApiService.getEvent(any())).thenReturn(eventDto);
+        Mockito.when(eventApiService.getEvent(any(), any(), any())).thenReturn(eventDto);
 
         List<Layer> result = eventShapeLayerProvider.obtainLayers(null, UUID.randomUUID());
         assertEquals(1, result.size());
