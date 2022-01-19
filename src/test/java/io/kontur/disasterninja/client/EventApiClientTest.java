@@ -51,7 +51,7 @@ class EventApiClientTest {
             });
 
         //when
-        List<EventApiEventDto> events = client.getEvents("JwtTestToken");
+        List<EventApiEventDto> events = client.getEvents("JwtTestToken", null);
 
         //then
         assertEquals(2, events.size());
@@ -67,7 +67,7 @@ class EventApiClientTest {
                         MediaType.APPLICATION_JSON));
         //when
         EventApiEventDto event = client.getEvent(UUID.fromString("1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"),
-                "JwtTestToken");
+                "JwtTestToken", null);
 
         //then
         assertNotNull(event);

@@ -2,6 +2,7 @@ package io.kontur.disasterninja.service;
 
 import io.kontur.disasterninja.client.EventApiClient;
 import io.kontur.disasterninja.dto.EventDto;
+import io.kontur.disasterninja.dto.EventFeedDto;
 import io.kontur.disasterninja.dto.EventListDto;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
@@ -27,21 +28,32 @@ public class EventApiService {
         this.authorizationService = authorizationService;
     }
 
-    public List<EventListDto> getEvents() {
+    public List<EventListDto> getEvents(String feed) {
         String accessToken = authorizationService.getAccessToken();
-        List<EventApiEventDto> events = client.getEvents(accessToken);
+        List<EventApiEventDto> events = client.getEvents(accessToken, feed);
         List<EventListDto> eventList = convertListOfEvents(events);
         sort(eventList);
         return eventList;
     }
 
-    public EventDto getEvent(UUID eventId) {
+    public EventDto getEvent(UUID eventId) { //todo will be removed. feed will be provided in all FE requests
+        return getEvent(eventId, null);
+    }
+
+    public EventDto getEvent(UUID eventId, String feed) {
         String accessToken = authorizationService.getAccessToken();
-        EventApiEventDto event = client.getEvent(eventId, accessToken);
+        EventApiEventDto event = client.getEvent(eventId, accessToken, feed);
         if (event == null) {
             throw new WebApplicationException("Event " + eventId + " is not found", HttpStatus.NOT_FOUND);
         }
         return EventDtoConverter.convert(event);
+    }
+
+    public List<EventFeedDto> getUserFeeds(String userToken) {
+        if (userToken == null || userToken.isBlank()) {
+            return client.getUserFeeds(authorizationService.getAccessToken()); //default DN2 token - for public users
+        }
+        return client.getUserFeeds(userToken);
     }
 
     private List<EventListDto> convertListOfEvents(List<EventApiEventDto> events) {
