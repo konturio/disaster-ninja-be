@@ -99,6 +99,8 @@ public class EventsController {
                     break;
                 }
             }
+        } else if (!feeds.isEmpty()) {
+            feeds.get(0).setDefault(true);
         }
         return feeds;
     }

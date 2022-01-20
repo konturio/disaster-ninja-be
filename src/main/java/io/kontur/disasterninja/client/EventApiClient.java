@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -49,7 +50,7 @@ public class EventApiClient {
             .exchange(EVENT_API_USER_FEEDS_URI, HttpMethod.GET, new HttpEntity<>(null, headers),
                 new ParameterizedTypeReference<>() { });
 
-        return response.getBody();
+        return Optional.ofNullable(response.getBody()).orElseGet(List::of);
     }
 
     public List<EventApiEventDto> getEvents(String jwtToken, String eventApiFeed) {
