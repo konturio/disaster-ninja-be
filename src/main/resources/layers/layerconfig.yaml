@@ -428,6 +428,17 @@ layers:
         steps:
           - sourceLayer: 'hotProjects'
             paramName: 'k_type'
+            paramValue: 'label'
+            style:
+              text: '{percentValidated}%'
+              text-size: 12
+              text-color: 'white'
+              text-anchor: 'center'
+              font-family: 'Noto Sans Regular'
+              circle-color: '#4AA357'
+              circle-radius: ["*", ["/", ["get", "percentMapped"], 100], 16]
+          - sourceLayer: 'hotProjects'
+            paramName: 'k_type'
             paramValue: 'callout'
             style:
               color: 'black'
@@ -436,14 +447,15 @@ layers:
             paramName: 'k_type'
             paramValue: 'label'
             style:
-              text: '{percentValidated}%'
-              text-size: 14
-              text-color: 'white'
-              text-anchor: 'center'
-              font-family: 'Noto Sans Regular'
-              circle-color: 'black'
-              circle-radius: 28
-              circle-opacity: 0.4
+              circle-color: '#505C67'
+              circle-radius: ["*", ["/", ["get", "percentMapped"], 100], 16]
+          - sourceLayer: 'hotProjects'
+            paramName: 'k_type'
+            paramValue: 'label'
+            style:
+              circle-color: '#EC0000'
+              circle-radius: 16
+              circle-opacity: 0.7
           - stepName: 'Project'
             stepShape: 'square'
             sourceLayer: 'hotProjects'
