@@ -24,6 +24,10 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.22'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+
     implementation 'org.wololo:jts2geojson:0.16.1'
     implementation 'org.springdoc:springdoc-openapi-ui:1.5.11'
     implementation 'com.apollographql.apollo:apollo-runtime:2.5.10'

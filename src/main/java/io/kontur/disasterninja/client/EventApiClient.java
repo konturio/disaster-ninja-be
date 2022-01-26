@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.kontur.disasterninja.dto.EventFeedDto;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -25,11 +27,12 @@ public class EventApiClient {
     private static final Logger LOG = LoggerFactory.getLogger(EventApiClient.class);
     private static final String EVENT_API_EVENT_LIST_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&after=%s&episodeFilterType=LATEST&limit=%s&sortOrder=ASC";
     private static final String EVENT_API_EVENT_ID_URI = "/v1/event?feed=%s&eventId=%s";
+    private static final String EVENT_API_USER_FEEDS_URI = "/v1/user_feeds";
 
     private final RestTemplate restTemplate;
 
     @Value("${kontur.platform.event-api.feed}")
-    private String eventApiFeed;
+    private String defaultEventApiFeed; //todo will be removed - as this param will be provided in all FE requests
     @Value("${kontur.platform.event-api.pageSize}")
     private int pageSize;
 
@@ -37,7 +40,23 @@ public class EventApiClient {
         this.restTemplate = eventApiRestTemplate;
     }
 
-    public List<EventApiEventDto> getEvents(String jwtToken) {
+    public List<EventFeedDto> getUserFeeds(String jwtToken) {
+        HttpHeaders headers = new HttpHeaders();
+        if (jwtToken != null && !jwtToken.isBlank()) {
+            headers.setBearerAuth(jwtToken);
+        }
+
+        ResponseEntity<List<EventFeedDto>> response = restTemplate
+            .exchange(EVENT_API_USER_FEEDS_URI, HttpMethod.GET, new HttpEntity<>(null, headers),
+                new ParameterizedTypeReference<>() { });
+
+        return Optional.ofNullable(response.getBody()).orElseGet(List::of);
+    }
+
+    public List<EventApiEventDto> getEvents(String jwtToken, String eventApiFeed) {
+        if (eventApiFeed == null) {
+            eventApiFeed = defaultEventApiFeed;
+        }
         OffsetDateTime after = OffsetDateTime.now()
             .minusDays(4);
 
@@ -68,9 +87,12 @@ public class EventApiClient {
         return result;
     }
 
-    public EventApiEventDto getEvent(UUID eventId, String jwtToken) {
+    public EventApiEventDto getEvent(UUID eventId, String jwtToken, String eventApiFeed) {
         if (eventId == null) {
             return null;
+        }
+        if (eventApiFeed == null) {
+            eventApiFeed = defaultEventApiFeed;
         }
         String uri = String.format(EVENT_API_EVENT_ID_URI, eventApiFeed, eventId);
         HttpHeaders headers = new HttpHeaders();

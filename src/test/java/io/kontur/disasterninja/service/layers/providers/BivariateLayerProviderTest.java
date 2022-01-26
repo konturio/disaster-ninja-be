@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -49,7 +51,7 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         );
         List<BivariateLayerLegendQuery.Indicator> indicators = List.of(
                 new BivariateLayerLegendQuery.Indicator("Indicator",
-                        "area_km2", "Area", List.of(List.of("neutral"), List.of("neutral")), List.of("copyrights")),
+                        "area_km2", "Area", List.of(List.of("neutral"), List.of("neutral")), List.of("copyrights https://kontur.io/")),
                 new BivariateLayerLegendQuery.Indicator("Indicator",
                         "count", "OSM Objects", List.of(List.of("bad"), List.of("good")), List.of("copyrights1")),
                 new BivariateLayerLegendQuery.Indicator("Indicator",
@@ -144,6 +146,12 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         //copyrights
         assertEquals(3, biv.getCopyrights().size());
 
+    }
+
+    @Test
+    public void copyrightLinkMarkdown_8657() {
+        List<Layer> layers = bivariateLayerProvider.obtainLayers(null, null);
+        assertThat(layers.get(0).getCopyrights(), hasItems("copyrights [https://kontur.io/](https://kontur.io/)", "copyrights1", "copyrights2"));
     }
 
     private List<BivariateLayerLegendQuery.Step> steps(double d1, double d2, double d3, double d4,

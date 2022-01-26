@@ -57,7 +57,7 @@ public class EventShapeLayerProvider implements LayerProvider {
             throw new WebApplicationException("EventId must be provided when requesting layer " + layerId,
                 HttpStatus.BAD_REQUEST);
         }
-        EventDto eventDto = eventApiService.getEvent(eventId);
+        EventDto eventDto = eventApiService.getEvent(eventId, null, null); //todo either userToken and feedname should be provided in request or default feed and auth should be used?
 
         Layer layer = fromEventDto(eventDto);
         if (layer != null && layer.getSource() != null && layer.getSource().getData() != null) {

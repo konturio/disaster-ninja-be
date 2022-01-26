@@ -2,6 +2,7 @@ package io.kontur.disasterninja.service;
 
 import io.kontur.disasterninja.client.EventApiClient;
 import io.kontur.disasterninja.dto.EventDto;
+import io.kontur.disasterninja.dto.EventFeedDto;
 import io.kontur.disasterninja.dto.EventListDto;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
@@ -27,21 +28,33 @@ public class EventApiService {
         this.authorizationService = authorizationService;
     }
 
-    public List<EventListDto> getEvents() {
-        String accessToken = authorizationService.getAccessToken();
-        List<EventApiEventDto> events = client.getEvents(accessToken);
+    public List<EventListDto> getEvents(String feed, String userToken) {
+        String token = getUserTokenOrDefaultAccessToken(userToken);
+        List<EventApiEventDto> events = client.getEvents(token, feed);
         List<EventListDto> eventList = convertListOfEvents(events);
         sort(eventList);
         return eventList;
     }
 
-    public EventDto getEvent(UUID eventId) {
-        String accessToken = authorizationService.getAccessToken();
-        EventApiEventDto event = client.getEvent(eventId, accessToken);
+    public EventDto getEvent(UUID eventId, String feed, String userToken) {
+        String token = getUserTokenOrDefaultAccessToken(userToken);
+        EventApiEventDto event = client.getEvent(eventId, token, feed);
         if (event == null) {
             throw new WebApplicationException("Event " + eventId + " is not found", HttpStatus.NOT_FOUND);
         }
         return EventDtoConverter.convert(event);
+    }
+
+    public List<EventFeedDto> getUserFeeds(String userToken) {
+        String token = getUserTokenOrDefaultAccessToken(userToken);
+        return client.getUserFeeds(token);
+    }
+
+    private String getUserTokenOrDefaultAccessToken(String userToken) {
+        if (userToken == null || userToken.isBlank()) {
+            return authorizationService.getAccessToken();
+        }
+        return userToken;
     }
 
     private List<EventListDto> convertListOfEvents(List<EventApiEventDto> events) {

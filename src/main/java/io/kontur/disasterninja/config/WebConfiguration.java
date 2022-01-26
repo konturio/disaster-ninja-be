@@ -87,6 +87,19 @@ public class WebConfiguration {
                 .build();
     }
 
+
+    @Bean
+    public RestTemplate userProfileRestTemplate(RestTemplateBuilder builder,
+                                                @Value("${kontur.platform.userProfileApi.url}") String url,
+                                                @Value("${kontur.platform.userProfileApi.connectionTimeout}") Integer connectionTimeout,
+                                                @Value("${kontur.platform.userProfileApi.readTimeout}") Integer readTimeout) {
+        return builder
+            .rootUri(url)
+            .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
+            .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
+            .build();
+    }
+
     @Bean
     public GeoJsonDeserializerCustomizer geoJsonDeserializerCustomizer() {
         return new GeoJsonDeserializerCustomizer();
