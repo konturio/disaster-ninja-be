@@ -30,11 +30,11 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class LayerApiProviderIT {
+public class LayersApiProviderIT {
 
     private MockRestServiceServer server;
     @Autowired
-    private LayerApiProvider provider;
+    private LayersApiProvider provider;
     @Autowired
     ObjectMapper objectMapper;
 

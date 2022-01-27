@@ -21,12 +21,12 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Service
 @Order(HIGHEST_PRECEDENCE)
-public class LayerApiProvider implements LayerProvider {
+public class LayersApiProvider implements LayerProvider {
 
     private static final String LAYER_PREFIX = "KLA__";
     private final LayersApiClient layersApiClient;
 
-    public LayerApiProvider(LayersApiClient layersApiClient) {
+    public LayersApiProvider(LayersApiClient layersApiClient) {
         this.layersApiClient = layersApiClient;
     }
 
