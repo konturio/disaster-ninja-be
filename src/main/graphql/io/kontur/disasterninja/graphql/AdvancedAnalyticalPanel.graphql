@@ -1,0 +1,20 @@
+query AdvancedAnalyticalPanel($polygon: GeoJSON) {
+    polygonStatistic(polygonStatisticRequest:{
+        polygonV2: $polygon
+    }
+    ){
+        analytics {
+            advancedAnalytics {
+                numerator,
+                denominator,
+                numeratorLabel,
+                denominatorLabel,
+                analytics {
+                    value,
+                    calculation,
+                    quality
+                }
+            }
+        }
+    }
+}

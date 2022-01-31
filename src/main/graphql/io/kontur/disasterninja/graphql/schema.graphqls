@@ -106,6 +106,21 @@ type Analytics {
   thermalSpotStatistic: ThermalSpotStatistic
   urbanCore: UrbanCore
   functions(args: [FunctionArgs]): [FunctionResult]
+  advancedAnalytics: [AdvancedAnalytics]
+}
+
+type AdvancedAnalytics {
+  numerator: String,
+  denominator: String,
+  numeratorLabel: String,
+  denominatorLabel: String,
+  analytics: [AdvancedAnalyticsValues]
+}
+
+type AdvancedAnalyticsValues {
+  calculation: String,
+  value: Float,
+  quality: Float
 }
 
 type PolygonStatistic {
