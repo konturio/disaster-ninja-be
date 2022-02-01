@@ -1,7 +1,6 @@
 package io.kontur.disasterninja.controller;
 
-import io.kontur.disasterninja.dto.AnalyticsDto;
-import io.kontur.disasterninja.graphql.AdvancedAnalyticalPanelQuery;
+import io.kontur.disasterninja.dto.AdvancedAnalyticsDto;
 import io.kontur.disasterninja.service.AdvancedAnalyticsPanelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -18,7 +17,7 @@ import org.wololo.geojson.GeoJSON;
 
 import java.util.List;
 
-@Tag(name = "Analytics tab", description = "Analytics tab API")
+@Tag(name = "Advanced Analytics tab", description = "Advanced Analytics panel API")
 @RestController
 @RequestMapping("/advanced_analytics")
 @RequiredArgsConstructor
@@ -30,10 +29,10 @@ public class AdvancedAnalyticsPanelController {
             tags = {"Analytics tab"},
             description = "Calculate advanced analytics to test the concept of getting analytical data automatically so analytical data makes sense.")
     @ApiResponse(responseCode = "200", description = "Successful operation",
-            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AnalyticsDto.class))))
+            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AdvancedAnalyticsDto.class))))
     @PostMapping
-    public List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic> getAdvancedAnalyticsTab(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Polygon in GeoJSON format. Send polygon as FeatureCollection")
-                                              @RequestBody GeoJSON geoJSON) {
+    public List<AdvancedAnalyticsDto> getAdvancedAnalyticsTab(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Polygon in GeoJSON format. Send polygon as FeatureCollection")
+                                                              @RequestBody GeoJSON geoJSON) {
         return advancedAnalyticsPanelService.calculateAnalytics(geoJSON);
     }
 }
