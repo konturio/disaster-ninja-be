@@ -1,582 +1,585 @@
-layers:
-  configs:
-    ##### Category: NONE
-    ### Group: Layers in selected area
+configs:
+  ##### Category: NONE
+  ### Group: Layers in selected area
 
-    ## Event Shape: default config
-    - id: 'eventShape'
-      globalOverlay: false
-      displayLegendIfNoFeaturesExist: true
-      boundaryRequiredForRetrieval: false
-      eventIdRequiredForRetrieval: true
-      name: 'Event shape'
-      group: 'layersInSelectedArea'
-      legend:
-        type: 'simple'
-        steps:
-          - stepName: 'Exposure Area'
-            stepShape: 'circle'
-            style:
-              width: 3
-              color: '#051626'
+  ## Event Shape: default config
+  - id: 'eventShape'
+    globalOverlay: false
+    displayLegendIfNoFeaturesExist: true
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: true
+    name: 'Event shape'
+    group: 'layersInSelectedArea'
+    legend:
+      type: 'simple'
+      steps:
+        - stepName: 'Exposure Area'
+          stepShape: 'circle'
+          style:
+            width: 3
+            color: '#051626'
 
-    ## Event Shape: configs per event type
-    - id: 'eventShape.CYCLONE'
-      globalOverlay: false
-      displayLegendIfNoFeaturesExist: false
-      boundaryRequiredForRetrieval: false
-      eventIdRequiredForRetrieval: true
-      name: 'Event shape'
-      group: 'layersInSelectedArea'
-      legend:
-        type: 'simple'
-        steps:
-          - stepName: 'Centroid'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Point_Centroid'
-            style:
-              circle-radius: 3
-              circle-color: '#051626'
-          - stepName: 'Exposure Area 60 km/h'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Poly_Green'
-            style:
-              width: 3
-              color: '#F5A663'
-          - stepName: 'Exposure Area 90 km/h'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Poly_Orange'
-            style:
-              width: 3
-              color: '#DA5080'
-          - stepName: 'Exposure Area 120 km/h'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Poly_Red'
-            style:
-              width: 2
-              color: '#830909'
-          - stepName: 'Line Track'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramPattern: 'Line_Line_[0-9]+' #all matches to be merged into single step
-            paramValue: 'Line_Line'
-            style:
-              color: '#8C949B'
-          - stepName: 'Point Track'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramPattern: 'Point_Polygon_Point_[0-9]+' #all matches to be merged into single step
-            paramValue: 'Point_Polygon_Point'
-            style:
-              circle-radius: 2
-              circle-color: '#051626'
-          - stepName: 'Uncertainty Cones'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Poly_Cones'
-            style:
-              width: 1
-              color: '#646F78'
+  ## Event Shape: configs per event type
+  - id: 'eventShape.CYCLONE'
+    globalOverlay: false
+    displayLegendIfNoFeaturesExist: false
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: true
+    name: 'Event shape'
+    group: 'layersInSelectedArea'
+    legend:
+      type: 'simple'
+      steps:
+        - stepName: 'Centroid'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Point_Centroid'
+          style:
+            circle-radius: 3
+            circle-color: '#051626'
+        - stepName: 'Exposure Area 60 km/h'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_Green'
+          style:
+            width: 3
+            color: '#F5A663'
+        - stepName: 'Exposure Area 90 km/h'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_Orange'
+          style:
+            width: 3
+            color: '#DA5080'
+        - stepName: 'Exposure Area 120 km/h'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_Red'
+          style:
+            width: 2
+            color: '#830909'
+        - stepName: 'Line Track'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramPattern: 'Line_Line_[0-9]+' #all matches to be merged into single step
+          paramValue: 'Line_Line'
+          style:
+            color: '#8C949B'
+        - stepName: 'Point Track'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramPattern: 'Point_Polygon_Point_[0-9]+' #all matches to be merged into single step
+          paramValue: 'Point_Polygon_Point'
+          style:
+            circle-radius: 2
+            circle-color: '#051626'
+        - stepName: 'Uncertainty Cones'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_Cones'
+          style:
+            width: 1
+            color: '#646F78'
 
-    - id: 'eventShape.DROUGHT'
-      globalOverlay: false
-      displayLegendIfNoFeaturesExist: false
-      boundaryRequiredForRetrieval: false
-      eventIdRequiredForRetrieval: true
-      name: 'Event shape'
-      group: 'layersInSelectedArea'
-      legend:
-        type: 'simple'
-        steps:
-          - stepName: 'Centroid'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Point_Centroid'
-            style:
-              circle-radius: 3
-              circle-color: '#051626'
-          - stepName: 'Exposure Area'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Poly_area'
-            style:
-              width: 3
-              color: '#051626'
+  - id: 'eventShape.DROUGHT'
+    globalOverlay: false
+    displayLegendIfNoFeaturesExist: false
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: true
+    name: 'Event shape'
+    group: 'layersInSelectedArea'
+    legend:
+      type: 'simple'
+      steps:
+        - stepName: 'Centroid'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Point_Centroid'
+          style:
+            circle-radius: 3
+            circle-color: '#051626'
+        - stepName: 'Exposure Area'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_area'
+          style:
+            width: 3
+            color: '#051626'
 
-    - id: 'eventShape.EARTHQUAKE'
-      globalOverlay: false
-      displayLegendIfNoFeaturesExist: false
-      boundaryRequiredForRetrieval: false
-      eventIdRequiredForRetrieval: true
-      name: 'Event shape'
-      group: 'layersInSelectedArea'
-      legend:
-        type: 'simple'
-        steps:
-          - stepName: 'Centroid'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Point_Centroid'
-            style:
-              circle-radius: 3
-              circle-color: '#051626'
-          - stepName: 'Exposure Area 100 km'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Poly_Circle'
-            style:
-              width: 3
-              color: '#646F78'
+  - id: 'eventShape.EARTHQUAKE'
+    globalOverlay: false
+    displayLegendIfNoFeaturesExist: false
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: true
+    name: 'Event shape'
+    group: 'layersInSelectedArea'
+    legend:
+      type: 'simple'
+      steps:
+        - stepName: 'Centroid'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Point_Centroid'
+          style:
+            circle-radius: 3
+            circle-color: '#051626'
+        - stepName: 'Exposure Area 100 km'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_Circle'
+          style:
+            width: 3
+            color: '#646F78'
 
-    - id: 'eventShape.FLOOD'
-      globalOverlay: false
-      displayLegendIfNoFeaturesExist: false
-      boundaryRequiredForRetrieval: false
-      eventIdRequiredForRetrieval: true
-      name: 'Event shape'
-      group: 'layersInSelectedArea'
-      legend:
-        type: 'simple'
-        steps:
-          - stepName: 'Centroid'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Point_Centroid'
-            style:
-              circle-radius: 3
-              circle-color: '#051626'
-          - stepName: 'Exposure Area'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Poly_Affected'
-            style:
-              width: 3
-              color: '#051626'
-          - stepName: 'Alert Area'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Poly_Global'
-            style:
-              width: 2
-              color: '#051626'
-              opacity: 0.5
+  - id: 'eventShape.FLOOD'
+    globalOverlay: false
+    displayLegendIfNoFeaturesExist: false
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: true
+    name: 'Event shape'
+    group: 'layersInSelectedArea'
+    legend:
+      type: 'simple'
+      steps:
+        - stepName: 'Centroid'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Point_Centroid'
+          style:
+            circle-radius: 3
+            circle-color: '#051626'
+        - stepName: 'Exposure Area'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_Affected'
+          style:
+            width: 3
+            color: '#051626'
+        - stepName: 'Alert Area'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_Global'
+          style:
+            width: 2
+            color: '#051626'
+            opacity: 0.5
 
-    - id: 'eventShape.WILDFIRE'
-      globalOverlay: false
-      displayLegendIfNoFeaturesExist: false
-      boundaryRequiredForRetrieval: false
-      eventIdRequiredForRetrieval: true
-      name: 'Event shape'
-      group: 'layersInSelectedArea'
-      legend:
-        type: 'simple'
-        steps:
-          - stepName: 'Centroid'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Point_Centroid'
-            style:
-              circle-radius: 3
-              circle-color: '#051626'
-          - stepName: 'Exposure Area'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Poly_area'
-            style:
-              width: 3
-              color: '#051626'
+  - id: 'eventShape.WILDFIRE'
+    globalOverlay: false
+    displayLegendIfNoFeaturesExist: false
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: true
+    name: 'Event shape'
+    group: 'layersInSelectedArea'
+    legend:
+      type: 'simple'
+      steps:
+        - stepName: 'Centroid'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Point_Centroid'
+          style:
+            circle-radius: 3
+            circle-color: '#051626'
+        - stepName: 'Exposure Area'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_area'
+          style:
+            width: 3
+            color: '#051626'
 
-    - id: 'eventShape.VOLCANO'
-      globalOverlay: false
-      displayLegendIfNoFeaturesExist: false
-      boundaryRequiredForRetrieval: false
-      eventIdRequiredForRetrieval: true
-      name: 'Event shape'
-      group: 'layersInSelectedArea'
-      legend:
-        type: 'simple'
-        steps:
-          - stepName: 'Centroid'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Point_Centroid'
-            style:
-              circle-radius: 3
-              circle-color: '#051626'
-          - stepName: 'Exposure Area 100 km'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Poly_Circle'
-            style:
-              width: 3
-              color: '#051626'
-          - stepName: 'Exposure Area'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Poly_Cones_0'
-            style:
-              width: 3
-              color: '#051626'
-          - stepName: '6 hours Forecast'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Poly_Cones_6'
-            style:
-              width: 2
-              color: '#051626'
-              opacity: 0.7
-          - stepName: '12 hours Forecast'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Poly_Cones_12'
-            style:
-              width: 2
-              color: '#051626'
-              opacity: 0.5
-          - stepName: '18 hours Forecast'
-            stepShape: 'circle'
-            paramName: 'Class'
-            paramValue: 'Poly_Cones_18'
-            style:
-              width: 2
-              color: '#051626'
-              opacity: 0.3
+  - id: 'eventShape.VOLCANO'
+    globalOverlay: false
+    displayLegendIfNoFeaturesExist: false
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: true
+    name: 'Event shape'
+    group: 'layersInSelectedArea'
+    legend:
+      type: 'simple'
+      steps:
+        - stepName: 'Centroid'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Point_Centroid'
+          style:
+            circle-radius: 3
+            circle-color: '#051626'
+        - stepName: 'Exposure Area 100 km'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_Circle'
+          style:
+            width: 3
+            color: '#051626'
+        - stepName: 'Exposure Area'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_Cones_0'
+          style:
+            width: 3
+            color: '#051626'
+        - stepName: '6 hours Forecast'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_Cones_6'
+          style:
+            width: 2
+            color: '#051626'
+            opacity: 0.7
+        - stepName: '12 hours Forecast'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_Cones_12'
+          style:
+            width: 2
+            color: '#051626'
+            opacity: 0.5
+        - stepName: '18 hours Forecast'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_Cones_18'
+          style:
+            width: 2
+            color: '#051626'
+            opacity: 0.3
 
-    # --- empty template ---
-    #- id: 'eventShape.'
-    #  globalOverlay: false
-    #  displayLegendIfNoFeaturesExist: false
-    #  boundaryRequiredForRetrieval: false
-    #  eventIdRequiredForRetrieval: true
-    #  name: 'Event shape'
-    #  group: 'layersInSelectedArea'
-    #  legend:
-    #    type: 'simple'
-    #    steps:
-    #      - stepName: 'Centroid'
-    #        paramName: 'Class'
-    #        paramValue: 'Point_Centroid'
-    #        paramValue: 'Poly_area'
-    #        paramValue: 'Poly_Circle'
-    #        paramValue: 'Poly_Affected'
-    #        paramValue: 'Poly_Global'
-    #        style:
-    #          fill-color: '#051626'
-    #          width: 3
-    #          color: '#fff'
+  # --- empty template ---
+  #- id: 'eventShape.'
+  #  globalOverlay: false
+  #  displayLegendIfNoFeaturesExist: false
+  #  boundaryRequiredForRetrieval: false
+  #  eventIdRequiredForRetrieval: true
+  #  name: 'Event shape'
+  #  group: 'layersInSelectedArea'
+  #  legend:
+  #    type: 'simple'
+  #    steps:
+  #      - stepName: 'Centroid'
+  #        paramName: 'Class'
+  #        paramValue: 'Point_Centroid'
+  #        paramValue: 'Poly_area'
+  #        paramValue: 'Poly_Circle'
+  #        paramValue: 'Poly_Affected'
+  #        paramValue: 'Poly_Global'
+  #        style:
+  #          fill-color: '#051626'
+  #          width: 3
+  #          color: '#fff'
 
-    ##end of Event Shape
+  ##end of Event Shape
 
-    - id: 'kontur_urban_core'
-      globalOverlay: false
-      name: "Kontur Urban Core"
-      displayLegendIfNoFeaturesExist: true
-      boundaryRequiredForRetrieval: true
-      group: 'layersInSelectedArea'
-      copyrights:
-        - '© Kontur'
-      legend:
-        type: 'simple'
-        steps:
-          - stepShape: 'hex'
-            style:
-              color: '#FF7B00'
-              width: 3
-              offset: 4
-              casing-offset: 2
-              casing-color: '#FF7B00'
-              casing-width: 3
-              casing-opacity: 0.5
-    - id: 'kontur_settled_periphery'
-      globalOverlay: false
-      name: "Kontur Settled Periphery"
-      displayLegendIfNoFeaturesExist: true
-      boundaryRequiredForRetrieval: true
-      group: 'layersInSelectedArea'
-      copyrights:
-        - '© Kontur'
-      legend:
-        type: 'simple'
-        steps:
-          - stepShape: 'hex'
-            style:
-              color: '#2AD72A'
-              width: 3
-              casing-offset: 2
-              casing-color: '#2AD72A'
-              casing-width: 3
-              casing-opacity: 0.5
+  - id: 'kontur_urban_core'
+    globalOverlay: false
+    name: "Kontur Urban Core"
+    displayLegendIfNoFeaturesExist: true
+    boundaryRequiredForRetrieval: true
+    group: 'layersInSelectedArea'
+    copyrights:
+      - '© Kontur'
+    legend:
+      type: 'simple'
+      steps:
+        - stepShape: 'hex'
+          style:
+            color: '#FF7B00'
+            width: 3
+            offset: 4
+            casing-offset: 2
+            casing-color: '#FF7B00'
+            casing-width: 3
+            casing-opacity: 0.5
+  - id: 'kontur_settled_periphery'
+    globalOverlay: false
+    name: "Kontur Settled Periphery"
+    displayLegendIfNoFeaturesExist: true
+    boundaryRequiredForRetrieval: true
+    group: 'layersInSelectedArea'
+    copyrights:
+      - '© Kontur'
+    legend:
+      type: 'simple'
+      steps:
+        - stepShape: 'hex'
+          style:
+            color: '#2AD72A'
+            width: 3
+            casing-offset: 2
+            casing-color: '#2AD72A'
+            casing-width: 3
+            casing-opacity: 0.5
 
-    ##### Category: OVERLAY
-    ### Group: Kontur
-    - id: 'activeContributors'
-      minZoom: 0
-      maxZoom: 8
-      globalOverlay: true
-      displayLegendIfNoFeaturesExist: true #can't be filtered until MVT tiles are read
-      boundaryRequiredForRetrieval: false
-      eventIdRequiredForRetrieval: false
-      name: 'Active contributors'
-      category: 'overlay'
-      group: 'other'
-      description: 'Contributors are labeled as active based on their mapping activity in the area for the past 2 years. We consider OpenStreetMap users to be local and mark them green if most of their edits were made close to that area.'
-      copyrights:
-        - '© OpenStreetMap Contributors, © Kontur'
-      source:
-        type: 'vector'
-        urls:
-          - '{tilesHost}/tiles/users/{z}/{x}/{y}.mvt'
-        tileSize: 512
-      legend:
-        type: 'simple'
-        linkProperty: 'profile'
-        steps:
-          - stepName: 'Possibly local mappers'
-            sourceLayer: 'users'
-            stepShape: 'circle'
-            paramName: 'is_local'
-            paramValue: true
-            style:
-              text: '{top_user}'
-              text-color: 'rgb(0, 145, 0)'
-              text-halo-color: 'rgba(255, 255, 255, 0.3)'
-              text-halo-radius: 2
-              text-size: 14
-              text-letter-spacing: 0.05
-              text-padding: 0
-              font-family: 'Noto Sans Bold'
-              icon-image: 'osm-user-shield'
-              icon-text-fit: 'both'
-              icon-allow-overlap: true
-          - stepName: 'Active mappers'
-            sourceLayer: 'users'
-            stepShape: 'circle'
-            paramName: 'is_local'
-            paramValue: false
-            style:
-              text: '{top_user}'
-              text-color: 'rgb(45, 45, 45)'
-              text-halo-color: 'rgba(255, 255, 255, 0.3)'
-              text-halo-radius: 2
-              text-size: 12
-              text-letter-spacing: 0.05
-              text-padding: 0
-              font-family: 'Noto Sans Regular'
-              icon-image: 'osm-user-shield'
-              icon-text-fit: 'both'
-              icon-allow-overlap: true
-          - sourceLayer: 'hexagon'
-            style:
-              color: 'black'
-              width: 1
-              opacity: 0.2
+  ##### Category: OVERLAY
+  ### Group: Kontur
+  - id: 'activeContributors'
+    minZoom: 0
+    maxZoom: 8
+    globalOverlay: true
+    displayLegendIfNoFeaturesExist: true #can't be filtered until MVT tiles are read
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: false
+    name: 'Active contributors'
+    category: 'overlay'
+    group: 'other'
+    description: 'Contributors are labeled as active based on their mapping activity in the area for the past 2 years. We consider OpenStreetMap users to be local and mark them green if most of their edits were made close to that area.'
+    copyrights:
+      - '© OpenStreetMap Contributors, © Kontur'
+    source:
+      type: 'vector'
+      urls:
+        - '{tilesHost}/tiles/users/{z}/{x}/{y}.mvt'
+      tileSize: 512
+    legend:
+      type: 'simple'
+      linkProperty: 'profile'
+      steps:
+        - stepName: 'Possibly local mappers'
+          sourceLayer: 'users'
+          stepShape: 'circle'
+          paramName: 'is_local'
+          paramValue: true
+          style:
+            text: '{top_user}'
+            text-color: 'rgb(0, 145, 0)'
+            text-halo-color: 'rgba(255, 255, 255, 0.3)'
+            text-halo-radius: 2
+            text-size: 14
+            text-letter-spacing: 0.05
+            text-padding: 0
+            font-family: 'Noto Sans Bold'
+            icon-image: 'osm-user-shield'
+            icon-text-fit: 'both'
+            icon-allow-overlap: true
+        - stepName: 'Active mappers'
+          sourceLayer: 'users'
+          stepShape: 'circle'
+          paramName: 'is_local'
+          paramValue: false
+          style:
+            text: '{top_user}'
+            text-color: 'rgb(45, 45, 45)'
+            text-halo-color: 'rgba(255, 255, 255, 0.3)'
+            text-halo-radius: 2
+            text-size: 12
+            text-letter-spacing: 0.05
+            text-padding: 0
+            font-family: 'Noto Sans Regular'
+            icon-image: 'osm-user-shield'
+            icon-text-fit: 'both'
+            icon-allow-overlap: true
+        - sourceLayer: 'hexagon'
+          style:
+            color: 'black'
+            width: 1
+            opacity: 0.2
 
-    - id: 'hotProjects'
-      globalOverlay: false
-      displayLegendIfNoFeaturesExist: false
-      boundaryRequiredForRetrieval: true
-      name: 'HOT Projects'
-      description: 'Projects on HOT Tasking Manager, ongoing and historical'
-      group: 'layersInSelectedArea'
-      copyrights:
-        - '© Humanitarian OpenStreetMap Team, © Kontur'
-      legend:
-        type: 'simple'
-        linkProperty: 'projectLink'
-        steps:
-          - paramName: status
-            paramValue: PUBLISHED
-            stepName: Published
-            stepShape: circle
-            style:
-              icon-image: hot-red
-              text: "{projectId} - {projectPriority}"
-              font-family: Noto Sans Regular
-              text-offset: 0, 0.6
-              text-anchor: top
-              symbol-z-order: viewport-y
-              icon-allow-overlap: true
-              fill-color: red
-          - paramName: status
-            paramValue: ARCHIVED
-            stepName: Archived
-            stepShape: circle
-            style:
-              icon-image: hot-gray
-              text: "{projectId} - {projectPriority}"
-              font-family: Noto Sans Regular
-              text-offset: 0, 0.6
-              text-anchor: top
-              symbol-z-order: viewport-y
-              icon-allow-overlap: true
-              fill-color: gray
+  - id: 'hotProjects'
+    globalOverlay: false
+    displayLegendIfNoFeaturesExist: false
+    boundaryRequiredForRetrieval: true
+    name: 'HOT Projects'
+    description: 'Projects on HOT Tasking Manager, ongoing and historical'
+    group: 'layersInSelectedArea'
+    copyrights:
+      - '© Humanitarian OpenStreetMap Team, © Kontur'
+    legend:
+      type: 'simple'
+      linkProperty: 'projectLink'
+      steps:
+        - paramName: status
+          paramValue: PUBLISHED
+          stepName: Published
+          stepShape: circle
+          style:
+            icon-image: hot-red
+            text: "{projectId} - {projectPriority}"
+            font-family: Noto Sans Regular
+            text-offset:
+              - 0
+              - 0.6
+            text-anchor: top
+            symbol-z-order: viewport-y
+            icon-allow-overlap: true
+            fill-color: red
+        - paramName: status
+          paramValue: ARCHIVED
+          stepName: Archived
+          stepShape: circle
+          style:
+            icon-image: hot-gray
+            text: "{projectId} - {projectPriority}"
+            font-family: Noto Sans Regular
+            text-offset:
+              - 0
+              - 0.6
+            text-anchor: top
+            symbol-z-order: viewport-y
+            icon-allow-overlap: true
+            fill-color: gray
 
-    - id: 'hotProjectsTileLayer'
-      testOnly: true
-      globalOverlay: true
-      boundaryRequiredForRetrieval: false
-      eventIdRequiredForRetrieval: false
-      name: 'HOT Project outlines'
-      category: 'overlay'
-      group: 'other'
-      legend:
-        type: 'simple'
-        steps:
-          - sourceLayer: 'hotProjects'
-            paramName: 'k_type'
-            paramValue: 'label'
-            style:
-              text: '{percentValidated}%'
-              text-size: 12
-              text-color: 'white'
-              text-anchor: 'center'
-              font-family: 'Noto Sans Regular'
-              circle-color: '#4AA357'
-              circle-radius: ["*", ["/", ["get", "percentMapped"], 100], 16]
-          - sourceLayer: 'hotProjects'
-            paramName: 'k_type'
-            paramValue: 'callout'
-            style:
-              color: 'black'
-              width: 1
-          - sourceLayer: 'hotProjects'
-            paramName: 'k_type'
-            paramValue: 'label'
-            style:
-              circle-color: '#505C67'
-              circle-radius: ["*", ["/", ["get", "percentMapped"], 100], 16]
-          - sourceLayer: 'hotProjects'
-            paramName: 'k_type'
-            paramValue: 'label'
-            style:
-              circle-color: '#EC0000'
-              circle-radius: 16
-              circle-opacity: 0.7
-          - stepName: 'Project'
-            stepShape: 'square'
-            sourceLayer: 'hotProjects'
-            paramName: 'k_type'
-            paramValue: 'polygon'
-            style:
-              fill-color: 'black'
-              fill-opacity: 0.3 
-      copyrights:
-        - '© Humanitarian OpenStreetMap Team, © Kontur'
-      source:
-        type: 'vector'
-        urls:
-          #layer is now available only at pg_tileserv at test-api02
-          - 'https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf'
-        tileSize: 512
+  - id: 'hotProjectsTileLayer'
+    testOnly: true
+    globalOverlay: true
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: false
+    name: 'HOT Project outlines'
+    category: 'overlay'
+    group: 'other'
+    legend:
+      type: 'simple'
+      steps:
+        - sourceLayer: 'hotProjects'
+          paramName: 'k_type'
+          paramValue: 'label'
+          style:
+            text: '{percentValidated}%'
+            text-size: 12
+            text-color: 'white'
+            text-anchor: 'center'
+            font-family: 'Noto Sans Regular'
+            circle-color: '#4AA357'
+            circle-radius: ["*", ["/", ["get", "percentMapped"], 100], 16]
+        - sourceLayer: 'hotProjects'
+          paramName: 'k_type'
+          paramValue: 'callout'
+          style:
+            color: 'black'
+            width: 1
+        - sourceLayer: 'hotProjects'
+          paramName: 'k_type'
+          paramValue: 'label'
+          style:
+            circle-color: '#505C67'
+            circle-radius: ["*", ["/", ["get", "percentMapped"], 100], 16]
+        - sourceLayer: 'hotProjects'
+          paramName: 'k_type'
+          paramValue: 'label'
+          style:
+            circle-color: '#EC0000'
+            circle-radius: 16
+            circle-opacity: 0.7
+        - stepName: 'Project'
+          stepShape: 'square'
+          sourceLayer: 'hotProjects'
+          paramName: 'k_type'
+          paramValue: 'polygon'
+          style:
+            fill-color: 'black'
+            fill-opacity: 0.3
+    copyrights:
+      - '© Humanitarian OpenStreetMap Team, © Kontur'
+    source:
+      type: 'vector'
+      urls:
+        #layer is now available only at pg_tileserv at test-api02
+        - 'https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf'
+      tileSize: 512
 
-    ### Group: Kontur Analytical Layers
-    - id: 'Kontur OpenStreetMap Quantity'
-      orderIndex: 1
-      globalOverlay: true
-      boundaryRequiredForRetrieval: false
-      eventIdRequiredForRetrieval: false
-      displayLegendIfNoFeaturesExist: true
-      category: 'overlay'
-      group: 'bivariate'
-      legend:
-        type: 'bivariate'
-      source:
-        type: 'vector'
-        urls:
-          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
-        tileSize: 512
-    - id: 'Kontur OpenStreetMap Building Quantity'
-      orderIndex: 2
-      globalOverlay: true
-      boundaryRequiredForRetrieval: false
-      eventIdRequiredForRetrieval: false
-      displayLegendIfNoFeaturesExist: true
-      category: 'overlay'
-      group: 'bivariate'
-      legend:
-        type: 'bivariate'
-      source:
-        type: 'vector'
-        urls:
-          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
-        tileSize: 512
-    - id: 'Kontur OpenStreetMap Road Length'
-      orderIndex: 3
-      globalOverlay: true
-      boundaryRequiredForRetrieval: false
-      eventIdRequiredForRetrieval: false
-      displayLegendIfNoFeaturesExist: true
-      category: 'overlay'
-      group: 'bivariate'
-      legend:
-        type: 'bivariate'
-      source:
-        type: 'vector'
-        urls:
-          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
-        tileSize: 512
-    - id: 'Kontur OpenStreetMap Mapping Activity'
-      orderIndex: 4
-      globalOverlay: true
-      boundaryRequiredForRetrieval: false
-      eventIdRequiredForRetrieval: false
-      displayLegendIfNoFeaturesExist: true
-      category: 'overlay'
-      group: 'bivariate'
-      legend:
-        type: 'bivariate'
-      source:
-        type: 'vector'
-        urls:
-          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
-        tileSize: 512
-    - id: 'Kontur OpenStreetMap Antiquity'
-      orderIndex: 5
-      globalOverlay: true
-      boundaryRequiredForRetrieval: false
-      eventIdRequiredForRetrieval: false
-      displayLegendIfNoFeaturesExist: true
-      category: 'overlay'
-      group: 'bivariate'
-      legend:
-        type: 'bivariate'
-      source:
-        type: 'vector'
-        urls:
-          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
-        tileSize: 512
-    - id: 'Kontur Nighttime Heatwave Risk'
-      orderIndex: 6
-      globalOverlay: true
-      boundaryRequiredForRetrieval: false
-      eventIdRequiredForRetrieval: false
-      displayLegendIfNoFeaturesExist: true
-      category: 'overlay'
-      group: 'bivariate'
-      legend:
-        type: 'bivariate'
-      source:
-        type: 'vector'
-        urls:
-          - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
-        tileSize: 512
-  ##### Category: BASELINE
+  ### Group: Kontur Analytical Layers
+  - id: 'Kontur OpenStreetMap Quantity'
+    orderIndex: 1
+    globalOverlay: true
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: false
+    displayLegendIfNoFeaturesExist: true
+    category: 'overlay'
+    group: 'bivariate'
+    legend:
+      type: 'bivariate'
+    source:
+      type: 'vector'
+      urls:
+        - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
+      tileSize: 512
+  - id: 'Kontur OpenStreetMap Building Quantity'
+    orderIndex: 2
+    globalOverlay: true
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: false
+    displayLegendIfNoFeaturesExist: true
+    category: 'overlay'
+    group: 'bivariate'
+    legend:
+      type: 'bivariate'
+    source:
+      type: 'vector'
+      urls:
+        - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
+      tileSize: 512
+  - id: 'Kontur OpenStreetMap Road Length'
+    orderIndex: 3
+    globalOverlay: true
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: false
+    displayLegendIfNoFeaturesExist: true
+    category: 'overlay'
+    group: 'bivariate'
+    legend:
+      type: 'bivariate'
+    source:
+      type: 'vector'
+      urls:
+        - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
+      tileSize: 512
+  - id: 'Kontur OpenStreetMap Mapping Activity'
+    orderIndex: 4
+    globalOverlay: true
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: false
+    displayLegendIfNoFeaturesExist: true
+    category: 'overlay'
+    group: 'bivariate'
+    legend:
+      type: 'bivariate'
+    source:
+      type: 'vector'
+      urls:
+        - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
+      tileSize: 512
+  - id: 'Kontur OpenStreetMap Antiquity'
+    orderIndex: 5
+    globalOverlay: true
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: false
+    displayLegendIfNoFeaturesExist: true
+    category: 'overlay'
+    group: 'bivariate'
+    legend:
+      type: 'bivariate'
+    source:
+      type: 'vector'
+      urls:
+        - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
+      tileSize: 512
+  - id: 'Kontur Nighttime Heatwave Risk'
+    orderIndex: 6
+    globalOverlay: true
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: false
+    displayLegendIfNoFeaturesExist: true
+    category: 'overlay'
+    group: 'bivariate'
+    legend:
+      type: 'bivariate'
+    source:
+      type: 'vector'
+      urls:
+        - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
+      tileSize: 512
+##### Category: BASELINE
 
-    - id: 'Bing'
-      category: 'base'
-      group: 'photo'
-      source:
-        type: 'raster'
-        urls:
-          - 'http://ecn.t0.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
-          - 'http://ecn.t1.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
-          - 'http://ecn.t2.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
-          - 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
-          - 'http://ecn.t4.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
-          - 'http://ecn.t5.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
-          - 'http://ecn.t6.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
-          - 'http://ecn.t7.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+  - id: 'Bing'
+    category: 'base'
+    group: 'photo'
+    source:
+      type: 'raster'
+      urls:
+        - 'http://ecn.t0.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+        - 'http://ecn.t1.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+        - 'http://ecn.t2.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+        - 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+        - 'http://ecn.t4.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+        - 'http://ecn.t5.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+        - 'http://ecn.t6.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
+        - 'http://ecn.t7.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'

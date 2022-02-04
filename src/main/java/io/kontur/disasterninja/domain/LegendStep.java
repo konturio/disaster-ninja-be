@@ -2,13 +2,19 @@ package io.kontur.disasterninja.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.kontur.disasterninja.domain.enums.LayerStepShape;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.springframework.boot.context.properties.ConstructorBinding;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.jackson.Jacksonized;
 
 import java.util.Map;
 
 @Data
-@ConstructorBinding
+@Builder
+@Jacksonized
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class LegendStep {
     private final String paramName;
     /**
