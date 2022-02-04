@@ -94,7 +94,7 @@ public class LocalLayerConfigService implements LayerConfigService {
     }
 
     private LocalLayersConfig convertLayerConfig(Resource layersJson) throws IOException {
-        File file = layersJson.getFile();
+        String json = new String(layersJson.getInputStream().readAllBytes());
         ObjectMapper mapper = YAMLMapper.builder()
                 .addModule(new JavaTimeModule())
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -102,7 +102,7 @@ public class LocalLayerConfigService implements LayerConfigService {
                 .build()
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL);
         try {
-            return mapper.readValue(new String(Files.readAllBytes(file.toPath())), LocalLayersConfig.class);
+            return mapper.readValue(json, LocalLayersConfig.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
