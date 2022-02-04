@@ -82,6 +82,11 @@ public class LayerConfigServiceTest {
 
         Assertions.assertEquals("hot-red", hot.getLegend().getSteps().get(0).getStyle().get("icon-image"));
         Assertions.assertEquals("hot-gray", hot.getLegend().getSteps().get(1).getStyle().get("icon-image"));
+
+        //#8748 text-offset is a List of Numbers, not Map or String
+        Assertions.assertTrue(hot.getLegend().getSteps().get(0).getStyle().get("text-offset") instanceof List);
+        Assertions.assertEquals(0, ((List<?>) hot.getLegend().getSteps().get(0).getStyle().get("text-offset")).get(0));
+        Assertions.assertEquals(0.6, ((List<?>) hot.getLegend().getSteps().get(0).getStyle().get("text-offset")).get(1));
     }
 
     @Test

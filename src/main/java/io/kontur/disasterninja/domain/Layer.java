@@ -4,7 +4,7 @@ import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LegendType;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.boot.context.properties.ConstructorBinding;
+import lombok.extern.jackson.Jacksonized;
 import org.wololo.geojson.Feature;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 @Data
 @Builder
-@ConstructorBinding
+@Jacksonized
 public class Layer {
     private final String id;
     private boolean globalOverlay;
