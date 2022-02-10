@@ -19,7 +19,7 @@ import java.util.List;
 
 @Tag(name = "Advanced Analytics tab", description = "Advanced Analytics panel API")
 @RestController
-@RequestMapping("/advanced_analytics")
+@RequestMapping("/advanced_polygon_details")
 @RequiredArgsConstructor
 public class AdvancedAnalyticsPanelController {
 
