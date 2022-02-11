@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.dto;
 
+import io.kontur.disasterninja.controller.LayerController;
 import io.kontur.disasterninja.domain.*;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LayerSourceType;
@@ -23,6 +24,8 @@ import org.wololo.geojson.Point;
 
 import java.util.*;
 
+import static io.kontur.disasterninja.controller.LayerController.PATH_DETAILS;
+import static io.kontur.disasterninja.controller.LayerController.PATH_SEARCH;
 import static io.kontur.disasterninja.domain.enums.LayerStepShape.HEX;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -35,17 +38,17 @@ public class DtoTest {
     private int port;
     @Autowired
     private TestRestTemplate restTemplate;
+    private final String SEARCH_URL = LayerController.PATH + PATH_SEARCH;
+    private final String DETAILS_URL = LayerController.PATH + PATH_DETAILS;
 
     @Test
     public void serializeDeserializeSummaryFromGeometryTest() {
-        String url = "/layers/";
-
         String id = "123";
         Layer layer = testLayer(id, new FeatureCollection(null));
         Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layer));
 
         LayerSummaryInputDto input = new LayerSummaryInputDto(UUID.randomUUID(), new Point(new double[]{1, 0}));
-        List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(url, input, LayerSummaryDto[].class)
+        List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
             .getBody());
 
         Assertions.assertEquals(layer.getId(), response.get(0).getId());
@@ -61,14 +64,12 @@ public class DtoTest {
 
     @Test
     public void serializeDeserializeDetailsFromGeometryTest() {
-        String url = "/layers/details";
-
         String id = "123";
         Layer layer = testLayer(id, new FeatureCollection(new Feature[]{new Feature(new Point(new double[]{1d, 2d}), new HashMap<>())}));
         Mockito.when(layerService.get(any(), any(), any())).thenReturn(List.of(layer));
 
         LayerDetailsInputDto input = new LayerDetailsInputDto(new Point(new double[]{1, 0}), List.of(layer.getId()), UUID.randomUUID());
-        List<LayerDetailsDto> response = Arrays.asList(restTemplate.postForEntity(url, input, LayerDetailsDto[].class)
+        List<LayerDetailsDto> response = Arrays.asList(restTemplate.postForEntity(DETAILS_URL, input, LayerDetailsDto[].class)
             .getBody());
 
         Assertions.assertEquals(layer.getId(), response.get(0).getId());
@@ -85,15 +86,13 @@ public class DtoTest {
 
     @Test
     public void serializeDeserializeFromFeatureTest() {
-        String url = "/layers/";
-
         String id = "123";
         Layer layer = testLayer(id, new FeatureCollection(null));
         Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layer));
 
         LayerSummaryInputDto input = new LayerSummaryInputDto(UUID.randomUUID(), new Feature(new Point(
             new double[]{1, 0}), new HashMap<>()));
-        List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(url, input, LayerSummaryDto[].class)
+        List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
             .getBody());
 
         Assertions.assertEquals(layer.getId(), response.get(0).getId());
@@ -109,8 +108,6 @@ public class DtoTest {
 
     @Test
     public void serializeDeserializeFromFeatureCollectionTest() {
-        String url = "/layers/";
-
         String id = "123";
         Layer layer = testLayer(id, new FeatureCollection(null));
         Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layer));
@@ -119,7 +116,7 @@ public class DtoTest {
             new Feature(new Point(new double[]{1, 0}), new HashMap<>()),
             new Feature(new Point(new double[]{1, 0}), new HashMap<>())}));
 
-        List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(url, input, LayerSummaryDto[].class)
+        List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
             .getBody());
 
         Assertions.assertEquals(layer.getId(), response.get(0).getId());
@@ -135,7 +132,6 @@ public class DtoTest {
 
     @Test
     public void paramPatternTest() { //#8311
-        String url = "/layers";
         String id = "123";
 
         final String PARAM_NAME = "param name";
@@ -191,7 +187,7 @@ public class DtoTest {
 
         Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layerWithPattern));
         LayerSummaryInputDto input = new LayerSummaryInputDto(UUID.randomUUID(), new Point(new double[]{1, 0}));
-        List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(url, input, LayerSummaryDto[].class)
+        List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
             .getBody());
 
         Assertions.assertEquals(2, response.get(0).getLegend().getSteps().size());

@@ -23,8 +23,11 @@ import java.util.stream.Collectors;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController()
-@RequestMapping("layers")
+@RequestMapping(LayerController.PATH)
 public class LayerController {
+    public static final String PATH = "/layers";
+    public static final String PATH_SEARCH = "/search";
+    public static final String PATH_DETAILS = "/details";
     @Autowired
     LayerService layerService;
     @Autowired
@@ -33,7 +36,7 @@ public class LayerController {
     @Operation(tags = "Layers", summary = "Get List of available layers")
     @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json",
         array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
-    @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PostMapping(path = PATH_SEARCH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<LayerSummaryDto> getSummaries(@RequestBody
                                               @io.swagger.v3.oas.annotations.parameters.RequestBody(
                                                   description = "geoJSON: only layers with features intersecting with" +
@@ -48,7 +51,7 @@ public class LayerController {
     @Operation(tags = "Layers", summary = "Get Layers by their ids")
     @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json",
         array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
-    @PostMapping(path = "/details", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PostMapping(path = PATH_DETAILS, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<LayerDetailsDto> getDetails(@RequestBody
                                             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                                                 description = "geoJSON: only layers with features intersecting with" +
