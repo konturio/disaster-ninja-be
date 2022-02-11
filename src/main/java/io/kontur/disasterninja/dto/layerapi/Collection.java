@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class Layer {
+public class Collection {
 
     @JsonProperty("id")
     private String id;
@@ -30,10 +30,10 @@ public class Layer {
     private Legend legend;
 
     @JsonProperty("group")
-    private LayerGroupProperties group;
+    private CollectionGroupProperties group;
 
     @JsonProperty("category")
-    private LayerCategoryProperties category;
+    private CollectionCategoryProperties category;
 
     @JsonProperty("links")
     private List<Link> links;

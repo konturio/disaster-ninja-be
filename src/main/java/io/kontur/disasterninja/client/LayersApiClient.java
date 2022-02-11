@@ -2,7 +2,7 @@ package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.kontur.disasterninja.dto.layerapi.Layer;
+import io.kontur.disasterninja.dto.layerapi.Collection;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -34,8 +34,8 @@ public class LayersApiClient {
         this.layersApiRestTemplate = layersApiRestTemplate;
     }
 
-    public List<Layer> getLayers(Geometry geoJson) {
-        List<Layer> result = new ArrayList<>();
+    public List<Collection> getCollections(Geometry geoJson) {
+        List<Collection> result = new ArrayList<>();
 
         Map<String, Object> body = new HashMap<>();
         body.put("geometry", geoJson);
@@ -47,16 +47,16 @@ public class LayersApiClient {
         while (true) {
             body.put("offset", result.size());
 
-            ResponseEntity<ApiLayersCollection> response = layersApiRestTemplate
+            ResponseEntity<ApiCollections> response = layersApiRestTemplate
                     .exchange(LAYERS_SEARCH_URI, HttpMethod.POST, new HttpEntity<>(body, headers),
                             new ParameterizedTypeReference<>() {});
 
-            ApiLayersCollection responseBody = response.getBody();
-            if (responseBody == null || CollectionUtils.isEmpty(responseBody.getLayers())) {
+            ApiCollections responseBody = response.getBody();
+            if (responseBody == null || CollectionUtils.isEmpty(responseBody.getCollections())) {
                 break;
             }
 
-            result.addAll(responseBody.getLayers());
+            result.addAll(responseBody.getCollections());
             if (result.size() == responseBody.getNumberMatched()) {
                 break;
             }
@@ -65,8 +65,8 @@ public class LayersApiClient {
         return result;
     }
 
-    public List<Feature> getLayersFeatures(Geometry geoJson, String layerId) {
-        Assert.notNull(layerId, "Layer ID should not be null");
+    public List<Feature> getCollectionFeatures(Geometry geoJson, String collectionId) {
+        Assert.notNull(collectionId, "Layer ID should not be null");
 
         List<Feature> result = new ArrayList<>();
 
@@ -80,12 +80,12 @@ public class LayersApiClient {
         while (true) {
             body.put("offset", result.size());
 
-            ResponseEntity<ApiLayersFeaturesCollection> response = layersApiRestTemplate
-                    .exchange(String.format(LAYERS_FEATURES_SEARCH_URI, layerId), HttpMethod.POST,
+            ResponseEntity<ApiFeatureCollection> response = layersApiRestTemplate
+                    .exchange(String.format(LAYERS_FEATURES_SEARCH_URI, collectionId), HttpMethod.POST,
                             new HttpEntity<>(body, headers),
                             new ParameterizedTypeReference<>() {});
 
-            ApiLayersFeaturesCollection responseBody = response.getBody();
+            ApiFeatureCollection responseBody = response.getBody();
             if (responseBody == null || CollectionUtils.isEmpty(responseBody.getFeatures())) {
                 break;
             }
@@ -99,41 +99,41 @@ public class LayersApiClient {
         return result;
     }
 
-    public Layer getLayer(String layerId) {
-        ResponseEntity<Layer> response = layersApiRestTemplate
-                .exchange(String.format(GET_LAYER_URI, layerId), HttpMethod.GET, new HttpEntity<>(null, null),
+    public Collection getCollection(String collectionId) {
+        ResponseEntity<Collection> response = layersApiRestTemplate
+                .exchange(String.format(GET_LAYER_URI, collectionId), HttpMethod.GET, new HttpEntity<>(null, null),
                         new ParameterizedTypeReference<>() {});
         return response.getBody();
     }
 
     @Getter
-    private static class ApiLayersCollection {
+    private static class ApiCollections {
 
-        private final List<Layer> layers;
+        private final List<Collection> collections;
         private final int numberMatched;
         private final int numberReturned;
 
         @JsonCreator
-        public ApiLayersCollection(@JsonProperty("collections") List<Layer> layers,
-                                   @JsonProperty("numberReturned") int numberReturned,
-                                   @JsonProperty("numberMatched") int numberMatched) {
-            this.layers = layers;
+        public ApiCollections(@JsonProperty("collections") List<Collection> collections,
+                              @JsonProperty("numberReturned") int numberReturned,
+                              @JsonProperty("numberMatched") int numberMatched) {
+            this.collections = collections;
             this.numberMatched = numberMatched;
             this.numberReturned = numberReturned;
         }
     }
 
     @Getter
-    private static class ApiLayersFeaturesCollection {
+    private static class ApiFeatureCollection {
 
         private final List<Feature> features;
         private final int numberMatched;
         private final int numberReturned;
 
         @JsonCreator
-        public ApiLayersFeaturesCollection(@JsonProperty("features") List<Feature> layers,
-                                           @JsonProperty("numberReturned") int numberReturned,
-                                           @JsonProperty("numberMatched") int numberMatched) {
+        public ApiFeatureCollection(@JsonProperty("features") List<Feature> layers,
+                                    @JsonProperty("numberReturned") int numberReturned,
+                                    @JsonProperty("numberMatched") int numberMatched) {
             this.features = layers;
             this.numberMatched = numberMatched;
             this.numberReturned = numberReturned;

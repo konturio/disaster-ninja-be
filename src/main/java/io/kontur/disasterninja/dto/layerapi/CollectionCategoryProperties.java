@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class LayerCategoryProperties {
+public class CollectionCategoryProperties {
 
     private String name;
     private Boolean isOpened;
