@@ -9,8 +9,10 @@ import io.kontur.disasterninja.dto.layer.LayerDetailsDto;
 import io.kontur.disasterninja.dto.layer.LayerDetailsInputDto;
 import io.kontur.disasterninja.dto.layer.LayerSummaryDto;
 import io.kontur.disasterninja.dto.layer.LayerSummaryInputDto;
+import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import io.kontur.disasterninja.service.layers.LayerService;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +36,19 @@ public class DtoTest {
 
     @MockBean
     LayerService layerService;
+    @MockBean
+    KeycloakAuthorizationService authorizationService;
     @LocalServerPort
     private int port;
     @Autowired
     private TestRestTemplate restTemplate;
     private final String SEARCH_URL = LayerController.PATH + PATH_SEARCH;
     private final String DETAILS_URL = LayerController.PATH + PATH_DETAILS;
+
+    @BeforeEach
+    public void before() {
+        Mockito.when(authorizationService.getAccessToken()).thenReturn("something");
+    }
 
     @Test
     public void serializeDeserializeSummaryFromGeometryTest() {

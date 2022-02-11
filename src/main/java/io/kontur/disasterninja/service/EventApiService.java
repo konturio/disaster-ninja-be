@@ -15,46 +15,30 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class EventApiService {
-
     private final EventApiClient client;
-    private final KeycloakAuthorizationService authorizationService;
 
-    public EventApiService(EventApiClient client,
-                           KeycloakAuthorizationService authorizationService) {
-        this.client = client;
-        this.authorizationService = authorizationService;
-    }
-
-    public List<EventListDto> getEvents(String feed, String userToken) {
-        String token = getUserTokenOrDefaultAccessToken(userToken);
-        List<EventApiEventDto> events = client.getEvents(token, feed);
+    public List<EventListDto> getEvents(String feed) {
+        List<EventApiEventDto> events = client.getEvents(feed);
         List<EventListDto> eventList = convertListOfEvents(events);
         sort(eventList);
         return eventList;
     }
 
-    public EventDto getEvent(UUID eventId, String feed, String userToken) {
-        String token = getUserTokenOrDefaultAccessToken(userToken);
-        EventApiEventDto event = client.getEvent(eventId, token, feed);
+    public EventDto getEvent(UUID eventId, String feed) {
+        EventApiEventDto event = client.getEvent(eventId, feed);
         if (event == null) {
             throw new WebApplicationException("Event " + eventId + " is not found", HttpStatus.NOT_FOUND);
         }
         return EventDtoConverter.convert(event);
     }
 
-    public List<EventFeedDto> getUserFeeds(String userToken) {
-        String token = getUserTokenOrDefaultAccessToken(userToken);
-        return client.getUserFeeds(token);
-    }
-
-    private String getUserTokenOrDefaultAccessToken(String userToken) {
-        if (userToken == null || userToken.isBlank()) {
-            return authorizationService.getAccessToken();
-        }
-        return userToken;
+    public List<EventFeedDto> getUserFeeds() {
+        return client.getUserFeeds();
     }
 
     private List<EventListDto> convertListOfEvents(List<EventApiEventDto> events) {

@@ -14,9 +14,9 @@ public class UserProfileService {
     private static final Logger LOG = LoggerFactory.getLogger(UserProfileService.class);
     private final UserProfileClient client;
 
-    public String getUserDefaultFeed(String userToken) {
+    public String getUserDefaultFeed() {
         try {
-            return client.getUserDefaultFeed(userToken);
+            return client.getUserDefaultFeed();
         } catch (Exception e) {
             LOG.error("Can't get default user event feed: {}", e.getMessage(), e);
             throw new WebApplicationException("Can't get default user event feed", HttpStatus.BAD_GATEWAY);
