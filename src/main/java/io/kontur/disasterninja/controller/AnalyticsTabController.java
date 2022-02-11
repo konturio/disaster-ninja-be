@@ -19,7 +19,7 @@ import java.util.List;
 
 @Tag(name = "Analytics tab", description = "Analytics tab API")
 @RestController
-@RequestMapping("/analytics")
+@RequestMapping("/polygon_details")
 @RequiredArgsConstructor
 public class AnalyticsTabController {
 
