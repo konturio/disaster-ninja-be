@@ -5,6 +5,7 @@ import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LayerSourceType;
+import io.kontur.disasterninja.dto.layerapi.Collection;
 import io.kontur.disasterninja.dto.layerapi.Link;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
@@ -32,16 +33,16 @@ public class LayersApiProvider implements LayerProvider {
 
     @Override
     public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
-        return layersApiClient.getLayers(geoJSON)
+        return layersApiClient.getCollections(geoJSON)
                 .stream()
-                .map(this::convertLayer)
+                .map(this::convertToLayer)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Layer obtainLayer(Geometry geoJSON, String layerId, UUID eventId) {
         String id = layerId.replaceFirst(LAYER_PREFIX, "");
-        return convertLayerDetails(geoJSON, layersApiClient.getLayer(id));
+        return convertToLayerDetails(geoJSON, layersApiClient.getCollection(id));
     }
 
     @Override
@@ -49,43 +50,44 @@ public class LayersApiProvider implements LayerProvider {
         return layerId.startsWith(LAYER_PREFIX);
     }
 
-    private Layer convertLayer(io.kontur.disasterninja.dto.layerapi.Layer layer) {
+    private Layer convertToLayer(Collection collection) {
         return Layer.builder()
-                .id(LAYER_PREFIX + layer.getId())
-                .name(layer.getTitle())
-                .description(layer.getDescription())
-                .category(layer.getCategory() != null ? LayerCategory.fromString(layer.getCategory().getName()) : null)
-                .group(layer.getGroup() != null ? layer.getGroup().getName() : null)
-                .legend(layer.getLegend())
-                .copyrights(Collections.singletonList(layer.getCopyrights()))
-                .boundaryRequiredForRetrieval(!"tiles".equals(layer.getItemType()))
+                .id(LAYER_PREFIX + collection.getId())
+                .name(collection.getTitle())
+                .description(collection.getDescription())
+                .category(collection.getCategory() != null ? LayerCategory.fromString(
+                    collection.getCategory().getName()) : null)
+                .group(collection.getGroup() != null ? collection.getGroup().getName() : null)
+                .legend(collection.getLegend())
+                .copyrights(Collections.singletonList(collection.getCopyrights()))
+                .boundaryRequiredForRetrieval(!"tiles".equals(collection.getItemType()))
                 .eventIdRequiredForRetrieval(false)
                 .build();
     }
 
-    private Layer convertLayerDetails(Geometry geoJSON,
-                                      io.kontur.disasterninja.dto.layerapi.Layer layer) {
-        if (layer == null) {
+    private Layer convertToLayerDetails(Geometry geoJSON,
+                                        Collection collection) {
+        if (collection == null) {
             return null;
         }
         LayerSource source = null;
-        if ("tiles".equals(layer.getItemType())) {
-            source = createVectorSource(layer);
-        } else if ("feature".equals(layer.getItemType())) {
-            source = createFeatureSource(geoJSON, layer.getId());
+        if ("tiles".equals(collection.getItemType())) {
+            source = createVectorSource(collection);
+        } else if ("feature".equals(collection.getItemType())) {
+            source = createFeatureSource(geoJSON, collection.getId());
         }
         return Layer.builder()
-                .id(LAYER_PREFIX + layer.getId())
+                .id(LAYER_PREFIX + collection.getId())
                 .source(source)
                 .build();
     }
 
-    private LayerSource createVectorSource(io.kontur.disasterninja.dto.layerapi.Layer layer) {
+    private LayerSource createVectorSource(Collection collection) {
         return LayerSource.builder()
                 .type(LayerSourceType.VECTOR)
                 .tileSize(512)
                 .urls(Collections.singletonList(
-                        layer.getLinks().stream()
+                        collection.getLinks().stream()
                                 .filter(l -> "tiles".equals(l.getRel()))
                                 .map(Link::getHref)
                                 .findFirst()
@@ -94,7 +96,7 @@ public class LayersApiProvider implements LayerProvider {
     }
 
     private LayerSource createFeatureSource(Geometry geoJSON, String layerId) {
-        List<Feature> features = layersApiClient.getLayersFeatures(geoJSON, layerId);
+        List<Feature> features = layersApiClient.getCollectionFeatures(geoJSON, layerId);
         return LayerSource.builder()
                 .type(LayerSourceType.GEOJSON)
                 .data(new FeatureCollection(features.toArray(new Feature[0])))

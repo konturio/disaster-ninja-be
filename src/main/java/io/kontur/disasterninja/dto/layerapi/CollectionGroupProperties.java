@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class LayerGroupProperties {
+public class CollectionGroupProperties {
 
     private String name;
     private Boolean isOpened;

@@ -3,7 +3,7 @@ package io.kontur.disasterninja.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.domain.enums.LegendType;
-import io.kontur.disasterninja.dto.layerapi.Layer;
+import io.kontur.disasterninja.dto.layerapi.Collection;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
@@ -37,7 +37,7 @@ class LayersApiClientTest {
     private MockRestServiceServer server;
 
     @Test
-    public void getLayersWithPagination() throws JsonProcessingException {
+    public void getCollectionsWithPagination() throws JsonProcessingException {
         //given
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
                 "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
@@ -59,28 +59,28 @@ class LayersApiClientTest {
                 });
 
         //when
-        List<Layer> layers = client.getLayers(objectMapper.readValue(json, Geometry.class));
+        List<Collection> collections = client.getCollections(objectMapper.readValue(json, Geometry.class));
 
         //then
-        assertEquals(12, layers.size());
+        assertEquals(12, collections.size());
 
-        Layer layer = layers.get(0);
-        assertEquals("hotProjects", layer.getId());
-        assertEquals("HOT Tasking Manager Projects", layer.getTitle());
-        assertEquals("Projects on HOT Tasking manager, ongoing and historical", layer.getDescription());
-        assertEquals("(c) Kontur", layer.getCopyrights());
-        assertEquals("overlay", layer.getCategory().getName());
-        assertEquals("tiles", layer.getItemType());
-        assertEquals("tiles", layer.getItemType());
-        assertEquals(1, layer.getLinks().size());
-        assertEquals("tiles", layer.getLinks().get(0).getRel());
+        Collection collection = collections.get(0);
+        assertEquals("hotProjects", collection.getId());
+        assertEquals("HOT Tasking Manager Projects", collection.getTitle());
+        assertEquals("Projects on HOT Tasking manager, ongoing and historical", collection.getDescription());
+        assertEquals("(c) Kontur", collection.getCopyrights());
+        assertEquals("overlay", collection.getCategory().getName());
+        assertEquals("tiles", collection.getItemType());
+        assertEquals("tiles", collection.getItemType());
+        assertEquals(1, collection.getLinks().size());
+        assertEquals("tiles", collection.getLinks().get(0).getRel());
         assertEquals("https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf",
-                layer.getLinks().get(0).getHref());
-        assertEquals(LegendType.SIMPLE, layer.getLegend().getType());
+                collection.getLinks().get(0).getHref());
+        assertEquals(LegendType.SIMPLE, collection.getLegend().getType());
     }
 
     @Test
-    public void getLayerFeaturesWithPagination() throws JsonProcessingException {
+    public void getCollectionFeaturesWithPagination() throws JsonProcessingException {
         //given
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
                 "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
@@ -102,7 +102,7 @@ class LayersApiClientTest {
                 });
 
         //when
-        List<Feature> features = client.getLayersFeatures(objectMapper.readValue(json, Geometry.class), "hotProjects");
+        List<Feature> features = client.getCollectionFeatures(objectMapper.readValue(json, Geometry.class), "hotProjects");
 
         //then
         assertEquals(12, features.size());
@@ -114,7 +114,7 @@ class LayersApiClientTest {
     }
 
     @Test
-    public void getLayer() {
+    public void getCollection() {
         //given
         server.expect(ExpectedCount.times(1), requestTo("/collections/hotProjects"))
                 .andExpect(method(HttpMethod.GET))
@@ -122,20 +122,20 @@ class LayersApiClientTest {
                         MediaType.APPLICATION_JSON).createResponse(r));
 
         //when
-        Layer layer = client.getLayer("hotProjects");
+        Collection collection = client.getCollection("hotProjects");
 
         //then
-        assertEquals("hotProjects", layer.getId());
-        assertEquals("HOT Tasking Manager Projects", layer.getTitle());
-        assertEquals("Projects on HOT Tasking manager, ongoing and historical", layer.getDescription());
-        assertEquals("(c) Kontur", layer.getCopyrights());
-        assertEquals("test_HotProjectsCategory", layer.getCategory().getName());
-        assertEquals("tiles", layer.getItemType());
-        assertEquals("tiles", layer.getItemType());
-        assertEquals(1, layer.getLinks().size());
-        assertEquals("tiles", layer.getLinks().get(0).getRel());
+        assertEquals("hotProjects", collection.getId());
+        assertEquals("HOT Tasking Manager Projects", collection.getTitle());
+        assertEquals("Projects on HOT Tasking manager, ongoing and historical", collection.getDescription());
+        assertEquals("(c) Kontur", collection.getCopyrights());
+        assertEquals("test_HotProjectsCategory", collection.getCategory().getName());
+        assertEquals("tiles", collection.getItemType());
+        assertEquals("tiles", collection.getItemType());
+        assertEquals(1, collection.getLinks().size());
+        assertEquals("tiles", collection.getLinks().get(0).getRel());
         assertEquals("https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf",
-                layer.getLinks().get(0).getHref());
-        assertEquals(LegendType.SIMPLE, layer.getLegend().getType());
+                collection.getLinks().get(0).getHref());
+        assertEquals(LegendType.SIMPLE, collection.getLegend().getType());
     }
 }
