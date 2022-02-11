@@ -1,17 +1,17 @@
 package io.kontur.disasterninja.service.layers;
 
 import io.kontur.disasterninja.domain.Layer;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import lombok.extern.jackson.Jacksonized;
 
 import java.util.List;
 
-@Component
-@RequiredArgsConstructor
 @Getter
-@ConfigurationProperties(prefix = "layers")
+@Jacksonized
+@Builder
 public class LocalLayersConfig {
+
     private final List<Layer> configs;
+
 }

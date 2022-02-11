@@ -1,13 +1,24 @@
 package io.kontur.disasterninja.service.layers;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.LegendStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,10 +31,11 @@ public class LocalLayerConfigService implements LayerConfigService {
     private final Map<String, Layer> globalOverlays = new HashMap<>();
     private final Map<String, Layer> regularLayers = new HashMap<>();
 
-    public LocalLayerConfigService(LocalLayersConfig localLayersConfig,
+    public LocalLayerConfigService(@Value("classpath:/layers/layerconfig.yaml") Resource layersJsonResource,
                                    @Value("${kontur.platform.tiles.host}") String tilesHost,
                                    @Value("${spring.profiles.active:dev}") String profile) {
         try {
+            LocalLayersConfig localLayersConfig = convertLayerConfig(layersJsonResource);
             localLayersConfig.getConfigs().forEach(this::setLegendStepsOrder);
 
             localLayersConfig.getConfigs().forEach((config) -> {
@@ -78,6 +90,21 @@ public class LocalLayerConfigService implements LayerConfigService {
             for (int i = 0; i < steps.size(); i++) {
                 steps.get(i).setOrder(i);
             }
+        }
+    }
+
+    private LocalLayersConfig convertLayerConfig(Resource layersJson) throws IOException {
+        String json = new String(layersJson.getInputStream().readAllBytes());
+        ObjectMapper mapper = YAMLMapper.builder()
+                .addModule(new JavaTimeModule())
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build()
+                .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        try {
+            return mapper.readValue(json, LocalLayersConfig.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 }
