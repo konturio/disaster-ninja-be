@@ -351,6 +351,7 @@ configs:
             icon-image: 'osm-user-shield'
             icon-text-fit: 'both'
             icon-allow-overlap: true
+            circle-color: 'rgb(0, 145, 0)'
         - stepName: 'Active mappers'
           sourceLayer: 'users'
           stepShape: 'circle'
@@ -358,7 +359,7 @@ configs:
           paramValue: false
           style:
             text: '{top_user}'
-            text-color: 'rgb(45, 45, 45)'
+            text-color: 'rgb(100, 111, 120)'
             text-halo-color: 'rgba(255, 255, 255, 0.3)'
             text-halo-radius: 2
             text-size: 12
@@ -368,6 +369,7 @@ configs:
             icon-image: 'osm-user-shield'
             icon-text-fit: 'both'
             icon-allow-overlap: true
+            circle-color: 'rgb(100, 111, 120)'
         - sourceLayer: 'hexagon'
           style:
             color: 'black'
