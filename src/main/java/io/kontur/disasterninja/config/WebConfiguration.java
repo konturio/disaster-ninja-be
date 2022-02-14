@@ -56,6 +56,18 @@ public class WebConfiguration {
     }
 
     @Bean
+    public RestTemplate layersApiRestTemplate(RestTemplateBuilder builder,
+                                          @Value("${kontur.platform.layersApi.url}") String apiUrl,
+                                          @Value("${kontur.platform.layersApi.connectionTimeout}") Integer connectionTimeout,
+                                          @Value("${kontur.platform.layersApi.readTimeout}") Integer readTimeout) {
+        return builder
+            .rootUri(apiUrl)
+            .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
+            .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
+            .build();
+    }
+
+    @Bean
     public RestTemplate insightsApiRestTemplate(RestTemplateBuilder builder,
                                                 @Value("${kontur.platform.insightsApi.url}") String eventApiUrl,
                                                 @Value("${kontur.platform.insightsApi.connectionTimeout}") Integer connectionTimeout,

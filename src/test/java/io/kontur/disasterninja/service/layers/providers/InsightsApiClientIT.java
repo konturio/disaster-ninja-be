@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
-import static io.kontur.disasterninja.service.layers.providers.LayerProvider.SETTL_PERIPHERY_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.LayerProvider.SETTLED_PERIPHERY_LAYER_ID;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.URBAN_CORE_LAYER_ID;
 
 @Disabled("just for local debugging")
@@ -33,7 +33,7 @@ public class InsightsApiClientIT {
 
         Layer urban = urbanAndPeripheryLayerProvider.urbanOrPeripheryLayer(dto, URBAN_CORE_LAYER_ID, false);
         Assertions.assertNotNull(urban);
-        Layer periphery = urbanAndPeripheryLayerProvider.urbanOrPeripheryLayer(dto, SETTL_PERIPHERY_LAYER_ID, false);
+        Layer periphery = urbanAndPeripheryLayerProvider.urbanOrPeripheryLayer(dto, SETTLED_PERIPHERY_LAYER_ID, false);
         Assertions.assertNotNull(periphery);
     }
 }

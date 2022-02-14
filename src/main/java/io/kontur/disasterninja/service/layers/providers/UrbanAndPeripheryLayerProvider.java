@@ -24,7 +24,7 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 @Order(HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
 public class UrbanAndPeripheryLayerProvider implements LayerProvider {
-    private static final Set<String> providedLayers = Set.of(SETTL_PERIPHERY_LAYER_ID, URBAN_CORE_LAYER_ID);
+    private static final Set<String> providedLayers = Set.of(SETTLED_PERIPHERY_LAYER_ID, URBAN_CORE_LAYER_ID);
 
     private final InsightsApiClient insightsApiClient;
 
@@ -101,7 +101,7 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
                 getFeatureProperty(f, "totalAreaKm2", Double.class)
             );
         }
-        if (SETTL_PERIPHERY_LAYER_ID.equals(f.getId())) {
+        if (SETTLED_PERIPHERY_LAYER_ID.equals(f.getId())) {
             return settledPeripheryDescription(
                 getFeatureProperty(f, "population", Integer.class),
                 getFeatureProperty(f, "areaKm2", Double.class));

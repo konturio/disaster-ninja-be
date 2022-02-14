@@ -1,7 +1,5 @@
 package io.kontur.disasterninja.service.layers;
 
-import io.kontur.disasterninja.client.InsightsApiClient;
-import io.kontur.disasterninja.client.KcApiClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.service.EventApiService;
@@ -21,8 +19,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class LayerService {
     private static final Logger LOG = LoggerFactory.getLogger(LayerService.class);
-    final KcApiClient kcApiClient;
-    final InsightsApiClient insightsApiClient;
     final LayerConfigService layerConfigService;
     final List<LayerProvider> providers;
     final EventApiService eventApiService;

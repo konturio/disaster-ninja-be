@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-import static io.kontur.disasterninja.service.layers.providers.LayerProvider.SETTL_PERIPHERY_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.LayerProvider.SETTLED_PERIPHERY_LAYER_ID;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.URBAN_CORE_LAYER_ID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,7 +58,7 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
             urbanAndPeripheryLayerProvider.obtainLayer(null, URBAN_CORE_LAYER_ID, UUID.randomUUID());
         });
         assertThrows(WebApplicationException.class, () -> {
-            urbanAndPeripheryLayerProvider.obtainLayer(null, SETTL_PERIPHERY_LAYER_ID, UUID.randomUUID());
+            urbanAndPeripheryLayerProvider.obtainLayer(null, SETTLED_PERIPHERY_LAYER_ID, UUID.randomUUID());
         });
     }
 
@@ -66,7 +66,7 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
     public void listTest() throws IOException {
         List<Layer> results = urbanAndPeripheryLayerProvider.obtainLayers(new Point(new double[]{0d, 0d}), null);
         Layer urbanCore = results.stream().filter(it -> URBAN_CORE_LAYER_ID.equals(it.getId())).findAny().get();
-        Layer periphery = results.stream().filter(it -> SETTL_PERIPHERY_LAYER_ID.equals(it.getId())).findAny().get();
+        Layer periphery = results.stream().filter(it -> SETTLED_PERIPHERY_LAYER_ID.equals(it.getId())).findAny().get();
 
         assertEquals("Kontur Urban Core", urbanCore.getName());
         assertEquals("Kontur Urban Core highlights most populated region affected. For this" +
@@ -85,7 +85,7 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
     @Test
     public void getPeripheryTest() throws IOException {
         Layer periphery = urbanAndPeripheryLayerProvider.obtainLayer(new Point(new double[]{-0.096666164, 6.286422267})
-            , SETTL_PERIPHERY_LAYER_ID, null);
+            , SETTLED_PERIPHERY_LAYER_ID, null);
 
         assertNotNull(periphery);
         assertEquals("Kontur Settled Periphery", periphery.getName());
