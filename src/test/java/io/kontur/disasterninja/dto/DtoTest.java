@@ -6,9 +6,9 @@ import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LayerSourceType;
 import io.kontur.disasterninja.domain.enums.LegendType;
 import io.kontur.disasterninja.dto.layer.LayerDetailsDto;
-import io.kontur.disasterninja.dto.layer.LayerDetailsInputDto;
+import io.kontur.disasterninja.dto.layer.LayerDetailsSearchDto;
 import io.kontur.disasterninja.dto.layer.LayerSummaryDto;
-import io.kontur.disasterninja.dto.layer.LayerSummaryInputDto;
+import io.kontur.disasterninja.dto.layer.LayerSummarySearchDto;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import io.kontur.disasterninja.service.layers.LayerService;
 import org.junit.jupiter.api.Assertions;
@@ -56,7 +56,8 @@ public class DtoTest {
         Layer layer = testLayer(id, new FeatureCollection(null));
         Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layer));
 
-        LayerSummaryInputDto input = new LayerSummaryInputDto(UUID.randomUUID(), new Point(new double[]{1, 0}));
+        LayerSummarySearchDto
+            input = new LayerSummarySearchDto(UUID.randomUUID(), new Point(new double[]{1, 0}));
         List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
             .getBody());
 
@@ -77,7 +78,7 @@ public class DtoTest {
         Layer layer = testLayer(id, new FeatureCollection(new Feature[]{new Feature(new Point(new double[]{1d, 2d}), new HashMap<>())}));
         Mockito.when(layerService.get(any(), any(), any())).thenReturn(List.of(layer));
 
-        LayerDetailsInputDto input = new LayerDetailsInputDto(new Point(new double[]{1, 0}), List.of(layer.getId()), UUID.randomUUID());
+        LayerDetailsSearchDto input = new LayerDetailsSearchDto(new Point(new double[]{1, 0}), List.of(layer.getId()), UUID.randomUUID());
         List<LayerDetailsDto> response = Arrays.asList(restTemplate.postForEntity(DETAILS_URL, input, LayerDetailsDto[].class)
             .getBody());
 
@@ -99,7 +100,7 @@ public class DtoTest {
         Layer layer = testLayer(id, new FeatureCollection(null));
         Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layer));
 
-        LayerSummaryInputDto input = new LayerSummaryInputDto(UUID.randomUUID(), new Feature(new Point(
+        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), new Feature(new Point(
             new double[]{1, 0}), new HashMap<>()));
         List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
             .getBody());
@@ -121,7 +122,7 @@ public class DtoTest {
         Layer layer = testLayer(id, new FeatureCollection(null));
         Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layer));
 
-        LayerSummaryInputDto input = new LayerSummaryInputDto(UUID.randomUUID(), new FeatureCollection(new Feature[]{
+        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), new FeatureCollection(new Feature[]{
             new Feature(new Point(new double[]{1, 0}), new HashMap<>()),
             new Feature(new Point(new double[]{1, 0}), new HashMap<>())}));
 
@@ -195,7 +196,8 @@ public class DtoTest {
             .build();
 
         Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layerWithPattern));
-        LayerSummaryInputDto input = new LayerSummaryInputDto(UUID.randomUUID(), new Point(new double[]{1, 0}));
+        LayerSummarySearchDto
+            input = new LayerSummarySearchDto(UUID.randomUUID(), new Point(new double[]{1, 0}));
         List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
             .getBody());
 

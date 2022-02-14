@@ -3,6 +3,7 @@ package io.kontur.disasterninja.client;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.kontur.disasterninja.dto.EventFeedDto;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
+import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,8 @@ public class EventApiClient extends RestClientWithBearerAuth {
     @Value("${kontur.platform.event-api.pageSize}")
     private int pageSize;
 
-    public EventApiClient(RestTemplate eventApiRestTemplate) {
+    public EventApiClient(RestTemplate eventApiRestTemplate, KeycloakAuthorizationService authorizationService) {
+        super(authorizationService);
         this.restTemplate = eventApiRestTemplate;
     }
 

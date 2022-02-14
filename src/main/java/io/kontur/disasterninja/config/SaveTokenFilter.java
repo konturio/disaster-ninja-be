@@ -1,7 +1,6 @@
 package io.kontur.disasterninja.config;
 
 
-import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -19,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 @RequiredArgsConstructor
 public class SaveTokenFilter extends OncePerRequestFilter {
-    private final KeycloakAuthorizationService authorizationService;
+
     private final BearerTokenResolver bearerTokenResolver = new HeaderBearerTokenResolver(
         HttpHeaders.AUTHORIZATION);
 
@@ -27,17 +26,11 @@ public class SaveTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String userToken = bearerTokenResolver.resolve(request);
-        String userOrDefaultToken = getUserTokenOrDefaultAccessToken(userToken);
-
-        SecurityContextHolder.getContext().setAuthentication(new BearerTokenAuthenticationToken(userOrDefaultToken));
+        if (userToken != null && !userToken.isBlank()) {
+            SecurityContextHolder.getContext()
+                .setAuthentication(new BearerTokenAuthenticationToken(userToken));
+        }
 
         filterChain.doFilter(request, response);
-    }
-
-    private String getUserTokenOrDefaultAccessToken(String userToken) {
-        if (userToken == null || userToken.isBlank()) {
-            return authorizationService.getAccessToken();
-        }
-        return userToken;
     }
 }

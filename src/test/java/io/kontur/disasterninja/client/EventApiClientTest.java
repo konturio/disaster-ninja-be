@@ -1,11 +1,13 @@
 package io.kontur.disasterninja.client;
 
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
+import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -41,6 +43,8 @@ class EventApiClientTest {
     private MockRestServiceServer server;
     @Mock
     SecurityContext securityContext;
+    @MockBean
+    KeycloakAuthorizationService authorizationService;
 
     public void givenJwtTokenIs(String jwt) {
         Authentication authentication = new BearerTokenAuthenticationToken(jwt);
