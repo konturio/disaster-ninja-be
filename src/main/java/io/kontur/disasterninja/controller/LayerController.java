@@ -16,13 +16,15 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,7 +55,7 @@ public class LayerController {
     @Operation(tags = "Layers", summary = "Update an existing new layer")
     @ApiResponse(responseCode = "200", description = "Successfully updated a layer", content = @Content(
         mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = LayerSummaryDto.class)))
-    @PostMapping(path = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public LayerSummaryDto update(@PathVariable String id, @RequestBody
                                       @io.swagger.v3.oas.annotations.parameters.RequestBody(
                                           description = "Layer data") LayerUpdateDto dto) {
@@ -64,8 +66,9 @@ public class LayerController {
     @Operation(tags = "Layers", summary = "Delete an existing new layer")
     @ApiResponse(responseCode = "204", description = "Successfully deleted a layer")
     @DeleteMapping(path = "/{id}")
-    public void delete(@PathVariable String id) {
+    public ResponseEntity<?> delete(@PathVariable String id) {
         layerService.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @Operation(tags = "Layers", summary = "Get List of available layers")

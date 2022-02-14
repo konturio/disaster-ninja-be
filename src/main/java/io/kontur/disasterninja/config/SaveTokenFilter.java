@@ -28,7 +28,7 @@ public class SaveTokenFilter extends OncePerRequestFilter {
         String userToken = bearerTokenResolver.resolve(request);
         if (userToken != null && !userToken.isBlank()) {
             SecurityContextHolder.getContext()
-                .setAuthentication(new BearerTokenAuthenticationToken(userToken));
+                .setAuthentication(new BearerTokenAuthenticationToken(userToken.substring("Bearer ".length())));
         }
 
         filterChain.doFilter(request, response);
