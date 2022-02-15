@@ -3,8 +3,10 @@ package io.kontur.disasterninja.service.layers;
 import static io.kontur.disasterninja.service.LayersApiService.LAYER_PREFIX;
 import static io.kontur.disasterninja.util.TestUtil.createLegend;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.matches;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,6 +23,7 @@ import io.kontur.disasterninja.service.layers.providers.EventShapeLayerProvider;
 import io.kontur.disasterninja.service.layers.providers.HotLayerProvider;
 import io.kontur.disasterninja.service.layers.providers.OsmLayerProvider;
 import io.kontur.disasterninja.service.layers.providers.UrbanAndPeripheryLayerProvider;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +31,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.wololo.geojson.Point;
 
 @SpringBootTest
@@ -90,9 +96,9 @@ public class LayerServiceTest {
 
     @Test
     public void createTest() {
-        LayerCreateDto dto = createDto();
         givenLayerApiCreateRespondsWithLayer();
 
+        LayerCreateDto dto = createDto();
         Layer layer = layerService.create(dto);
 
         verify(layersApiClient, times(1)).createCollection(dto);
@@ -100,10 +106,18 @@ public class LayerServiceTest {
     }
 
     @Test
+    public void createNoPermissionsTest() {
+        givenLayerApiCreateRespondsWith403();
+
+        LayerCreateDto dto = createDto();
+        assertThrows(HttpClientErrorException.Forbidden.class, () -> layerService.create(dto));
+    }
+
+    @Test
     public void updateTest() {
-        LayerUpdateDto dto = updateDto();
         givenLayerApiUpdateRespondsWithLayer();
 
+        LayerUpdateDto dto = updateDto();
         Layer layer = layerService.update(id, dto);
 
         verify(layersApiClient, times(1)).updateCollection(id, dto);
@@ -111,10 +125,27 @@ public class LayerServiceTest {
     }
 
     @Test
+    public void updateNoPermissionsTest() {
+        givenLayerApiUpdateRespondsWith403();
+
+        LayerUpdateDto dto = updateDto();
+        assertThrows(HttpClientErrorException.Forbidden.class,
+            () -> layerService.update("123", dto));
+    }
+
+    @Test
     public void deleteTest() {
         layerService.delete(id);
 
         verify(layersApiClient, times(1)).deleteCollection(id);
+    }
+
+    @Test
+    public void deleteNoPermissionsTest() {
+        givenLayerApiDeleteRespondsWith401();
+
+        assertThrows(HttpClientErrorException.Unauthorized.class,
+            () -> layerService.delete("123"));
     }
 
     private LayerUpdateDto updateDto() {
@@ -139,11 +170,29 @@ public class LayerServiceTest {
         when(layersApiClient.createCollection(any())).thenReturn(layerApiResponse);
     }
 
+    private void givenLayerApiCreateRespondsWith403() {
+        when(layersApiClient.createCollection(any()))
+            .thenThrow(HttpClientErrorException.create(HttpStatus.FORBIDDEN, "forbidden",
+                new HttpHeaders(), null, Charset.defaultCharset()));
+    }
+
     private void givenLayerApiUpdateRespondsWithLayer() {
         Collection layerApiResponse = new Collection(id, title, null, null,
             null, legendDto, null, null, null, null);
 
         when(layersApiClient.updateCollection(matches(id), any())).thenReturn(layerApiResponse);
+    }
+
+    private void givenLayerApiUpdateRespondsWith403() {
+        when(layersApiClient.updateCollection(any(), any()))
+            .thenThrow(HttpClientErrorException.create(HttpStatus.FORBIDDEN, "forbidden",
+                new HttpHeaders(), null, Charset.defaultCharset()));
+    }
+
+    private void givenLayerApiDeleteRespondsWith401() {
+        doThrow(HttpClientErrorException.create(HttpStatus.UNAUTHORIZED, "unauthorized",
+            new HttpHeaders(), null, Charset.defaultCharset()))
+            .when(layersApiClient).deleteCollection(any());
     }
 
     private void assertLayer(Layer layer) {
