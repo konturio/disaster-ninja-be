@@ -6,12 +6,10 @@ import io.kontur.disasterninja.service.UserProfileService;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -82,25 +80,25 @@ public class EventControllerTest {
     }
 
     private List<EventFeedDto> getUserFeedsFromService() {
-        return eventsController.getUserFeeds(new HttpHeaders());
+        return eventsController.getUserFeeds();
     }
 
     private void givenEventApiReturnsTwoFeeds() {
-        when(eventApiService.getUserFeeds(any()))
+        when(eventApiService.getUserFeeds())
             .thenReturn(Lists.newArrayList(feed(1), feed(2)));
     }
 
     private void givenEventApiReturnsOnlyFeed2() {
-        when(eventApiService.getUserFeeds(any()))
+        when(eventApiService.getUserFeeds())
             .thenReturn(List.of(feed(2)));
     }
 
     private void givenUpsReturnsNoDefaultFeed() {
-        when(userProfileService.getUserDefaultFeed(any())).thenReturn(null);
+        when(userProfileService.getUserDefaultFeed()).thenReturn(null);
     }
 
     private void givenUpsReturnsPublicFeed2AsDefault() {
-        when(userProfileService.getUserDefaultFeed(any())).thenReturn(publicFeed2.getFeed());
+        when(userProfileService.getUserDefaultFeed()).thenReturn(publicFeed2.getFeed());
     }
 
     private void assertDto1(boolean isDefault, EventFeedDto dto) {

@@ -1,7 +1,7 @@
 package io.kontur.disasterninja.dto.layerapi;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.kontur.disasterninja.domain.Legend;
+import io.kontur.disasterninja.dto.layer.LegendDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -27,7 +27,7 @@ public class Collection {
     private Object properties;
 
     @JsonProperty("legend")
-    private Legend legend;
+    private LegendDto legend;
 
     @JsonProperty("group")
     private CollectionGroupProperties group;

@@ -6,7 +6,6 @@ import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.dto.EventFeedDto;
 import io.kontur.disasterninja.dto.EventListDto;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
-import org.junit.Rule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,11 +13,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import uk.co.jemos.podam.api.PodamFactory;
@@ -30,8 +31,6 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.mockito.quality.Strictness.LENIENT;
-import static org.mockito.quality.Strictness.STRICT_STUBS;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -45,6 +44,7 @@ class EventApiServiceTest {
     EventApiService service;
 
     private final String userToken = "some-user-token";
+    private final String defaultAppToken = "some-app-token";
     private final String defaultAppFeed = "disaster-ninja-02";
     private final String defaultAppFeedDesc = "some desc";
     private final String userAppFeed = "some-user-feed";
@@ -52,15 +52,27 @@ class EventApiServiceTest {
 
     @BeforeEach
     public void before() {
-        String defaultAppToken = "some-app-token";
         when(authorizationService.getAccessToken()).thenReturn(defaultAppToken);
-        when(client.getUserFeeds(defaultAppToken)).thenReturn(publicFeeds());
-        when(client.getUserFeeds(userToken)).thenReturn(userFeeds());
+    }
+
+    public void givenJwtTokenIs(String jwt) {
+        if (jwt == null) {
+            jwt = defaultAppToken;
+            when(client.getUserFeeds()).thenReturn(publicFeeds());
+        } else {
+            when(client.getUserFeeds()).thenReturn(userFeeds());
+
+        }
+        Authentication authentication = new BearerTokenAuthenticationToken(jwt);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
     }
 
     @Test
     public void testPublicFeeds() {
-        List<EventFeedDto> result = service.getUserFeeds(null);
+        givenJwtTokenIs(null);
+        List<EventFeedDto> result = service.getUserFeeds();
 
         assertEquals(1, result.size());
         assertEquals(defaultAppFeed, result.get(0).getFeed());
@@ -69,22 +81,12 @@ class EventApiServiceTest {
 
     @Test
     public void testUserFeeds() {
-        List<EventFeedDto> result = service.getUserFeeds(userToken);
+        givenJwtTokenIs(userToken);
+        List<EventFeedDto> result = service.getUserFeeds();
 
         assertEquals(1, result.size());
         assertEquals(userAppFeed, result.get(0).getFeed());
         assertEquals(userAppFeedDesc, result.get(0).getDescription());
-    }
-
-    @Test
-    public void testGetEvents_TokenRequest() {
-        //given
-        when(authorizationService.getAccessToken()).thenReturn("testToken");
-        //when
-        service.getEvents(null, null);
-        //then
-        verify(authorizationService, times(1)).getAccessToken();
-        verify(client, times(1)).getEvents("testToken", null);
     }
 
     @Test
@@ -106,10 +108,10 @@ class EventApiServiceTest {
         moreRecentEvent.getEventDetails().put("population", 50);
         moreRecentEvent.setUpdatedAt(OffsetDateTime.now());
 
-        when(client.getEvents(any(), any())).thenReturn(List.of(moreRecentEvent, oldEvent, mostPopulatedEvent));
+        when(client.getEvents(any())).thenReturn(List.of(moreRecentEvent, oldEvent, mostPopulatedEvent));
 
         //when
-        List<EventListDto> events = service.getEvents(null, null);
+        List<EventListDto> events = service.getEvents(null);
 
         //then
         assertEquals(mostPopulatedEvent.getEventId(), events.get(0).getEventId());
@@ -136,12 +138,11 @@ class EventApiServiceTest {
         event.getEventDetails().put("populatedAreaKm2", "123234");
 
         UUID eventId = UUID.randomUUID();
-        when(client.getEvent(eventId, "testToken", null)).thenReturn(event);
+        when(client.getEvent(eventId, null)).thenReturn(event);
         //when
-        EventDto result = service.getEvent(eventId, null, null);
+        EventDto result = service.getEvent(eventId, null);
         //then
-        verify(authorizationService, times(1)).getAccessToken();
-        verify(client, times(1)).getEvent(eventId, "testToken", null);
+        verify(client, times(1)).getEvent(eventId, null);
         //some EventDto fields
         assertEquals(event.getProperName(), result.getEventName());
         assertEquals(event.getLocation(), result.getLocation());
@@ -154,7 +155,7 @@ class EventApiServiceTest {
         //given
         when(authorizationService.getAccessToken()).thenReturn("testToken");
         //when,then
-        Assertions.assertThrows(WebApplicationException.class, () -> service.getEvent(UUID.randomUUID(), null, null));
+        Assertions.assertThrows(WebApplicationException.class, () -> service.getEvent(UUID.randomUUID(), null));
     }
 
     private List<EventFeedDto> publicFeeds() {

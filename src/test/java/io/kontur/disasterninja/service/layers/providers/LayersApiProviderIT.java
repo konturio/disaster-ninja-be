@@ -7,10 +7,12 @@ import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LayerSourceType;
 import io.kontur.disasterninja.domain.enums.LegendType;
+import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.ExpectedCount;
@@ -33,6 +35,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class LayersApiProviderIT {
 
     private MockRestServiceServer server;
+    @MockBean
+    KeycloakAuthorizationService authorizationService;
     @Autowired
     private LayersApiProvider provider;
     @Autowired

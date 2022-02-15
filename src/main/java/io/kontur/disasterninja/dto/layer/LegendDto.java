@@ -29,11 +29,11 @@ public class LegendDto {
         return new Legend(
                 LegendType.fromString(type),
                 linkProperty,
-                steps.stream()
+                steps != null ? steps.stream()
                         .map(LegendStepDto::toLegendStep)
-                        .collect(Collectors.toList()),
-                colors.stream()
-                        .collect(Collectors.toMap(ColorDto::getId, ColorDto::getColor)),
+                        .collect(Collectors.toList()) : null,
+                colors != null ? colors.stream()
+                        .collect(Collectors.toMap(ColorDto::getId, ColorDto::getColor)) : null,
                 axes
                 );
     }

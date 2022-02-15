@@ -3,6 +3,7 @@ package io.kontur.disasterninja.client;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.kontur.disasterninja.dto.EventFeedDto;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
+import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class EventApiClient {
+public class EventApiClient extends RestClientWithBearerAuth {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventApiClient.class);
     private static final String EVENT_API_EVENT_LIST_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&after=%s&episodeFilterType=LATEST&limit=%s&sortOrder=ASC";
@@ -36,24 +37,20 @@ public class EventApiClient {
     @Value("${kontur.platform.event-api.pageSize}")
     private int pageSize;
 
-    public EventApiClient(RestTemplate eventApiRestTemplate) {
+    public EventApiClient(RestTemplate eventApiRestTemplate, KeycloakAuthorizationService authorizationService) {
+        super(authorizationService);
         this.restTemplate = eventApiRestTemplate;
     }
 
-    public List<EventFeedDto> getUserFeeds(String jwtToken) {
-        HttpHeaders headers = new HttpHeaders();
-        if (jwtToken != null && !jwtToken.isBlank()) {
-            headers.setBearerAuth(jwtToken);
-        }
-
+    public List<EventFeedDto> getUserFeeds() {
         ResponseEntity<List<EventFeedDto>> response = restTemplate
-            .exchange(EVENT_API_USER_FEEDS_URI, HttpMethod.GET, new HttpEntity<>(null, headers),
+            .exchange(EVENT_API_USER_FEEDS_URI, HttpMethod.GET, new HttpEntity<>(null, httpHeadersWithBearerAuth()),
                 new ParameterizedTypeReference<>() { });
 
         return Optional.ofNullable(response.getBody()).orElseGet(List::of);
     }
 
-    public List<EventApiEventDto> getEvents(String jwtToken, String eventApiFeed) {
+    public List<EventApiEventDto> getEvents(String eventApiFeed) {
         if (eventApiFeed == null) {
             eventApiFeed = defaultEventApiFeed;
         }
@@ -61,14 +58,12 @@ public class EventApiClient {
             .minusDays(4);
 
         List<EventApiEventDto> result = new ArrayList<>();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(jwtToken);
 
         while (true) {
             String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed, after.atZoneSameInstant(ZoneOffset.UTC)
                 .truncatedTo(ChronoUnit.MILLIS).format(DateTimeFormatter.ISO_ZONED_DATE_TIME), pageSize);
             ResponseEntity<EventApiSearchEventResponse> response = restTemplate
-                .exchange(uri, HttpMethod.GET, new HttpEntity<>(null, headers), new ParameterizedTypeReference<>() {
+                .exchange(uri, HttpMethod.GET, new HttpEntity<>(null, httpHeadersWithBearerAuth()), new ParameterizedTypeReference<>() {
                 });
             if (!response.getStatusCode().is2xxSuccessful()) {
                 LOG.info("Received {} response from eventapi. Request uri: {}", response.getStatusCode(), uri);
@@ -87,7 +82,7 @@ public class EventApiClient {
         return result;
     }
 
-    public EventApiEventDto getEvent(UUID eventId, String jwtToken, String eventApiFeed) {
+    public EventApiEventDto getEvent(UUID eventId, String eventApiFeed) {
         if (eventId == null) {
             return null;
         }
@@ -95,10 +90,8 @@ public class EventApiClient {
             eventApiFeed = defaultEventApiFeed;
         }
         String uri = String.format(EVENT_API_EVENT_ID_URI, eventApiFeed, eventId);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(jwtToken);
         ResponseEntity<EventApiEventDto> response = restTemplate
-            .exchange(uri, HttpMethod.GET, new HttpEntity<>(null, headers), new ParameterizedTypeReference<>() {
+            .exchange(uri, HttpMethod.GET, new HttpEntity<>(null, httpHeadersWithBearerAuth()), new ParameterizedTypeReference<>() {
             });
         if (!response.getStatusCode().is2xxSuccessful()) {
             LOG.info("Received {} response from eventapi. Request uri: {}", response.getStatusCode(), uri);

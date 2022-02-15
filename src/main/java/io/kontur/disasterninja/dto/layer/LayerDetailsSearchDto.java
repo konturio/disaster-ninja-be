@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-public class LayerDetailsInputDto {
+public class LayerDetailsSearchDto {
     private final GeoJSON geoJSON;
     private final List<String> layerIds;
     private final UUID eventId; //event id

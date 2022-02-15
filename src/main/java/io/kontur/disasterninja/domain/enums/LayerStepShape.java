@@ -19,6 +19,9 @@ public enum LayerStepShape {
 
     @JsonCreator
     public static LayerStepShape fromString(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
         return Arrays.stream(LayerStepShape.values())
             .filter(t -> t.value.equals(value))
             .findFirst()
