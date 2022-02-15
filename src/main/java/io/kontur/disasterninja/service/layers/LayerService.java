@@ -1,11 +1,11 @@
 package io.kontur.disasterninja.service.layers;
 
+import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
 import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
 import io.kontur.disasterninja.service.GeometryTransformer;
-import io.kontur.disasterninja.service.LayersApiService;
 import io.kontur.disasterninja.service.layers.providers.LayerProvider;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -23,20 +23,20 @@ public class LayerService {
     private static final Logger LOG = LoggerFactory.getLogger(LayerService.class);
     final LayerConfigService layerConfigService;
     final List<LayerProvider> providers;
-    private final LayersApiService layersApiService;
+    private final LayersApiClient layersApiClient;
 
     private final GeometryTransformer geometryTransformer;
 
     public Layer create(LayerCreateDto dto) {
-        return layersApiService.createLayer(dto);
+        return layersApiClient.createLayer(dto);
     }
 
     public Layer update(String id, LayerUpdateDto dto) {
-        return layersApiService.updateLayer(id, dto);
+        return layersApiClient.updateLayer(id, dto);
     }
 
     public void delete(String id) {
-        layersApiService.deleteLayer(id);
+        layersApiClient.deleteLayer(id);
     }
 
     public List<Layer> getList(GeoJSON geoJSON, UUID eventId) {

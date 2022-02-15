@@ -12,7 +12,7 @@
     "order": 0
   },
   "category": {
-    "name": "string",
+    "name": "base",
     "isOpened": true,
     "mutuallyExclusive": true,
     "order": 0

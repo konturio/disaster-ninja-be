@@ -1,6 +1,5 @@
 package io.kontur.disasterninja.service.layers;
 
-import static io.kontur.disasterninja.service.LayersApiService.LAYER_PREFIX;
 import static io.kontur.disasterninja.util.TestUtil.createLegend;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -17,7 +16,6 @@ import io.kontur.disasterninja.domain.Legend;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
 import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
 import io.kontur.disasterninja.dto.layer.LegendDto;
-import io.kontur.disasterninja.dto.layerapi.Collection;
 import io.kontur.disasterninja.service.layers.providers.BivariateLayerProvider;
 import io.kontur.disasterninja.service.layers.providers.EventShapeLayerProvider;
 import io.kontur.disasterninja.service.layers.providers.HotLayerProvider;
@@ -43,6 +41,11 @@ public class LayerServiceTest {
     final String title = "layer title";
     final Legend legend = createLegend();
     final LegendDto legendDto = LegendDto.fromLegend(legend);
+    final Layer layer = Layer.builder()
+        .id(id)
+        .name(title)
+        .legend(legend)
+        .build();
 
     @MockBean
     HotLayerProvider hotLayerProvider;
@@ -96,12 +99,12 @@ public class LayerServiceTest {
 
     @Test
     public void createTest() {
-        givenLayerApiCreateRespondsWithLayer();
+        when(layersApiClient.createLayer(any())).thenReturn(layer);
 
         LayerCreateDto dto = createDto();
         Layer layer = layerService.create(dto);
 
-        verify(layersApiClient, times(1)).createCollection(dto);
+        verify(layersApiClient, times(1)).createLayer(dto);
         assertLayer(layer);
     }
 
@@ -115,12 +118,12 @@ public class LayerServiceTest {
 
     @Test
     public void updateTest() {
-        givenLayerApiUpdateRespondsWithLayer();
+        when(layersApiClient.updateLayer(matches(id), any())).thenReturn(layer);
 
         LayerUpdateDto dto = updateDto();
         Layer layer = layerService.update(id, dto);
 
-        verify(layersApiClient, times(1)).updateCollection(id, dto);
+        verify(layersApiClient, times(1)).updateLayer(id, dto);
         assertLayer(layer);
     }
 
@@ -137,7 +140,7 @@ public class LayerServiceTest {
     public void deleteTest() {
         layerService.delete(id);
 
-        verify(layersApiClient, times(1)).deleteCollection(id);
+        verify(layersApiClient, times(1)).deleteLayer(id);
     }
 
     @Test
@@ -163,28 +166,14 @@ public class LayerServiceTest {
         return dto;
     }
 
-    private void givenLayerApiCreateRespondsWithLayer() {
-        Collection layerApiResponse = new Collection(id, title, null, null,
-            null, legendDto, null, null, null, null);
-
-        when(layersApiClient.createCollection(any())).thenReturn(layerApiResponse);
-    }
-
     private void givenLayerApiCreateRespondsWith403() {
-        when(layersApiClient.createCollection(any()))
+        when(layersApiClient.createLayer(any()))
             .thenThrow(HttpClientErrorException.create(HttpStatus.FORBIDDEN, "forbidden",
                 new HttpHeaders(), null, Charset.defaultCharset()));
     }
 
-    private void givenLayerApiUpdateRespondsWithLayer() {
-        Collection layerApiResponse = new Collection(id, title, null, null,
-            null, legendDto, null, null, null, null);
-
-        when(layersApiClient.updateCollection(matches(id), any())).thenReturn(layerApiResponse);
-    }
-
     private void givenLayerApiUpdateRespondsWith403() {
-        when(layersApiClient.updateCollection(any(), any()))
+        when(layersApiClient.updateLayer(any(), any()))
             .thenThrow(HttpClientErrorException.create(HttpStatus.FORBIDDEN, "forbidden",
                 new HttpHeaders(), null, Charset.defaultCharset()));
     }
@@ -192,11 +181,11 @@ public class LayerServiceTest {
     private void givenLayerApiDeleteRespondsWith401() {
         doThrow(HttpClientErrorException.create(HttpStatus.UNAUTHORIZED, "unauthorized",
             new HttpHeaders(), null, Charset.defaultCharset()))
-            .when(layersApiClient).deleteCollection(any());
+            .when(layersApiClient).deleteLayer(any());
     }
 
     private void assertLayer(Layer layer) {
-        assertEquals(LAYER_PREFIX + id, layer.getId());
+        assertEquals(id, layer.getId());
         assertEquals(title, layer.getName());
         assertEquals(legend, layer.getLegend());
     }
