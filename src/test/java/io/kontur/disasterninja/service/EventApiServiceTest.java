@@ -45,7 +45,7 @@ class EventApiServiceTest {
     EventApiService service;
 
     private final String userToken = "some-user-token";
-    private final String defaultAppFeed = "disaster-ninja-02";
+    private final String defaultAppFeed = "kontur-public";
     private final String defaultAppFeedDesc = "some desc";
     private final String userAppFeed = "some-user-feed";
     private final String userAppFeedDesc = "some user desc";
