@@ -44,7 +44,7 @@ public class EventsController {
         @Min(0)
             int offset,
 
-        @Parameter(description = "Event API Feed name", example = "disaster-ninja-02")
+        @Parameter(description = "Event API Feed name", example = "kontur-public")
         @RequestParam(required = false)
             String feed
     ) {
