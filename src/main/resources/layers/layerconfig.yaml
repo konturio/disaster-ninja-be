@@ -567,6 +567,21 @@ configs:
       urls:
         - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
       tileSize: 512
+  - id: 'Kontur Fire Service Scarcity Risk'
+    orderIndex: 7
+    globalOverlay: true
+    boundaryRequiredForRetrieval: false
+    eventIdRequiredForRetrieval: false
+    displayLegendIfNoFeaturesExist: true
+    category: 'overlay'
+    group: 'bivariate'
+    legend:
+      type: 'bivariate'
+    source:
+      type: 'vector'
+      urls:
+        - '{tilesHost}/tiles/stats/{z}/{x}/{y}.mvt'
+      tileSize: 512
 ##### Category: BASELINE
 
   - id: 'Bing'
