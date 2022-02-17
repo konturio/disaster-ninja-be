@@ -41,6 +41,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
     private static final String LAYERS_SEARCH_URI = COLLECTIONS_URI + "/search";
     private static final String LAYERS_FEATURES_SEARCH_URI = COLLECTIONS_URI + "/%s/items/search";
     private static final String COLLECTION_BY_ID_URL = COLLECTIONS_URI + "/%s";
+    private static final String UPDATE_FEATURES_URL = COLLECTIONS_URI + "/%s/items";
 
     private final RestTemplate layersApiRestTemplate;
     @Value("${kontur.platform.layersApi.pageSize}")
@@ -78,6 +79,15 @@ public class LayersApiClient extends RestClientWithBearerAuth {
     public void deleteLayer(String layerId) {
         String id = getIdWithoutPrefix(layerId);
         deleteCollection(id);
+    }
+
+    public FeatureCollection updateLayerFeatures(String layerId, FeatureCollection body) {
+        String id = layerId.replaceFirst(LAYER_PREFIX, "");
+
+        ResponseEntity<FeatureCollection> response = layersApiRestTemplate
+                .exchange(String.format(UPDATE_FEATURES_URL, id), HttpMethod.PUT,
+                        httpEntityWithUserBearerAuthIfPresent(body), new ParameterizedTypeReference<>() {});
+        return response.getBody();
     }
 
     private String getIdWithoutPrefix(String layerId) {

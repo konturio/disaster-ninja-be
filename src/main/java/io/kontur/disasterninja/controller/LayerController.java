@@ -12,12 +12,16 @@ import io.kontur.disasterninja.dto.layer.LayerSummaryDto;
 import io.kontur.disasterninja.dto.layer.LayerSummarySearchDto;
 import io.kontur.disasterninja.service.layers.LayerService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +32,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.wololo.geojson.FeatureCollection;
 
 @RestController()
 @RequestMapping(LayerController.PATH)
@@ -101,5 +106,18 @@ public class LayerController {
         return layerService.get(inputDto.getGeoJSON(), inputDto.getShouldApplyGeometryFilterPerLayerId(), inputDto.getEventId())
             .stream().map(LayerDetailsDto::fromLayer)
             .collect(Collectors.toList());
+    }
+
+    @Operation(tags = "Layers", summary = "Updates layer feature set")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "fetch the set of features", content = @Content(schema = @Schema(implementation = FeatureCollection.class))),
+            @ApiResponse(responseCode = "404", description = "The requested URI was not found.")})
+    @PutMapping(path = "/{id}/items", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity updateFeatures(
+            @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
+            @PathVariable("id") String layerId,
+            @RequestBody FeatureCollection body) {
+        FeatureCollection fc = layerService.updateFeatures(layerId, body);
+        return ResponseEntity.ok(fc);
     }
 }
