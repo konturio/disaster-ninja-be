@@ -1,0 +1,29 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "id": "jlayRsW2",
+      "type": "Feature",
+      "properties": {"name": "feature1"},
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          41.1328125,
+          27.059125784374068
+        ]
+      }
+    },
+    {
+      "id": "msjYHng9",
+      "type": "Feature",
+      "properties": {"name": "feature2"},
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          43.2421875,
+          47.754097979680026
+        ]
+      }
+    }
+  ]
+}

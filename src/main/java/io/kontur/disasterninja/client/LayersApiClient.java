@@ -2,7 +2,6 @@ package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
@@ -41,6 +40,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
     private static final String LAYERS_SEARCH_URI = COLLECTIONS_URI + "/search";
     private static final String LAYERS_FEATURES_SEARCH_URI = COLLECTIONS_URI + "/%s/items/search";
     private static final String COLLECTION_BY_ID_URL = COLLECTIONS_URI + "/%s";
+    private static final String UPDATE_FEATURES_URL = COLLECTIONS_URI + "/%s/items";
 
     private final RestTemplate layersApiRestTemplate;
     @Value("${kontur.platform.layersApi.pageSize}")
@@ -69,13 +69,23 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         return convertToLayer(collection);
     }
 
-    public Layer updateLayer(String id, LayerUpdateDto dto) {
+    public Layer updateLayer(String layerId, LayerUpdateDto dto) {
+        String id = layerId.replaceFirst(LAYER_PREFIX, "");
         Collection collection = updateCollection(id, dto);
         return convertToLayer(collection);
     }
 
     public void deleteLayer(String id) {
         deleteCollection(id);
+    }
+
+    public FeatureCollection updateLayerFeatures(String layerId, FeatureCollection body) {
+        String id = layerId.replaceFirst(LAYER_PREFIX, "");
+
+        ResponseEntity<FeatureCollection> response = layersApiRestTemplate
+                .exchange(String.format(UPDATE_FEATURES_URL, id), HttpMethod.PUT,
+                        new HttpEntity<>(body, httpHeadersWithBearerAuth()), new ParameterizedTypeReference<>() {});
+        return response.getBody();
     }
 
     protected Collection createCollection(LayerCreateDto dto) {

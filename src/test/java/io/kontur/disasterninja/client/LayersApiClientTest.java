@@ -3,6 +3,8 @@ package io.kontur.disasterninja.client;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static io.kontur.disasterninja.util.TestUtil.createLegend;
 import static io.kontur.disasterninja.util.TestUtil.readFile;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -32,6 +34,7 @@ import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.HttpClientErrorException;
 import org.wololo.geojson.Feature;
+import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
 @RestClientTest(LayersApiClient.class)
@@ -238,5 +241,44 @@ class LayersApiClientTest {
         assertEquals("https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf",
                 collection.getLinks().get(0).getHref());
         assertEquals(LegendType.SIMPLE.toString(), collection.getLegend().getType());
+    }
+
+    @Test
+    public void updateLayerFeaturesTest() throws JsonProcessingException {
+        //GIVEN
+        final String id = "layerId";
+        final String bodyJson = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"name\":\"feature1\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[41.1328125,27.059125784374068]}},{\"type\":\"Feature\",\"properties\":{\"name\":\"feature2\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[43.2421875,47.754097979680026]}}]}";
+        FeatureCollection body = new ObjectMapper().readValue(bodyJson, FeatureCollection.class);
+
+        server.expect(ExpectedCount.times(1), requestTo("/collections/" + id + "/items"))
+                .andExpect(method(HttpMethod.PUT))
+                .andExpect(r -> assertThat(r.getBody().toString(), equalTo(new ObjectMapper().writeValueAsString(body))))
+                .andRespond(r ->
+                        withSuccess(readFile(this, "layers/layersAPI.features.updated.json"),
+                                MediaType.APPLICATION_JSON)
+                                .createResponse(r)
+                );
+
+        //WHEN
+        FeatureCollection result = client.updateLayerFeatures(id, body);
+
+        //THEN
+        assertEquals(2, result.getFeatures().length);
+        assertEquals("jlayRsW2", result.getFeatures()[0].getId());
+        assertEquals("msjYHng9", result.getFeatures()[1].getId());
+    }
+
+    @Test
+    public void updateLayerFeaturesTest_Negative() {
+        //GIVEN
+        final String id = "layerId";
+
+        server.expect(ExpectedCount.times(1), requestTo("/collections/" + id + "/items"))
+                .andExpect(method(HttpMethod.PUT))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+        //WHEN
+        //THEN
+        assertThrows(HttpClientErrorException.NotFound.class, () -> client.updateLayerFeatures(id, new FeatureCollection(new Feature[0])));
     }
 }
