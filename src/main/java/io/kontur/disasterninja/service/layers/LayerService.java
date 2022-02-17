@@ -75,16 +75,26 @@ public class LayerService {
                 .toList();
     }
 
-    public List<Layer> get(GeoJSON geoJSON, List<String> layerIds, UUID eventId) {
+    public List<Layer> get(GeoJSON geoJSON, Map<String, Boolean> shouldApplyGeometryFilterPerLayerId, UUID eventId) {
         Geometry boundary = geometryTransformer.getGeometryFromGeoJson(geoJSON);
         List<Layer> result = new ArrayList<>();
 
-        for (String layerId : layerIds) {
+        if (shouldApplyGeometryFilterPerLayerId == null || shouldApplyGeometryFilterPerLayerId.isEmpty()) {
+            return List.of();
+        }
+        for (Map.Entry<String, Boolean> layerEntry : shouldApplyGeometryFilterPerLayerId.entrySet()) {
+            String layerId = layerEntry.getKey();
+            boolean applyGeometryFilterForLayer = layerEntry.getValue();
+
             Layer layer = null;
             for (LayerProvider provider : providers) {
                 //find first by layer id and use it
                 if (provider.isApplicable(layerId)) {
-                    layer = provider.obtainLayer(boundary, layerId, eventId);
+                    if (applyGeometryFilterForLayer) {
+                        layer = provider.obtainLayer(boundary, layerId, eventId);
+                    } else {
+                        layer = provider.obtainLayer(null, layerId, eventId);
+                    }
                     if (layer != null) {
                         LOG.info("Found layer by id {} by provider {}", layerId, provider.getClass().getSimpleName());
                         layerConfigService.applyConfig(layer);

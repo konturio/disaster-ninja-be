@@ -94,9 +94,11 @@ public class LayerController {
                                             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                                                 description = "geoJSON: only layers with features intersecting with" +
                                                     " geoJSON boundary will be returned; eventId: Event Id for" +
-                                                    " EventShape layer; List of layer ids to retrieve")
+                                                    " EventShape layer; Map of layer ids with corresponding boolean" +
+                                                    " specifying if geoJson filter should be used when looking for" +
+                                                    " that layer")
                                                 LayerDetailsSearchDto inputDto) {
-        return layerService.get(inputDto.getGeoJSON(), inputDto.getLayerIds(), inputDto.getEventId())
+        return layerService.get(inputDto.getGeoJSON(), inputDto.getShouldApplyGeometryFilterPerLayerId(), inputDto.getEventId())
             .stream().map(LayerDetailsDto::fromLayer)
             .collect(Collectors.toList());
     }

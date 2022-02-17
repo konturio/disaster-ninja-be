@@ -1,19 +1,12 @@
 package io.kontur.disasterninja.client;
 
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
-import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 
@@ -34,24 +27,13 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 @RestClientTest(EventApiClient.class)
 @AutoConfigureWebClient(registerRestTemplate = true)
-class EventApiClientTest {
+class EventApiClientTest extends TestDependingOnUserAuth {
 
-    private final String jwt = "JwtTestToken";
     @Autowired
     private EventApiClient client;
+
     @Autowired
     private MockRestServiceServer server;
-    @Mock
-    SecurityContext securityContext;
-    @MockBean
-    KeycloakAuthorizationService authorizationService;
-
-    public void givenJwtTokenIs(String jwt) {
-        Authentication authentication = new BearerTokenAuthenticationToken(jwt);
-        securityContext = mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-    }
 
     @Test
     public void testGetEvents() {

@@ -1,30 +1,18 @@
 package io.kontur.disasterninja.client;
 
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static io.kontur.disasterninja.util.TestUtil.createLegend;
-import static io.kontur.disasterninja.util.TestUtil.readFile;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.enums.LegendType;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
 import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
 import io.kontur.disasterninja.dto.layer.LegendDto;
 import io.kontur.disasterninja.dto.layerapi.Collection;
-import io.kontur.disasterninja.service.KeycloakAuthorizationService;
-import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,9 +22,21 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.Geometry;
 
+import java.util.List;
+
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
+import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
+import static io.kontur.disasterninja.util.TestUtil.createLegend;
+import static io.kontur.disasterninja.util.TestUtil.readFile;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
 @RestClientTest(LayersApiClient.class)
 @AutoConfigureWebClient(registerRestTemplate = true)
-class LayersApiClientTest {
+class LayersApiClientTest extends TestDependingOnUserAuth {
 
     @Autowired
     ObjectMapper objectMapper;
@@ -44,13 +44,17 @@ class LayersApiClientTest {
     private LayersApiClient client;
     @Autowired
     private MockRestServiceServer server;
-    @MockBean
-    private KeycloakAuthorizationService authorizationService;
+
+    @BeforeEach
+    public void beforeEach() {
+        givenUserIsLoggedIn();
+    }
 
     @Test
     public void createLayerTest() {
         server.expect(ExpectedCount.times(1), requestTo("/collections"))
             .andExpect(method(HttpMethod.POST))
+            .andExpect(jsonPath("$.itemType", is(LayerUpdateDto.Type.feature.name())))
             .andRespond(r ->
                 withSuccess(readFile(this, "layers/layersAPI.layer.created.json"),
                     MediaType.APPLICATION_JSON)
@@ -59,18 +63,18 @@ class LayersApiClientTest {
 
         final String id = "myId";
         final String title = "layer title";
-        final LegendDto legend = LegendDto.fromLegend(createLegend());
+        final LegendDto legendDto = LegendDto.fromLegend(createLegend());
 
         LayerCreateDto dto = new LayerCreateDto();
         dto.setId(id);
         dto.setTitle(title);
-        dto.setLegend(legend);
+        dto.setLegend(legendDto);
 
-        Collection collection = client.createCollection(dto);
-        assertEquals(id, collection.getId());
-        assertEquals(title, collection.getTitle());
-        assertEquals(LayerUpdateDto.Type.feature.name(), collection.getItemType());
-        assertEquals(legend, collection.getLegend());
+        Layer layer = client.createLayer(dto);
+        assertEquals(LAYER_PREFIX + id, layer.getId());
+        assertEquals(title, layer.getName());
+        assertEquals(legendDto.toLegend(), layer.getLegend());
+        assertTrue(layer.isOwnedByUser());
     }
 
     @Test
@@ -87,6 +91,7 @@ class LayersApiClientTest {
         final String id = "myId";
         server.expect(ExpectedCount.times(1), requestTo("/collections/" + id))
             .andExpect(method(HttpMethod.PUT))
+            .andExpect(jsonPath("$.itemType", is(LayerUpdateDto.Type.feature.name())))
             .andRespond(r ->
                 withSuccess(readFile(this, "layers/layersAPI.layer.created.json"),
                     MediaType.APPLICATION_JSON)
@@ -94,17 +99,17 @@ class LayersApiClientTest {
             );
 
         final String title = "layer title";
-        final LegendDto legend = LegendDto.fromLegend(createLegend());
+        final LegendDto legendDto = LegendDto.fromLegend(createLegend());
 
         LayerUpdateDto dto = new LayerUpdateDto();
         dto.setTitle(title);
-        dto.setLegend(legend);
+        dto.setLegend(legendDto);
 
-        Collection collection = client.updateCollection(id, dto);
-        assertEquals(id, collection.getId());
-        assertEquals(title, collection.getTitle());
-        assertEquals(LayerUpdateDto.Type.feature.name(), collection.getItemType());
-        assertEquals(legend, collection.getLegend());
+        Layer layer = client.updateLayer(LAYER_PREFIX + id, dto);
+        assertEquals(LAYER_PREFIX + id, layer.getId());
+        assertEquals(title, layer.getName());
+        assertEquals(legendDto.toLegend(), layer.getLegend());
+        assertTrue(layer.isOwnedByUser());
     }
 
     @Test
@@ -124,7 +129,7 @@ class LayersApiClientTest {
             .andExpect(method(HttpMethod.DELETE))
             .andRespond(withSuccess());
 
-        client.deleteCollection(id);
+        client.deleteLayer(LAYER_PREFIX + id);
     }
 
     @Test
@@ -160,7 +165,7 @@ class LayersApiClientTest {
                 });
 
         //when
-        List<Collection> collections = client.getCollections(objectMapper.readValue(json, Geometry.class));
+        List<Collection> collections = client.getCollections(objectMapper.readValue(json, Geometry.class), null);
 
         //then
         assertEquals(12, collections.size());

@@ -78,7 +78,7 @@ public class DtoTest {
         Layer layer = testLayer(id, new FeatureCollection(new Feature[]{new Feature(new Point(new double[]{1d, 2d}), new HashMap<>())}));
         Mockito.when(layerService.get(any(), any(), any())).thenReturn(List.of(layer));
 
-        LayerDetailsSearchDto input = new LayerDetailsSearchDto(new Point(new double[]{1, 0}), List.of(layer.getId()), UUID.randomUUID());
+        LayerDetailsSearchDto input = new LayerDetailsSearchDto(new Point(new double[]{1, 0}), Map.of(layer.getId(), false), UUID.randomUUID());
         List<LayerDetailsDto> response = Arrays.asList(restTemplate.postForEntity(DETAILS_URL, input, LayerDetailsDto[].class)
             .getBody());
 

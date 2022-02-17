@@ -2,7 +2,6 @@ package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
@@ -10,18 +9,14 @@ import io.kontur.disasterninja.domain.enums.LayerSourceType;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
 import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
 import io.kontur.disasterninja.dto.layerapi.Collection;
+import io.kontur.disasterninja.dto.layerapi.CollectionOwner;
 import io.kontur.disasterninja.dto.layerapi.Link;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -31,6 +26,11 @@ import org.springframework.web.client.RestTemplate;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.Type.tiles;
 
 @Component
 public class LayersApiClient extends RestClientWithBearerAuth {
@@ -52,15 +52,15 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         this.layersApiRestTemplate = layersApiRestTemplate;
     }
 
-    public List<Layer> findLayers(Geometry geoJSON) {
-        return getCollections(geoJSON)
+    public List<Layer> findLayers(Geometry geoJSON, CollectionOwner collectionOwner) {
+        return getCollections(geoJSON, collectionOwner)
             .stream()
             .map(this::convertToLayer)
             .collect(Collectors.toList());
     }
 
     public Layer getLayer(Geometry geoJSON, String layerId) {
-        String id = layerId.replaceFirst(LAYER_PREFIX, "");
+        String id = getIdWithoutPrefix(layerId);
         return convertToLayerDetails(geoJSON, getCollection(id));
     }
 
@@ -69,39 +69,55 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         return convertToLayer(collection);
     }
 
-    public Layer updateLayer(String id, LayerUpdateDto dto) {
+    public Layer updateLayer(String layerId, LayerUpdateDto dto) {
+        String id = getIdWithoutPrefix(layerId);
         Collection collection = updateCollection(id, dto);
         return convertToLayer(collection);
     }
 
-    public void deleteLayer(String id) {
+    public void deleteLayer(String layerId) {
+        String id = getIdWithoutPrefix(layerId);
         deleteCollection(id);
+    }
+
+    private String getIdWithoutPrefix(String layerId) {
+        return layerId.replaceFirst(LAYER_PREFIX, "");
+    }
+
+    private String getIdWithPrefix(String id) {
+        return LAYER_PREFIX + id;
     }
 
     protected Collection createCollection(LayerCreateDto dto) {
         ResponseEntity<Collection> response = layersApiRestTemplate
-            .exchange(COLLECTIONS_URI, HttpMethod.POST, new HttpEntity<>(dto, httpHeadersWithBearerAuth()),
-                new ParameterizedTypeReference<>() {});
+            .exchange(COLLECTIONS_URI, HttpMethod.POST, httpEntityWithUserBearerAuthIfPresent(dto),
+                new ParameterizedTypeReference<>() {
+                });
         return response.getBody();
     }
 
     protected Collection updateCollection(String id, LayerUpdateDto dto) {
         ResponseEntity<Collection> response = layersApiRestTemplate
             .exchange(String.format(COLLECTION_BY_ID_URL, id), HttpMethod.PUT,
-                new HttpEntity<>(dto, httpHeadersWithBearerAuth()), new ParameterizedTypeReference<>() {});
+                httpEntityWithUserBearerAuthIfPresent(dto), new ParameterizedTypeReference<>() {
+                });
         return response.getBody();
     }
 
     protected void deleteCollection(String id) {
         layersApiRestTemplate
             .exchange(String.format(COLLECTION_BY_ID_URL, id), HttpMethod.DELETE,
-                new HttpEntity<>(null, httpHeadersWithBearerAuth()), new ParameterizedTypeReference<>() {});
+                httpEntityWithUserBearerAuthIfPresent(null), new ParameterizedTypeReference<>() {
+                });
     }
 
-    protected List<Collection> getCollections(Geometry geoJson) {
+    protected List<Collection> getCollections(Geometry geoJson, CollectionOwner collectionOwner) {
         List<Collection> result = new ArrayList<>();
 
         Map<String, Object> body = new HashMap<>();
+        if (collectionOwner != null) {
+            body.put("collectionOwner", collectionOwner);
+        }
         body.put("geometry", geoJson);
         body.put("limit", pageSize);
 
@@ -109,8 +125,9 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             body.put("offset", result.size());
 
             ResponseEntity<ApiCollections> response = layersApiRestTemplate
-                    .exchange(LAYERS_SEARCH_URI, HttpMethod.POST, new HttpEntity<>(body, httpHeadersWithBearerAuth()),
-                            new ParameterizedTypeReference<>() {});
+                .exchange(LAYERS_SEARCH_URI, HttpMethod.POST, httpEntityWithUserBearerAuthIfPresent(body),
+                    new ParameterizedTypeReference<>() {
+                    });
 
             ApiCollections responseBody = response.getBody();
             if (responseBody == null || CollectionUtils.isEmpty(responseBody.getCollections())) {
@@ -139,9 +156,10 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             body.put("offset", result.size());
 
             ResponseEntity<ApiFeatureCollection> response = layersApiRestTemplate
-                    .exchange(String.format(LAYERS_FEATURES_SEARCH_URI, collectionId), HttpMethod.POST,
-                            new HttpEntity<>(body, httpHeadersWithBearerAuth()),
-                            new ParameterizedTypeReference<>() {});
+                .exchange(String.format(LAYERS_FEATURES_SEARCH_URI, collectionId), HttpMethod.POST,
+                    httpEntityWithUserBearerAuthIfPresent(body),
+                    new ParameterizedTypeReference<>() {
+                    });
 
             ApiFeatureCollection responseBody = response.getBody();
             if (responseBody == null || CollectionUtils.isEmpty(responseBody.getFeatures())) {
@@ -159,23 +177,24 @@ public class LayersApiClient extends RestClientWithBearerAuth {
 
     protected Collection getCollection(String collectionId) {
         ResponseEntity<Collection> response = layersApiRestTemplate
-                .exchange(String.format(COLLECTION_BY_ID_URL, collectionId), HttpMethod.GET, new HttpEntity<>(null, null),
+                .exchange(String.format(COLLECTION_BY_ID_URL, collectionId), HttpMethod.GET, httpEntityWithUserBearerAuthIfPresent(null),
                         new ParameterizedTypeReference<>() {});
         return response.getBody();
     }
 
     private Layer convertToLayer(Collection collection) {
         return Layer.builder()
-            .id(LAYER_PREFIX + collection.getId())
+            .id(getIdWithPrefix(collection.getId()))
             .name(collection.getTitle())
             .description(collection.getDescription())
             .category(collection.getCategory() != null ? LayerCategory.fromString(
                 collection.getCategory().getName()) : null)
             .group(collection.getGroup() != null ? collection.getGroup().getName() : null)
             .legend(collection.getLegend() != null ? collection.getLegend().toLegend() : null)
-            .copyrights(Collections.singletonList(collection.getCopyrights()))
-            .boundaryRequiredForRetrieval(!"tiles".equals(collection.getItemType()))
+            .copyrights(collection.getCopyrights() != null ? Collections.singletonList(collection.getCopyrights()) : null)
+            .boundaryRequiredForRetrieval(!LayerUpdateDto.Type.tiles.name().equals(collection.getItemType()) && !collection.isOwnedByUser())
             .eventIdRequiredForRetrieval(false)
+            .ownedByUser(collection.isOwnedByUser())
             .build();
     }
 
@@ -185,27 +204,30 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             return null;
         }
         LayerSource source = null;
-        if ("tiles".equals(collection.getItemType())) {
+        if (LayerUpdateDto.Type.tiles.name().equals(collection.getItemType())) {
             source = createVectorSource(collection);
-        } else if ("feature".equals(collection.getItemType())) {
+        } else if (LayerUpdateDto.Type.feature.name().equals(collection.getItemType())) {
             source = createFeatureSource(geoJSON, collection.getId());
         }
         return Layer.builder()
-            .id(LAYER_PREFIX + collection.getId())
+            .id(getIdWithPrefix(collection.getId()))
             .source(source)
+            .ownedByUser(collection.isOwnedByUser())
             .build();
     }
 
     private LayerSource createVectorSource(Collection collection) {
+        String url = collection.getLinks().stream()
+            .filter(l -> tiles.name().equals(l.getRel()))
+            .map(Link::getHref)
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
+
         return LayerSource.builder()
             .type(LayerSourceType.VECTOR)
             .tileSize(512)
-            .urls(Collections.singletonList(
-                collection.getLinks().stream()
-                    .filter(l -> "tiles".equals(l.getRel()))
-                    .map(Link::getHref)
-                    .findFirst()
-                    .orElse(null)))
+            .urls(url != null ? Collections.singletonList(url) : null)
             .build();
     }
 
