@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.GeoJSON;
 import org.wololo.geojson.Geometry;
 
@@ -108,5 +109,9 @@ public class LayerService {
                     HttpStatus.NOT_FOUND);
         }
         return result;
+    }
+
+    public FeatureCollection updateFeatures(String layerId, FeatureCollection body) {
+        return layersApiClient.updateLayerFeatures(layerId, body);
     }
 }
