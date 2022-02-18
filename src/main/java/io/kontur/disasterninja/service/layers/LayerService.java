@@ -18,6 +18,8 @@ import org.wololo.geojson.Geometry;
 
 import java.util.*;
 
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 @Service
 @RequiredArgsConstructor
 public class LayerService {
@@ -76,26 +78,27 @@ public class LayerService {
                 .toList();
     }
 
-    public List<Layer> get(GeoJSON geoJSON, Map<String, Boolean> shouldApplyGeometryFilterPerLayerId, UUID eventId) {
+    public List<Layer> get(GeoJSON geoJSON, List<String> layersToRetrieveWithGeometryFilter,
+                           List<String> layersToRetrieveWithoutGeometryFilter, UUID eventId) {
+        List<Layer> layersFoundWithGeometryFilter = get(geoJSON, layersToRetrieveWithGeometryFilter, eventId);
+        List<Layer> layersFoundWithoutGeometryFilter = get(null, layersToRetrieveWithoutGeometryFilter, eventId);
+
+        return mergeLayerListsByLayerId(layersFoundWithGeometryFilter, layersFoundWithoutGeometryFilter);
+    }
+
+    protected List<Layer> get(GeoJSON geoJSON, List<String> layerIds, UUID eventId) {
         Geometry boundary = geometryTransformer.getGeometryFromGeoJson(geoJSON);
         List<Layer> result = new ArrayList<>();
 
-        if (shouldApplyGeometryFilterPerLayerId == null || shouldApplyGeometryFilterPerLayerId.isEmpty()) {
+        if (isEmpty(layerIds)) {
             return List.of();
         }
-        for (Map.Entry<String, Boolean> layerEntry : shouldApplyGeometryFilterPerLayerId.entrySet()) {
-            String layerId = layerEntry.getKey();
-            boolean applyGeometryFilterForLayer = layerEntry.getValue();
-
+        for (String layerId: layerIds) {
             Layer layer = null;
             for (LayerProvider provider : providers) {
                 //find first by layer id and use it
                 if (provider.isApplicable(layerId)) {
-                    if (applyGeometryFilterForLayer) {
-                        layer = provider.obtainLayer(boundary, layerId, eventId);
-                    } else {
-                        layer = provider.obtainLayer(null, layerId, eventId);
-                    }
+                    layer = provider.obtainLayer(boundary, layerId, eventId);
                     if (layer != null) {
                         LOG.info("Found layer by id {} by provider {}", layerId, provider.getClass().getSimpleName());
                         layerConfigService.applyConfig(layer);
@@ -123,5 +126,16 @@ public class LayerService {
 
     public FeatureCollection updateFeatures(String layerId, FeatureCollection body) {
         return layersApiClient.updateLayerFeatures(layerId, body);
+    }
+
+    private List<Layer> mergeLayerListsByLayerId(List<Layer> mainList, List<Layer> otherList) {
+        List<Layer> mergedList = new ArrayList<>(mainList);
+        otherList.forEach(layer -> {
+            String layerId = layer.getId();
+            if (mergedList.stream().map(Layer::getId).noneMatch(it -> it.equals(layerId))) {
+                mergedList.add(layer);
+            }
+        });
+        return mergedList;
     }
 }

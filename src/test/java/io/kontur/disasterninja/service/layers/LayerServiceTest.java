@@ -22,7 +22,6 @@ import org.wololo.geojson.Point;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
@@ -80,9 +79,8 @@ public class LayerServiceTest {
         givenUserLayerIsReturnedOnlyWhenQueriedWithoutGeometry();
         givenCommonLayerIsReturnedOnlyWhenQueriedWithGeometry();
 
-        Map<String, Boolean> applyGeometryFilterForLayers = Map.of(commonLayer.getId(), true, userLayer.getId(), false);
-
-        List<Layer> result = layerService.get(someGeometry, applyGeometryFilterForLayers, UUID.randomUUID());
+        List<Layer> result = layerService.get(someGeometry, List.of(commonLayer.getId()), List.of(userLayer.getId()),
+            UUID.randomUUID());
         assertEquals(2, result.size());
         assertTrue(result.contains(userLayer));
         assertTrue(result.contains(commonLayer));
@@ -93,14 +91,22 @@ public class LayerServiceTest {
         givenUserLayerIsReturnedOnlyWhenQueriedWithoutGeometry();
         givenCommonLayerIsReturnedOnlyWhenQueriedWithGeometry();
 
-        Map<String, Boolean> applyGeometryFilterForLayers = Map.of(commonLayer.getId(), false, userLayer.getId(), true);
-
         try {
-            layerService.get(someGeometry, applyGeometryFilterForLayers, UUID.randomUUID());
+            layerService.get(someGeometry, List.of(userLayer.getId()), List.of(commonLayer.getId()), UUID.randomUUID());
             throw new RuntimeException("Expected exception was not thrown!");
         } catch (WebApplicationException e) {
             assertEquals("Layer not found / no layer data found by id and boundary!", e.getMessage());
         }
+    }
+
+    @Test
+    public void noDuplicatesShouldBePresentInResponseTest() {
+        when(layersApiClient.getLayer(any(), any())).thenReturn(userLayer);
+
+        List<Layer> result = layerService.get(someGeometry, List.of(userLayer.getId()), List.of(userLayer.getId()), UUID.randomUUID());
+        verify(layersApiClient, times(1)).getLayer(notNull(), eq(userLayer.getId()));
+        verify(layersApiClient, times(1)).getLayer(isNull(), eq(userLayer.getId()));
+        assertEquals(1, result.size());
     }
 
     private void givenUserLayerIsReturnedOnlyWhenQueriedWithoutGeometry() {
@@ -136,8 +142,8 @@ public class LayerServiceTest {
     @Test
     public void globalOverlaysGetTest() {
         //all providers return nothing (= no features matched by geometry), so global overlay should be returned
-        List<Layer> layers = layerService.get(new Point(new double[]{1, 2}), Map.of("Kontur Nighttime Heatwave Risk", false),
-            null);
+        List<Layer> layers = layerService.get(new Point(new double[]{1, 2}), List.of("Kontur Nighttime Heatwave Risk"),
+            List.of(), null);
         assertEquals(1, layers.size());
         System.out.println(layers);
     }
