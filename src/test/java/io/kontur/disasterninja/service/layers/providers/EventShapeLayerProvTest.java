@@ -54,8 +54,8 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
         assertEquals(1, results.size());
         Layer result = results.get(0);
 
-        //there are "Class" properties in features - which define further layer id hence layer config
-        Assertions.assertEquals(EVENT_SHAPE_LAYER_ID + "." + EARTHQUAKE, result.getId());
+        Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.getId());
+        Assertions.assertEquals(EARTHQUAKE, result.getEventType());
         //check source data was loaded
         Assertions.assertEquals(2, result.getSource().getData().getFeatures().length);
         Assertions.assertEquals("Point", result.getSource().getData().getFeatures()[0].getGeometry().getType());
@@ -66,8 +66,8 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
     public void get_Earthquake() {
         Layer result = eventShapeLayerProvider.obtainLayer(null, EVENT_SHAPE_LAYER_ID, UUID.randomUUID());
 
-        //there are "Class" properties in features - which define further layer id hence layer config
-        Assertions.assertEquals(EVENT_SHAPE_LAYER_ID + "." + EARTHQUAKE, result.getId());
+        Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.getId());
+        Assertions.assertEquals(EARTHQUAKE, result.getEventType());
         //check source data was loaded
         Assertions.assertEquals(2, result.getSource().getData().getFeatures().length);
         Assertions.assertEquals("Point", result.getSource().getData().getFeatures()[0].getGeometry().getType());
@@ -80,6 +80,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
                 .getResource("/io/kontur/disasterninja/client/layers/eventdto.json"),
             EventDto.class);
         //remove "Class" entries from features properties
+        eventDto.setEventType(null);
         Arrays.stream(eventDto.getLatestEpisodeGeojson().getFeatures()).forEach(feature -> {
             if (feature.getProperties() != null) {
                 feature.getProperties().remove("Class");
@@ -88,8 +89,9 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
         Mockito.when(eventApiService.getEvent(any(), any())).thenReturn(eventDto);
 
         Layer result = eventShapeLayerProvider.obtainLayer(null, EVENT_SHAPE_LAYER_ID, UUID.randomUUID());
-        //"Class" property is absent from features properties => the default template is used
+
         Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.getId());
+        Assertions.assertNull(result.getEventType());
         //check source data was loaded
         Assertions.assertEquals(2, result.getSource().getData().getFeatures().length);
         Assertions.assertEquals("Point", result.getSource().getData().getFeatures()[0].getGeometry().getType());
@@ -103,6 +105,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
             EventDto.class);
 
         //remove "Class" entries from features properties
+        eventDto.setEventType(null);
         Arrays.stream(eventDto.getLatestEpisodeGeojson().getFeatures()).forEach(feature -> {
             if (feature.getProperties() != null) {
                 feature.getProperties().remove("Class");
@@ -112,8 +115,9 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
 
         List<Layer> result = eventShapeLayerProvider.obtainLayers(null, UUID.randomUUID());
         assertEquals(1, result.size());
-        //"Class" property is absent from features properties => the default template is used
+
         Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.get(0).getId());
+        Assertions.assertNull(result.get(0).getEventType());
     }
 
     @Test

@@ -69,14 +69,22 @@ public class LocalLayerConfigService implements LayerConfigService {
 
     @Override
     public void applyConfig(Layer input) {
-        Layer config = regularLayers.get(input.getId());
+        String configLayerId = getConfigLayerId(input);
+        Layer config = regularLayers.get(configLayerId);
         if (config == null) {
-            config = globalOverlays.get(input.getId());
+            config = globalOverlays.get(configLayerId);
         }
 
         if (config != null) {
             input.mergeFrom(config);
         }
+    }
+
+    private String getConfigLayerId(Layer layer) {
+        if (layer.getEventType() != null) {
+            return layer.getId() + "." + layer.getEventType().toString();
+        }
+        return layer.getId();
     }
 
     @Override

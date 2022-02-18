@@ -2,6 +2,7 @@ package io.kontur.disasterninja.domain;
 
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LegendType;
+import io.kontur.disasterninja.dto.EventType;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
@@ -21,6 +22,8 @@ public class Layer {
     private boolean displayLegendIfNoFeaturesExist;
     private boolean boundaryRequiredForRetrieval;
     private boolean eventIdRequiredForRetrieval;
+    //event shape layer only
+    private EventType eventType;
     //layer summary
     private String name;
     private String description;

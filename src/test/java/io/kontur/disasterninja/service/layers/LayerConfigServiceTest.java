@@ -289,7 +289,8 @@ public class LayerConfigServiceTest {
         //event type = CYCLONE
         //features with different Class value exist - each should be added to legend
         Layer layer = Layer.builder()
-            .id(EVENT_SHAPE_LAYER_ID + "." + CYCLONE)
+            .id(EVENT_SHAPE_LAYER_ID)
+            .eventType(CYCLONE)
             .source(LayerSource.builder()
                 .data(new FeatureCollection(new Feature[]{
                     //random order, some duplicates
@@ -329,7 +330,8 @@ public class LayerConfigServiceTest {
         //event type = CYCLONE
         //features with different Class value exist - each should be added to legend
         Layer layer = Layer.builder()
-            .id(EVENT_SHAPE_LAYER_ID + "." + CYCLONE)
+            .id(EVENT_SHAPE_LAYER_ID)
+            .eventType(CYCLONE)
             .source(LayerSource.builder()
                 .data(new FeatureCollection(new Feature[]{
                     //random order, some duplicates
