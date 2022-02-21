@@ -78,17 +78,17 @@ public class LayerServiceTest {
         //all providers return nothing (= no features matched by geometry), so only global overlays should be returned
         List<Layer> layers = layerService.getList(new Point(new double[]{1, 2}), null);
         //check all layers with 'globalOverlay: true' are present
-        assertEquals(9, layers.size());
+        assertEquals(8, layers.size());
         assertEquals("Kontur OpenStreetMap Quantity", layers.get(0).getId());
         assertEquals("Kontur OpenStreetMap Building Quantity", layers.get(1).getId());
         assertEquals("Kontur OpenStreetMap Road Length", layers.get(2).getId());
         assertEquals("Kontur OpenStreetMap Mapping Activity", layers.get(3).getId());
         assertEquals("Kontur OpenStreetMap Antiquity", layers.get(4).getId());
         assertEquals("Kontur Nighttime Heatwave Risk", layers.get(5).getId());
-        assertEquals("Kontur Fire Service Scarcity Risk", layers.get(6).getId());
+//        assertEquals("Kontur Fire Service Scarcity Risk", layers.get(6).getId()); //todo #9119
 
-        assertEquals("activeContributors", layers.get(7).getId());
-        assertEquals("hotProjectsTileLayer", layers.get(8).getId());
+        assertEquals("activeContributors", layers.get(6).getId());
+        assertEquals("hotProjectsTileLayer", layers.get(7).getId());
 
         System.out.println(layers);
     }
