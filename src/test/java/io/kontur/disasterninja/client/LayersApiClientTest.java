@@ -27,6 +27,7 @@ import java.util.List;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
+import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.LAYER_TYPE_FEATURE;
 import static io.kontur.disasterninja.util.TestUtil.createLegend;
 import static io.kontur.disasterninja.util.TestUtil.readFile;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -57,7 +58,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     public void createLayerTest() {
         server.expect(ExpectedCount.times(1), requestTo("/collections"))
             .andExpect(method(HttpMethod.POST))
-            .andExpect(jsonPath("$.itemType", is(LayerUpdateDto.Type.feature.name())))
+            .andExpect(jsonPath("$.itemType", is(LAYER_TYPE_FEATURE)))
             .andRespond(r ->
                 withSuccess(readFile(this, "layers/layersAPI.layer.created.json"),
                     MediaType.APPLICATION_JSON)
@@ -94,7 +95,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         final String id = "myId";
         server.expect(ExpectedCount.times(1), requestTo("/collections/" + id))
             .andExpect(method(HttpMethod.PUT))
-            .andExpect(jsonPath("$.itemType", is(LayerUpdateDto.Type.feature.name())))
+            .andExpect(jsonPath("$.itemType", is(LAYER_TYPE_FEATURE)))
             .andRespond(r ->
                 withSuccess(readFile(this, "layers/layersAPI.layer.created.json"),
                     MediaType.APPLICATION_JSON)
