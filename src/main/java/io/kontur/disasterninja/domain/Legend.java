@@ -25,4 +25,10 @@ public class Legend {
     private Map<String, String> bivariateColors = null;
     @Builder.Default
     private BivariateLegendAxes bivariateAxes = null;
+    @Builder.Default
+    private String name = "";
+    @Builder.Default
+    private final List<String> copyrights = new ArrayList<>();
+    @Builder.Default
+    private String description = "";
 }

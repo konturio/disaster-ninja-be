@@ -70,19 +70,15 @@ public class BivariateLayerProvider implements LayerProvider {
         if (overlay == null) {
             return null;
         }
-        Legend legend = bivariateLegendFromOverlay(overlay);
-
-        List<String> copyrights = copyrightsFromIndicators(legend, indicators);
+        Legend legend = bivariateLegendFromOverlay(overlay, indicators);
 
         return Layer.builder()
                 .id(overlay.name())
                 .name(overlay.name())
-                .description(overlay.description())
                 .source(LayerSource.builder()
                         .type(VECTOR)
                         .build())
                 .legend(legend)
-                .copyrights(copyrights)
                 .build();
     }
 
@@ -110,7 +106,7 @@ public class BivariateLayerProvider implements LayerProvider {
         }
     }
 
-    private Legend bivariateLegendFromOverlay(BivariateLayerLegendQuery.Overlay overlay) {
+    private Legend bivariateLegendFromOverlay(BivariateLayerLegendQuery.Overlay overlay, List<BivariateLayerLegendQuery.Indicator> indicators) {
         if (overlay == null) {
             return null;
         }
@@ -151,6 +147,8 @@ public class BivariateLayerProvider implements LayerProvider {
                 .collect(Collectors.toMap(BivariateLayerLegendQuery.Color::id,
                         c -> requireNonNull(c.color())));
 
+        List<String> copyrights = copyrightsFromIndicators(xAxis.getQuotient(), yAxis.getQuotient(), indicators);
+
         return Legend.builder()
                 .type(BIVARIATE)
                 .bivariateColors(colors)
@@ -158,13 +156,16 @@ public class BivariateLayerProvider implements LayerProvider {
                         .x(xAxis)
                         .y(yAxis)
                         .build())
+                .name(overlay.name())
+                .description(overlay.description())
+                .copyrights(copyrights)
                 .build();
     }
 
-    private List<String> copyrightsFromIndicators(Legend legend, List<BivariateLayerLegendQuery.Indicator> indicators) {
+    private List<String> copyrightsFromIndicators(List<String> quotientX, List<String> quotientY, List<BivariateLayerLegendQuery.Indicator> indicators) {
         Set<String> quotient = new HashSet<>();
-        quotient.addAll(legend.getBivariateAxes().getX().getQuotient());
-        quotient.addAll(legend.getBivariateAxes().getY().getQuotient());
+        quotient.addAll(quotientX);
+        quotient.addAll(quotientY);
 
         Set<String> copyrights = new HashSet<>();
         quotient.forEach(q ->

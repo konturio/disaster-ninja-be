@@ -103,8 +103,8 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         //layer
         assertEquals("Kontur OpenStreetMap Quantity", biv.getId());
         assertEquals("Kontur OpenStreetMap Quantity", biv.getName());
-        assertEquals("This map shows relative distribution of OpenStreetMap objects and Population." +
-                " Last updated 2021-11-06T20:59:29Z", biv.getDescription());
+        assertNull(biv.getDescription());
+        assertNull(biv.getCopyrights());
 
         //source
         assertEquals(VECTOR, biv.getSource().getType());
@@ -112,6 +112,9 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         //legend
         assertNotNull(biv.getLegend());
         assertNotNull(biv.getLegend().getBivariateAxes());
+        assertEquals("Kontur OpenStreetMap Quantity", biv.getLegend().getName());
+        assertEquals("This map shows relative distribution of OpenStreetMap objects and Population." +
+                " Last updated 2021-11-06T20:59:29Z", biv.getLegend().getDescription());
 
         //axisX
         BivariateLegendAxisDescription x = biv.getLegend().getBivariateAxes().getX();
@@ -144,14 +147,14 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         assertEquals("rgb(232,232,333)", c3);
 
         //copyrights
-        assertEquals(3, biv.getCopyrights().size());
+        assertEquals(3, biv.getLegend().getCopyrights().size());
 
     }
 
     @Test
     public void copyrightLinkMarkdown_8657() {
         List<Layer> layers = bivariateLayerProvider.obtainLayers(null, null);
-        assertThat(layers.get(0).getCopyrights(), hasItems("copyrights [https://kontur.io/](https://kontur.io/)", "copyrights1", "copyrights2"));
+        assertThat(layers.get(0).getLegend().getCopyrights(), hasItems("copyrights [https://kontur.io/](https://kontur.io/)", "copyrights1", "copyrights2"));
     }
 
     private List<BivariateLayerLegendQuery.Step> steps(double d1, double d2, double d3, double d4,

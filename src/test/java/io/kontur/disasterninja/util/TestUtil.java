@@ -1,17 +1,17 @@
 package io.kontur.disasterninja.util;
 
-import static io.kontur.disasterninja.domain.enums.LayerStepShape.HEX;
-
 import io.kontur.disasterninja.domain.BivariateLegendAxes;
 import io.kontur.disasterninja.domain.Legend;
 import io.kontur.disasterninja.domain.LegendStep;
 import io.kontur.disasterninja.domain.enums.LegendType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import static io.kontur.disasterninja.domain.enums.LayerStepShape.HEX;
 
 public final class TestUtil {
 
@@ -25,7 +25,7 @@ public final class TestUtil {
         final String OTHER_PARAM_VALUE = "asd";
 
         Legend legend = new Legend(LegendType.SIMPLE, null, new ArrayList<>(), new HashMap<>(),
-            new BivariateLegendAxes());
+            new BivariateLegendAxes(), null, new ArrayList<>(), null);
         Map<String, Object> map = new HashMap<>();
         map.put("prop", "value");
 

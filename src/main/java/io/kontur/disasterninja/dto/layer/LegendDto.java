@@ -15,14 +15,20 @@ public class LegendDto {
     private final String linkProperty;
     private final List<LegendStepDto> steps;
     private final List<ColorDto> colors;
-    private final BivariateLegendAxes axes;
+    private final BivariateLegendAxes axis;
+    private final String name;
+    private final List<String> copyrights;
+    private final String description;
 
     public static LegendDto fromLegend(Legend legend) {
         return legend == null ? null : new LegendDto(legend.getType() == null ? null : legend.getType().toString(),
                 legend.getLinkProperty(),
                 legend.getSteps().stream().map(LegendStepDto::fromLegendStep).collect(Collectors.toList()),
                 bivariateColors(legend.getBivariateColors()),
-                legend.getBivariateAxes());
+                legend.getBivariateAxes(),
+                legend.getName(),
+                legend.getCopyrights(),
+                legend.getDescription());
     }
 
     public Legend toLegend() {
@@ -34,7 +40,10 @@ public class LegendDto {
                         .collect(Collectors.toList()) : null,
                 colors != null ? colors.stream()
                         .collect(Collectors.toMap(ColorDto::getId, ColorDto::getColor)) : null,
-                axes
+                axis,
+                name,
+                copyrights,
+                description
                 );
     }
 
