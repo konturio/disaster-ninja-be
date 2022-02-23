@@ -35,6 +35,7 @@ public class Layer {
     //test-only layers
     private boolean testOnly;
     private Integer orderIndex; //for sorting bivariate presets
+    private boolean ownedByUser;
 
     /**
      * Overrides all non-final fields with values from <b>other</b>, except for <b>this.source.data</b> as it's the
@@ -84,6 +85,8 @@ public class Layer {
             this.source = new LayerSource(otherSource.getType(), otherSource.getTileSize(),
                     otherSource.getUrls(), this.source != null ? this.source.getData() : null); //sic! source.data is not replaced
         }
+
+        this.ownedByUser = other.ownedByUser;
     }
 
     /**

@@ -1,15 +1,8 @@
 package io.kontur.disasterninja.controller;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.domain.Layer;
-import io.kontur.disasterninja.dto.layer.LayerCreateDto;
-import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
-import io.kontur.disasterninja.dto.layer.LayerDetailsDto;
-import io.kontur.disasterninja.dto.layer.LayerDetailsSearchDto;
-import io.kontur.disasterninja.dto.layer.LayerSummaryDto;
-import io.kontur.disasterninja.dto.layer.LayerSummarySearchDto;
+import io.kontur.disasterninja.dto.layer.*;
 import io.kontur.disasterninja.service.layers.LayerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,21 +11,17 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.wololo.geojson.FeatureCollection;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController()
 @RequestMapping(LayerController.PATH)
@@ -82,9 +71,9 @@ public class LayerController {
     @PostMapping(path = PATH_SEARCH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<LayerSummaryDto> getSummaries(@RequestBody
                                               @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                                                  description = "geoJSON: only layers with features intersecting with" +
-                                                      " geoJSON boundary will be returned and id: EventId for" +
-                                                      " EventShape layer")
+                                                  description = "geoJSON boundary: only layers containing features" +
+                                                      " intersecting with the boundary and global layers will be" +
+                                                      " returned; eventId: Event Id for EventShape layer")
                                                   LayerSummarySearchDto inputDto) {
         return layerService.getList(inputDto.getGeoJSON(), inputDto.getId())
             .stream().map(LayerSummaryDto::fromLayer)
@@ -97,11 +86,13 @@ public class LayerController {
     @PostMapping(path = PATH_DETAILS, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<LayerDetailsDto> getDetails(@RequestBody
                                             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                                                description = "geoJSON: only layers with features intersecting with" +
-                                                    " geoJSON boundary will be returned; eventId: Event Id for" +
-                                                    " EventShape layer; List of layer ids to retrieve")
+                                                description = "geoJSON boundary; eventId: Event Id for" +
+                                                    " EventShape layer; List of layer ids which should be retrieved" +
+                                                    " using the provided boundary; List of layer ids which" +
+                                                    " should be retrieved ignoring the boundary")
                                                 LayerDetailsSearchDto inputDto) {
-        return layerService.get(inputDto.getGeoJSON(), inputDto.getLayerIds(), inputDto.getEventId())
+        return layerService.get(inputDto.getGeoJSON(), inputDto.getLayersToRetrieveWithGeometryFilter(),
+                inputDto.getLayersToRetrieveWithoutGeometryFilter(), inputDto.getEventId())
             .stream().map(LayerDetailsDto::fromLayer)
             .collect(Collectors.toList());
     }
@@ -111,7 +102,7 @@ public class LayerController {
             @ApiResponse(responseCode = "200", description = "fetch the set of features", content = @Content(schema = @Schema(implementation = FeatureCollection.class))),
             @ApiResponse(responseCode = "404", description = "The requested URI was not found.")})
     @PutMapping(path = "/{id}/items", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity updateFeatures(
+    public ResponseEntity<FeatureCollection> updateFeatures(
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
             @PathVariable("id") String layerId,
             @RequestBody FeatureCollection body) {

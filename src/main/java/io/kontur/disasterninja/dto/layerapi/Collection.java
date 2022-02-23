@@ -41,4 +41,7 @@ public class Collection {
     @JsonProperty("itemType")
     private String itemType;
 
+    @JsonProperty("ownedByUser")
+    private boolean ownedByUser;
+
 }

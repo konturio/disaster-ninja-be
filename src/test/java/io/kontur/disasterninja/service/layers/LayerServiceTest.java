@@ -1,29 +1,13 @@
 package io.kontur.disasterninja.service.layers;
 
-import static io.kontur.disasterninja.util.TestUtil.createLegend;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.matches;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import io.kontur.disasterninja.client.LayersApiClient;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.Legend;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
 import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
 import io.kontur.disasterninja.dto.layer.LegendDto;
-import io.kontur.disasterninja.service.layers.providers.BivariateLayerProvider;
-import io.kontur.disasterninja.service.layers.providers.EventShapeLayerProvider;
-import io.kontur.disasterninja.service.layers.providers.HotLayerProvider;
-import io.kontur.disasterninja.service.layers.providers.OsmLayerProvider;
-import io.kontur.disasterninja.service.layers.providers.UrbanAndPeripheryLayerProvider;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
+import io.kontur.disasterninja.service.layers.providers.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +16,20 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
+import org.wololo.geojson.Geometry;
 import org.wololo.geojson.Point;
+
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
+import static io.kontur.disasterninja.util.TestUtil.createLegend;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.matches;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class LayerServiceTest {
@@ -46,6 +43,10 @@ public class LayerServiceTest {
         .name(title)
         .legend(legend)
         .build();
+
+    final Layer userLayer = Layer.builder().id(LAYER_PREFIX + "userLayer").build();
+    final Layer commonLayer = Layer.builder().id(LAYER_PREFIX + "commonLayer").build();
+    final Geometry someGeometry = new Point(new double[]{1d, 2d});
 
     @MockBean
     HotLayerProvider hotLayerProvider;
@@ -74,6 +75,51 @@ public class LayerServiceTest {
     }
 
     @Test
+    public void useBoundaryFilterOrNotTest() {
+        givenUserLayerIsReturnedOnlyWhenQueriedWithoutGeometry();
+        givenCommonLayerIsReturnedOnlyWhenQueriedWithGeometry();
+
+        List<Layer> result = layerService.get(someGeometry, List.of(commonLayer.getId()), List.of(userLayer.getId()),
+            UUID.randomUUID());
+        assertEquals(2, result.size());
+        assertTrue(result.contains(userLayer));
+        assertTrue(result.contains(commonLayer));
+    }
+
+    @Test
+    public void useBoundaryFilterOrNotNegativeTest() {
+        givenUserLayerIsReturnedOnlyWhenQueriedWithoutGeometry();
+        givenCommonLayerIsReturnedOnlyWhenQueriedWithGeometry();
+
+        try {
+            layerService.get(someGeometry, List.of(userLayer.getId()), List.of(commonLayer.getId()), UUID.randomUUID());
+            throw new RuntimeException("Expected exception was not thrown!");
+        } catch (WebApplicationException e) {
+            assertEquals("Layer not found / no layer data found by id and boundary!", e.getMessage());
+        }
+    }
+
+    @Test
+    public void noDuplicatesShouldBePresentInResponseTest() {
+        when(layersApiClient.getLayer(any(), any())).thenReturn(userLayer);
+
+        List<Layer> result = layerService.get(someGeometry, List.of(userLayer.getId()), List.of(userLayer.getId()), UUID.randomUUID());
+        verify(layersApiClient, times(1)).getLayer(notNull(), eq(userLayer.getId()));
+        verify(layersApiClient, times(1)).getLayer(isNull(), eq(userLayer.getId()));
+        assertEquals(1, result.size());
+    }
+
+    private void givenUserLayerIsReturnedOnlyWhenQueriedWithoutGeometry() {
+        when(layersApiClient.getLayer(notNull(), eq(userLayer.getId()))).thenReturn(null);
+        when(layersApiClient.getLayer(isNull(), eq(userLayer.getId()))).thenReturn(userLayer);
+    }
+
+    private void givenCommonLayerIsReturnedOnlyWhenQueriedWithGeometry() {
+        when(layersApiClient.getLayer(notNull(), eq(commonLayer.getId()))).thenReturn(commonLayer);
+        when(layersApiClient.getLayer(isNull(), eq(commonLayer.getId()))).thenReturn(null);
+    }
+
+    @Test
     public void globalOverlaysListTest() {
         //all providers return nothing (= no features matched by geometry), so only global overlays should be returned
         List<Layer> layers = layerService.getList(new Point(new double[]{1, 2}), null);
@@ -97,7 +143,7 @@ public class LayerServiceTest {
     public void globalOverlaysGetTest() {
         //all providers return nothing (= no features matched by geometry), so global overlay should be returned
         List<Layer> layers = layerService.get(new Point(new double[]{1, 2}), List.of("Kontur Nighttime Heatwave Risk"),
-            null);
+            List.of(), null);
         assertEquals(1, layers.size());
         System.out.println(layers);
     }

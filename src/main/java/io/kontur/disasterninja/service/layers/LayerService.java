@@ -18,6 +18,8 @@ import org.wololo.geojson.Geometry;
 
 import java.util.*;
 
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 @Service
 @RequiredArgsConstructor
 public class LayerService {
@@ -76,11 +78,22 @@ public class LayerService {
                 .toList();
     }
 
-    public List<Layer> get(GeoJSON geoJSON, List<String> layerIds, UUID eventId) {
+    public List<Layer> get(GeoJSON geoJSON, List<String> layersToRetrieveWithGeometryFilter,
+                           List<String> layersToRetrieveWithoutGeometryFilter, UUID eventId) {
+        List<Layer> layersFoundWithGeometryFilter = get(geoJSON, layersToRetrieveWithGeometryFilter, eventId);
+        List<Layer> layersFoundWithoutGeometryFilter = get(null, layersToRetrieveWithoutGeometryFilter, eventId);
+
+        return mergeLayerListsByLayerId(layersFoundWithGeometryFilter, layersFoundWithoutGeometryFilter);
+    }
+
+    protected List<Layer> get(GeoJSON geoJSON, List<String> layerIds, UUID eventId) {
         Geometry boundary = geometryTransformer.getGeometryFromGeoJson(geoJSON);
         List<Layer> result = new ArrayList<>();
 
-        for (String layerId : layerIds) {
+        if (isEmpty(layerIds)) {
+            return List.of();
+        }
+        for (String layerId: layerIds) {
             Layer layer = null;
             for (LayerProvider provider : providers) {
                 //find first by layer id and use it
@@ -113,5 +126,16 @@ public class LayerService {
 
     public FeatureCollection updateFeatures(String layerId, FeatureCollection body) {
         return layersApiClient.updateLayerFeatures(layerId, body);
+    }
+
+    private List<Layer> mergeLayerListsByLayerId(List<Layer> mainList, List<Layer> otherList) {
+        List<Layer> mergedList = new ArrayList<>(mainList);
+        otherList.forEach(layer -> {
+            String layerId = layer.getId();
+            if (mergedList.stream().map(Layer::getId).noneMatch(it -> it.equals(layerId))) {
+                mergedList.add(layer);
+            }
+        });
+        return mergedList;
     }
 }

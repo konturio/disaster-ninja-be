@@ -2,7 +2,6 @@ package io.kontur.disasterninja.client;
 
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,7 @@ public class UserProfileClient extends RestClientWithBearerAuth {
 
     public String getUserDefaultFeed() {
         ResponseEntity<String> response = userProfileRestTemplate
-            .exchange(USER_PROFILE_API_USER_FEED_URL, HttpMethod.GET, new HttpEntity<>(null, httpHeadersWithBearerAuth()),
+            .exchange(USER_PROFILE_API_USER_FEED_URL, HttpMethod.GET, httpEntityWithUserBearerAuthIfPresent(null),
                 new ParameterizedTypeReference<>() {
                 });
 

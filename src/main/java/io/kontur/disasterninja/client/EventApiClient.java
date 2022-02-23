@@ -44,8 +44,9 @@ public class EventApiClient extends RestClientWithBearerAuth {
 
     public List<EventFeedDto> getUserFeeds() {
         ResponseEntity<List<EventFeedDto>> response = restTemplate
-            .exchange(EVENT_API_USER_FEEDS_URI, HttpMethod.GET, new HttpEntity<>(null, httpHeadersWithBearerAuth()),
-                new ParameterizedTypeReference<>() { });
+            .exchange(EVENT_API_USER_FEEDS_URI, HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
+                new ParameterizedTypeReference<>() {
+            });
 
         return Optional.ofNullable(response.getBody()).orElseGet(List::of);
     }
@@ -63,7 +64,8 @@ public class EventApiClient extends RestClientWithBearerAuth {
             String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed, after.atZoneSameInstant(ZoneOffset.UTC)
                 .truncatedTo(ChronoUnit.MILLIS).format(DateTimeFormatter.ISO_ZONED_DATE_TIME), pageSize);
             ResponseEntity<EventApiSearchEventResponse> response = restTemplate
-                .exchange(uri, HttpMethod.GET, new HttpEntity<>(null, httpHeadersWithBearerAuth()), new ParameterizedTypeReference<>() {
+                .exchange(uri, HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
+                    new ParameterizedTypeReference<>() {
                 });
             if (!response.getStatusCode().is2xxSuccessful()) {
                 LOG.info("Received {} response from eventapi. Request uri: {}", response.getStatusCode(), uri);
@@ -91,7 +93,8 @@ public class EventApiClient extends RestClientWithBearerAuth {
         }
         String uri = String.format(EVENT_API_EVENT_ID_URI, eventApiFeed, eventId);
         ResponseEntity<EventApiEventDto> response = restTemplate
-            .exchange(uri, HttpMethod.GET, new HttpEntity<>(null, httpHeadersWithBearerAuth()), new ParameterizedTypeReference<>() {
+            .exchange(uri, HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
+                new ParameterizedTypeReference<>() {
             });
         if (!response.getStatusCode().is2xxSuccessful()) {
             LOG.info("Received {} response from eventapi. Request uri: {}", response.getStatusCode(), uri);

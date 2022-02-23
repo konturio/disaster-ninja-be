@@ -10,9 +10,10 @@ public class LayerDetailsDto {
     private final Integer maxZoom; //for 'vector' and 'raster' only (see source.type)
     private final Integer minZoom; //for 'vector' and 'raster' only (see source.type)
     private final LayerSourceDto source;
+    private final boolean ownedByUser;
 
     public static LayerDetailsDto fromLayer(Layer layer) {
         return layer == null ? null : new LayerDetailsDto(layer.getId(), layer.getMaxZoom(), layer.getMinZoom(),
-            LayerSourceDto.fromLayerSource(layer.getSource()));
+            LayerSourceDto.fromLayerSource(layer.getSource()), layer.isOwnedByUser());
     }
 }
