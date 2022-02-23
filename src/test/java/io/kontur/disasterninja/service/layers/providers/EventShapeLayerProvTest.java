@@ -2,6 +2,7 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.service.EventApiService;
 import org.junit.jupiter.api.Assertions;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.wololo.geojson.Geometry;
 import org.wololo.geojson.Point;
 
 import java.io.IOException;
@@ -18,6 +20,8 @@ import java.util.UUID;
 
 import static io.kontur.disasterninja.dto.EventType.EARTHQUAKE;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.EVENT_SHAPE_LAYER_ID;
+import static io.kontur.disasterninja.util.TestUtil.emptyParams;
+import static io.kontur.disasterninja.util.TestUtil.someEventIdEventFeedParams;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -25,6 +29,8 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
 
     @MockBean
     EventApiService eventApiService;
+
+    final Geometry someGeometry = new Point(new double[]{1d, 2d});
 
     @BeforeEach
     private void init() throws IOException {
@@ -36,21 +42,39 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
 
     @Test
     public void list_emptyEventId() {
-        assertNull(eventShapeLayerProvider.obtainLayers(null, null));
+        assertNull(eventShapeLayerProvider.obtainLayers(emptyParams()));
     }
 
     @Test
-    public void get_emptyEventId() {
+    public void get_emptyEventIdEventFeed() {
         assertThrows(WebApplicationException.class, () -> {
-            assertNull(eventShapeLayerProvider.obtainLayer(new Point(new double[]{0d, 0d}),
-                EVENT_SHAPE_LAYER_ID, null)
+            assertNull(eventShapeLayerProvider.obtainLayer(EVENT_SHAPE_LAYER_ID, LayerSearchParams.builder()
+                .boundary(someGeometry).build())
+            );
+        });
+
+        assertThrows(WebApplicationException.class, () -> {
+            assertNull(eventShapeLayerProvider.obtainLayer(EVENT_SHAPE_LAYER_ID, LayerSearchParams.builder()
+                .boundary(someGeometry)
+                .eventId(UUID.randomUUID())
+                //no event feed
+                .build())
+            );
+        });
+
+        assertThrows(WebApplicationException.class, () -> {
+            assertNull(eventShapeLayerProvider.obtainLayer(EVENT_SHAPE_LAYER_ID, LayerSearchParams.builder()
+                .boundary(someGeometry)
+                .eventFeed("some-feed")
+                //no event id
+                .build())
             );
         });
     }
 
     @Test
     public void list_Earthquake() {
-        List<Layer> results = eventShapeLayerProvider.obtainLayers(null, UUID.randomUUID());
+        List<Layer> results = eventShapeLayerProvider.obtainLayers(someEventIdEventFeedParams());
         assertEquals(1, results.size());
         Layer result = results.get(0);
 
@@ -64,7 +88,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
 
     @Test
     public void get_Earthquake() {
-        Layer result = eventShapeLayerProvider.obtainLayer(null, EVENT_SHAPE_LAYER_ID, UUID.randomUUID());
+        Layer result = eventShapeLayerProvider.obtainLayer(EVENT_SHAPE_LAYER_ID, someEventIdEventFeedParams());
 
         Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.getId());
         Assertions.assertEquals(EARTHQUAKE, result.getEventType());
@@ -88,7 +112,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
         });
         Mockito.when(eventApiService.getEvent(any(), any())).thenReturn(eventDto);
 
-        Layer result = eventShapeLayerProvider.obtainLayer(null, EVENT_SHAPE_LAYER_ID, UUID.randomUUID());
+        Layer result = eventShapeLayerProvider.obtainLayer(EVENT_SHAPE_LAYER_ID, someEventIdEventFeedParams());
 
         Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.getId());
         Assertions.assertNull(result.getEventType());
@@ -113,7 +137,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
         });
         Mockito.when(eventApiService.getEvent(any(), any())).thenReturn(eventDto);
 
-        List<Layer> result = eventShapeLayerProvider.obtainLayers(null, UUID.randomUUID());
+        List<Layer> result = eventShapeLayerProvider.obtainLayers(someEventIdEventFeedParams());
         assertEquals(1, result.size());
 
         Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.get(0).getId());
@@ -122,12 +146,15 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
 
     @Test
     public void list_NoIntersection() {
-        assertNull(eventShapeLayerProvider.obtainLayers(new Point(new double[]{0d, 0d}), UUID.randomUUID()));
+        assertNull(eventShapeLayerProvider.obtainLayers(LayerSearchParams.builder()
+            .boundary(new Point(new double[]{0d, 0d}))
+            .eventId(UUID.randomUUID()).eventFeed("some-feed").build()));
     }
 
     @Test
     public void get_NoIntersection() {
-        assertNull(eventShapeLayerProvider.obtainLayer(new Point(new double[]{0d, 0d}), EVENT_SHAPE_LAYER_ID,
-            UUID.randomUUID()));
+        assertNull(eventShapeLayerProvider.obtainLayer(EVENT_SHAPE_LAYER_ID, LayerSearchParams.builder()
+            .boundary(new Point(new double[]{0d, 0d}))
+            .eventId(UUID.randomUUID()).eventFeed("some-feed").build()));
     }
 }

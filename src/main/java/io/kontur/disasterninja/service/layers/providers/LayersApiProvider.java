@@ -2,6 +2,7 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSearchParams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
@@ -12,7 +13,6 @@ import org.wololo.geojson.Geometry;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
 import static io.kontur.disasterninja.dto.layerapi.CollectionOwner.*;
@@ -26,23 +26,23 @@ public class LayersApiProvider implements LayerProvider {
     private final LayersApiClient layersApiClient;
 
     @Override
-    public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
+    public List<Layer> obtainLayers(LayerSearchParams searchParams) {
         if (isUserAuthenticated()) {
             List<Layer> result = new ArrayList<>();
-            result.addAll(obtainNonUserOwnedLayersByGeometry(geoJSON));
+            result.addAll(obtainNonUserOwnedLayersByGeometry(searchParams.getBoundary()));
             result.addAll(obtainAllUserOwnedLayers());
             return result;
         } else {
-            return obtainLayersByGeometry(geoJSON);
+            return obtainLayersByGeometry(searchParams.getBoundary());
         }
     }
 
     @Override
-    public Layer obtainLayer(Geometry geoJSON, String layerId, UUID eventId) {
+    public Layer obtainLayer(String layerId, LayerSearchParams searchParams) {
         if (!isApplicable(layerId)) {
             return null;
         }
-        return layersApiClient.getLayer(geoJSON, layerId);
+        return layersApiClient.getLayer(searchParams.getBoundary(), layerId);
     }
 
     @Override

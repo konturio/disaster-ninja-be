@@ -1,8 +1,9 @@
 package io.kontur.disasterninja.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.dto.layer.*;
+import io.kontur.disasterninja.service.GeometryTransformer;
 import io.kontur.disasterninja.service.layers.LayerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,7 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,14 +26,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController()
 @RequestMapping(LayerController.PATH)
+@RequiredArgsConstructor
 public class LayerController {
     public static final String PATH = "/layers";
     public static final String PATH_SEARCH = "/search";
     public static final String PATH_DETAILS = "/details";
-    @Autowired
-    LayerService layerService;
-    @Autowired
-    ObjectMapper objectMapper;
+    private final LayerService layerService;
+    private final GeometryTransformer geometryTransformer;
 
     @Operation(tags = "Layers", summary = "Create a new layer")
     @ApiResponse(responseCode = "200", description = "Successfully created a layer", content = @Content(
@@ -75,7 +75,8 @@ public class LayerController {
                                                       " geoJSON boundary will be returned and id: EventId for" +
                                                       " EventShape layer")
                                                   LayerSummarySearchDto inputDto) {
-        return layerService.getList(inputDto.getGeoJSON(), inputDto.getId())
+        LayerSearchParams searchParams = createLayerSearchParams(inputDto);
+        return layerService.getList(searchParams)
             .stream().map(LayerSummaryDto::fromLayer)
             .collect(Collectors.toList());
     }
@@ -92,8 +93,9 @@ public class LayerController {
                                                     " specifying if geoJson filter should be used when looking for" +
                                                     " that layer")
                                                 LayerDetailsSearchDto inputDto) {
-        return layerService.get(inputDto.getGeoJSON(), inputDto.getLayersToRetrieveWithGeometryFilter(),
-                inputDto.getLayersToRetrieveWithoutGeometryFilter(), inputDto.getEventId())
+        LayerSearchParams searchParams = createLayerSearchParams(inputDto);
+        return layerService.get(inputDto.getLayersToRetrieveWithGeometryFilter(),
+                inputDto.getLayersToRetrieveWithoutGeometryFilter(), searchParams)
             .stream().map(LayerDetailsDto::fromLayer)
             .collect(Collectors.toList());
     }
@@ -109,5 +111,21 @@ public class LayerController {
             @RequestBody FeatureCollection body) {
         FeatureCollection fc = layerService.updateFeatures(layerId, body);
         return ResponseEntity.ok(fc);
+    }
+
+    private LayerSearchParams createLayerSearchParams(LayerDetailsSearchDto dto) {
+        return LayerSearchParams.builder()
+            .eventId(dto.getEventId())
+            .eventFeed(dto.getEventFeed())
+            .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))
+            .build();
+    }
+
+    private LayerSearchParams createLayerSearchParams(LayerSummarySearchDto dto) {
+        return LayerSearchParams.builder()
+            .eventId(dto.getEventId())
+            .eventFeed(dto.getEventFeed())
+            .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))
+            .build();
     }
 }

@@ -3,6 +3,7 @@ package io.kontur.disasterninja.service.layers.providers;
 import io.kontur.disasterninja.client.KcApiClient;
 import io.kontur.disasterninja.domain.DtoFeatureProperties;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.service.layers.LayerConfigService;
@@ -11,10 +12,12 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
-import org.wololo.geojson.Geometry;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.client.KcApiClient.OSM_LAYERS;
@@ -59,30 +62,25 @@ public class OsmLayerProvider implements LayerProvider {
         return clazz.cast(value);
     }
 
-    /**
-     * @param geoJSON required to find features by intersection
-     * @param eventId not used
-     */
     @Override
-    public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
-        if (geoJSON == null) {
+    public List<Layer> obtainLayers(LayerSearchParams searchParams) {
+        if (searchParams.getBoundary() == null) {
             return null;
         }
-        List<Feature> osmLayers = kcApiClient.getCollectionItemsByGeometry(geoJSON, OSM_LAYERS);
+        List<Feature> osmLayers = kcApiClient.getCollectionItemsByGeometry(searchParams.getBoundary(), OSM_LAYERS);
         return fromOsmLayers(osmLayers);
     }
 
     /**
      * @param layerId LayerID to retrieve
-     * @param eventId ignored
      * @return Entire layer, not limited by geometry
      */
     @Override
-    public Layer obtainLayer(Geometry geoJSON, String layerId, UUID eventId) {
+    public Layer obtainLayer(String layerId, LayerSearchParams searchParams) {
         if (!isApplicable(layerId)) {
             return null;
         }
-        return fromOsmLayer(kcApiClient.getFeatureFromCollection(geoJSON, layerId, OSM_LAYERS), true);
+        return fromOsmLayer(kcApiClient.getFeatureFromCollection(searchParams.getBoundary(), layerId, OSM_LAYERS), true);
     }
 
     @Override

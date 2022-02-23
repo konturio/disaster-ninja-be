@@ -3,6 +3,7 @@ package io.kontur.disasterninja.service.layers;
 import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
 import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
 import io.kontur.disasterninja.service.GeometryTransformer;
@@ -13,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.FeatureCollection;
-import org.wololo.geojson.GeoJSON;
-import org.wololo.geojson.Geometry;
 
 import java.util.*;
 
@@ -42,14 +41,13 @@ public class LayerService {
         layersApiClient.deleteLayer(id);
     }
 
-    public List<Layer> getList(GeoJSON geoJSON, UUID eventId) {
+    public List<Layer> getList(LayerSearchParams layerSearchParams) {
         Map<String, Layer> layers = new HashMap<>();
-        Geometry boundary = geometryTransformer.getGeometryFromGeoJson(geoJSON);
 
         //load layers from providers
         providers.stream().map(it -> {
                 try {
-                    return it.obtainLayers(boundary, eventId);
+                    return it.obtainLayers(layerSearchParams);
                 } catch (Exception e) {
                     LOG.error("Caught exception while obtaining layers from {}: {}", it.getClass().getSimpleName(),
                         e.getMessage(), e);
@@ -78,42 +76,25 @@ public class LayerService {
                 .toList();
     }
 
-    public List<Layer> get(GeoJSON geoJSON, List<String> layersToRetrieveWithGeometryFilter,
-                           List<String> layersToRetrieveWithoutGeometryFilter, UUID eventId) {
-        List<Layer> layersFoundWithGeometryFilter = get(geoJSON, layersToRetrieveWithGeometryFilter, eventId);
-        List<Layer> layersFoundWithoutGeometryFilter = get(null, layersToRetrieveWithoutGeometryFilter, eventId);
+    public List<Layer> get(List<String> layersToRetrieveWithGeometryFilter,
+                           List<String> layersToRetrieveWithoutGeometryFilter, LayerSearchParams searchParams) {
+        List<Layer> layersFoundWithGeometryFilter = get(layersToRetrieveWithGeometryFilter, searchParams);
+        List<Layer> layersFoundWithoutGeometryFilter = get(layersToRetrieveWithoutGeometryFilter, searchParams.getCopyWithoutBoundary());
 
         return mergeLayerListsByLayerId(layersFoundWithGeometryFilter, layersFoundWithoutGeometryFilter);
     }
 
-    protected List<Layer> get(GeoJSON geoJSON, List<String> layerIds, UUID eventId) {
-        Geometry boundary = geometryTransformer.getGeometryFromGeoJson(geoJSON);
+    protected List<Layer> get(List<String> layerIds, LayerSearchParams searchParams) {
         List<Layer> result = new ArrayList<>();
 
         if (isEmpty(layerIds)) {
             return List.of();
         }
+
         for (String layerId: layerIds) {
-            Layer layer = null;
-            for (LayerProvider provider : providers) {
-                //find first by layer id and use it
-                if (provider.isApplicable(layerId)) {
-                    layer = provider.obtainLayer(boundary, layerId, eventId);
-                    if (layer != null) {
-                        LOG.info("Found layer by id {} by provider {}", layerId, provider.getClass().getSimpleName());
-                        layerConfigService.applyConfig(layer);
-                        result.add(layer);
-                    }
-                    break;
-                }
-            }
-            //if not found - use global overlay from config
-            if (layer == null) {
-                layer = layerConfigService.getGlobalOverlays().get(layerId);
-                if (layer != null && layer.getSource() != null) {
-                    LOG.info("No loaded layer found by id, using a global overlay: {}", layerId);
-                    result.add(layer);
-                }
+            Layer layer = getFromProvidersOrGlobalOverlays(layerId, searchParams);
+            if (layer != null) {
+                result.add(layer);
             }
         }
 
@@ -122,6 +103,34 @@ public class LayerService {
                     HttpStatus.NOT_FOUND);
         }
         return result;
+    }
+
+    private Layer getFromProvidersOrGlobalOverlays(String layerId, LayerSearchParams searchParams) {
+        Layer layer = getFromProviders(layerId, searchParams);
+        if (layer != null) {
+            return layer;
+        }
+        //if not found - use global overlay from config
+        layer = layerConfigService.getGlobalOverlays().get(layerId);
+        if (layer != null && layer.getSource() != null) {
+            LOG.info("No loaded layer found by id, using a global overlay: {}", layerId);
+        }
+        return layer;
+    }
+
+    private Layer getFromProviders(String layerId, LayerSearchParams searchParams) {
+        for (LayerProvider provider : providers) {
+            //find first by layer id and use it
+            if (provider.isApplicable(layerId)) {
+                Layer layer = provider.obtainLayer(layerId, searchParams);
+                if (layer != null) {
+                    LOG.info("Found layer by id {} by provider {}", layerId, provider.getClass().getSimpleName());
+                    layerConfigService.applyConfig(layer);
+                }
+                return layer;
+            }
+        }
+        return null;
     }
 
     public FeatureCollection updateFeatures(String layerId, FeatureCollection body) {

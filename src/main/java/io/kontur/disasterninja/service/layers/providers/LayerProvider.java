@@ -1,10 +1,9 @@
 package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.domain.Layer;
-import org.wololo.geojson.Geometry;
+import io.kontur.disasterninja.domain.LayerSearchParams;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface LayerProvider {
     String HOT_LAYER_ID = "hotProjects";
@@ -13,15 +12,13 @@ public interface LayerProvider {
     String EVENT_SHAPE_LAYER_ID = "eventShape";
 
     /**
-     * Return list of layers available from this LayerProvider. Layer.Source is not populated for layers returned!
+     * Layer.Source is not populated for layers returned!
      *
-     * @param geoJSON if specified - used to filter features by intersection
-     * @param eventId used by EventShapeLayerProvider
      * @return list of layers available from this LayerProvider.
      */
-    List<Layer> obtainLayers(Geometry geoJSON, UUID eventId);
+    List<Layer> obtainLayers(LayerSearchParams searchParams);
 
-    Layer obtainLayer(Geometry geoJSON, String layerId, UUID eventId);
+    Layer obtainLayer(String layerId, LayerSearchParams searchParams);
 
     boolean isApplicable(String layerId);
 }

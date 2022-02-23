@@ -2,6 +2,7 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.service.EventApiService;
@@ -16,7 +17,6 @@ import org.wololo.geojson.Geometry;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import static io.kontur.disasterninja.config.logging.LogHttpTraceRepository.LOG;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
@@ -30,40 +30,31 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 public class EventShapeLayerProvider implements LayerProvider {
     private final EventApiService eventApiService;
 
-    /**
-     * @param geoJson if specified - used to filter Event features by intersection
-     * @param eventId required to get event from Event API
-     */
     @Override
-    public List<Layer> obtainLayers(Geometry geoJson, UUID eventId) {
-        if (eventId == null) {
+    public List<Layer> obtainLayers(LayerSearchParams searchParams) {
+        if (searchParams.getEventId() == null || searchParams.getEventFeed() == null) {
             return null;
         }
-        Layer layer = obtainLayer(geoJson, EVENT_SHAPE_LAYER_ID, eventId);
+        Layer layer = obtainLayer(EVENT_SHAPE_LAYER_ID, searchParams);
         return layer == null ? null : List.of(layer);
     }
 
-    /**
-     * @param geoJSON if specified - used to filter Event features by intersection
-     * @param layerId Layer ID
-     * @param eventId required to get event from Event API
-     */
     @Override
-    public Layer obtainLayer(Geometry geoJSON, String layerId, UUID eventId) {
+    public Layer obtainLayer(String layerId, LayerSearchParams searchParams) {
         if (!isApplicable(layerId)) {
             return null;
         }
-        if (eventId == null) {
-            throw new WebApplicationException("EventId must be provided when requesting layer " + layerId,
+        if (searchParams.getEventId() == null || searchParams.getEventFeed() == null) {
+            throw new WebApplicationException("EventId and EventFeed must be provided when requesting layer " + layerId,
                 HttpStatus.BAD_REQUEST);
         }
-        EventDto eventDto = eventApiService.getEvent(eventId, null); //todo either userToken and feedname should be provided in request or default feed and auth should be used?
+        EventDto eventDto = eventApiService.getEvent(searchParams.getEventId(), searchParams.getEventFeed());
 
         Layer layer = fromEventDto(eventDto);
         if (layer != null && layer.getSource() != null && layer.getSource().getData() != null) {
-            Feature[] filteredFeatures = filterFeaturesByGeometry(layer.getSource().getData().getFeatures(), geoJSON);
+            Feature[] filteredFeatures = filterFeaturesByGeometry(layer.getSource().getData().getFeatures(), searchParams.getBoundary());
             if (filteredFeatures.length == 0) {
-                LOG.info("No features intersecting with requested boundary {}", geoJSON);
+                LOG.info("No features intersecting with requested boundary {}", searchParams.getBoundary());
                 return null;
             }
             layer.getSource().setData(new FeatureCollection(filteredFeatures));

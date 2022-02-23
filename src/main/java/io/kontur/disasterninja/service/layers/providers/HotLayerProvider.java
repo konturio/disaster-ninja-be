@@ -3,6 +3,7 @@ package io.kontur.disasterninja.service.layers.providers;
 import io.kontur.disasterninja.client.KcApiClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.domain.LayerSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
@@ -10,10 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
-import org.wololo.geojson.Geometry;
 
 import java.util.List;
-import java.util.UUID;
 
 import static io.kontur.disasterninja.client.KcApiClient.HOT_PROJECTS;
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
@@ -28,36 +27,30 @@ public class HotLayerProvider implements LayerProvider {
 
     private final KcApiClient kcApiClient;
 
-    /**
-     * @param geoJSON required to find features by intersection
-     * @param eventId not used
-     */
     @Override
-    public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
-        if (geoJSON == null) {
+    public List<Layer> obtainLayers(LayerSearchParams searchParams) {
+        if (searchParams.getBoundary() == null) {
             return null;
         }
-        Layer layer = obtainLayer(geoJSON, HOT_LAYER_ID, eventId);
+        Layer layer = obtainLayer(HOT_LAYER_ID, searchParams);
         return layer == null ? null : List.of(layer);
     }
 
     /**
-     * @param geoJson required to find features by intersection
-     * @param eventId not used
      * @return layer containing features whose Centroid intersects with requested geoJson (same as in DN1)
      */
     @Override
-    public Layer obtainLayer(Geometry geoJson, String layerId, UUID eventId) {
+    public Layer obtainLayer(String layerId, LayerSearchParams searchParams) {
         if (!isApplicable(layerId)) {
             return null;
         }
-        if (geoJson == null) {
+        if (searchParams.getBoundary() == null) {
             throw new WebApplicationException("GeoJson boundary must be specified for layer " + layerId,
                 HttpStatus.BAD_REQUEST);
         }
         //todo now only features whose Centroid intersects with requested geoJson are included (same as in DN1) #7768
         //it's possible that the centroid does intersect with the geoJson, but geometries themselves do not!
-        List<Feature> hotProjectLayers = kcApiClient.getCollectionItemsByCentroidGeometry(geoJson, HOT_PROJECTS);
+        List<Feature> hotProjectLayers = kcApiClient.getCollectionItemsByCentroidGeometry(searchParams.getBoundary(), HOT_PROJECTS);
         return fromHotProjectLayers(hotProjectLayers);
     }
 
