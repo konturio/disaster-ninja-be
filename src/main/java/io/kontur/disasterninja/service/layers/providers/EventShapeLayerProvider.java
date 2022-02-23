@@ -76,15 +76,9 @@ public class EventShapeLayerProvider implements LayerProvider {
             return null;
         }
 
-        //if 'Class' property is absent from features - use common config for EVENT_SHAPE_LAYER_ID
-        //otherwise there are separate cfgs based on event type
-        boolean isClassSpecified = Arrays.stream(eventDto.getLatestEpisodeGeojson().getFeatures())
-            .anyMatch(f -> f.getProperties().containsKey("Class"));
-        String layerId = isClassSpecified ? EVENT_SHAPE_LAYER_ID + "." + eventDto.getEventType()
-            : EVENT_SHAPE_LAYER_ID;
-
         return Layer.builder()
-            .id(layerId)
+            .eventType(eventDto.getEventType())
+            .id(EVENT_SHAPE_LAYER_ID)
             .source(LayerSource.builder()
                 .type(GEOJSON)
                 .data(eventDto.getLatestEpisodeGeojson()) //sic!

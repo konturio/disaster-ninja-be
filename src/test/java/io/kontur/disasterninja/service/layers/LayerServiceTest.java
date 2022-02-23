@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
+import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
 import static io.kontur.disasterninja.util.TestUtil.createLegend;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -60,6 +61,8 @@ public class LayerServiceTest {
     BivariateLayerProvider bivariateLayerProvider;
     @MockBean
     LayersApiClient layersApiClient;
+    @MockBean
+    LayersApiProvider layersApiProvider;
 
     @Autowired
     LayerService layerService;
@@ -101,22 +104,25 @@ public class LayerServiceTest {
 
     @Test
     public void noDuplicatesShouldBePresentInResponseTest() {
-        when(layersApiClient.getLayer(any(), any())).thenReturn(userLayer);
+        when(layersApiProvider.isApplicable(any())).thenReturn(true);
+        when(layersApiProvider.obtainLayer(any(), any(), any())).thenReturn(userLayer);
 
         List<Layer> result = layerService.get(someGeometry, List.of(userLayer.getId()), List.of(userLayer.getId()), UUID.randomUUID());
-        verify(layersApiClient, times(1)).getLayer(notNull(), eq(userLayer.getId()));
-        verify(layersApiClient, times(1)).getLayer(isNull(), eq(userLayer.getId()));
+        verify(layersApiProvider, times(1)).obtainLayer(notNull(), eq(userLayer.getId()), any());
+        verify(layersApiProvider, times(1)).obtainLayer(isNull(), eq(userLayer.getId()), any());
         assertEquals(1, result.size());
     }
 
     private void givenUserLayerIsReturnedOnlyWhenQueriedWithoutGeometry() {
-        when(layersApiClient.getLayer(notNull(), eq(userLayer.getId()))).thenReturn(null);
-        when(layersApiClient.getLayer(isNull(), eq(userLayer.getId()))).thenReturn(userLayer);
+        when(layersApiProvider.isApplicable(any())).thenReturn(true);
+        when(layersApiProvider.obtainLayer(notNull(), eq(userLayer.getId()), any())).thenReturn(null);
+        when(layersApiProvider.obtainLayer(isNull(), eq(userLayer.getId()), any())).thenReturn(userLayer);
     }
 
     private void givenCommonLayerIsReturnedOnlyWhenQueriedWithGeometry() {
-        when(layersApiClient.getLayer(notNull(), eq(commonLayer.getId()))).thenReturn(commonLayer);
-        when(layersApiClient.getLayer(isNull(), eq(commonLayer.getId()))).thenReturn(null);
+        when(layersApiProvider.isApplicable(any())).thenReturn(true);
+        when(layersApiProvider.obtainLayer(notNull(), eq(commonLayer.getId()), any())).thenReturn(commonLayer);
+        when(layersApiProvider.obtainLayer(isNull(), eq(commonLayer.getId()), any())).thenReturn(null);
     }
 
     @Test
@@ -137,6 +143,33 @@ public class LayerServiceTest {
         assertEquals("hotProjectsTileLayer", layers.get(7).getId());
 
         System.out.println(layers);
+    }
+
+    @Test
+    public void getListShouldWorkEvenIfSomeProvidersThrowTest() {
+        when(hotLayerProvider.obtainLayers(any(), any())).thenThrow(HttpClientErrorException.create(HttpStatus.BAD_REQUEST,
+            "fail", null,null, Charset.defaultCharset()));
+        when(layersApiProvider.obtainLayers(any(), any())).thenReturn(List.of(layer));
+
+        List<Layer> result = layerService.getList(new Point(new double[]{1, 2}), null);
+        assertFalse(result.isEmpty());
+        assertTrue(result.contains(layer));
+    }
+
+    @Test
+    public void getShouldThrowIfAnyProviderThrowsTest() {
+        when(hotLayerProvider.isApplicable(any())).thenReturn(true);
+        when(hotLayerProvider.obtainLayer(any(), any(), any())).thenThrow(HttpClientErrorException.create(HttpStatus.NOT_FOUND,
+            "not found", null,null, Charset.defaultCharset()));
+        when(layersApiProvider.isApplicable(any())).thenReturn(true);
+        when(layersApiProvider.obtainLayer(any(), any(), any())).thenReturn(userLayer);
+
+        try {
+            layerService.get(new Point(new double[]{1, 2}), List.of(HOT_LAYER_ID), List.of(userLayer.getId()), null);
+            throw new RuntimeException("expected exception was not thrown!");
+        } catch (HttpClientErrorException.NotFound e) {
+            assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
+        }
     }
 
     @Test
