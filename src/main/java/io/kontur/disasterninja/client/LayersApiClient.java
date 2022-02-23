@@ -30,7 +30,8 @@ import org.wololo.geojson.Geometry;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.Type.tiles;
+import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.LAYER_TYPE_FEATURE;
+import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.LAYER_TYPE_TILES;
 
 @Component
 public class LayersApiClient extends RestClientWithBearerAuth {
@@ -82,7 +83,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
     }
 
     public FeatureCollection updateLayerFeatures(String layerId, FeatureCollection body) {
-        String id = layerId.replaceFirst(LAYER_PREFIX, "");
+        String id = getIdWithoutPrefix(layerId);
 
         ResponseEntity<FeatureCollection> response = layersApiRestTemplate
                 .exchange(String.format(UPDATE_FEATURES_URL, id), HttpMethod.PUT,
@@ -202,7 +203,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             .group(collection.getGroup() != null ? collection.getGroup().getName() : null)
             .legend(collection.getLegend() != null ? collection.getLegend().toLegend() : null)
             .copyrights(collection.getCopyrights() != null ? Collections.singletonList(collection.getCopyrights()) : null)
-            .boundaryRequiredForRetrieval(!LayerUpdateDto.Type.tiles.name().equals(collection.getItemType()) && !collection.isOwnedByUser())
+            .boundaryRequiredForRetrieval(!LAYER_TYPE_TILES.equals(collection.getItemType()) && !collection.isOwnedByUser())
             .eventIdRequiredForRetrieval(false)
             .ownedByUser(collection.isOwnedByUser())
             .build();
@@ -214,9 +215,9 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             return null;
         }
         LayerSource source = null;
-        if (LayerUpdateDto.Type.tiles.name().equals(collection.getItemType())) {
+        if (LAYER_TYPE_TILES.equals(collection.getItemType())) {
             source = createVectorSource(collection);
-        } else if (LayerUpdateDto.Type.feature.name().equals(collection.getItemType())) {
+        } else if (LAYER_TYPE_FEATURE.equals(collection.getItemType())) {
             source = createFeatureSource(geoJSON, collection.getId());
         }
         return Layer.builder()
@@ -228,7 +229,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
 
     private LayerSource createVectorSource(Collection collection) {
         String url = collection.getLinks().stream()
-            .filter(l -> tiles.name().equals(l.getRel()))
+            .filter(l -> LAYER_TYPE_TILES.equals(l.getRel()))
             .map(Link::getHref)
             .filter(Objects::nonNull)
             .findFirst()

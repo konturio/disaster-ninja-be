@@ -71,9 +71,9 @@ public class LayerController {
     @PostMapping(path = PATH_SEARCH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<LayerSummaryDto> getSummaries(@RequestBody
                                               @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                                                  description = "geoJSON: only layers with features intersecting with" +
-                                                      " geoJSON boundary will be returned and id: EventId for" +
-                                                      " EventShape layer")
+                                                  description = "geoJSON boundary: only layers containing features" +
+                                                      " intersecting with the boundary and global layers will be" +
+                                                      " returned; eventId: Event Id for EventShape layer")
                                                   LayerSummarySearchDto inputDto) {
         LayerSearchParams searchParams = createLayerSearchParams(inputDto);
         return layerService.getList(searchParams)
@@ -87,11 +87,10 @@ public class LayerController {
     @PostMapping(path = PATH_DETAILS, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<LayerDetailsDto> getDetails(@RequestBody
                                             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                                                description = "geoJSON: only layers with features intersecting with" +
-                                                    " geoJSON boundary will be returned; eventId: Event Id for" +
-                                                    " EventShape layer; Map of layer ids with corresponding boolean" +
-                                                    " specifying if geoJson filter should be used when looking for" +
-                                                    " that layer")
+                                                description = "geoJSON boundary; eventId: Event Id for" +
+                                                    " EventShape layer; List of layer ids which should be retrieved" +
+                                                    " using the provided boundary; List of layer ids which" +
+                                                    " should be retrieved ignoring the boundary")
                                                 LayerDetailsSearchDto inputDto) {
         LayerSearchParams searchParams = createLayerSearchParams(inputDto);
         return layerService.get(inputDto.getLayersToRetrieveWithGeometryFilter(),
