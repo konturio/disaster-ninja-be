@@ -32,7 +32,7 @@ public class AdvancedAnalyticsPanelController {
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AdvancedAnalyticsDto.class))))
     @PostMapping
     public List<AdvancedAnalyticsDto> getAdvancedAnalyticsTab(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Polygon in GeoJSON format. Send polygon as FeatureCollection")
-                                                              @RequestBody GeoJSON geoJSON) {
+                                                              @RequestBody(required = false) GeoJSON geoJSON) {
         return advancedAnalyticsPanelService.calculateAnalytics(geoJSON);
     }
 }
