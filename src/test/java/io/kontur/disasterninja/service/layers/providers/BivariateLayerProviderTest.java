@@ -11,12 +11,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.wololo.geojson.Point;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
+import static io.kontur.disasterninja.util.TestUtil.emptyParams;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,7 +71,7 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         when(insightsApiGraphqlClient.getBivariateStatistic()).thenThrow(new ApolloException("hello world"));
 
         try {
-            bivariateLayerProvider.obtainLayers(null, null);
+            bivariateLayerProvider.obtainLayers(emptyParams());
             throw new RuntimeException("expected exception was not thrown");
         } catch (WebApplicationException e) {
             assertEquals("Can't load bivariate layers", e.getMessage());
@@ -83,7 +83,7 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         when(insightsApiGraphqlClient.getBivariateStatistic()).thenThrow(new ApolloException("hello world"));
 
         try {
-            bivariateLayerProvider.obtainLayer(null, "Kontur Nighttime Heatwave Risk", null);
+            bivariateLayerProvider.obtainLayer("Kontur Nighttime Heatwave Risk", emptyParams());
             throw new RuntimeException("expected exception was not thrown");
         } catch (WebApplicationException e) {
             assertEquals("Can't load bivariate layer", e.getMessage());
@@ -92,14 +92,13 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
 
     @Test
     public void listTest() {
-        List<Layer> layers = bivariateLayerProvider.obtainLayers(null, null);
+        List<Layer> layers = bivariateLayerProvider.obtainLayers(emptyParams());
         assertEquals(1, layers.size());
     }
 
     @Test
     public void getTest() {
-        Layer biv = bivariateLayerProvider.obtainLayer(new Point(new double[]{0d, 0d}),
-                "Kontur OpenStreetMap Quantity", null);
+        Layer biv = bivariateLayerProvider.obtainLayer("Kontur OpenStreetMap Quantity", emptyParams());
         //layer
         assertEquals("Kontur OpenStreetMap Quantity", biv.getId());
         assertEquals("Kontur OpenStreetMap Quantity", biv.getName());
@@ -150,7 +149,7 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
 
     @Test
     public void copyrightLinkMarkdown_8657() {
-        List<Layer> layers = bivariateLayerProvider.obtainLayers(null, null);
+        List<Layer> layers = bivariateLayerProvider.obtainLayers(emptyParams());
         assertThat(layers.get(0).getCopyrights(), hasItems("copyrights [https://kontur.io/](https://kontur.io/)", "copyrights1", "copyrights2"));
     }
 

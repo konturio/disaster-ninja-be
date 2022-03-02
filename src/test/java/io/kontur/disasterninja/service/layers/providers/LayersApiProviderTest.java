@@ -4,12 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.client.TestDependingOnUserAuth;
+import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.dto.layerapi.CollectionOwner;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.wololo.geojson.Geometry;
-
-import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
@@ -27,7 +26,7 @@ public class LayersApiProviderTest extends TestDependingOnUserAuth {
         givenUserIsNotAuthenticated();
 
         Geometry geometry = objectMapper.readValue(json, Geometry.class);
-        provider.obtainLayers(geometry, UUID.randomUUID());
+        provider.obtainLayers(LayerSearchParams.builder().boundary(geometry).build());
 
         verify(client, times(1)).findLayers(geometry, CollectionOwner.ANY);
     }
@@ -37,7 +36,7 @@ public class LayersApiProviderTest extends TestDependingOnUserAuth {
         givenUserIsLoggedIn();
 
         Geometry geometry = objectMapper.readValue(json, Geometry.class);
-        provider.obtainLayers(geometry, UUID.randomUUID());
+        provider.obtainLayers(LayerSearchParams.builder().boundary(geometry).build());
 
         verify(client, times(1)).findLayers(null, CollectionOwner.ME);
         verify(client, times(1)).findLayers(geometry, CollectionOwner.NOT_ME);

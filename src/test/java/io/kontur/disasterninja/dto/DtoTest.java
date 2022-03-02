@@ -54,10 +54,10 @@ public class DtoTest {
     public void serializeDeserializeSummaryFromGeometryTest() {
         String id = "123";
         Layer layer = testLayer(id, new FeatureCollection(null));
-        Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layer));
+        Mockito.when(layerService.getList(any())).thenReturn(List.of(layer));
 
         LayerSummarySearchDto
-            input = new LayerSummarySearchDto(UUID.randomUUID(), new Point(new double[]{1, 0}));
+            input = new LayerSummarySearchDto(UUID.randomUUID(), "some-feed", new Point(new double[]{1, 0}));
         List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
             .getBody());
 
@@ -65,7 +65,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.isEventIdRequiredForRetrieval(), response.get(0).isEventIdRequiredForRetrieval());
         Assertions.assertEquals(layer.getName(), response.get(0).getName());
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
-        Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
+        Assertions.assertEquals(layer.getCategory(), response.get(0).getCategory());
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(), response.get(0).isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
@@ -76,9 +76,9 @@ public class DtoTest {
     public void serializeDeserializeDetailsFromGeometryTest() {
         String id = "123";
         Layer layer = testLayer(id, new FeatureCollection(new Feature[]{new Feature(new Point(new double[]{1d, 2d}), new HashMap<>())}));
-        Mockito.when(layerService.get(any(), any(), any(), any())).thenReturn(List.of(layer));
+        Mockito.when(layerService.get(any(), any(), any())).thenReturn(List.of(layer));
 
-        LayerDetailsSearchDto input = new LayerDetailsSearchDto(new Point(new double[]{1, 0}), List.of(layer.getId()), List.of(), UUID.randomUUID());
+        LayerDetailsSearchDto input = new LayerDetailsSearchDto(new Point(new double[]{1, 0}), List.of(layer.getId()), List.of(), UUID.randomUUID(), "some-feed");
         List<LayerDetailsDto> response = Arrays.asList(restTemplate.postForEntity(DETAILS_URL, input, LayerDetailsDto[].class)
             .getBody());
 
@@ -98,9 +98,9 @@ public class DtoTest {
     public void serializeDeserializeFromFeatureTest() {
         String id = "123";
         Layer layer = testLayer(id, new FeatureCollection(null));
-        Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layer));
+        Mockito.when(layerService.getList(any())).thenReturn(List.of(layer));
 
-        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), new Feature(new Point(
+        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), "some-feed", new Feature(new Point(
             new double[]{1, 0}), new HashMap<>()));
         List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
             .getBody());
@@ -109,7 +109,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.isEventIdRequiredForRetrieval(), response.get(0).isEventIdRequiredForRetrieval());
         Assertions.assertEquals(layer.getName(), response.get(0).getName());
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
-        Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
+        Assertions.assertEquals(layer.getCategory(), response.get(0).getCategory());
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(), response.get(0).isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
@@ -120,9 +120,9 @@ public class DtoTest {
     public void serializeDeserializeFromFeatureCollectionTest() {
         String id = "123";
         Layer layer = testLayer(id, new FeatureCollection(null));
-        Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layer));
+        Mockito.when(layerService.getList(any())).thenReturn(List.of(layer));
 
-        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), new FeatureCollection(new Feature[]{
+        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), "some-feed", new FeatureCollection(new Feature[]{
             new Feature(new Point(new double[]{1, 0}), new HashMap<>()),
             new Feature(new Point(new double[]{1, 0}), new HashMap<>())}));
 
@@ -133,7 +133,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.isEventIdRequiredForRetrieval(), response.get(0).isEventIdRequiredForRetrieval());
         Assertions.assertEquals(layer.getName(), response.get(0).getName());
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
-        Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
+        Assertions.assertEquals(layer.getCategory(), response.get(0).getCategory());
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(), response.get(0).isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
@@ -195,9 +195,9 @@ public class DtoTest {
             .source(source)
             .build();
 
-        Mockito.when(layerService.getList(any(), any())).thenReturn(List.of(layerWithPattern));
+        Mockito.when(layerService.getList(any())).thenReturn(List.of(layerWithPattern));
         LayerSummarySearchDto
-            input = new LayerSummarySearchDto(UUID.randomUUID(), new Point(new double[]{1, 0}));
+            input = new LayerSummarySearchDto(UUID.randomUUID(), "some-feed", new Point(new double[]{1, 0}));
         List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
             .getBody());
 

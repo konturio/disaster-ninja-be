@@ -3,6 +3,7 @@ package io.kontur.disasterninja.service.layers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSearchParams;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -24,8 +25,9 @@ public class LayerServiceIT {
             "6.276395795],[-10.7264328,6.274774784],[-10.73141098,6.260612054],[-10.696048737,6.226739391]," +
             "[-10.656738281,6.219060146],[-10.651073456,6.246363619],[-10.649528503,6.265304567]," +
             "[-10.654764175,6.276395795]]]]}";
-        List<Layer> layers = layerService.getList(new ObjectMapper().readValue(json,
-            Geometry.class), null);
+        List<Layer> layers = layerService.getList(LayerSearchParams.builder()
+                .boundary(new ObjectMapper().readValue(json, Geometry.class))
+                .build());
         Assertions.assertFalse(layers.isEmpty());
     }
 }
