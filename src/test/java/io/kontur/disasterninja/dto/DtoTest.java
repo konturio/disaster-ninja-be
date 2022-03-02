@@ -65,7 +65,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.isEventIdRequiredForRetrieval(), response.get(0).isEventIdRequiredForRetrieval());
         Assertions.assertEquals(layer.getName(), response.get(0).getName());
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
-        Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
+        Assertions.assertEquals(layer.getCategory(), response.get(0).getCategory());
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(), response.get(0).isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
@@ -109,7 +109,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.isEventIdRequiredForRetrieval(), response.get(0).isEventIdRequiredForRetrieval());
         Assertions.assertEquals(layer.getName(), response.get(0).getName());
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
-        Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
+        Assertions.assertEquals(layer.getCategory(), response.get(0).getCategory());
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(), response.get(0).isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
@@ -133,7 +133,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.isEventIdRequiredForRetrieval(), response.get(0).isEventIdRequiredForRetrieval());
         Assertions.assertEquals(layer.getName(), response.get(0).getName());
         Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
-        Assertions.assertEquals(layer.getCategory(), LayerCategory.fromString(response.get(0).getCategory()));
+        Assertions.assertEquals(layer.getCategory(), response.get(0).getCategory());
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(), response.get(0).isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
