@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.domain;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LegendType;
 import io.kontur.disasterninja.dto.EventType;
@@ -39,6 +40,7 @@ public class Layer {
     private boolean testOnly;
     private Integer orderIndex; //for sorting bivariate presets
     private boolean ownedByUser;
+    private ObjectNode featureProperties;
 
     /**
      * Overrides all non-final fields with values from <b>other</b>, except for <b>this.source.data</b> as it's the
