@@ -3,6 +3,7 @@ package io.kontur.disasterninja.service.layers.providers;
 import io.kontur.disasterninja.client.InsightsApiClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSearchParams;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -13,10 +14,10 @@ import org.wololo.geojson.Point;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.SETTLED_PERIPHERY_LAYER_ID;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.URBAN_CORE_LAYER_ID;
+import static io.kontur.disasterninja.util.TestUtil.emptyParams;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -43,28 +44,30 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
 
         Mockito.when(insightsApiClient.getUrbanCoreAndSettledPeripheryLayers(any()))
             .thenReturn(fc);
-        List<Layer> layers = urbanAndPeripheryLayerProvider.obtainLayers(new Point(new double[]{0d, 0d}), null);
+        List<Layer> layers = urbanAndPeripheryLayerProvider.obtainLayers(LayerSearchParams
+            .builder().boundary(new Point(new double[]{1d, 2d})).build());
         assertEquals(1, layers.size());
     }
 
     @Test
     public void listEmptyGeojsonTest() {
-        assertNull(urbanAndPeripheryLayerProvider.obtainLayers(null, UUID.randomUUID()));
+        assertNull(urbanAndPeripheryLayerProvider.obtainLayers(emptyParams()));
     }
 
     @Test
     public void getEmptyGeoJsonTest() {
         assertThrows(WebApplicationException.class, () -> {
-            urbanAndPeripheryLayerProvider.obtainLayer(null, URBAN_CORE_LAYER_ID, UUID.randomUUID());
+            urbanAndPeripheryLayerProvider.obtainLayer(URBAN_CORE_LAYER_ID, emptyParams());
         });
         assertThrows(WebApplicationException.class, () -> {
-            urbanAndPeripheryLayerProvider.obtainLayer(null, SETTLED_PERIPHERY_LAYER_ID, UUID.randomUUID());
+            urbanAndPeripheryLayerProvider.obtainLayer(SETTLED_PERIPHERY_LAYER_ID, emptyParams());
         });
     }
 
     @Test
     public void listTest() throws IOException {
-        List<Layer> results = urbanAndPeripheryLayerProvider.obtainLayers(new Point(new double[]{0d, 0d}), null);
+        List<Layer> results = urbanAndPeripheryLayerProvider.obtainLayers(LayerSearchParams
+            .builder().boundary(new Point(new double[]{1d, 2d})).build());
         Layer urbanCore = results.stream().filter(it -> URBAN_CORE_LAYER_ID.equals(it.getId())).findAny().get();
         Layer periphery = results.stream().filter(it -> SETTLED_PERIPHERY_LAYER_ID.equals(it.getId())).findAny().get();
 
@@ -84,8 +87,8 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
 
     @Test
     public void getPeripheryTest() throws IOException {
-        Layer periphery = urbanAndPeripheryLayerProvider.obtainLayer(new Point(new double[]{-0.096666164, 6.286422267})
-            , SETTLED_PERIPHERY_LAYER_ID, null);
+        Layer periphery = urbanAndPeripheryLayerProvider.obtainLayer(SETTLED_PERIPHERY_LAYER_ID, LayerSearchParams
+            .builder().boundary(new Point(new double[]{1d, 2d})).build());
 
         assertNotNull(periphery);
         assertEquals("Kontur Settled Periphery", periphery.getName());
@@ -105,8 +108,8 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
 
     @Test
     public void getUrbanTest() throws IOException {
-        Layer urban = urbanAndPeripheryLayerProvider.obtainLayer(new Point(new double[]{2.512246911, 49.914386015})
-            , URBAN_CORE_LAYER_ID, null);
+        Layer urban = urbanAndPeripheryLayerProvider.obtainLayer(URBAN_CORE_LAYER_ID, LayerSearchParams
+            .builder().boundary(new Point(new double[]{1d, 2d})).build());
 
         assertNotNull(urban);
         assertEquals("Kontur Urban Core", urban.getName());

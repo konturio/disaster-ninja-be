@@ -3,6 +3,7 @@ package io.kontur.disasterninja.util;
 import static io.kontur.disasterninja.domain.enums.LayerStepShape.HEX;
 
 import io.kontur.disasterninja.domain.BivariateLegendAxes;
+import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.domain.Legend;
 import io.kontur.disasterninja.domain.LegendStep;
 import io.kontur.disasterninja.domain.enums.LegendType;
@@ -10,8 +11,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
+import org.wololo.geojson.Geometry;
+import org.wololo.geojson.Point;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public final class TestUtil {
 
@@ -43,4 +47,16 @@ public final class TestUtil {
         return legend;
     }
 
+    public static LayerSearchParams emptyParams() {
+        return LayerSearchParams.builder().build();
+    }
+
+    public static LayerSearchParams paramsWithSomeBoundary() {
+        Geometry someGeometry = new Point(new double[]{1d, 2d});
+        return LayerSearchParams.builder().boundary(someGeometry).build();
+    }
+
+    public static LayerSearchParams someEventIdEventFeedParams() {
+        return LayerSearchParams.builder().eventFeed("some-feed").eventId(UUID.randomUUID()).build();
+    }
 }

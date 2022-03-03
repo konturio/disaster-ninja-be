@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.wololo.geojson.Geometry;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -44,17 +43,15 @@ public class BivariateLayerProvider implements LayerProvider {
     }
 
     /**
-     * @param geoJSON not used
-     * @param eventId not used
      * @return Bivariate layers from insights-api graphql api
      */
     @Override
-    public List<Layer> obtainLayers(Geometry geoJSON, UUID eventId) {
+    public List<Layer> obtainLayers(LayerSearchParams searchParams) {
         try {
             BivariateStatisticDto bivariateStatisticDto = insightsApiGraphqlClient.getBivariateStatistic().get();
             return bivariateStatisticDto.getOverlays().stream()
-                    .map(overlay -> fromOverlay(overlay, bivariateStatisticDto.getIndicators()))
-                    .collect(Collectors.toList());
+                .map(overlay -> fromOverlay(overlay, bivariateStatisticDto.getIndicators()))
+                .collect(Collectors.toList());
         } catch (Exception e) {
             LOG.error("Can't load bivariate layers: {}", e.getMessage(), e);
             throw new WebApplicationException("Can't load bivariate layers", HttpStatus.BAD_GATEWAY);
@@ -87,13 +84,10 @@ public class BivariateLayerProvider implements LayerProvider {
     }
 
     /**
-     * @param geoJSON not used
-     * @param layerId layer id to retrieve
-     * @param eventId not used
      * @return Bivariate layer by ID from insights-api graphql api
      */
     @Override
-    public Layer obtainLayer(Geometry geoJSON, String layerId, UUID eventId) {
+    public Layer obtainLayer(String layerId, LayerSearchParams searchParams) {
         if (!isApplicable(layerId)) {
             return null;
         }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.client.TestDependingOnUserAuth;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LayerSourceType;
@@ -20,7 +21,6 @@ import org.springframework.web.client.RestTemplate;
 import org.wololo.geojson.Geometry;
 
 import java.util.List;
-import java.util.UUID;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static io.kontur.disasterninja.dto.layerapi.CollectionOwner.ME;
@@ -75,7 +75,8 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
                 });
 
         //when
-        List<Layer> layers = provider.obtainLayers(objectMapper.readValue(json, Geometry.class), UUID.randomUUID());
+        Geometry geometry = objectMapper.readValue(json, Geometry.class);
+        List<Layer> layers = provider.obtainLayers(LayerSearchParams.builder().boundary(geometry).build());
 
         //then
         assertEquals(13, layers.size());
@@ -116,7 +117,9 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
                         MediaType.APPLICATION_JSON).createResponse(r));
 
         //when
-        Layer layer = provider.obtainLayer(objectMapper.readValue(json, Geometry.class), "KLA__hotProjects", UUID.randomUUID());
+        Geometry geometry = objectMapper.readValue(json, Geometry.class);
+        Layer layer = provider.obtainLayer("KLA__hotProjects", LayerSearchParams.builder()
+            .boundary(geometry).build());
 
         //then
         assertEquals("KLA__hotProjects", layer.getId());
@@ -156,7 +159,9 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
                 });
 
         //when
-        Layer layer = provider.obtainLayer(objectMapper.readValue(json, Geometry.class), "KLA__hotProjects_feature_type", UUID.randomUUID());
+        Geometry geometry = objectMapper.readValue(json, Geometry.class);
+        Layer layer = provider.obtainLayer("KLA__hotProjects_feature_type", LayerSearchParams.builder()
+            .boundary(geometry).build());
 
         //then
         assertEquals("KLA__hotProjects_feature_type", layer.getId());

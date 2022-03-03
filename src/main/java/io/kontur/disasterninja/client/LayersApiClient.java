@@ -206,6 +206,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             .boundaryRequiredForRetrieval(!LAYER_TYPE_TILES.equals(collection.getItemType()) && !collection.isOwnedByUser())
             .eventIdRequiredForRetrieval(false)
             .ownedByUser(collection.isOwnedByUser())
+            .featureProperties(collection.getFeatureProperties())
             .build();
     }
 

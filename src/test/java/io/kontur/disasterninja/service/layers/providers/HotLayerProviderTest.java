@@ -9,14 +9,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.wololo.geojson.FeatureCollection;
-import org.wololo.geojson.Point;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
+import static io.kontur.disasterninja.util.TestUtil.emptyParams;
+import static io.kontur.disasterninja.util.TestUtil.paramsWithSomeBoundary;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -37,19 +37,19 @@ public class HotLayerProviderTest extends LayerProvidersTest {
 
     @Test
     public void list_emptyGeojson() {
-        assertNull(hotLayerProvider.obtainLayers(null, UUID.randomUUID()));
+        assertNull(hotLayerProvider.obtainLayers(emptyParams()));
     }
 
     @Test
     public void get_emptyGeojson() {
         assertThrows(WebApplicationException.class, () -> {
-            hotLayerProvider.obtainLayer(null, HOT_LAYER_ID, UUID.randomUUID());
+            hotLayerProvider.obtainLayer(HOT_LAYER_ID, emptyParams());
         });
     }
 
     @Test
     public void list() {
-        List<Layer> results = hotLayerProvider.obtainLayers(new Point(new double[]{16.428510034, 8.230779546}), null); //filtering is done in kcApiClient so not testing it here
+        List<Layer> results = hotLayerProvider.obtainLayers(paramsWithSomeBoundary()); //filtering is done in kcApiClient so not testing it here
         assertEquals(1, results.size());
         Layer result = results.get(0);
         assertLayer(result);
@@ -57,20 +57,20 @@ public class HotLayerProviderTest extends LayerProvidersTest {
 
     @Test
     public void get() {
-        Layer result = hotLayerProvider.obtainLayer(new Point(new double[]{16.428510034, 8.230779546}), HOT_LAYER_ID, null);
+        Layer result = hotLayerProvider.obtainLayer(HOT_LAYER_ID, paramsWithSomeBoundary());
         assertLayer(result);
     }
 
     @Test
     public void listNoIntersection() {
         Mockito.when(kcApiClient.getCollectionItemsByCentroidGeometry(any(), any())).thenReturn(List.of());
-        assertNull(hotLayerProvider.obtainLayers(new Point(new double[]{-900d, -900d}), null));
+        assertNull(hotLayerProvider.obtainLayers(paramsWithSomeBoundary()));
     }
 
     @Test
     public void getNoIntersection() {
         Mockito.when(kcApiClient.getCollectionItemsByCentroidGeometry(any(), any())).thenReturn(List.of());
-        Layer result = hotLayerProvider.obtainLayer(new Point(new double[]{10d, 20d}), HOT_LAYER_ID, null);
+        Layer result = hotLayerProvider.obtainLayer(HOT_LAYER_ID, paramsWithSomeBoundary());
         assertNull(result);
     }
 

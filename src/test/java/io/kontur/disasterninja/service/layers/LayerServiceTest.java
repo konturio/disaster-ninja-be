@@ -16,17 +16,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
-import org.wololo.geojson.Geometry;
-import org.wololo.geojson.Point;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
 import static io.kontur.disasterninja.util.TestUtil.createLegend;
+import static io.kontur.disasterninja.util.TestUtil.paramsWithSomeBoundary;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.matches;
@@ -47,7 +45,6 @@ public class LayerServiceTest {
 
     final Layer userLayer = Layer.builder().id(LAYER_PREFIX + "userLayer").build();
     final Layer commonLayer = Layer.builder().id(LAYER_PREFIX + "commonLayer").build();
-    final Geometry someGeometry = new Point(new double[]{1d, 2d});
 
     @MockBean
     HotLayerProvider hotLayerProvider;
@@ -69,11 +66,11 @@ public class LayerServiceTest {
 
     @BeforeEach
     public void beforeEach() {
-        when(hotLayerProvider.obtainLayers(any(), any())).thenReturn(new ArrayList<>());
-        when(osmLayerProvider.obtainLayers(any(), any())).thenReturn(new ArrayList<>());
-        when(urbanAndPeripheryLayerProvider.obtainLayers(any(), any())).thenReturn(new ArrayList<>());
-        when(eventApiProvider.obtainLayers(any(), any())).thenReturn(new ArrayList<>());
-        when(bivariateLayerProvider.obtainLayers(any(), any())).thenReturn(new ArrayList<>());
+        when(hotLayerProvider.obtainLayers(any())).thenReturn(new ArrayList<>());
+        when(osmLayerProvider.obtainLayers(any())).thenReturn(new ArrayList<>());
+        when(urbanAndPeripheryLayerProvider.obtainLayers(any())).thenReturn(new ArrayList<>());
+        when(eventApiProvider.obtainLayers(any())).thenReturn(new ArrayList<>());
+        when(bivariateLayerProvider.obtainLayers(any())).thenReturn(new ArrayList<>());
         //add other providers
     }
 
@@ -82,8 +79,8 @@ public class LayerServiceTest {
         givenUserLayerIsReturnedOnlyWhenQueriedWithoutGeometry();
         givenCommonLayerIsReturnedOnlyWhenQueriedWithGeometry();
 
-        List<Layer> result = layerService.get(someGeometry, List.of(commonLayer.getId()), List.of(userLayer.getId()),
-            UUID.randomUUID());
+        List<Layer> result = layerService.get(List.of(commonLayer.getId()), List.of(userLayer.getId()),
+            paramsWithSomeBoundary());
         assertEquals(2, result.size());
         assertTrue(result.contains(userLayer));
         assertTrue(result.contains(commonLayer));
@@ -95,7 +92,8 @@ public class LayerServiceTest {
         givenCommonLayerIsReturnedOnlyWhenQueriedWithGeometry();
 
         try {
-            layerService.get(someGeometry, List.of(userLayer.getId()), List.of(commonLayer.getId()), UUID.randomUUID());
+            layerService.get(List.of(userLayer.getId()), List.of(commonLayer.getId()),
+                paramsWithSomeBoundary());
             throw new RuntimeException("Expected exception was not thrown!");
         } catch (WebApplicationException e) {
             assertEquals("Layer not found / no layer data found by id and boundary!", e.getMessage());
@@ -105,30 +103,33 @@ public class LayerServiceTest {
     @Test
     public void noDuplicatesShouldBePresentInResponseTest() {
         when(layersApiProvider.isApplicable(any())).thenReturn(true);
-        when(layersApiProvider.obtainLayer(any(), any(), any())).thenReturn(userLayer);
+        when(layersApiProvider.obtainLayer(any(), any())).thenReturn(userLayer);
 
-        List<Layer> result = layerService.get(someGeometry, List.of(userLayer.getId()), List.of(userLayer.getId()), UUID.randomUUID());
-        verify(layersApiProvider, times(1)).obtainLayer(notNull(), eq(userLayer.getId()), any());
-        verify(layersApiProvider, times(1)).obtainLayer(isNull(), eq(userLayer.getId()), any());
+        List<Layer> result = layerService.get(List.of(userLayer.getId()), List.of(userLayer.getId()),
+            paramsWithSomeBoundary());
+        verify(layersApiProvider, times(1)).obtainLayer(eq(userLayer.getId()),
+            argThat(p -> p.getBoundary() != null));
+        verify(layersApiProvider, times(1)).obtainLayer(eq(userLayer.getId()),
+            argThat(p -> p.getBoundary() == null));
         assertEquals(1, result.size());
     }
 
     private void givenUserLayerIsReturnedOnlyWhenQueriedWithoutGeometry() {
         when(layersApiProvider.isApplicable(any())).thenReturn(true);
-        when(layersApiProvider.obtainLayer(notNull(), eq(userLayer.getId()), any())).thenReturn(null);
-        when(layersApiProvider.obtainLayer(isNull(), eq(userLayer.getId()), any())).thenReturn(userLayer);
+        when(layersApiProvider.obtainLayer(eq(userLayer.getId()), argThat(p -> p.getBoundary() != null))).thenReturn(null);
+        when(layersApiProvider.obtainLayer(eq(userLayer.getId()), argThat(p -> p.getBoundary() == null))).thenReturn(userLayer);
     }
 
     private void givenCommonLayerIsReturnedOnlyWhenQueriedWithGeometry() {
         when(layersApiProvider.isApplicable(any())).thenReturn(true);
-        when(layersApiProvider.obtainLayer(notNull(), eq(commonLayer.getId()), any())).thenReturn(commonLayer);
-        when(layersApiProvider.obtainLayer(isNull(), eq(commonLayer.getId()), any())).thenReturn(null);
+        when(layersApiProvider.obtainLayer(eq(commonLayer.getId()), argThat(p -> p.getBoundary() != null))).thenReturn(commonLayer);
+        when(layersApiProvider.obtainLayer(eq(commonLayer.getId()), argThat(p -> p.getBoundary() == null))).thenReturn(null);
     }
 
     @Test
     public void globalOverlaysListTest() {
         //all providers return nothing (= no features matched by geometry), so only global overlays should be returned
-        List<Layer> layers = layerService.getList(new Point(new double[]{1, 2}), null);
+        List<Layer> layers = layerService.getList(paramsWithSomeBoundary());
         //check all layers with 'globalOverlay: true' are present
         assertEquals(8, layers.size());
         assertEquals("Kontur OpenStreetMap Quantity", layers.get(0).getId());
@@ -147,11 +148,11 @@ public class LayerServiceTest {
 
     @Test
     public void getListShouldWorkEvenIfSomeProvidersThrowTest() {
-        when(hotLayerProvider.obtainLayers(any(), any())).thenThrow(HttpClientErrorException.create(HttpStatus.BAD_REQUEST,
+        when(hotLayerProvider.obtainLayers(any())).thenThrow(HttpClientErrorException.create(HttpStatus.BAD_REQUEST,
             "fail", null,null, Charset.defaultCharset()));
-        when(layersApiProvider.obtainLayers(any(), any())).thenReturn(List.of(layer));
+        when(layersApiProvider.obtainLayers(any())).thenReturn(List.of(layer));
 
-        List<Layer> result = layerService.getList(new Point(new double[]{1, 2}), null);
+        List<Layer> result = layerService.getList(paramsWithSomeBoundary());
         assertFalse(result.isEmpty());
         assertTrue(result.contains(layer));
     }
@@ -159,13 +160,13 @@ public class LayerServiceTest {
     @Test
     public void getShouldThrowIfAnyProviderThrowsTest() {
         when(hotLayerProvider.isApplicable(any())).thenReturn(true);
-        when(hotLayerProvider.obtainLayer(any(), any(), any())).thenThrow(HttpClientErrorException.create(HttpStatus.NOT_FOUND,
+        when(hotLayerProvider.obtainLayer(any(), any())).thenThrow(HttpClientErrorException.create(HttpStatus.NOT_FOUND,
             "not found", null,null, Charset.defaultCharset()));
         when(layersApiProvider.isApplicable(any())).thenReturn(true);
-        when(layersApiProvider.obtainLayer(any(), any(), any())).thenReturn(userLayer);
+        when(layersApiProvider.obtainLayer(any(), any())).thenReturn(userLayer);
 
         try {
-            layerService.get(new Point(new double[]{1, 2}), List.of(HOT_LAYER_ID), List.of(userLayer.getId()), null);
+            layerService.get(List.of(HOT_LAYER_ID), List.of(userLayer.getId()), paramsWithSomeBoundary());
             throw new RuntimeException("expected exception was not thrown!");
         } catch (HttpClientErrorException.NotFound e) {
             assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
@@ -175,8 +176,8 @@ public class LayerServiceTest {
     @Test
     public void globalOverlaysGetTest() {
         //all providers return nothing (= no features matched by geometry), so global overlay should be returned
-        List<Layer> layers = layerService.get(new Point(new double[]{1, 2}), List.of("Kontur Nighttime Heatwave Risk"),
-            List.of(), null);
+        List<Layer> layers = layerService.get(List.of("Kontur Nighttime Heatwave Risk"),
+            List.of(), paramsWithSomeBoundary());
         assertEquals(1, layers.size());
         System.out.println(layers);
     }

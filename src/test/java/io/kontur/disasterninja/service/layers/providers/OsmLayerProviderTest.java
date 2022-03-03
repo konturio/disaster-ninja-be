@@ -2,6 +2,7 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.client.KcApiClient;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSearchParams;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,11 +12,11 @@ import org.wololo.geojson.*;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.RASTER;
+import static io.kontur.disasterninja.util.TestUtil.emptyParams;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -43,13 +44,13 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
     @Test
     public void list_emptyGeoJson() {
         //no geojson => no result
-        assertNull(osmLayerProvider.obtainLayers(null, UUID.randomUUID()));
+        assertNull(osmLayerProvider.obtainLayers(emptyParams()));
     }
 
     @Test
     public void get_emptyGeoJson() {
         //no geoJson => no filtering is applied
-        Layer layer = osmLayerProvider.obtainLayer(null, "Benin_cotonou_pleiade_2016", null);
+        Layer layer = osmLayerProvider.obtainLayer("Benin_cotonou_pleiade_2016", emptyParams());
         assertEquals("Benin_cotonou_pleiade_2016", layer.getId());
         //source
         assertTrue(layer.getSource().getData().getFeatures().length > 0);
@@ -62,7 +63,7 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
     @Test
     public void list() {
         Geometry point = new Point(new double[]{1.722946974, 6.266307793});
-        List<Layer> result = osmLayerProvider.obtainLayers(point, null);
+        List<Layer> result = osmLayerProvider.obtainLayers(LayerSearchParams.builder().boundary(point).build());
 
         assertEquals(10, result.size()); //9 layers without geometry, 1 matching
 
@@ -92,8 +93,8 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
 
     @Test
     public void get() {
-        Layer layer1 = osmLayerProvider.obtainLayer(new Point(new double[]{1.722946974, 6.266307793}),
-            "Benin_cotonou_pleiade_2016", null);
+        Layer layer1 = osmLayerProvider.obtainLayer("Benin_cotonou_pleiade_2016", LayerSearchParams
+            .builder().boundary(new Point(new double[]{1.722946974, 6.266307793})).build());
 
         assertEquals("Benin: Cotonou Pleiade 2016", layer1.getName());
         assertEquals(BASE, layer1.getCategory());

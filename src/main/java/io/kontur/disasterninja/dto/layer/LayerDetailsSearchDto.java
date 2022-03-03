@@ -13,5 +13,6 @@ public class LayerDetailsSearchDto {
     private final GeoJSON geoJSON;
     private final List<String> layersToRetrieveWithGeometryFilter;
     private final List<String> layersToRetrieveWithoutGeometryFilter;
-    private final UUID eventId; //event id
+    private final UUID eventId;
+    private final String eventFeed;
 }
