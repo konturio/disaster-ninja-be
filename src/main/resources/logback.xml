@@ -59,12 +59,10 @@
 
     <logger name="httptrace" additivity="false">
         <appender-ref ref="FILE-HTTP-TRACE"/>
-        <appender-ref ref="STDOUT"/>
     </logger>
 
     <root level="info">
         <appender-ref ref="FILE-AUDIT"/>
         <appender-ref ref="FILE-ERROR"/>
-        <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
