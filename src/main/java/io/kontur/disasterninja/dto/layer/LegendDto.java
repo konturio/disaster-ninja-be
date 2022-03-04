@@ -21,9 +21,10 @@ public class LegendDto {
     private final BivariateLegendAxes axes;
 
     public static LegendDto fromLegend(Legend legend) {
-        return legend == null ? null : new LegendDto(legend.getType() == null ? null : legend.getType(),
+        return legend == null ? null : new LegendDto(legend.getType(),
             legend.getLinkProperty(),
-            legend.getSteps().stream().map(LegendStepDto::fromLegendStep).collect(Collectors.toList()),
+            legend.getSteps() == null ? null : legend.getSteps().stream().map(LegendStepDto::fromLegendStep)
+                .collect(Collectors.toList()),
             bivariateColors(legend.getBivariateColors()),
             legend.getBivariateAxes());
     }

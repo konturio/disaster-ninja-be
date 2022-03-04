@@ -29,6 +29,7 @@ import java.util.*;
 import static io.kontur.disasterninja.controller.LayerController.PATH_DETAILS;
 import static io.kontur.disasterninja.controller.LayerController.PATH_SEARCH;
 import static io.kontur.disasterninja.domain.enums.LayerStepShape.HEX;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -48,6 +49,19 @@ public class DtoTest {
     @BeforeEach
     public void before() {
         Mockito.when(authorizationService.getAccessToken()).thenReturn("something");
+    }
+
+    @Test
+    public void serializeLayerWithEmptyCollections() {
+        Layer layer = Layer.builder()
+            .legend(Legend.builder().build())
+            .build();
+        layer.getLegend().setSteps(null);
+        layer.getLegend().setBivariateColors(null);
+
+        LayerSummaryDto summaryDto = LayerSummaryDto.fromLayer(layer);
+        assertNull(summaryDto.getLegend().getSteps());
+        assertNull(summaryDto.getLegend().getColors());
     }
 
     @Test
