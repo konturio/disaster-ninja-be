@@ -479,6 +479,7 @@ configs:
   ### Group: Kontur Analytical Layers
   - id: 'Kontur OpenStreetMap Quantity'
     orderIndex: 1
+    maxZoom: 8
     globalOverlay: true
     boundaryRequiredForRetrieval: false
     eventIdRequiredForRetrieval: false
@@ -494,6 +495,7 @@ configs:
       tileSize: 512
   - id: 'Kontur OpenStreetMap Building Quantity'
     orderIndex: 2
+    maxZoom: 8
     globalOverlay: true
     boundaryRequiredForRetrieval: false
     eventIdRequiredForRetrieval: false
@@ -509,6 +511,7 @@ configs:
       tileSize: 512
   - id: 'Kontur OpenStreetMap Road Length'
     orderIndex: 3
+    maxZoom: 8
     globalOverlay: true
     boundaryRequiredForRetrieval: false
     eventIdRequiredForRetrieval: false
@@ -524,6 +527,7 @@ configs:
       tileSize: 512
   - id: 'Kontur OpenStreetMap Mapping Activity'
     orderIndex: 4
+    maxZoom: 8
     globalOverlay: true
     boundaryRequiredForRetrieval: false
     eventIdRequiredForRetrieval: false
@@ -539,6 +543,7 @@ configs:
       tileSize: 512
   - id: 'Kontur OpenStreetMap Antiquity'
     orderIndex: 5
+    maxZoom: 8
     globalOverlay: true
     boundaryRequiredForRetrieval: false
     eventIdRequiredForRetrieval: false
@@ -554,6 +559,7 @@ configs:
       tileSize: 512
   - id: 'Kontur Nighttime Heatwave Risk'
     orderIndex: 6
+    maxZoom: 8
     globalOverlay: true
     boundaryRequiredForRetrieval: false
     eventIdRequiredForRetrieval: false
