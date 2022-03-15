@@ -74,6 +74,7 @@ public class EventShapeLayerProvider implements LayerProvider {
                 .type(GEOJSON)
                 .data(eventDto.getLatestEpisodeGeojson()) //sic!
                 .build())
+            .eventIdRequiredForRetrieval(true)
             .build();
     }
 
