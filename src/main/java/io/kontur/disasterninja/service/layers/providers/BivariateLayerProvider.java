@@ -89,6 +89,7 @@ public class BivariateLayerProvider implements LayerProvider {
             .source(LayerSource.builder()
                 .type(VECTOR)
                 .urls(List.of(tilesHost + "/tiles/stats/{z}/{x}/{y}.mvt"))
+                .tileSize(512)
                 .build())
             .legend(legend)
             .copyrights(copyrights)
