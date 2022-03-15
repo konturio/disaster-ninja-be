@@ -19,7 +19,8 @@ import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
 import static io.kontur.disasterninja.util.TestUtil.emptyParams;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 public class BivariateLayerProviderTest extends LayerProvidersTest {
@@ -37,17 +38,18 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
                         "label1", "label2", "label3", "label4"),
                         List.of("count", "area_km2")),
                 new BivariateLayerLegendQuery.Y("Axis", "Population (ppl/km²)", steps1(0d, 10d, 20d, 10000d,
-                        "label11", "label12", "label13", "label14"),
-                        List.of("population", "area_km2")),
-                List.of(new BivariateLayerLegendQuery.Color("OverlayColor", "A1", "rgb(111,232,157)"),
-                        new BivariateLayerLegendQuery.Color("OverlayColor", "A2", "rgb(222,232,157)"),
-                        new BivariateLayerLegendQuery.Color("OverlayColor", "A3", "rgb(333,232,157)"),
-                        new BivariateLayerLegendQuery.Color("OverlayColor", "B1", "rgb(232,111,157)"),
-                        new BivariateLayerLegendQuery.Color("OverlayColor", "B2", "rgb(232,222,157)"),
-                        new BivariateLayerLegendQuery.Color("OverlayColor", "B3", "rgb(232,333,157)"),
-                        new BivariateLayerLegendQuery.Color("OverlayColor", "C1", "rgb(232,232,111)"),
-                        new BivariateLayerLegendQuery.Color("OverlayColor", "C2", "rgb(232,232,222)"),
-                        new BivariateLayerLegendQuery.Color("OverlayColor", "C3", "rgb(232,232,333)"))
+                    "label11", "label12", "label13", "label14"),
+                    List.of("population", "area_km2")),
+            List.of(new BivariateLayerLegendQuery.Color("OverlayColor", "A1", "rgb(111,232,157)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "A2", "rgb(222,232,157)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "A3", "rgb(333,232,157)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "B1", "rgb(232,111,157)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "B2", "rgb(232,222,157)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "B3", "rgb(232,333,157)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "C1", "rgb(232,232,111)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "C2", "rgb(232,232,222)"),
+                new BivariateLayerLegendQuery.Color("OverlayColor", "C3", "rgb(232,232,333)")),
+            1
         );
         List<BivariateLayerLegendQuery.Indicator> indicators = List.of(
                 new BivariateLayerLegendQuery.Indicator("Indicator",
@@ -83,7 +85,7 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         when(insightsApiGraphqlClient.getBivariateStatistic()).thenThrow(new ApolloException("hello world"));
 
         try {
-            bivariateLayerProvider.obtainLayer("Kontur Nighttime Heatwave Risk", emptyParams());
+            bivariateLayerProvider.obtainLayer("Kontur OpenStreetMap Quantity", emptyParams());
             throw new RuntimeException("expected exception was not thrown");
         } catch (WebApplicationException e) {
             assertEquals("Can't load bivariate layer", e.getMessage());

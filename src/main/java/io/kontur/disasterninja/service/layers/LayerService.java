@@ -6,7 +6,6 @@ import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
 import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
-import io.kontur.disasterninja.service.GeometryTransformer;
 import io.kontur.disasterninja.service.layers.providers.LayerProvider;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -26,8 +25,6 @@ public class LayerService {
     final LayerConfigService layerConfigService;
     final List<LayerProvider> providers;
     private final LayersApiClient layersApiClient;
-
-    private final GeometryTransformer geometryTransformer;
 
     public Layer create(LayerCreateDto dto) {
         return layersApiClient.createLayer(dto);

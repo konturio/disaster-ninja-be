@@ -25,7 +25,8 @@ query BivariateLayerLegend($polygon: GeoJSON) {
                 colors {
                     id,
                     color
-                }
+                },
+                order
             },
             colors {
                 fallback,
