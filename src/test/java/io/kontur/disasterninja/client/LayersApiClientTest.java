@@ -24,6 +24,7 @@ import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
 import java.util.List;
+import java.util.UUID;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
@@ -31,8 +32,7 @@ import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.LAYER_TYPE_FEATUR
 import static io.kontur.disasterninja.util.TestUtil.createLegend;
 import static io.kontur.disasterninja.util.TestUtil.readFile;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
@@ -226,13 +226,24 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     @Test
     public void getCollection() {
         //given
-        server.expect(ExpectedCount.times(1), requestTo("/collections/hotProjects"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(r -> withSuccess(readFile(this, "layers/layersAPI.layer.vector.json"),
-                        MediaType.APPLICATION_JSON).createResponse(r));
+        UUID appId = UUID.randomUUID();
+
+        server.expect(ExpectedCount.times(1), requestTo("/collections/search"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(r -> {
+                    String body = r.getBody().toString();
+                    if (hasJsonPath("$.collectionIds", hasSize(1)).matches(body) &&
+                            hasJsonPath("$.collectionIds", contains("hotProjects")).matches(body) &&
+                            hasJsonPath("$.appId", is(appId.toString())).matches(body)) {
+                        return withSuccess(readFile(this, "layers/layersAPI.search.hotProjects.response.json"),
+                                MediaType.APPLICATION_JSON).createResponse(r);
+                    } else {
+                        throw new RuntimeException();
+                    }
+                });
 
         //when
-        Collection collection = client.getCollection("hotProjects");
+        Collection collection = client.getCollection("hotProjects", appId);
 
         //then
         assertEquals("hotProjects", collection.getId());

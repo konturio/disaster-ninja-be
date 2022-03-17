@@ -114,6 +114,7 @@ public class LayerController {
 
     private LayerSearchParams createLayerSearchParams(LayerDetailsSearchDto dto) {
         return LayerSearchParams.builder()
+            .appId(dto.getAppId())
             .eventId(dto.getEventId())
             .eventFeed(dto.getEventFeed())
             .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))
@@ -122,6 +123,7 @@ public class LayerController {
 
     private LayerSearchParams createLayerSearchParams(LayerSummarySearchDto dto) {
         return LayerSearchParams.builder()
+            .appId(dto.getAppId())
             .eventId(dto.getEventId())
             .eventFeed(dto.getEventFeed())
             .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))

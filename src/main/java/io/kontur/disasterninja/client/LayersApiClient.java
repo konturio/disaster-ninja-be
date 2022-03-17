@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.LAYER_TYPE_FEATURE;
 import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.LAYER_TYPE_TILES;
+import static java.util.Collections.singletonList;
 
 @Component
 public class LayersApiClient extends RestClientWithBearerAuth {
@@ -54,16 +55,16 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         this.layersApiRestTemplate = layersApiRestTemplate;
     }
 
-    public List<Layer> findLayers(Geometry geoJSON, CollectionOwner collectionOwner) {
+    public List<Layer> findLayers(Geometry geoJSON, CollectionOwner collectionOwner, UUID appId) {
         return getCollections(geoJSON, collectionOwner)
             .stream()
             .map(this::convertToLayer)
             .collect(Collectors.toList());
     }
 
-    public Layer getLayer(Geometry geoJSON, String layerId) {
+    public Layer getLayer(Geometry geoJSON, String layerId, UUID appId) {
         String id = getIdWithoutPrefix(layerId);
-        return convertToLayerDetails(geoJSON, getCollection(id));
+        return convertToLayerDetails(geoJSON, getCollection(id, appId));
     }
 
     public Layer createLayer(LayerCreateDto dto) {
@@ -186,11 +187,18 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         return result;
     }
 
-    protected Collection getCollection(String collectionId) {
-        ResponseEntity<Collection> response = layersApiRestTemplate
-                .exchange(String.format(COLLECTION_BY_ID_URL, collectionId), HttpMethod.GET, httpEntityWithUserBearerAuthIfPresent(null),
+    protected Collection getCollection(String collectionId, UUID appId) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("collectionIds", singletonList(collectionId));
+        body.put("appId", appId);
+
+        ResponseEntity<ApiCollections> response = layersApiRestTemplate
+                .exchange(LAYERS_SEARCH_URI, HttpMethod.POST, httpEntityWithUserBearerAuthIfPresent(body),
                         new ParameterizedTypeReference<>() {});
-        return response.getBody();
+        if (response.getBody() != null && !CollectionUtils.isEmpty(response.getBody().collections)) {
+            return response.getBody().collections.get(0);
+        }
+        return null;
     }
 
     private Layer convertToLayer(Collection collection) {
@@ -202,7 +210,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                 collection.getCategory().getName()) : null)
             .group(collection.getGroup() != null ? collection.getGroup().getName() : null)
             .legend(collection.getLegend() != null ? collection.getLegend().toLegend() : null)
-            .copyrights(collection.getCopyrights() != null ? Collections.singletonList(collection.getCopyrights()) : null)
+            .copyrights(collection.getCopyrights() != null ? singletonList(collection.getCopyrights()) : null)
             .boundaryRequiredForRetrieval(!LAYER_TYPE_TILES.equals(collection.getItemType()) && !collection.isOwnedByUser())
             .eventIdRequiredForRetrieval(false)
             .ownedByUser(collection.isOwnedByUser())
@@ -239,7 +247,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         return LayerSource.builder()
             .type(LayerSourceType.VECTOR)
             .tileSize(512)
-            .urls(url != null ? Collections.singletonList(url) : null)
+            .urls(url != null ? singletonList(url) : null)
             .build();
     }
 
