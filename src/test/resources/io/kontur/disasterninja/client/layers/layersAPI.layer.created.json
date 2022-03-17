@@ -4,7 +4,7 @@
   "description": "An address.",
   "copyrights": "string",
   "properties": {},
-  "legend": {"type":"simple","linkProperty":null,"steps":[{"paramName":"param name","paramValue":"qwe","axis":null,"axisValue":null,"stepName":"step name","stepShape":"hex","style":{"prop":"value"},"sourceLayer":"source-layer"},{"paramName":"param name","paramValue":"asd","axis":null,"axisValue":null,"stepName":"step name2","stepShape":"hex","style":{"prop":"value"},"sourceLayer":"source-layer"}],"colors":[],"axes":{"x":null,"y":null}},
+  "styleRule": {"type":"simple","linkProperty":null,"steps":[{"paramName":"param name","paramValue":"qwe","axis":null,"axisValue":null,"stepName":"step name","stepShape":"hex","style":{"prop":"value"},"sourceLayer":"source-layer"},{"paramName":"param name","paramValue":"asd","axis":null,"axisValue":null,"stepName":"step name2","stepShape":"hex","style":{"prop":"value"},"sourceLayer":"source-layer"}],"colors":[],"axes":{"x":null,"y":null}},
   "group": {
     "name": "string",
     "isOpened": true,

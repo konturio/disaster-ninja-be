@@ -209,7 +209,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             .category(collection.getCategory() != null ? LayerCategory.fromString(
                 collection.getCategory().getName()) : null)
             .group(collection.getGroup() != null ? collection.getGroup().getName() : null)
-            .legend(collection.getLegend() != null ? collection.getLegend().toLegend() : null)
+            .legend(collection.getStyleRule() != null ? collection.getStyleRule().toLegend() : null)
             .copyrights(collection.getCopyrights() != null ? singletonList(collection.getCopyrights()) : null)
             .boundaryRequiredForRetrieval(!LAYER_TYPE_TILES.equals(collection.getItemType()) && !collection.isOwnedByUser())
             .eventIdRequiredForRetrieval(false)

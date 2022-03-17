@@ -46,7 +46,7 @@ public class LayerController {
         return LayerSummaryDto.fromLayer(layer);
     }
 
-    @Operation(tags = "Layers", summary = "Update an existing new layer")
+    @Operation(tags = "Layers", summary = "Update an existing layer")
     @ApiResponse(responseCode = "200", description = "Successfully updated a layer", content = @Content(
         mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = LayerSummaryDto.class)))
     @PutMapping(path = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
@@ -57,7 +57,7 @@ public class LayerController {
         return LayerSummaryDto.fromLayer(layer);
     }
 
-    @Operation(tags = "Layers", summary = "Delete an existing new layer")
+    @Operation(tags = "Layers", summary = "Delete an existing layer")
     @ApiResponse(responseCode = "204", description = "Successfully deleted a layer")
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> delete(@PathVariable String id) {
