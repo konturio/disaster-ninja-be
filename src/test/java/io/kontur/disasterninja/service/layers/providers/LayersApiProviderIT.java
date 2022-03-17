@@ -45,7 +45,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
     @BeforeEach
     void setUp() {
         server = MockRestServiceServer.createServer(layersApiRestTemplate);
-        givenJwtTokenIs(jwt);
+        givenJwtTokenIs(getUserToken());
     }
 
     @Test
@@ -56,7 +56,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
 
         server.expect(ExpectedCount.times(3), requestTo("/collections/search"))
             .andExpect(method(HttpMethod.POST))
-            .andExpect(header("Authorization", "Bearer " + jwt))
+            .andExpect(header("Authorization", "Bearer " + getUserToken()))
                 .andRespond(r -> {
                     String body = r.getBody().toString();
                     if (hasJsonPath("$.collectionOwner", is(ME.name())).matches(body)) {

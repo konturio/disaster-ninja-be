@@ -1,0 +1,12 @@
+[
+  {
+    "name": "analytics_panel",
+    "description": "Analytics panel",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "events_list",
+    "description": "Events list",
+    "type": "UI_PANEL"
+  }
+]
