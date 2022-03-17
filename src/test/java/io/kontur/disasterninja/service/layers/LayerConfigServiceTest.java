@@ -219,24 +219,6 @@ public class LayerConfigServiceTest {
         assertFalse(bing.isEventIdRequiredForRetrieval());
     }
 
-    @Test
-    public void konturAnalyticsTest() {
-        Layer analytics = Layer.builder()
-            .id("Kontur OpenStreetMap Quantity")
-            .build();
-        service.applyConfig(analytics);
-        //layer
-        Assertions.assertEquals(List.of("https://test-apps02.konturlabs.com/tiles/stats/{z}/{x}/{y}.mvt"),
-            analytics.getSource().getUrls());
-        assertTrue(analytics.isGlobalOverlay());
-        assertTrue(analytics.isDisplayLegendIfNoFeaturesExist());
-        assertFalse(analytics.isBoundaryRequiredForRetrieval());
-        Assertions.assertEquals(OVERLAY, analytics.getCategory());
-        Assertions.assertEquals("bivariate", analytics.getGroup());
-        //skipping the rest
-        assertFalse(analytics.isEventIdRequiredForRetrieval());
-    }
-
     //even shape tests
 
     @Test

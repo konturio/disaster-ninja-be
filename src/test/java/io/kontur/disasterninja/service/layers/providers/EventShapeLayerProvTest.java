@@ -142,6 +142,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
 
         Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.get(0).getId());
         Assertions.assertNull(result.get(0).getEventType());
+        Assertions.assertTrue(result.get(0).isEventIdRequiredForRetrieval());
     }
 
     @Test

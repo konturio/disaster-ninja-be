@@ -16,9 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,15 +67,32 @@ public class LocalLayerConfigService implements LayerConfigService {
 
     @Override
     public void applyConfig(Layer input) {
-        String configLayerId = getConfigLayerId(input);
-        Layer config = regularLayers.get(configLayerId);
+        Layer config = getConfigForRegularLayer(input);
+
         if (config == null) {
-            config = globalOverlays.get(configLayerId);
+            config = globalOverlays.get(input.getId());
         }
 
         if (config != null) {
             input.mergeFrom(config);
         }
+    }
+
+    private Layer getConfigForRegularLayer(Layer input) {
+        if (input.getEventType() != null) {
+            return getConfigForEventShapeLayer(input);
+        } else {
+            return regularLayers.get(input.getId());
+        }
+    }
+
+    private Layer getConfigForEventShapeLayer(Layer input) {
+        String eventShapeWithTypeConfigId = input.getId() + "." + input.getEventType().toString();
+        Layer eventShapeWithTypeConfig = (regularLayers.get(eventShapeWithTypeConfigId));
+        if (eventShapeWithTypeConfig != null) {
+            return eventShapeWithTypeConfig;
+        }
+        return regularLayers.get(input.getId());
     }
 
     private String getConfigLayerId(Layer layer) {

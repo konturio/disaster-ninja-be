@@ -3,12 +3,13 @@ package io.kontur.disasterninja.service.layers.providers;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.*;
+import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.dto.BivariateStatisticDto;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
-import io.kontur.disasterninja.service.layers.LayerConfigService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -31,15 +32,22 @@ public class BivariateLayerProvider implements LayerProvider {
     private static final String MARKDOWN_LINK_PATTERN = "[%s](%s)";
     private static final Pattern URL_SEARCH_PATTERN = Pattern.compile("(http|ftp|https):\\/\\/([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-])");
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
-    private final LayerConfigService layerConfigService;
-    private List<String> bivariateLayerIds;
+    @Value("${kontur.platform.tiles.host}")
+    private String tilesHost;
+    private List<String> bivariateLayerIds = List.of();
 
     @PostConstruct
     private void init() {
-        bivariateLayerIds = layerConfigService.getGlobalOverlays().values().stream()
-                .filter(it -> {
-                    return it.getLegend() != null && it.getLegend().getType() == BIVARIATE;
-                }).map(Layer::getId).collect(Collectors.toList());
+        try {
+            BivariateStatisticDto bivariateStatisticDto = insightsApiGraphqlClient.getBivariateStatistic().get();
+            if (bivariateStatisticDto != null && bivariateStatisticDto.getOverlays() != null) {
+                bivariateLayerIds = bivariateStatisticDto.getOverlays().stream()
+                    .map(BivariateLayerLegendQuery.Overlay::name)
+                    .collect(Collectors.toList());
+            }
+        } catch (Exception e) {
+            LOG.warn("Can't load list of available bivariate layers: {}", e.getMessage(), e);
+        }
     }
 
     /**
@@ -60,6 +68,9 @@ public class BivariateLayerProvider implements LayerProvider {
 
     @Override
     public boolean isApplicable(String layerId) {
+        if (bivariateLayerIds.isEmpty()) {
+            init();
+        }
         return bivariateLayerIds.contains(layerId);
     }
 
@@ -72,15 +83,25 @@ public class BivariateLayerProvider implements LayerProvider {
         List<String> copyrights = copyrightsFromIndicators(legend, indicators);
 
         return Layer.builder()
-                .id(overlay.name())
-                .name(overlay.name())
-                .description(overlay.description())
-                .source(LayerSource.builder()
-                        .type(VECTOR)
-                        .build())
-                .legend(legend)
-                .copyrights(copyrights)
-                .build();
+            .id(overlay.name())
+            .name(overlay.name())
+            .description(overlay.description())
+            .source(LayerSource.builder()
+                .type(VECTOR)
+                .urls(List.of(tilesHost + "/tiles/stats/{z}/{x}/{y}.mvt"))
+                .tileSize(512)
+                .build())
+            .legend(legend)
+            .copyrights(copyrights)
+            .maxZoom(8)
+            .globalOverlay(true)
+            .boundaryRequiredForRetrieval(false)
+            .eventIdRequiredForRetrieval(false)
+            .displayLegendIfNoFeaturesExist(true)
+            .category(LayerCategory.OVERLAY)
+            .group("bivariate")
+            .orderIndex(overlay.order())
+            .build();
     }
 
     /**

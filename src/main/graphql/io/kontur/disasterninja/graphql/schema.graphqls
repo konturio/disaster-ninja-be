@@ -84,6 +84,7 @@ type Overlay {
   colors: [OverlayColor]
   x: Axis
   y: Axis
+  order: Int
 }
 
 type OverlayColor {
