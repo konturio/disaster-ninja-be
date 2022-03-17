@@ -209,7 +209,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             .category(collection.getCategory() != null ? LayerCategory.fromString(
                 collection.getCategory().getName()) : null)
             .group(collection.getGroup() != null ? collection.getGroup().getName() : null)
-            .legend(collection.getStyleRule() != null ? collection.getStyleRule().toLegend() : null)
+            .legend(collection.getStyleRule() != null ? collection.getStyleRule().toLegend() : null) //TODO to remove in #9110
             .copyrights(collection.getCopyrights() != null ? singletonList(collection.getCopyrights()) : null)
             .boundaryRequiredForRetrieval(!LAYER_TYPE_TILES.equals(collection.getItemType()) && !collection.isOwnedByUser())
             .eventIdRequiredForRetrieval(false)
@@ -231,6 +231,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         }
         return Layer.builder()
             .id(getIdWithPrefix(collection.getId()))
+            .legend(collection.getStyleRule().toLegend())
             .source(source)
             .ownedByUser(collection.isOwnedByUser())
             .build();

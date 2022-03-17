@@ -113,10 +113,6 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
                 "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
         UUID appId = UUID.randomUUID();
 
-//        server.expect(ExpectedCount.times(1), requestTo("/collections/hotProjects"))
-//                .andExpect(method(HttpMethod.GET))
-//                .andRespond(r -> withSuccess(readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.layer.vector.json"),
-//                        MediaType.APPLICATION_JSON).createResponse(r));
         server.expect(ExpectedCount.times(1), requestTo("/collections/search"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(r -> {
@@ -144,6 +140,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         assertEquals(1, source.getUrls().size());
         assertEquals("https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf", source.getUrls().get(0));
         assertNull(source.getData());
+        assertEquals(LegendType.SIMPLE, layer.getLegend().getType());
     }
 
     @Test

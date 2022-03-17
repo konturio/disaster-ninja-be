@@ -6,7 +6,7 @@ import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.enums.LegendType;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
 import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
-import io.kontur.disasterninja.dto.layer.LegendDto;
+import io.kontur.disasterninja.dto.layer.StyleRuleDto;
 import io.kontur.disasterninja.dto.layerapi.Collection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,17 +67,17 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
 
         final String id = "myId";
         final String title = "layer title";
-        final LegendDto legendDto = LegendDto.fromLegend(createLegend());
+        final StyleRuleDto styleRuleDto = StyleRuleDto.fromLegend(createLegend());
 
         LayerCreateDto dto = new LayerCreateDto();
         dto.setId(id);
         dto.setTitle(title);
-        dto.setLegend(legendDto);
+        dto.setLegend(styleRuleDto);
 
         Layer layer = client.createLayer(dto);
         assertEquals(LAYER_PREFIX + id, layer.getId());
         assertEquals(title, layer.getName());
-        assertEquals(legendDto.toLegend(), layer.getLegend());
+        assertEquals(styleRuleDto.toLegend(), layer.getLegend());
         assertTrue(layer.isOwnedByUser());
     }
 
@@ -103,16 +103,16 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
             );
 
         final String title = "layer title";
-        final LegendDto legendDto = LegendDto.fromLegend(createLegend());
+        final StyleRuleDto styleRuleDto = StyleRuleDto.fromLegend(createLegend());
 
         LayerUpdateDto dto = new LayerUpdateDto();
         dto.setTitle(title);
-        dto.setLegend(legendDto);
+        dto.setLegend(styleRuleDto);
 
         Layer layer = client.updateLayer(LAYER_PREFIX + id, dto);
         assertEquals(LAYER_PREFIX + id, layer.getId());
         assertEquals(title, layer.getName());
-        assertEquals(legendDto.toLegend(), layer.getLegend());
+        assertEquals(styleRuleDto.toLegend(), layer.getLegend());
         assertTrue(layer.isOwnedByUser());
     }
 

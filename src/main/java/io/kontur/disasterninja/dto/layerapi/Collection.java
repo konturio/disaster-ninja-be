@@ -3,7 +3,7 @@ package io.kontur.disasterninja.dto.layerapi;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.kontur.disasterninja.dto.layer.LegendDto;
+import io.kontur.disasterninja.dto.layer.StyleRuleDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -30,7 +30,7 @@ public class Collection {
 
     @JsonAlias("legend")
     @JsonProperty("styleRule")
-    private LegendDto styleRule;
+    private StyleRuleDto styleRule;
 
     @JsonProperty("group")
     private CollectionGroupProperties group;

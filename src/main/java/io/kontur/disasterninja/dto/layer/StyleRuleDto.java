@@ -13,15 +13,15 @@ import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
-public class LegendDto {
+public class StyleRuleDto {
     private final LegendType type;
     private final String linkProperty;
     private final List<LegendStepDto> steps;
     private final List<ColorDto> colors;
     private final BivariateLegendAxes axes;
 
-    public static LegendDto fromLegend(Legend legend) {
-        return legend == null ? null : new LegendDto(legend.getType(),
+    public static StyleRuleDto fromLegend(Legend legend) {
+        return legend == null ? null : new StyleRuleDto(legend.getType(),
             legend.getLinkProperty(),
             legend.getSteps() == null ? null : legend.getSteps().stream().map(LegendStepDto::fromLegendStep)
                 .collect(Collectors.toList()),
