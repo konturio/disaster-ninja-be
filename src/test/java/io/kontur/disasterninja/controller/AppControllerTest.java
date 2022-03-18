@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.client.TestDependingOnUserAuth;
 import io.kontur.disasterninja.client.UserProfileClient;
 import io.kontur.disasterninja.dto.AppDto;
@@ -25,8 +26,7 @@ import static io.kontur.disasterninja.controller.AppsController.PATH;
 import static io.kontur.disasterninja.service.GeometryTransformer.geometriesAreEqual;
 import static io.kontur.disasterninja.util.TestUtil.readFile;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.HttpMethod.DELETE;
-import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -128,6 +128,59 @@ public class AppControllerTest extends TestDependingOnUserAuth {
 
         assertEquals(HttpStatus.NO_CONTENT, appsController.delete(appId).getStatusCode());
     }
+
+    @Test
+    public void updateApp() throws IOException {
+        givenUserIsLoggedIn();
+        UUID appId = UUID.fromString("58851b50-9574-4aec-a3a6-425fa18dcb11");
+
+        AppDto update = createAppDto();
+        update.setOwnedByUser(true);
+        update.setId(appId);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String dto = objectMapper.writeValueAsString(update);
+
+        userProfileApi.expect(requestTo(PATH + "/" + appId))
+            .andExpect(method(PUT))
+            .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+            .andExpect(content().json(dto, true))
+            .andRespond(withSuccess(dto, MediaType.APPLICATION_JSON));
+
+        AppDto result = appsController.update(appId, update);
+        assertEquals(update, result);
+    }
+
+    @Test
+    public void createApp() throws IOException {
+        givenUserIsLoggedIn();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        AppDto request = createAppDto();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        AppDto response = createAppDto();
+        UUID appId = UUID.fromString("58851b50-9574-4aec-a3a6-425fa18dcb11");
+        response.setId(appId);
+        response.setOwnedByUser(true);
+        String responseJson = objectMapper.writeValueAsString(response);
+
+        userProfileApi.expect(requestTo(PATH))
+            .andExpect(method(POST))
+            .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+            .andExpect(content().json(requestJson, true))
+            .andRespond(withSuccess(responseJson, MediaType.APPLICATION_JSON));
+
+        AppDto result = appsController.create(request);
+        assertEquals(request.getDescription(), result.getDescription());
+        assertEquals(request.getName(), result.getName());
+        assertEquals(request.getFeatures(), result.getFeatures());
+        assertEquals(request.isPublic(), result.isPublic());
+        assertTrue(geometriesAreEqual(request.getCenterGeometry(), result.getCenterGeometry()));
+
+        assertEquals(appId, result.getId());
+        assertEquals(true, result.getOwnedByUser());
+    }
+
 
     @Test
     public void test404isPassedToTheClient() {
