@@ -39,9 +39,7 @@ public class AppsController {
     @Operation(summary = "Delete app")
     @ApiResponse(responseCode = "204")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable @Parameter(name = "id",
-        example = "58851b50-9574-4aec-a3a6-425fa18dcb54") //DN2_ID, but must be constant here
-                                        UUID id) {
+    public ResponseEntity<?> delete(@PathVariable @Parameter(name = "id") UUID id) {
         userProfileClient.deleteApp(id);
         return ResponseEntity.noContent().build();
     }
@@ -52,9 +50,7 @@ public class AppsController {
         content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
             schema = @Schema(implementation = AppDto.class)))
     @PutMapping(path = "/{id}")
-    public AppDto update(@PathVariable @Parameter(name = "id",
-        example = "58851b50-9574-4aec-a3a6-425fa18dcb54") //DN2_ID, but must be constant here
-                             UUID id,
+    public AppDto update(@PathVariable @Parameter(name = "id") UUID id,
                          @RequestBody @Parameter(name = "app") AppDto appDto) {
         return userProfileClient.updateApp(id, appDto);
     }
