@@ -1,7 +1,6 @@
 package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
-import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.*;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.dto.BivariateStatisticDto;
@@ -11,11 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -34,19 +33,19 @@ public class BivariateLayerProvider implements LayerProvider {
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
     @Value("${kontur.platform.tiles.host}")
     private String tilesHost;
-    private List<String> bivariateLayerIds = List.of();
+    @Value("${kontur.platform.insightsApi.layersReloadInterval}")
+    private long layersReloadInterval;
+    private volatile Map<String, Layer> bivariateLayers = new ConcurrentHashMap<>();
+    private volatile long bivariateLayersTimestamp = System.currentTimeMillis();
 
     @PostConstruct
-    private void init() {
-        try {
-            BivariateStatisticDto bivariateStatisticDto = insightsApiGraphqlClient.getBivariateStatistic().get();
-            if (bivariateStatisticDto != null && bivariateStatisticDto.getOverlays() != null) {
-                bivariateLayerIds = bivariateStatisticDto.getOverlays().stream()
-                    .map(BivariateLayerLegendQuery.Overlay::name)
-                    .collect(Collectors.toList());
+    private void reloadLayersIfNeeded() {
+        if (layersShouldBeReloaded()) {
+            synchronized (this) {
+                if (layersShouldBeReloaded()) {
+                    reloadLayers();
+                }
             }
-        } catch (Exception e) {
-            LOG.warn("Can't load list of available bivariate layers: {}", e.getMessage(), e);
         }
     }
 
@@ -55,23 +54,25 @@ public class BivariateLayerProvider implements LayerProvider {
      */
     @Override
     public List<Layer> obtainLayers(LayerSearchParams searchParams) {
-        try {
-            BivariateStatisticDto bivariateStatisticDto = insightsApiGraphqlClient.getBivariateStatistic().get();
-            return bivariateStatisticDto.getOverlays().stream()
-                .map(overlay -> fromOverlay(overlay, bivariateStatisticDto.getIndicators()))
-                .collect(Collectors.toList());
-        } catch (Exception e) {
-            LOG.error("Can't load bivariate layers: {}", e.getMessage(), e);
-            throw new WebApplicationException("Can't load bivariate layers", HttpStatus.BAD_GATEWAY);
-        }
+        reloadLayersIfNeeded();
+        return bivariateLayers.values().stream().toList();
     }
 
     @Override
     public boolean isApplicable(String layerId) {
-        if (bivariateLayerIds.isEmpty()) {
-            init();
+        reloadLayersIfNeeded();
+        return bivariateLayers.containsKey(layerId);
+    }
+
+    /**
+     * @return Bivariate layer by ID from insights-api graphql api
+     */
+    @Override
+    public Layer obtainLayer(String layerId, LayerSearchParams searchParams) {
+        if (!isApplicable(layerId)) {
+            return null;
         }
-        return bivariateLayerIds.contains(layerId);
+        return bivariateLayers.get(layerId);
     }
 
     protected Layer fromOverlay(BivariateLayerLegendQuery.Overlay overlay, List<BivariateLayerLegendQuery.Indicator> indicators) {
@@ -104,24 +105,26 @@ public class BivariateLayerProvider implements LayerProvider {
             .build();
     }
 
-    /**
-     * @return Bivariate layer by ID from insights-api graphql api
-     */
-    @Override
-    public Layer obtainLayer(String layerId, LayerSearchParams searchParams) {
-        if (!isApplicable(layerId)) {
-            return null;
-        }
+    private boolean layersShouldBeReloaded() {
+        return bivariateLayers.isEmpty()
+            || System.currentTimeMillis() > (bivariateLayersTimestamp + layersReloadInterval * 1000);
+    }
+
+    private void reloadLayers() {
+        LOG.info("Loading bivariate layers from insights-api");
         try {
             BivariateStatisticDto bivariateStatisticDto = insightsApiGraphqlClient.getBivariateStatistic().get();
-            return bivariateStatisticDto.getOverlays().stream()
-                    .filter(it -> layerId.equals(it.name())).findFirst()
+            if (bivariateStatisticDto != null && bivariateStatisticDto.getOverlays() != null) {
+                bivariateLayers = bivariateStatisticDto.getOverlays().stream()
                     .map(overlay -> fromOverlay(overlay, bivariateStatisticDto.getIndicators()))
-                    .orElseGet(() -> null);
+                    .collect(Collectors.toMap(Layer::getId, it -> it));
+                LOG.info("Loaded bivariate layers: {}",
+                    String.join(", ", bivariateLayers.keySet()));
+            } else {
+                LOG.error("Can't load list of available bivariate layers: no overlays received");
+            }
         } catch (Exception e) {
-            LOG.error("Can't load bivariate layer by id {}: {}",
-                layerId, e.getMessage(), e);
-            throw new WebApplicationException("Can't load bivariate layer", HttpStatus.BAD_GATEWAY);
+            LOG.error("Can't load list of available bivariate layers: {}", e.getMessage(), e);
         }
     }
 
