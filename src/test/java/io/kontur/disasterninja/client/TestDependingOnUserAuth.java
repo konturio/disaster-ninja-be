@@ -13,14 +13,17 @@ import static org.mockito.Mockito.when;
 
 public abstract class TestDependingOnUserAuth {
 
-    protected final String jwt = "JwtTestToken";
     @Mock
     protected SecurityContext securityContext;
     @MockBean
     protected KeycloakAuthorizationService keycloakAuthorizationService;
 
     protected void givenUserIsLoggedIn() {
-        givenJwtTokenIs(jwt);
+        givenJwtTokenIs(getUserToken());
+    }
+
+    protected String getUserToken() {
+        return "JwtTestToken";
     }
 
     protected void givenJwtTokenIs(String jwt) {
