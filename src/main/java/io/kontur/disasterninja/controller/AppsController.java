@@ -1,7 +1,10 @@
 package io.kontur.disasterninja.controller;
 
+import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.client.UserProfileClient;
+import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.dto.AppDto;
+import io.kontur.disasterninja.dto.AppLayerUpdateDto;
 import io.kontur.disasterninja.dto.AppSummaryDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,14 +25,16 @@ import java.util.UUID;
 @RestController
 @RequestMapping(AppsController.PATH)
 public class AppsController {
+
     public static final String PATH = "/apps";
     private final UserProfileClient userProfileClient;
+    private final LayersApiClient layersApiClient;
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Create a new embedded app")
     @ApiResponse(responseCode = "200",
-        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = @Schema(implementation = AppDto.class)))
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = AppDto.class)))
     @PostMapping
     public AppDto create(@Parameter(name = "app") @RequestBody AppDto appDto) {
         return userProfileClient.createApp(appDto);
@@ -47,8 +52,8 @@ public class AppsController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Update existing app")
     @ApiResponse(responseCode = "200",
-        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = @Schema(implementation = AppDto.class)))
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = AppDto.class)))
     @PutMapping(path = "/{id}")
     public AppDto update(@PathVariable @Parameter(name = "id") UUID id,
                          @RequestBody @Parameter(name = "app") AppDto appDto) {
@@ -57,22 +62,41 @@ public class AppsController {
 
     @Operation(summary = "Get application information by id")
     @ApiResponse(responseCode = "200",
-        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = @Schema(implementation = AppDto.class)))
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = AppDto.class)))
     @GetMapping(path = "/{id}")
     public AppDto get(@PathVariable @Parameter(name = "id",
-        example = "58851b50-9574-4aec-a3a6-425fa18dcb54") //DN2_ID, but must be constant here
-                          UUID id) {
+            example = "58851b50-9574-4aec-a3a6-425fa18dcb54") //DN2_ID, but must be constant here
+                              UUID id) {
         return userProfileClient.getApp(id);
     }
 
     @Operation(summary = "Get application list available to user (includes public apps"
-        + " and user-owned apps)")
+            + " and user-owned apps)")
     @ApiResponse(responseCode = "200",
-        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-            array = @ArraySchema(schema = @Schema(implementation = AppSummaryDto.class))))
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    array = @ArraySchema(schema = @Schema(implementation = AppSummaryDto.class))))
     @GetMapping
     public List<AppSummaryDto> getList() {
         return userProfileClient.getAppsList();
+    }
+
+    @Operation(summary = "Get list of default layers for the app")
+    @ApiResponse(responseCode = "200",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    array = @ArraySchema(schema = @Schema(implementation = Layer.class))))
+    @GetMapping("/{id}/layers")
+    public List<Layer> getListOfLayers(@PathVariable("id") UUID appId) {
+        return layersApiClient.getApplicationLayers(appId);
+    }
+
+    @Operation(summary = "Updates list of layers for the app")
+    @ApiResponse(responseCode = "200",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    array = @ArraySchema(schema = @Schema(implementation = Layer.class))))
+    @PutMapping("/{id}/layers")
+    public List<Layer> updateListOfLayers(@PathVariable("id") UUID appId,
+                                          @RequestBody List<AppLayerUpdateDto> layers) {
+        return layersApiClient.updateApplicationLayers(appId, layers);
     }
 }

@@ -169,7 +169,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
                 });
 
         //when
-        List<Collection> collections = client.getCollections(objectMapper.readValue(json, Geometry.class), null);
+        List<Collection> collections = client.getCollections(objectMapper.readValue(json, Geometry.class), null, null);
 
         //then
         assertEquals(12, collections.size());

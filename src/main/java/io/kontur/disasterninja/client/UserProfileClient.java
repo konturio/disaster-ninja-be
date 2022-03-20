@@ -17,6 +17,7 @@ import static org.springframework.http.HttpMethod.*;
 
 @Component
 public class UserProfileClient extends RestClientWithBearerAuth {
+
     private static final String FEATURES_USER_FEED_URL = "/features/user_feed";
     private static final String FEATURES_URL = "/features";
     private static final String APP_URL = "/apps";
@@ -31,9 +32,9 @@ public class UserProfileClient extends RestClientWithBearerAuth {
 
     public String getUserDefaultFeed() {
         ResponseEntity<String> response = userProfileRestTemplate
-            .exchange(FEATURES_USER_FEED_URL, HttpMethod.GET, httpEntityWithUserBearerAuthIfPresent(null),
-                new ParameterizedTypeReference<>() {
-                });
+                .exchange(FEATURES_USER_FEED_URL, HttpMethod.GET, httpEntityWithUserBearerAuthIfPresent(null),
+                        new ParameterizedTypeReference<>() {
+                        });
 
         return response.getBody();
     }
@@ -47,18 +48,18 @@ public class UserProfileClient extends RestClientWithBearerAuth {
         }
 
         ResponseEntity<List<FeatureDto>> response = userProfileRestTemplate
-            .exchange(url, HttpMethod.GET, httpEntityWithUserBearerAuthIfPresent(null),
-                new ParameterizedTypeReference<>() {
-                }, appId);
+                .exchange(url, HttpMethod.GET, httpEntityWithUserBearerAuthIfPresent(null),
+                        new ParameterizedTypeReference<>() {
+                        }, appId);
 
         return response.getBody();
     }
 
     public List<AppSummaryDto> getAppsList() {
         ResponseEntity<List<AppSummaryDto>> response = userProfileRestTemplate
-            .exchange(APP_URL, HttpMethod.GET, httpEntityWithUserBearerAuthIfPresent(null),
-                new ParameterizedTypeReference<>() {
-                });
+                .exchange(APP_URL, HttpMethod.GET, httpEntityWithUserBearerAuthIfPresent(null),
+                        new ParameterizedTypeReference<>() {
+                        });
 
         return response.getBody();
     }
@@ -81,8 +82,8 @@ public class UserProfileClient extends RestClientWithBearerAuth {
 
     private ResponseEntity<AppDto> sendAppRequest(String url, Object queryParam, HttpMethod method, AppDto body) {
         return userProfileRestTemplate
-            .exchange(url, method, httpEntityWithUserBearerAuthIfPresent(body),
-                new ParameterizedTypeReference<>() {
-                }, queryParam);
+                .exchange(url, method, httpEntityWithUserBearerAuthIfPresent(body),
+                        new ParameterizedTypeReference<>() {
+                        }, queryParam);
     }
 }

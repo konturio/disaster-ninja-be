@@ -17,7 +17,7 @@ public class LayerSummaryDto {
     private final String group;
     private final boolean boundaryRequiredForRetrieval;
     private final boolean eventIdRequiredForRetrieval;
-    private final StyleRuleDto legend;
+    private final StyleRuleDto legend; //TODO to remove in #9110
     private final List<String> copyrights;
     private final boolean ownedByUser;
     private final ObjectNode featureProperties;
