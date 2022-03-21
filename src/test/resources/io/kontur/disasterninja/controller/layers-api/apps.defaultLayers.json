@@ -1,0 +1,68 @@
+{
+  "id": "d3212cf3-d682-4ce7-9242-4095d85b1446",
+  "showAllPublicLayers": false,
+  "defaultCollections": [
+    {
+      "id": "hotProjects",
+      "title": "HOT Tasking Manager Projects",
+      "description": "Projects on HOT Tasking manager, ongoing and historical",
+      "copyrights": "© Humanitarian OpenStreetMap Team, © Kontur",
+      "links": [
+        {
+          "href": "https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf",
+          "rel": "tiles"
+        }
+      ],
+      "itemType": "tiles",
+      "crs": [
+        "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+      ],
+      "ownedByUser": false,
+      "styleRule": {
+        "type": "simple",
+        "linkProperty": "projectLink",
+        "steps": [
+          {
+            "paramName": "status",
+            "paramValue": "PUBLISHED",
+            "stepName": "Published",
+            "stepShape": "circle",
+            "style": {
+              "icon-image": "hot-red",
+              "text": "{projectId} - {projectPriority}",
+              "font-family": "Noto Sans Regular",
+              "text-offset": [
+                0,
+                0.6
+              ],
+              "text-anchor": "top",
+              "symbol-z-order": "viewport-y",
+              "icon-allow-overlap": true,
+              "fill-color": "red"
+            }
+          },
+          {
+            "paramName": "status",
+            "paramValue": "ARCHIVED",
+            "stepName": "Archived",
+            "stepShape": "circle",
+            "style": {
+              "icon-image": "hot-gray",
+              "text": "{projectId} - {projectPriority}",
+              "font-family": "Noto Sans Regular",
+              "text-offset": [
+                0,
+                0.6
+              ],
+              "text-anchor": "top",
+              "symbol-z-order": "viewport-y",
+              "icon-allow-overlap": true,
+              "fill-color": "gray"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "isPublic": true
+}

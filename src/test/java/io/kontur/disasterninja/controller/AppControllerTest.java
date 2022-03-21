@@ -1,9 +1,13 @@
 package io.kontur.disasterninja.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.client.TestDependingOnUserAuth;
 import io.kontur.disasterninja.client.UserProfileClient;
+import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.dto.AppDto;
+import io.kontur.disasterninja.dto.AppLayerUpdateDto;
 import io.kontur.disasterninja.dto.AppSummaryDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,37 +23,45 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.wololo.geojson.Point;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
+import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
 import static io.kontur.disasterninja.controller.AppsController.PATH;
 import static io.kontur.disasterninja.service.GeometryTransformer.geometriesAreEqual;
 import static io.kontur.disasterninja.util.TestUtil.readFile;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-@RestClientTest(UserProfileClient.class)
+@RestClientTest(components = {UserProfileClient.class, LayersApiClient.class})
 @AutoConfigureWebClient(registerRestTemplate = true)
 public class AppControllerTest extends TestDependingOnUserAuth {
     private static final UUID DN2_ID = UUID.fromString("58851b50-9574-4aec-a3a6-425fa18dcb54");
     @Autowired
-    private MockRestServiceServer userProfileApi;
+    private MockRestServiceServer mockServer;
     @Autowired
     private UserProfileClient userProfileClient;
+    @Autowired
+    private LayersApiClient layersApiClient;
     private AppsController appsController;
 
     @BeforeEach
     public void before() {
-        appsController = new AppsController(userProfileClient);
+        appsController = new AppsController(userProfileClient, layersApiClient);
     }
 
     @Test
     public void getAppsListUnauthenticated() throws IOException {
         givenUserIsNotAuthenticated();
-        userProfileApi.expect(requestTo(PATH))
+        mockServer.expect(requestTo(PATH))
             .andExpect(method(GET))
             .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
             .andRespond(withSuccess(readFile(this, "ups/publicApps.json"), MediaType.APPLICATION_JSON));
@@ -63,7 +75,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     @Test
     public void getAppsList() throws IOException {
         givenUserIsLoggedIn();
-        userProfileApi.expect(requestTo(PATH))
+        mockServer.expect(requestTo(PATH))
             .andExpect(method(GET))
             .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
             .andRespond(withSuccess(readFile(this, "ups/privateApps.json"), MediaType.APPLICATION_JSON));
@@ -79,7 +91,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     @Test
     public void getAppUnauthenticated() throws IOException {
         givenUserIsNotAuthenticated();
-        userProfileApi.expect(requestTo(PATH + "/" + DN2_ID))
+        mockServer.expect(requestTo(PATH + "/" + DN2_ID))
             .andExpect(method(GET))
             .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
             .andRespond(withSuccess(readFile(this, "ups/dn2App.json"), MediaType.APPLICATION_JSON));
@@ -99,7 +111,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     public void getApp() throws IOException {
         givenUserIsLoggedIn();
         UUID appId = UUID.fromString("58851b50-9574-4aec-a3a6-425fa18dcb11");
-        userProfileApi.expect(requestTo(PATH + "/" + appId))
+        mockServer.expect(requestTo(PATH + "/" + appId))
             .andExpect(method(GET))
             .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
             .andRespond(withSuccess(readFile(this, "ups/privateApp.json"), MediaType.APPLICATION_JSON));
@@ -122,7 +134,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     public void deleteApp() {
         givenUserIsLoggedIn();
         UUID appId = UUID.randomUUID();
-        userProfileApi.expect(requestTo(PATH + "/" + appId))
+        mockServer.expect(requestTo(PATH + "/" + appId))
             .andExpect(method(DELETE))
             .andRespond(withStatus(HttpStatus.NO_CONTENT));
 
@@ -140,7 +152,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         ObjectMapper objectMapper = new ObjectMapper();
         String dto = objectMapper.writeValueAsString(update);
 
-        userProfileApi.expect(requestTo(PATH + "/" + appId))
+        mockServer.expect(requestTo(PATH + "/" + appId))
             .andExpect(method(PUT))
             .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
             .andExpect(content().json(dto, true))
@@ -164,7 +176,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         response.setOwnedByUser(true);
         String responseJson = objectMapper.writeValueAsString(response);
 
-        userProfileApi.expect(requestTo(PATH))
+        mockServer.expect(requestTo(PATH))
             .andExpect(method(POST))
             .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
             .andExpect(content().json(requestJson, true))
@@ -185,7 +197,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     @Test
     public void test404isPassedToTheClient() {
         givenUserIsLoggedIn();
-        userProfileApi.expect(anything()).andRespond(MockRestResponseCreators.withStatus(HttpStatus.NOT_FOUND));
+        mockServer.expect(anything()).andRespond(MockRestResponseCreators.withStatus(HttpStatus.NOT_FOUND));
 
         assertThrows(HttpClientErrorException.NotFound.class, () -> appsController.get(UUID.randomUUID()));
     }
@@ -193,7 +205,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     @Test
     public void test403isPassedToTheClient() {
         givenUserIsLoggedIn();
-        userProfileApi.expect(anything()).andRespond(MockRestResponseCreators.withStatus(HttpStatus.FORBIDDEN));
+        mockServer.expect(anything()).andRespond(MockRestResponseCreators.withStatus(HttpStatus.FORBIDDEN));
 
         assertThrows(HttpClientErrorException.Forbidden.class, () -> appsController.update(UUID.randomUUID(), createAppDto()));
     }
@@ -201,9 +213,81 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     @Test
     public void test401isPassedToTheClient() {
         givenUserIsLoggedIn();
-        userProfileApi.expect(anything()).andRespond(MockRestResponseCreators.withStatus(HttpStatus.UNAUTHORIZED));
+        mockServer.expect(anything()).andRespond(MockRestResponseCreators.withStatus(HttpStatus.UNAUTHORIZED));
 
         assertThrows(HttpClientErrorException.Unauthorized.class, () -> appsController.delete(UUID.randomUUID()));
+    }
+
+    @Test
+    public void getAppsLayersUnauthenticated() throws IOException {
+        //GIVEN
+        givenUserIsNotAuthenticated();
+        UUID appID = UUID.randomUUID();
+
+        mockServer.expect(requestTo(String.format("/apps/%s?includeDefaultCollections=true", appID)))
+                .andExpect(method(GET))
+                .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
+                .andRespond(withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"), MediaType.APPLICATION_JSON));
+
+        //WHEN
+        List<Layer> result = appsController.getListOfLayers(appID);
+
+        //THEN
+        assertEquals(1, result.size());
+        assertNotNull(result.get(0).getLegend());
+    }
+
+    @Test
+    public void getAppsLayersAuthenticated() throws IOException {
+        //GIVEN
+        givenUserIsLoggedIn();
+        UUID appID = UUID.randomUUID();
+
+        mockServer.expect(requestTo(String.format("/apps/%s?includeDefaultCollections=true", appID)))
+                .andExpect(method(GET))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andRespond(withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"), MediaType.APPLICATION_JSON));
+
+        //WHEN
+        List<Layer> result = appsController.getListOfLayers(appID);
+
+        //THEN
+        assertEquals(1, result.size());
+        assertNotNull(result.get(0).getLegend());
+    }
+
+    @Test
+    public void updateAppsLayers() throws IOException {
+        //GIVEN
+        givenUserIsLoggedIn();
+        UUID appID = UUID.randomUUID();
+        String randomJsonString = "{\"id\":\"623705fe3955c57d8b2c85ba\",\"index\":1}";
+
+        mockServer.expect(requestTo(String.format("/apps/%s", appID)))
+                .andExpect(method(PUT))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andExpect(request -> {
+                    String s = request.getBody().toString();
+                    assertThat(s, hasJsonPath("$.showAllPublicLayers", is(Boolean.FALSE)));
+                    assertThat(s, hasJsonPath("$.isPublic", is(Boolean.TRUE)));
+                    assertThat(s, hasJsonPath("$.layers", hasSize(1)));
+                    assertThat(s, hasJsonPath("$.layers[0].layerId", is("testLayerId")));
+                    assertThat(s, hasJsonPath("$.layers[0].isDefault", is(Boolean.TRUE)));
+                    assertThat(s, hasJsonPath("$.layers[0].styleRule.id", is("623705fe3955c57d8b2c85ba")));
+                    assertThat(s, hasJsonPath("$.layers[0].styleRule.index", is(1)));
+                })
+                .andRespond(
+                        withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"), MediaType.APPLICATION_JSON));
+
+        //WHEN
+        List<Layer> result = appsController.updateListOfLayers(appID, Collections.singletonList(
+                new AppLayerUpdateDto(LAYER_PREFIX + "testLayerId", true,
+                        (ObjectNode) new ObjectMapper().readTree(randomJsonString))
+        ));
+
+        //THEN
+        assertEquals(1, result.size());
+        assertNotNull(result.get(0).getLegend());
     }
 
     private AppDto createAppDto() {
