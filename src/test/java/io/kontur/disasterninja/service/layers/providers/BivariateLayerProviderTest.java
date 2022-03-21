@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
+import static io.kontur.disasterninja.service.layers.providers.BivariateLayerProvider.LAYER_PREFIX;
 import static io.kontur.disasterninja.util.TestUtil.emptyParams;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
@@ -89,9 +90,9 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
 
     @Test
     public void getTest() {
-        Layer biv = bivariateLayerProvider.obtainLayer("Kontur OpenStreetMap Quantity", emptyParams());
+        Layer biv = bivariateLayerProvider.obtainLayer(LAYER_PREFIX + "Kontur OpenStreetMap Quantity", emptyParams());
         //layer
-        assertEquals("Kontur OpenStreetMap Quantity", biv.getId());
+        assertEquals(LAYER_PREFIX + "Kontur OpenStreetMap Quantity", biv.getId());
         assertEquals("Kontur OpenStreetMap Quantity", biv.getName());
         assertEquals("This map shows relative distribution of OpenStreetMap objects and Population." +
                 " Last updated 2021-11-06T20:59:29Z", biv.getDescription());
