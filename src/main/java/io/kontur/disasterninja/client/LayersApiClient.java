@@ -179,7 +179,12 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         }
         body.put("geometry", geoJson);
         body.put("limit", pageSize);
-        body.put("appId", appId);
+        if (appId == null) {
+            //TODO remove default value after DN2 FE is updated with application functionality
+            body.put("appId", UUID.fromString("58851b50-9574-4aec-a3a6-425fa18dcb54"));
+        } else {
+            body.put("appId", appId);
+        }
 
         while (true) {
             body.put("offset", result.size());
