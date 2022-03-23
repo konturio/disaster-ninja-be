@@ -10,6 +10,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.GeoJSON;
 import org.wololo.geojson.GeoJSONFactory;
 
@@ -72,7 +73,7 @@ class AdvancedAnalyticsPanelServiceTest {
         when(insightsApiGraphqlClient.advancedAnalyticsPanelQuery(geoJSONArgumentCaptor.capture())).thenReturn(completableFuture);
 
         //when
-        List<AdvancedAnalyticsDto> result = service.calculateAnalytics(GeoJSONFactory.create(geoJsonString));
+        List<AdvancedAnalyticsDto> result = service.calculateAnalytics((FeatureCollection) GeoJSONFactory.create(geoJsonString));
 
         //then
         GeoJSON geoJSONCaptorValue = geoJSONArgumentCaptor.getValue();
@@ -150,7 +151,7 @@ class AdvancedAnalyticsPanelServiceTest {
 
         //when
         try {
-            service.calculateAnalytics(GeoJSONFactory.create(geoJsonString));
+            service.calculateAnalytics((FeatureCollection) GeoJSONFactory.create(geoJsonString));
             throw new RuntimeException("expected exception was not thrown");
         } catch (WebApplicationException e) {
             assertEquals("Exception when getting data from insights-api using apollo client", e.getMessage());

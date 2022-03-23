@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.wololo.geojson.Feature;
+import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.GeoJSON;
 
 import java.util.Collections;
@@ -25,7 +27,11 @@ public class AdvancedAnalyticsPanelService {
     private static final Logger LOG = LoggerFactory.getLogger(AdvancedAnalyticsPanelService.class);
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
 
-    public List<AdvancedAnalyticsDto> calculateAnalytics(GeoJSON geoJSON) {
+    public List<AdvancedAnalyticsDto> calculateAnalytics(FeatureCollection geoJSON) {
+        if(geoJSON != null && geoJSON.getFeatures() != null && geoJSON.getFeatures().length == 0)
+        {
+            geoJSON = null;
+        }
         List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic> analyticsResult;
         try {
             analyticsResult = insightsApiGraphqlClient.advancedAnalyticsPanelQuery(geoJSON).get();
