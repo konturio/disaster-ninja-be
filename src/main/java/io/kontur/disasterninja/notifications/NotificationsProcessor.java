@@ -44,7 +44,7 @@ public class NotificationsProcessor {
 
     @Value("${notifications.enabled:false}")
     private Boolean isEnabled;
-    @Value("${notifications.slackWebHook}")
+    @Value("${notifications.slackWebHook:}")
     private String slackWebHookUrl;
 
     public NotificationsProcessor(SlackMessageFormatter slackMessageFormatter,
@@ -58,9 +58,11 @@ public class NotificationsProcessor {
 
     @PostConstruct
     public void init() {
-        List<EventApiEventDto> events = eventApiClient.getLatestEvents(1);
-        EventApiEventDto latestEvent = events.get(0);
-        latestUpdatedDate = latestEvent.getUpdatedAt();
+        if (isEnabled) {
+            List<EventApiEventDto> events = eventApiClient.getLatestEvents(1);
+            EventApiEventDto latestEvent = events.get(0);
+            latestUpdatedDate = latestEvent.getUpdatedAt();
+        }
     }
 
     @Scheduled(fixedRate = 60000, initialDelay = 1000)
