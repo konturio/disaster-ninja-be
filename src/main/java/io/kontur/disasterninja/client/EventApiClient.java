@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.OffsetDateTime;
@@ -27,7 +28,7 @@ public class EventApiClient extends RestClientWithBearerAuth {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventApiClient.class);
     private static final String EVENT_API_EVENT_LIST_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&after=%s&episodeFilterType=LATEST&limit=%s&sortOrder=ASC";
-    private static final String EVENT_API_LATEST_EVENTS_URI = "/v1/?feed=%s&types=FLOOD,EARTHQUAKE,CYCLONE,VOLCANO,WILDFIRE&severities=EXTREME,SEVERE,MODERATE&episodeFilterType=LATEST&limit=%s&sortOrder=DESC";
+    private static final String EVENT_API_LATEST_EVENTS_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&episodeFilterType=LATEST&limit=%s&sortOrder=DESC";
     private static final String EVENT_API_EVENT_ID_URI = "/v1/event?feed=%s&eventId=%s";
     private static final String EVENT_API_USER_FEEDS_URI = "/v1/user_feeds";
 
@@ -85,8 +86,11 @@ public class EventApiClient extends RestClientWithBearerAuth {
         return result;
     }
 
-    public List<EventApiEventDto> getLatestEvents(int limit) {
+    public List<EventApiEventDto> getLatestEvents(List<String> acceptableTypes, int limit) {
         String uri = String.format(EVENT_API_LATEST_EVENTS_URI, defaultEventApiFeed, limit);
+        if (!CollectionUtils.isEmpty(acceptableTypes)) {
+            uri += "&types=" + String.join(",", acceptableTypes);
+        }
         ResponseEntity<EventApiSearchEventResponse> response = restTemplate
             .exchange(uri, HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
                 new ParameterizedTypeReference<>() {

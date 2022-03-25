@@ -7,6 +7,7 @@ import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -31,19 +32,19 @@ import java.util.stream.Stream;
 import static java.util.Collections.emptyMap;
 
 @Component
+@ConditionalOnProperty(value="notifications.enabled")
 public class NotificationsProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationsProcessor.class);
     private static volatile OffsetDateTime latestUpdatedDate = null;
     private static final GeoJSONReader geoJSONReader = new GeoJSONReader();
     private static final GeoJSONWriter geoJSONWriter = new GeoJSONWriter();
+    private static final List<String> acceptableTypes = Arrays.asList("FLOOD", "EARTHQUAKE", "CYCLONE", "VOLCANO", "WILDFIRE");
 
     private final EventApiClient eventApiClient;
     private final InsightsApiGraphqlClient insightsApiClient;
     private final SlackMessageFormatter slackMessageFormatter;
 
-    @Value("${notifications.enabled:false}")
-    private Boolean isEnabled;
     @Value("${notifications.slackWebHook:}")
     private String slackWebHookUrl;
 
@@ -58,39 +59,35 @@ public class NotificationsProcessor {
 
     @PostConstruct
     public void init() {
-        if (isEnabled) {
-            List<EventApiEventDto> events = eventApiClient.getLatestEvents(1);
-            EventApiEventDto latestEvent = events.get(0);
-            latestUpdatedDate = latestEvent.getUpdatedAt();
-        }
+        List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, 1);
+        EventApiEventDto latestEvent = events.get(0);
+        latestUpdatedDate = latestEvent.getUpdatedAt();
     }
 
     @Scheduled(fixedRate = 60000, initialDelay = 1000)
     public void run() {
-        if (isEnabled) {
-            try {
-                List<EventApiEventDto> events = eventApiClient.getLatestEvents(100);
+        try {
+            List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, 100);
 
-                for (EventApiEventDto event : events) {
-                    if (event.getUpdatedAt().isBefore(latestUpdatedDate)
-                            || event.getUpdatedAt().isEqual(latestUpdatedDate)) {
-                        break;
-                    }
-
-                    if (isEventInPopulatedArea(event) && isEventTypeAppropriate(event)) {
-                        FeedEpisode latestEpisode = event.getEpisodes().get(0);
-                        Geometry geometry = convertGeometry(latestEpisode.getGeometries());
-                        latestUpdatedDate = event.getUpdatedAt();
-                        process(event, geometry);
-                    }
+            for (EventApiEventDto event : events) {
+                if (event.getUpdatedAt().isBefore(latestUpdatedDate)
+                        || event.getUpdatedAt().isEqual(latestUpdatedDate)) {
+                    break;
                 }
-            } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+
+                if (isEventInPopulatedArea(event) && isEventTypeAppropriate(event)) {
+                    FeedEpisode latestEpisode = event.getEpisodes().get(0);
+                    Geometry geometry = convertGeometry(latestEpisode.getGeometries());
+                    latestUpdatedDate = event.getUpdatedAt();
+                    process(event, geometry);
+                }
             }
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
         }
     }
 
-    public void process(EventApiEventDto event, Geometry geometry) {
+    private void process(EventApiEventDto event, Geometry geometry) {
         LOG.info("New event has been occurred. Sending notifications. Event ID = '{}', name = '{}'",
                 event.getEventId(), event.getName());
 
@@ -111,8 +108,7 @@ public class NotificationsProcessor {
      * Hotfix for Industrial heats being wildfires #7985
      */
     private boolean isEventTypeAppropriate(EventApiEventDto eventApiEventDto) {
-        List<String> types = Arrays.asList("FLOOD", "EARTHQUAKE", "CYCLONE", "VOLCANO", "WILDFIRE");
-        return types.contains(eventApiEventDto.getEpisodes().get(0).getType());
+        return acceptableTypes.contains(eventApiEventDto.getEpisodes().get(0).getType());
     }
 
     private boolean isEventInPopulatedArea(EventApiEventDto event) {
@@ -151,7 +147,7 @@ public class NotificationsProcessor {
         }
     }
 
-    public static Geometry convertGeometry(FeatureCollection shape) {
+    private Geometry convertGeometry(FeatureCollection shape) {
         if (shape == null) {
             return null;
         }
