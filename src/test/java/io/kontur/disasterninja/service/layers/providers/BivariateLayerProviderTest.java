@@ -2,7 +2,6 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import com.apollographql.apollo.exception.ApolloException;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
-import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.BivariateLegendAxisDescription;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.dto.BivariateStatisticDto;
@@ -16,11 +15,11 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
+import static io.kontur.disasterninja.service.layers.providers.BivariateLayerProvider.LAYER_PREFIX;
 import static io.kontur.disasterninja.util.TestUtil.emptyParams;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 public class BivariateLayerProviderTest extends LayerProvidersTest {
@@ -66,30 +65,21 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
 
         Mockito.when(insightsApiGraphqlClient.getBivariateStatistic()).thenReturn(CompletableFuture
                 .completedFuture(dto));
+        bivariateLayerProvider = new BivariateLayerProvider(insightsApiGraphqlClient);
     }
 
     @Test
     public void bivariateListExceptionTest() {
         when(insightsApiGraphqlClient.getBivariateStatistic()).thenThrow(new ApolloException("hello world"));
 
-        try {
-            bivariateLayerProvider.obtainLayers(emptyParams());
-            throw new RuntimeException("expected exception was not thrown");
-        } catch (WebApplicationException e) {
-            assertEquals("Can't load bivariate layers", e.getMessage());
-        }
+        assertTrue(bivariateLayerProvider.obtainLayers(emptyParams()).isEmpty());
     }
 
     @Test
     public void bivariateLayerExceptionTest() {
         when(insightsApiGraphqlClient.getBivariateStatistic()).thenThrow(new ApolloException("hello world"));
 
-        try {
-            bivariateLayerProvider.obtainLayer("Kontur OpenStreetMap Quantity", emptyParams());
-            throw new RuntimeException("expected exception was not thrown");
-        } catch (WebApplicationException e) {
-            assertEquals("Can't load bivariate layer", e.getMessage());
-        }
+        assertNull(bivariateLayerProvider.obtainLayer("some layer", emptyParams()));
     }
 
     @Test
@@ -100,9 +90,9 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
 
     @Test
     public void getTest() {
-        Layer biv = bivariateLayerProvider.obtainLayer("Kontur OpenStreetMap Quantity", emptyParams());
+        Layer biv = bivariateLayerProvider.obtainLayer(LAYER_PREFIX + "Kontur OpenStreetMap Quantity", emptyParams());
         //layer
-        assertEquals("Kontur OpenStreetMap Quantity", biv.getId());
+        assertEquals(LAYER_PREFIX + "Kontur OpenStreetMap Quantity", biv.getId());
         assertEquals("Kontur OpenStreetMap Quantity", biv.getName());
         assertEquals("This map shows relative distribution of OpenStreetMap objects and Population." +
                 " Last updated 2021-11-06T20:59:29Z", biv.getDescription());
