@@ -89,6 +89,19 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     }
 
     @Test
+    public void getDefaultAppIdUnauthenticated() {
+        String dn2AppId = "58851b50-9574-4aec-a3a6-425fa18dcb54";
+        givenUserIsNotAuthenticated();
+        mockServer.expect(requestTo(PATH + "/" + "default_id"))
+            .andExpect(method(GET))
+            .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
+            .andRespond(withSuccess(dn2AppId, MediaType.TEXT_PLAIN));
+
+        String result = appsController.getDefaultAppId();
+        assertEquals(dn2AppId, result);
+    }
+
+    @Test
     public void getAppUnauthenticated() throws IOException {
         givenUserIsNotAuthenticated();
         mockServer.expect(requestTo(PATH + "/" + DN2_ID))
