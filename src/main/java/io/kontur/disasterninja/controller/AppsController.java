@@ -60,6 +60,14 @@ public class AppsController {
         return userProfileClient.updateApp(id, appDto);
     }
 
+    @Operation(summary = "Get default app id")
+    @ApiResponse(responseCode = "200",
+        content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE))
+    @GetMapping(path = "/default_id")
+    public String getDefaultAppId() {
+        return userProfileClient.getDefaultAppId();
+    }
+
     @Operation(summary = "Get application information by id")
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,

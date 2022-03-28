@@ -22,6 +22,7 @@ public class UserProfileClient extends RestClientWithBearerAuth {
     private static final String FEATURES_URL = "/features";
     private static final String APP_URL = "/apps";
     private static final String APP_URL_WITH_ID = "/apps/{id}";
+    private static final String DEFAULT_APP_ID_URL = "/apps/default_id";
     private final RestTemplate userProfileRestTemplate;
 
     public UserProfileClient(RestTemplate userProfileRestTemplate,
@@ -61,6 +62,14 @@ public class UserProfileClient extends RestClientWithBearerAuth {
                         new ParameterizedTypeReference<>() {
                         });
 
+        return response.getBody();
+    }
+
+    public String getDefaultAppId() {
+        ResponseEntity<String> response = userProfileRestTemplate
+            .exchange(DEFAULT_APP_ID_URL, HttpMethod.GET, httpEntityWithUserBearerAuthIfPresent(null),
+                new ParameterizedTypeReference<>() {
+                });
         return response.getBody();
     }
 
