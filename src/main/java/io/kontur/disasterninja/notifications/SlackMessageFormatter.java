@@ -23,7 +23,8 @@ public class SlackMessageFormatter {
     @Value("${notifications.alertUrlPattern:}")
     private String notificationAlertUrlPattern;
 
-    public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties) {
+    public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
+                         Map<String, Double> analytics) {
 
         List<FeedEpisode> eventEpisodes = event.getEpisodes();
         eventEpisodes.sort(Comparator.comparing(FeedEpisode::getUpdatedAt));
@@ -42,6 +43,10 @@ public class SlackMessageFormatter {
         description.append(convertIndustrialStatistic(episodeDetails, eventDetails));
         description.append(convertForestStatistic(episodeDetails, eventDetails));
         description.append(convertFireStatistic(episodeDetails, eventDetails, latestEpisode));
+        String osmQuality = convertOsmQuality(analytics);
+        if (StringUtils.isNotBlank(osmQuality)) {
+            description.append("\\n>OSM quality:").append(osmQuality);
+        }
 
         return String.format(BODY, alertUrl, event.getName(), description);
     }
@@ -95,6 +100,56 @@ public class SlackMessageFormatter {
         String episodeValue = formatNumber(episodeDetails.get("hotspotDaysPerYearMax"));
         String eventValue = formatNumber(eventDetails.get("hotspotDaysPerYearMax"));
         return convertStatistic(patternEpisode, patternEvent, episodeValue, eventValue);
+    }
+
+    private String convertOsmQuality(Map<String, Double> analytics) {
+        StringBuilder result = new StringBuilder();
+
+        result.append(convertOsmGapsPercentage(analytics));
+        result.append(convertOsmGapsValues(analytics));
+        result.append(convertNoBuildingsValues(analytics));
+        result.append(convertNoRoadsValue(analytics));
+
+        return result.toString();
+    }
+
+    private String convertOsmGapsPercentage(Map<String, Double> analytics) {
+        String osmGaps = "\\n>:mag_right: OSM gaps: %s%.";
+        String osmGapsPercentage = formatNumber(analytics.get("osmGapsPercentage"));
+        if (!"0".equals(osmGapsPercentage)) {
+            return String.format(osmGaps, osmGapsPercentage);
+        }
+        return "";
+    }
+
+    private String convertOsmGapsValues(Map<String, Double> analytics) {
+        String osmObjects = "\\n>:world_map: Populated area without OSM objects: %s km², contains %s people.";
+        String osmGapsArea = formatNumber(analytics.get("osmGapsArea"));
+        String osmGapsPopulation = formatNumber(analytics.get("osmGapsPopulation"));
+        if (!"0".equals(osmGapsArea) && !"0".equals(osmGapsPopulation)) {
+            return String.format(osmObjects, osmGapsArea, osmGapsPopulation);
+        }
+        return "";
+    }
+
+    private String convertNoBuildingsValues(Map<String, Double> analytics) {
+        String osmBuildings = "\\n>:house_buildings: Populated area without OSM buildings: %s km², contains %s people.";
+        String noBuildingsArea = formatNumber(analytics.get("noBuildingsArea"));
+        String noBuildingsPopulation = formatNumber(analytics.get("noBuildingsPopulation"));
+        if (!"0".equals(noBuildingsArea) && !"0".equals(noBuildingsPopulation)) {
+            return String.format(osmBuildings, noBuildingsArea, noBuildingsPopulation);
+        }
+        return "";
+    }
+
+    private String convertNoRoadsValue(Map<String, Double> analytics) {
+        String osmRoads = "\\n>:motorway: Populated area without OSM roads: %s km², contains %s people.";
+        String noRoadsArea = formatNumber(analytics.get("noRoadsArea"));
+        String noRoadsPopulation = formatNumber(analytics.get("noRoadsPopulation"));
+        if (!"0".equals(noRoadsArea) && !"0".equals(noRoadsPopulation)) {
+            return String.format(osmRoads, noRoadsArea, noRoadsPopulation);
+        }
+        return "";
     }
 
     private String convertStatistic(String patternEpisode, String patternEvent, String episodeValue,

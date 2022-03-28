@@ -1,7 +1,7 @@
 package io.kontur.disasterninja.controller;
 
 import io.kontur.disasterninja.dto.AnalyticsDto;
-import io.kontur.disasterninja.service.AnalyticsTabService;
+import io.kontur.disasterninja.service.AnalyticsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AnalyticsTabController {
 
-    private final AnalyticsTabService analyticsTabService;
+    private final AnalyticsService analyticsService;
 
     @Operation(summary = "Calculate data for analytics tab using insights-api service",
             tags = {"Analytics tab"},
@@ -33,6 +33,6 @@ public class AnalyticsTabController {
     @PostMapping
     public List<AnalyticsDto> getAnalyticsTab(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Polygon in GeoJSON format. Send polygon as FeatureCollection")
                                               @RequestBody GeoJSON geoJSON) {
-        return analyticsTabService.calculateAnalytics(geoJSON);
+        return analyticsService.calculateAnalyticsForPanel(geoJSON);
     }
 }
