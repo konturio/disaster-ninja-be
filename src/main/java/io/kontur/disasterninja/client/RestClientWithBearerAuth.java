@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -52,10 +53,12 @@ public abstract class RestClientWithBearerAuth {
 
     private String getUserToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication instanceof BearerTokenAuthenticationToken userToken
-            && userToken.getToken() != null
-            && !userToken.getToken().isBlank()) {
-            return userToken.getToken();
+        if (authentication instanceof BearerTokenAuthenticationToken bearerToken) {
+            return bearerToken.getToken() == null ? null :
+                bearerToken.getToken();
+        } else if (authentication instanceof JwtAuthenticationToken jwtToken) {
+            return jwtToken.getToken() == null ? null
+                : jwtToken.getToken().getTokenValue();
         }
         return null;
     }
