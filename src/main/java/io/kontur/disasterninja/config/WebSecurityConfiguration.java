@@ -17,6 +17,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.Collection;
 import java.util.List;
@@ -69,39 +70,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-            .headers().cacheControl().disable()
+            .csrf()
+            .ignoringRequestMatchers(new AntPathRequestMatcher("/advanced_polygon_details", "POST"))
+            .ignoringRequestMatchers(new AntPathRequestMatcher("/polygon_details", "POST"))
+            .ignoringRequestMatchers(new AntPathRequestMatcher("/boundaries", "POST"))
+            .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/details", "POST"))
+            .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/search", "POST"))
+
             .and()
-            .authorizeRequests()
-
-            .antMatchers("/doc", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
-            .permitAll()
-
-            .antMatchers("/actuator", "/actuator/**")
-            .permitAll() //TODO security temporarily disabled
-
-            .antMatchers("/advanced_polygon_details")
-            .permitAll()
-
-            .antMatchers("/polygon_details")
-            .permitAll()
-
-            .antMatchers("/apps", "/apps/**")
-            .permitAll()
-
-            .antMatchers("/boundaries")
-            .permitAll()
-
-            .antMatchers("/events", "/events/**")
-            .permitAll()
-
-            .antMatchers("/features")
-            .permitAll()
-
-            .antMatchers("/layers", "/layers/**")
-            .permitAll()
-
-            .anyRequest().authenticated()
-
+            .headers().cacheControl().disable()
             .and()
             .oauth2ResourceServer(resourceServerConfigurer -> resourceServerConfigurer
                 .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(
