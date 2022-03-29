@@ -9,9 +9,8 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.text.DecimalFormatSymbols;
+import java.util.*;
 
 @Component
 @ConditionalOnProperty(value="notifications.enabled")
@@ -19,7 +18,8 @@ public class SlackMessageFormatter {
 
     private static final String BODY = "{\"text\":\"><%s|%s>%s\"}";
     private static final String gdacsReportLinkPattern = "https://www.gdacs.org/report.aspx?eventtype=%s&eventid=%s";
-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,###.##");
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,###.##",
+            new DecimalFormatSymbols(Locale.US));
     @Value("${notifications.alertUrlPattern:}")
     private String notificationAlertUrlPattern;
 
@@ -114,7 +114,7 @@ public class SlackMessageFormatter {
     }
 
     private String convertOsmGapsPercentage(Map<String, Double> analytics) {
-        String osmGaps = "\\n>:mag_right: OSM gaps: %s%.";
+        String osmGaps = "\\n>:mag_right: OSM gaps: %s%%.";
         String osmGapsPercentage = formatNumber(analytics.get("osmGapsPercentage"));
         if (!"0".equals(osmGapsPercentage)) {
             return String.format(osmGaps, osmGapsPercentage);
