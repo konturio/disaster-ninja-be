@@ -71,11 +71,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http
             .csrf()
-            .ignoringRequestMatchers(new AntPathRequestMatcher("/advanced_polygon_details", "POST"))
-            .ignoringRequestMatchers(new AntPathRequestMatcher("/polygon_details", "POST"))
-            .ignoringRequestMatchers(new AntPathRequestMatcher("/boundaries", "POST"))
-            .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/details", "POST"))
-            .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/search", "POST"))
+            .ignoringRequestMatchers(new AntPathRequestMatcher("/advanced_polygon_details/**", "POST"))
+            .ignoringRequestMatchers(new AntPathRequestMatcher("/polygon_details/**", "POST"))
+            .ignoringRequestMatchers(new AntPathRequestMatcher("/boundaries/**", "POST"))
+            .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/details/**", "POST"))
+            .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/search/**", "POST"))
 
             .and()
             .headers().cacheControl().disable()
