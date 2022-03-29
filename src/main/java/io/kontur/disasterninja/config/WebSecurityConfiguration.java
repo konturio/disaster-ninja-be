@@ -10,7 +10,6 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,7 +17,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
-import org.springframework.security.web.authentication.switchuser.SwitchUserFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,7 +30,6 @@ import java.util.stream.Collectors;
 @Profile("!" + WebSecurityConfiguration.JWT_AUTH_DISABLED)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     public static final String JWT_AUTH_DISABLED = "jwtAuthDisabled";
-    private final SaveTokenFilter saveTokenFilter;
 
     @Bean
     public Converter<Jwt, AbstractAuthenticationToken> jwtAuthenticationConverter() {
@@ -70,20 +68,22 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().anyRequest();
-    }
-
-    @Override
     public void configure(HttpSecurity http) throws Exception {
         http
+            .csrf()
+            .ignoringRequestMatchers(new AntPathRequestMatcher("/advanced_polygon_details", "POST"))
+            .ignoringRequestMatchers(new AntPathRequestMatcher("/polygon_details", "POST"))
+            .ignoringRequestMatchers(new AntPathRequestMatcher("/boundaries", "POST"))
+            .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/details", "POST"))
+            .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/search", "POST"))
+
+            .and()
             .headers().cacheControl().disable()
             .and()
             .oauth2ResourceServer(resourceServerConfigurer -> resourceServerConfigurer
                 .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(
                     jwtAuthenticationConverter()))
-            )
-            .addFilterAfter(saveTokenFilter, SwitchUserFilter.class); //the last filter in the chain
+            );
     }
 
     public static class ClaimParams {
