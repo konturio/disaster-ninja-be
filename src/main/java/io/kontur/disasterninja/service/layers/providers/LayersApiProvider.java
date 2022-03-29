@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Geometry;
 
@@ -65,7 +65,7 @@ public class LayersApiProvider implements LayerProvider {
 
     private boolean isUserAuthenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication instanceof BearerTokenAuthenticationToken;
+        return authentication instanceof JwtAuthenticationToken;
     }
 
 }
