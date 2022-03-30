@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.notifications;
 
+import io.kontur.disasterninja.dto.Severity;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
 import org.apache.commons.lang3.StringUtils;
@@ -30,25 +31,50 @@ public class SlackMessageFormatter {
         eventEpisodes.sort(Comparator.comparing(FeedEpisode::getUpdatedAt));
 
         FeedEpisode latestEpisode = eventEpisodes.get(eventEpisodes.size() - 1);
-        String alertUrl = createAlertLink(event, latestEpisode);
-        StringBuilder description = new StringBuilder();
-        if (StringUtils.isNoneBlank(latestEpisode.getDescription())) {
-            description.append("\\n>").append(latestEpisode.getDescription());
-        }
         Map<String, Object> episodeDetails = latestEpisode.getEpisodeDetails();
         Map<String, Object> eventDetails = event.getEventDetails();
 
+        StringBuilder description = new StringBuilder();
+        description.append(convertNotificationDescription(latestEpisode));
         description.append(convertUrbanStatistic(urbanPopulationProperties));
         description.append(convertPopulationStatistic(episodeDetails));
         description.append(convertIndustrialStatistic(episodeDetails, eventDetails));
         description.append(convertForestStatistic(episodeDetails, eventDetails));
         description.append(convertFireStatistic(episodeDetails, eventDetails, latestEpisode));
-        String osmQuality = convertOsmQuality(analytics);
-        if (StringUtils.isNotBlank(osmQuality)) {
-            description.append("\\n>OSM quality:").append(osmQuality);
-        }
+        description.append(convertOsmQuality(analytics));
 
-        return String.format(BODY, alertUrl, event.getName(), description);
+        String colorCode = getMessageColorCode(latestEpisode);
+        String alertUrl = createAlertLink(event, latestEpisode);
+        String title = colorCode + event.getName();
+        return String.format(BODY, alertUrl, title, description);
+    }
+
+    private String getMessageColorCode(FeedEpisode latestEpisode) {
+        String description = latestEpisode.getDescription();
+
+        if (StringUtils.isNotBlank(description) && description.startsWith("Green")) {
+            return ":large_green_circle: ";
+        } else if (StringUtils.isNotBlank(description) && description.startsWith("Orange")) {
+            return ":large_orange_circle: ";
+        } else if (StringUtils.isNotBlank(description) && description.startsWith("Red")) {
+            return ":red_circle: ";
+        } else if (Severity.EXTREME.equals(latestEpisode.getSeverity())) {
+            return ":red_circle: ";
+        } else if (Severity.SEVERE.equals(latestEpisode.getSeverity())) {
+            return ":large_orange_circle: ";
+        } else if (Severity.MINOR.equals(latestEpisode.getSeverity())
+                || Severity.MODERATE.equals(latestEpisode.getSeverity())) {
+            return ":large_green_circle: ";
+        }
+        return "";
+    }
+
+    private String convertNotificationDescription(FeedEpisode latestEpisode) {
+        String description = latestEpisode.getDescription();
+        if (StringUtils.isBlank(description)) {
+            return "";
+        }
+        return "\\n>" + description;
     }
 
     private String convertUrbanStatistic(Map<String, Object> urbanPopulationProperties) {
@@ -110,7 +136,10 @@ public class SlackMessageFormatter {
         result.append(convertNoBuildingsValues(analytics));
         result.append(convertNoRoadsValue(analytics));
 
-        return result.toString();
+        if (StringUtils.isNotBlank(result)) {
+            return "\\n>OSM quality:" + result;
+        }
+        return "";
     }
 
     private String convertOsmGapsPercentage(Map<String, Double> analytics) {

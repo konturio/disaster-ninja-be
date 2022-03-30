@@ -66,17 +66,14 @@ public class NotificationsProcessor {
         this.notificationsAnalyticsConfig = notificationsAnalyticsConfig;
     }
 
-    @PostConstruct
-    public void init() {
-        List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, 1);
-        EventApiEventDto latestEvent = events.get(0);
-        latestUpdatedDate = latestEvent.getUpdatedAt();
-    }
-
     @Scheduled(fixedRate = 60000, initialDelay = 1000)
     public void run() {
+        if (latestUpdatedDate == null) {
+            initUpdateDate();
+            return;
+        }
         try {
-            List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, 100);
+            List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, 1);
 
             for (EventApiEventDto event : events) {
                 if (event.getUpdatedAt().isBefore(latestUpdatedDate)
@@ -94,6 +91,12 @@ public class NotificationsProcessor {
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
+    }
+
+    private void initUpdateDate() {
+        List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, 1);
+        EventApiEventDto latestEvent = events.get(0);
+        latestUpdatedDate = latestEvent.getUpdatedAt();
     }
 
     private void process(EventApiEventDto event, Geometry geometry) {
