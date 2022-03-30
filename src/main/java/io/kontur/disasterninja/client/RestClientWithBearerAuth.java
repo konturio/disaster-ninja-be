@@ -2,6 +2,7 @@ package io.kontur.disasterninja.client;
 
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,8 +18,10 @@ public abstract class RestClientWithBearerAuth {
 
     private final KeycloakAuthorizationService authorizationService;
 
-    protected <T> HttpEntity<T> httpEntityWithUserBearerAuthIfPresent(T body) {
-        return new HttpEntity<T>(body, httpHeadersWithUserBearerAuthIfPresent());
+    protected <T> HttpEntity<T> httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(T body) {
+        HttpHeaders headers = httpHeadersWithUserBearerAuthIfPresent();
+        headers.setCacheControl(CacheControl.noCache());
+        return new HttpEntity<T>(body, headers);
     }
 
     protected <T> HttpEntity<T> httpEntityWithUserOrDefaultBearerAuth(T body) {
