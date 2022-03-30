@@ -73,7 +73,7 @@ public class NotificationsProcessor {
             return;
         }
         try {
-            List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, 1);
+            List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, 100);
 
             for (EventApiEventDto event : events) {
                 if (event.getUpdatedAt().isBefore(latestUpdatedDate)

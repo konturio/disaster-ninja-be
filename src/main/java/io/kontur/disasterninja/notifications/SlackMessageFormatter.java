@@ -44,29 +44,10 @@ public class SlackMessageFormatter {
         description.append(convertOsmQuality(analytics));
 
         String colorCode = getMessageColorCode(latestEpisode);
+        String status = getEventStatus(event);
         String alertUrl = createAlertLink(event, latestEpisode);
-        String title = colorCode + event.getName();
+        String title = colorCode + status + event.getName();
         return String.format(BODY, alertUrl, title, description);
-    }
-
-    private String getMessageColorCode(FeedEpisode latestEpisode) {
-        String description = latestEpisode.getDescription();
-
-        if (StringUtils.isNotBlank(description) && description.startsWith("Green")) {
-            return ":large_green_circle: ";
-        } else if (StringUtils.isNotBlank(description) && description.startsWith("Orange")) {
-            return ":large_orange_circle: ";
-        } else if (StringUtils.isNotBlank(description) && description.startsWith("Red")) {
-            return ":red_circle: ";
-        } else if (Severity.EXTREME.equals(latestEpisode.getSeverity())) {
-            return ":red_circle: ";
-        } else if (Severity.SEVERE.equals(latestEpisode.getSeverity())) {
-            return ":large_orange_circle: ";
-        } else if (Severity.MINOR.equals(latestEpisode.getSeverity())
-                || Severity.MODERATE.equals(latestEpisode.getSeverity())) {
-            return ":large_green_circle: ";
-        }
-        return "";
     }
 
     private String convertNotificationDescription(FeedEpisode latestEpisode) {
@@ -195,6 +176,30 @@ public class SlackMessageFormatter {
         }
         result.append(".");
         return result.toString();
+    }
+
+    private String getEventStatus(EventApiEventDto event) {
+        return event.getVersion() == 1 ? "" : "[Update] ";
+    }
+
+    private String getMessageColorCode(FeedEpisode latestEpisode) {
+        String description = latestEpisode.getDescription();
+
+        if (StringUtils.isNotBlank(description) && description.startsWith("Green")) {
+            return ":large_green_circle: ";
+        } else if (StringUtils.isNotBlank(description) && description.startsWith("Orange")) {
+            return ":large_orange_circle: ";
+        } else if (StringUtils.isNotBlank(description) && description.startsWith("Red")) {
+            return ":red_circle: ";
+        } else if (Severity.EXTREME.equals(latestEpisode.getSeverity())) {
+            return ":red_circle: ";
+        } else if (Severity.SEVERE.equals(latestEpisode.getSeverity())) {
+            return ":large_orange_circle: ";
+        } else if (Severity.MINOR.equals(latestEpisode.getSeverity())
+                || Severity.MODERATE.equals(latestEpisode.getSeverity())) {
+            return ":large_green_circle: ";
+        }
+        return "";
     }
 
     private String createAlertLink(EventApiEventDto event, FeedEpisode episode) {
