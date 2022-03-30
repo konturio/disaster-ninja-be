@@ -28,8 +28,8 @@ public final class TestUtil {
         final String PARAM_VALUE = "qwe";
         final String OTHER_PARAM_VALUE = "asd";
 
-        Legend legend = new Legend(LegendType.SIMPLE, null, new ArrayList<>(), new HashMap<>(),
-            new BivariateLegendAxes());
+        Legend legend = new Legend("legendName", LegendType.SIMPLE, null, new ArrayList<>(),
+                new HashMap<>(), new BivariateLegendAxes());
         Map<String, Object> map = new HashMap<>();
         map.put("prop", "value");
 

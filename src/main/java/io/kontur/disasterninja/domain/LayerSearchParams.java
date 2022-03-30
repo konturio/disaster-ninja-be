@@ -10,11 +10,13 @@ import java.util.UUID;
 @Builder
 public class LayerSearchParams {
     private final Geometry boundary;
+    private final UUID appId;
     private final UUID eventId;
     private final String eventFeed;
 
     public LayerSearchParams getCopyWithoutBoundary() {
         return LayerSearchParams.builder()
+            .appId(appId)
             .eventId(eventId)
             .eventFeed(eventFeed)
             .build();

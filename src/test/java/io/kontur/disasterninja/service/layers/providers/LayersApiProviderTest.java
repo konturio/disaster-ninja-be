@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.wololo.geojson.Geometry;
 
+import java.util.UUID;
+
 import static org.mockito.Mockito.*;
 
 public class LayersApiProviderTest extends TestDependingOnUserAuth {
@@ -26,9 +28,10 @@ public class LayersApiProviderTest extends TestDependingOnUserAuth {
         givenUserIsNotAuthenticated();
 
         Geometry geometry = objectMapper.readValue(json, Geometry.class);
-        provider.obtainLayers(LayerSearchParams.builder().boundary(geometry).build());
+        UUID appId = UUID.randomUUID();
+        provider.obtainLayers(LayerSearchParams.builder().boundary(geometry).appId(appId).build());
 
-        verify(client, times(1)).findLayers(geometry, CollectionOwner.ANY);
+        verify(client, times(1)).findLayers(geometry, CollectionOwner.ANY, appId);
     }
 
     @Test
@@ -36,9 +39,10 @@ public class LayersApiProviderTest extends TestDependingOnUserAuth {
         givenUserIsLoggedIn();
 
         Geometry geometry = objectMapper.readValue(json, Geometry.class);
-        provider.obtainLayers(LayerSearchParams.builder().boundary(geometry).build());
+        UUID appId = UUID.randomUUID();
+        provider.obtainLayers(LayerSearchParams.builder().boundary(geometry).appId(appId).build());
 
-        verify(client, times(1)).findLayers(null, CollectionOwner.ME);
-        verify(client, times(1)).findLayers(geometry, CollectionOwner.NOT_ME);
+        verify(client, times(1)).findLayers(null, CollectionOwner.ME, appId);
+        verify(client, times(1)).findLayers(geometry, CollectionOwner.NOT_ME, appId);
     }
 }

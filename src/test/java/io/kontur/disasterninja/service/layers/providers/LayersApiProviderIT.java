@@ -21,11 +21,12 @@ import org.springframework.web.client.RestTemplate;
 import org.wololo.geojson.Geometry;
 
 import java.util.List;
+import java.util.UUID;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static io.kontur.disasterninja.dto.layerapi.CollectionOwner.ME;
 import static io.kontur.disasterninja.util.TestUtil.readFile;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -45,7 +46,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
     @BeforeEach
     void setUp() {
         server = MockRestServiceServer.createServer(layersApiRestTemplate);
-        givenJwtTokenIs(jwt);
+        givenJwtTokenIs(getUserToken());
     }
 
     @Test
@@ -56,7 +57,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
 
         server.expect(ExpectedCount.times(3), requestTo("/collections/search"))
             .andExpect(method(HttpMethod.POST))
-            .andExpect(header("Authorization", "Bearer " + jwt))
+            .andExpect(header("Authorization", "Bearer " + getUserToken()))
                 .andRespond(r -> {
                     String body = r.getBody().toString();
                     if (hasJsonPath("$.collectionOwner", is(ME.name())).matches(body)) {
@@ -110,16 +111,26 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         //given
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
                 "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
+        UUID appId = UUID.randomUUID();
 
-        server.expect(ExpectedCount.times(1), requestTo("/collections/hotProjects"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(r -> withSuccess(readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.layer.vector.json"),
-                        MediaType.APPLICATION_JSON).createResponse(r));
+        server.expect(ExpectedCount.times(1), requestTo("/collections/search"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(r -> {
+                    String body = r.getBody().toString();
+                    if (hasJsonPath("$.collectionIds", hasSize(1)).matches(body) &&
+                            hasJsonPath("$.collectionIds", contains("hotProjects")).matches(body) &&
+                            hasJsonPath("$.appId", is(appId.toString())).matches(body)) {
+                        return withSuccess(readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.search.hotProjects.response.json"),
+                                MediaType.APPLICATION_JSON).createResponse(r);
+                    } else {
+                        throw new RuntimeException();
+                    }
+                });
 
         //when
         Geometry geometry = objectMapper.readValue(json, Geometry.class);
         Layer layer = provider.obtainLayer("KLA__hotProjects", LayerSearchParams.builder()
-            .boundary(geometry).build());
+            .boundary(geometry).appId(appId).build());
 
         //then
         assertEquals("KLA__hotProjects", layer.getId());
@@ -129,6 +140,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         assertEquals(1, source.getUrls().size());
         assertEquals("https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf", source.getUrls().get(0));
         assertNull(source.getData());
+        assertEquals(LegendType.SIMPLE, layer.getLegend().getType());
     }
 
     @Test
@@ -136,11 +148,21 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         //given
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
                 "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
+        UUID appId = UUID.randomUUID();
 
-        server.expect(ExpectedCount.times(1), requestTo("/collections/hotProjects_feature_type"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(r -> withSuccess(readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.layer.geojson.json"),
-                        MediaType.APPLICATION_JSON).createResponse(r));
+        server.expect(ExpectedCount.times(1), requestTo("/collections/search"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(r -> {
+                    String body = r.getBody().toString();
+                    if (hasJsonPath("$.collectionIds", hasSize(1)).matches(body) &&
+                            hasJsonPath("$.collectionIds", contains("hotProjects_feature_type")).matches(body) &&
+                            hasJsonPath("$.appId", is(appId.toString())).matches(body)) {
+                        return withSuccess(readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.layer.geojson.json"),
+                                MediaType.APPLICATION_JSON).createResponse(r);
+                    } else {
+                        throw new RuntimeException();
+                    }
+                });
 
         server.expect(ExpectedCount.times(2), requestTo("/collections/hotProjects_feature_type/items/search"))
                 .andExpect(method(HttpMethod.POST))
@@ -161,7 +183,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         //when
         Geometry geometry = objectMapper.readValue(json, Geometry.class);
         Layer layer = provider.obtainLayer("KLA__hotProjects_feature_type", LayerSearchParams.builder()
-            .boundary(geometry).build());
+            .boundary(geometry).appId(appId).build());
 
         //then
         assertEquals("KLA__hotProjects_feature_type", layer.getId());

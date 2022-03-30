@@ -1,0 +1,142 @@
+[
+  {
+    "name": "analytics_panel",
+    "description": "Analytics panel",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "events_list",
+    "description": "Events list",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "map_layers_panel",
+    "description": "Map Layers panel",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "side_bar",
+    "description": "Sidebar",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "current_event",
+    "description": "Current event",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "focused_geometry_layer",
+    "description": "Focused geometry layer",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "layers_in_area",
+    "description": "Layers in area",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "map_ruler",
+    "description": "Map ruler",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "toasts",
+    "description": "Toasts",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "boundary_selector",
+    "description": "Boundary selector",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "draw_tools",
+    "description": "Draw tools",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "geometry_uploader",
+    "description": "Geometry uploader",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "legend_panel",
+    "description": "Legend panel",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "reports",
+    "description": "Reports",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "url_store",
+    "description": "URL store",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "interactive_map",
+    "description": "Interactive map",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "current_episode",
+    "description": "Current episode",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "geocoder",
+    "description": "Geocoder",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "episode_list",
+    "description": "Episode list",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "communities",
+    "description": "Communities",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "feature_settings",
+    "description": "Feature settings",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "osm_edit_link",
+    "description": "OSM Edit Link",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "tooltip",
+    "description": "Tooltip",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "app_login",
+    "description": "App login",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "bivariate_manager",
+    "description": "Bivariate manager",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "feed_selector",
+    "description": "Feed selector",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "advanced_analytics_panel",
+    "description": "Advanced analytics panel",
+    "type": "UI_PANEL"
+  },
+  {
+    "name": "kontur-public",
+    "description": "Default public event feed",
+    "type": "EVENT_FEED"
+  }
+]

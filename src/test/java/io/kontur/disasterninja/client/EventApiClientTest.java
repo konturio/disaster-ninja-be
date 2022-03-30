@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.ExpectedCount;
@@ -20,7 +21,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesRegex;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -38,13 +40,13 @@ class EventApiClientTest extends TestDependingOnUserAuth {
     @Test
     public void testGetEvents() {
         //given
-        givenJwtTokenIs(jwt);
+        givenJwtTokenIs(getUserToken());
         server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
                 matchesRegex(Pattern.compile(
                     "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&after=\\d{4}-\\d{2}-\\d{2}[tT]" +
                         "\\d{2}:\\d{2}:\\d{2}.?\\d{0,3}Z&episodeFilterType=LATEST&limit=1000&sortOrder=ASC"))))
             .andExpect(method(HttpMethod.GET))
-            .andExpect(header("Authorization", "Bearer " + jwt))
+            .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
             .andRespond(r -> {
                 if (r.getURI().toString().contains("2021-09-28T14:46")) { //last page
                     return withNoContent().createResponse(r);
@@ -66,8 +68,8 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         //given
         givenJwtTokenIs("JwtTestToken");
         server.expect(ExpectedCount.once(), requestTo("/v1/event?feed=testFeedName&eventId=1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"))
-                .andExpect(method(HttpMethod.GET))
-                .andExpect(header("Authorization", "Bearer " + jwt))
+            .andExpect(method(HttpMethod.GET))
+            .andExpect(header("Authorization", "Bearer " + getUserToken()))
                 .andRespond(withSuccess(readFile(this, "EventApiClientTest.testGetEvent.response.json"),
                         MediaType.APPLICATION_JSON));
         //when

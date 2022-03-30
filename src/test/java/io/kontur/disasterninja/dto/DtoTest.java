@@ -71,7 +71,7 @@ public class DtoTest {
         Mockito.when(layerService.getList(any())).thenReturn(List.of(layer));
 
         LayerSummarySearchDto
-            input = new LayerSummarySearchDto(UUID.randomUUID(), "some-feed", new Point(new double[]{1, 0}));
+            input = new LayerSummarySearchDto(UUID.randomUUID(), UUID.randomUUID(), "some-feed", new Point(new double[]{1, 0}));
         List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
             .getBody());
 
@@ -92,7 +92,7 @@ public class DtoTest {
         Layer layer = testLayer(id, new FeatureCollection(new Feature[]{new Feature(new Point(new double[]{1d, 2d}), new HashMap<>())}));
         Mockito.when(layerService.get(any(), any(), any())).thenReturn(List.of(layer));
 
-        LayerDetailsSearchDto input = new LayerDetailsSearchDto(new Point(new double[]{1, 0}), List.of(layer.getId()), List.of(), UUID.randomUUID(), "some-feed");
+        LayerDetailsSearchDto input = new LayerDetailsSearchDto(new Point(new double[]{1, 0}), List.of(layer.getId()), List.of(), UUID.randomUUID(), UUID.randomUUID(), "some-feed");
         List<LayerDetailsDto> response = Arrays.asList(restTemplate.postForEntity(DETAILS_URL, input, LayerDetailsDto[].class)
             .getBody());
 
@@ -114,7 +114,7 @@ public class DtoTest {
         Layer layer = testLayer(id, new FeatureCollection(null));
         Mockito.when(layerService.getList(any())).thenReturn(List.of(layer));
 
-        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), "some-feed", new Feature(new Point(
+        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), UUID.randomUUID(), "some-feed", new Feature(new Point(
             new double[]{1, 0}), new HashMap<>()));
         List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
             .getBody());
@@ -136,7 +136,7 @@ public class DtoTest {
         Layer layer = testLayer(id, new FeatureCollection(null));
         Mockito.when(layerService.getList(any())).thenReturn(List.of(layer));
 
-        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), "some-feed", new FeatureCollection(new Feature[]{
+        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), UUID.randomUUID(), "some-feed", new FeatureCollection(new Feature[]{
             new Feature(new Point(new double[]{1, 0}), new HashMap<>()),
             new Feature(new Point(new double[]{1, 0}), new HashMap<>())}));
 
@@ -180,8 +180,8 @@ public class DtoTest {
             .urls(List.of("url-com.com"))
             .tileSize(2)
             .data(geoJSON).build();
-        Legend legend = new Legend(LegendType.SIMPLE, null, new ArrayList<>(), new HashMap<>(),
-            new BivariateLegendAxes());
+        Legend legend = new Legend("legendName", LegendType.SIMPLE, null, new ArrayList<>(),
+                new HashMap<>(), new BivariateLegendAxes());
         Map<String, Object> map = new HashMap<>();
         map.put("prop", "value");
 
@@ -211,7 +211,7 @@ public class DtoTest {
 
         Mockito.when(layerService.getList(any())).thenReturn(List.of(layerWithPattern));
         LayerSummarySearchDto
-            input = new LayerSummarySearchDto(UUID.randomUUID(), "some-feed", new Point(new double[]{1, 0}));
+            input = new LayerSummarySearchDto(UUID.randomUUID(), UUID.randomUUID(), "some-feed", new Point(new double[]{1, 0}));
         List<LayerSummaryDto> response = Arrays.asList(restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
             .getBody());
 
@@ -227,7 +227,7 @@ public class DtoTest {
             .urls(List.of("url-com.com"))
             .tileSize(2)
             .data(geoJSON).build();
-        Legend legend = new Legend(LegendType.SIMPLE, null, new ArrayList<>(), new HashMap<>(), new BivariateLegendAxes());
+        Legend legend = new Legend("legendName", LegendType.SIMPLE, null, new ArrayList<>(), new HashMap<>(), new BivariateLegendAxes());
         Map<String, Object> map = new HashMap<>();
         map.put("prop", "value");
         legend.getSteps().add(new LegendStep("param name", null, "param value", null, null, "step name",

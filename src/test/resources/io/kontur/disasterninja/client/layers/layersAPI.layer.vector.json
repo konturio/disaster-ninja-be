@@ -3,7 +3,7 @@
   "title": "HOT Tasking Manager Projects",
   "description": "Projects on HOT Tasking manager, ongoing and historical",
   "copyrights": "(c) Kontur",
-  "legend": {
+  "styleRule": {
     "type": "simple",
     "steps": [
       {

@@ -17,6 +17,8 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Legend {
+
+    private String name;
     private LegendType type;
     private String linkProperty;
     @Builder.Default

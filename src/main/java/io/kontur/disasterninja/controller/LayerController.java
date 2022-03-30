@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.wololo.geojson.FeatureCollection;
 
@@ -38,6 +39,7 @@ public class LayerController {
     @ApiResponse(responseCode = "200", description = "Successfully created a layer", content = @Content(
         mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = LayerSummaryDto.class)))
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PreAuthorize("isAuthenticated()")
     public LayerSummaryDto create(@RequestBody
                                   @io.swagger.v3.oas.annotations.parameters.RequestBody(
                                       description = "Layer data")
@@ -46,10 +48,11 @@ public class LayerController {
         return LayerSummaryDto.fromLayer(layer);
     }
 
-    @Operation(tags = "Layers", summary = "Update an existing new layer")
+    @Operation(tags = "Layers", summary = "Update an existing layer")
     @ApiResponse(responseCode = "200", description = "Successfully updated a layer", content = @Content(
         mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = LayerSummaryDto.class)))
     @PutMapping(path = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PreAuthorize("isAuthenticated()")
     public LayerSummaryDto update(@PathVariable String id, @RequestBody
                                       @io.swagger.v3.oas.annotations.parameters.RequestBody(
                                           description = "Layer data") LayerUpdateDto dto) {
@@ -57,9 +60,10 @@ public class LayerController {
         return LayerSummaryDto.fromLayer(layer);
     }
 
-    @Operation(tags = "Layers", summary = "Delete an existing new layer")
+    @Operation(tags = "Layers", summary = "Delete an existing layer")
     @ApiResponse(responseCode = "204", description = "Successfully deleted a layer")
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> delete(@PathVariable String id) {
         layerService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -104,6 +108,7 @@ public class LayerController {
             @ApiResponse(responseCode = "200", description = "fetch the set of features", content = @Content(schema = @Schema(implementation = FeatureCollection.class))),
             @ApiResponse(responseCode = "404", description = "The requested URI was not found.")})
     @PutMapping(path = "/{id}/items", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<FeatureCollection> updateFeatures(
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
             @PathVariable("id") String layerId,
@@ -114,6 +119,7 @@ public class LayerController {
 
     private LayerSearchParams createLayerSearchParams(LayerDetailsSearchDto dto) {
         return LayerSearchParams.builder()
+            .appId(dto.getAppId())
             .eventId(dto.getEventId())
             .eventFeed(dto.getEventFeed())
             .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))
@@ -122,6 +128,7 @@ public class LayerController {
 
     private LayerSearchParams createLayerSearchParams(LayerSummarySearchDto dto) {
         return LayerSearchParams.builder()
+            .appId(dto.getAppId())
             .eventId(dto.getEventId())
             .eventFeed(dto.getEventFeed())
             .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))
