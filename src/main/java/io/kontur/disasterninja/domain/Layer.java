@@ -102,6 +102,10 @@ public class Layer {
     private Legend getLegendWithStepsForWhichFeaturesExist(Legend prototype) {
         final Legend thisLegend = this.getLegend() != null ? this.getLegend() : new Legend();
 
+        if (prototype.getName() != null) {
+            thisLegend.setName(prototype.getName());
+        }
+
         if (prototype.getType() != null) {
             thisLegend.setType(prototype.getType());
         }

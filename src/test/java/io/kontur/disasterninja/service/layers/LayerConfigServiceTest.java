@@ -62,6 +62,7 @@ public class LayerConfigServiceTest {
         Assertions.assertNull(hot.getCategory());
         Assertions.assertEquals("layersInSelectedArea", hot.getGroup());
         Assertions.assertNotNull(hot.getLegend());
+        Assertions.assertEquals("HOT Projects", hot.getLegend().getName());
         Assertions.assertNotNull(hot.getLegend().getSteps());
         assertFalse(hot.isEventIdRequiredForRetrieval());
         //colors are only used for bivariate legends
