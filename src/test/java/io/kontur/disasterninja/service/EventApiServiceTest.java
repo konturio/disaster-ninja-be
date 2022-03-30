@@ -16,10 +16,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import uk.co.jemos.podam.api.PodamFactory;
@@ -55,15 +57,18 @@ class EventApiServiceTest {
         when(authorizationService.getAccessToken()).thenReturn(defaultAppToken);
     }
 
-    public void givenJwtTokenIs(String jwt) {
-        if (jwt == null) {
-            jwt = defaultAppToken;
+    public void givenJwtTokenIs(String tokenValue) {
+        if (tokenValue == null) {
+            tokenValue = defaultAppToken;
             when(client.getUserFeeds()).thenReturn(publicFeeds());
         } else {
             when(client.getUserFeeds()).thenReturn(userFeeds());
 
         }
-        Authentication authentication = new BearerTokenAuthenticationToken(jwt);
+        Authentication authentication = new JwtAuthenticationToken(Jwt.withTokenValue(tokenValue)
+            .claim("some", "claim")
+            .header(HttpHeaders.AUTHORIZATION, tokenValue)
+            .build());
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);

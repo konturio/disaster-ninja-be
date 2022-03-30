@@ -17,7 +17,7 @@ public class LayerSummaryDto {
     private final String group;
     private final boolean boundaryRequiredForRetrieval;
     private final boolean eventIdRequiredForRetrieval;
-    private final LegendDto legend;
+    private final StyleRuleDto legend; //TODO to remove in #9110
     private final List<String> copyrights;
     private final boolean ownedByUser;
     private final ObjectNode featureProperties;
@@ -26,7 +26,7 @@ public class LayerSummaryDto {
         return layer == null ? null : new LayerSummaryDto(layer.getId(), layer.getName(),
             layer.getDescription(), layer.getCategory() == null ? null : layer.getCategory(),
             layer.getGroup(), layer.isBoundaryRequiredForRetrieval(), layer.isEventIdRequiredForRetrieval(),
-            LegendDto.fromLegend(layer.getLegend()),
+            StyleRuleDto.fromLegend(layer.getLegend()),
             layer.getCopyrights(), layer.isOwnedByUser(), layer.getFeatureProperties());
     }
 }

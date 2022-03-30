@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.ExpectedCount;
@@ -29,11 +30,11 @@ class UserProfileClientTest extends TestDependingOnUserAuth {
     @Test
     public void getUserFeedTest() {
         //given
-        givenJwtTokenIs(jwt);
+        givenJwtTokenIs(getUserToken());
 
         server.expect(ExpectedCount.times(1), requestTo("/features/user_feed"))
             .andExpect(method(HttpMethod.GET))
-            .andExpect(header("Authorization", "Bearer " + jwt))
+            .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
             .andRespond(r -> withSuccess(USER_FEED, MediaType.APPLICATION_JSON).createResponse(r));
 
         //when
