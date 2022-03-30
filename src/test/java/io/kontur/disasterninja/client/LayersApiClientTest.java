@@ -13,9 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.HttpClientErrorException;
@@ -147,6 +145,17 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     }
 
     @Test
+    public void thereIsCacheControlNoCacheHeaderInRequest() {
+        final String id = "myId";
+        server.expect(ExpectedCount.times(1), requestTo("/collections/" + id))
+            .andExpect(method(HttpMethod.DELETE))
+            .andExpect(header(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue()))
+            .andRespond(withSuccess());
+
+        client.deleteLayer(LAYER_PREFIX + id);
+    }
+
+    @Test
     public void getCollectionsWithPagination() throws JsonProcessingException {
         //given
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
@@ -187,6 +196,28 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         assertEquals("https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf",
                 collection.getLinks().get(0).getHref());
         assertEquals(LegendType.SIMPLE, collection.getStyleRule().getType());
+    }
+
+    @Test
+    public void getCollectionsEmptyResponse() throws JsonProcessingException {
+        //given
+        String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
+                "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
+        UUID appId = UUID.randomUUID();
+
+        server.expect(ExpectedCount.times(2), requestTo("/collections/search"))
+            .andExpect(request -> {
+                String s = request.getBody().toString();
+                assertThat(s, hasJsonPath("$.appId", is(appId.toString())));
+            })
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(r -> withSuccess().createResponse(r));
+        //when
+        List<Collection> collections = client.getCollections(objectMapper.readValue(json, Geometry.class),
+            null, appId);
+
+        //then
+        assertEquals(0, collections.size());
     }
 
     @Test

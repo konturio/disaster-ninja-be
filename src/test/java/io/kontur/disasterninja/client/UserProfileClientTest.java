@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -61,6 +62,18 @@ class UserProfileClientTest extends TestDependingOnUserAuth {
         //then
         verify(securityContext, times(1)).getAuthentication();
         assertEquals(DEFAULT_FEED, feed);
+    }
+
+    @Test
+    public void thereIsCacheControlNoCacheHeaderInRequest() {
+        givenUserIsNotAuthenticated();
+
+        server.expect(ExpectedCount.times(1), requestTo("/features/user_feed"))
+            .andExpect(method(HttpMethod.GET))
+            .andExpect(header(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue()))
+            .andRespond(r -> withSuccess(DEFAULT_FEED, MediaType.APPLICATION_JSON).createResponse(r));
+
+        client.getUserDefaultFeed();
     }
 
 
