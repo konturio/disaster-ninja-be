@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.wololo.geojson.Geometry;
 
@@ -11,10 +12,12 @@ import static io.kontur.disasterninja.service.GeometryTransformer.geometriesAreE
 
 @Data
 public class AppDto {
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private UUID id;
     private String name;
     private String description;
     private boolean isPublic;
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Boolean ownedByUser;
     private List<String> features;
     private Geometry centerGeometry;
