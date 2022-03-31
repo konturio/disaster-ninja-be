@@ -43,7 +43,7 @@ public class SlackMessageFormatter {
         description.append(convertFireStatistic(episodeDetails, eventDetails, latestEpisode));
         description.append(convertOsmQuality(analytics));
 
-        String colorCode = getMessageColorCode(latestEpisode);
+        String colorCode = getMessageColorCode(event, latestEpisode);
         String status = getEventStatus(event);
         String alertUrl = createAlertLink(event, latestEpisode);
         String title = colorCode + status + event.getName();
@@ -182,22 +182,25 @@ public class SlackMessageFormatter {
         return event.getVersion() == 1 ? "" : "[Update] ";
     }
 
-    private String getMessageColorCode(FeedEpisode latestEpisode) {
-        String description = latestEpisode.getDescription();
+    private String getMessageColorCode(EventApiEventDto event, FeedEpisode latestEpisode) {
+        String name = event.getName();
 
-        if (StringUtils.isNotBlank(description) && description.startsWith("Green")) {
+        if (StringUtils.isNotBlank(name) && name.startsWith("Green")) {
             return ":large_green_circle: ";
-        } else if (StringUtils.isNotBlank(description) && description.startsWith("Orange")) {
+        } else if (StringUtils.isNotBlank(name) && name.startsWith("Orange")) {
             return ":large_orange_circle: ";
-        } else if (StringUtils.isNotBlank(description) && description.startsWith("Red")) {
+        } else if (StringUtils.isNotBlank(name) && name.startsWith("Red")) {
             return ":red_circle: ";
-        } else if (Severity.EXTREME.equals(latestEpisode.getSeverity())) {
-            return ":red_circle: ";
+        } else if (Severity.TERMINATION.equals(latestEpisode.getSeverity())) {
+            return "▰▱▱▱▱ ";
+        } else if (Severity.MINOR.equals(latestEpisode.getSeverity())) {
+            return "▰▰▱▱▱ ";
+        } else if (Severity.MODERATE.equals(latestEpisode.getSeverity())) {
+            return "▰▰▰▱▱ ";
         } else if (Severity.SEVERE.equals(latestEpisode.getSeverity())) {
-            return ":large_orange_circle: ";
-        } else if (Severity.MINOR.equals(latestEpisode.getSeverity())
-                || Severity.MODERATE.equals(latestEpisode.getSeverity())) {
-            return ":large_green_circle: ";
+            return "▰▰▰▰▱ ";
+        } else if (Severity.EXTREME.equals(latestEpisode.getSeverity())) {
+            return "▰▰▰▰▰ ";
         }
         return "";
     }
