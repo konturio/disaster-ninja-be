@@ -28,7 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AnalyticsTabServiceTest {
+class AnalyticsServiceTest {
 
     @Mock
     private InsightsApiGraphqlClient insightsApiGraphqlClient;
@@ -37,7 +37,7 @@ class AnalyticsTabServiceTest {
     private AnalyticsTabProperties configuration;
 
     @InjectMocks
-    private AnalyticsTabService service;
+    private AnalyticsService service;
 
     @Test
     public void calculateAnalyticsTest() {
@@ -83,7 +83,7 @@ class AnalyticsTabServiceTest {
         when(insightsApiGraphqlClient.analyticsTabQuery(geoJSONArgumentCaptor.capture(), functionArgsArgumentCaptor.capture())).thenReturn(completableFuture);
 
         //when
-        List<AnalyticsDto> result = service.calculateAnalytics(GeoJSONFactory.create(geoJsonString));
+        List<AnalyticsDto> result = service.calculateAnalyticsForPanel(GeoJSONFactory.create(geoJsonString));
 
         //then
         GeoJSON geoJSONCaptorValue = geoJSONArgumentCaptor.getValue();
@@ -144,7 +144,7 @@ class AnalyticsTabServiceTest {
 
         //when
         try {
-            service.calculateAnalytics(GeoJSONFactory.create(geoJsonString));
+            service.calculateAnalyticsForPanel(GeoJSONFactory.create(geoJsonString));
             throw new RuntimeException("expected exception was not thrown");
         } catch (WebApplicationException e) {
             assertEquals("Exception when getting data from insights-api using apollo client", e.getMessage());
@@ -185,7 +185,7 @@ class AnalyticsTabServiceTest {
         when(insightsApiGraphqlClient.analyticsTabQuery(any(GeoJSON.class), anyList())).thenReturn(completableFuture);
 
         //when
-        List<AnalyticsDto> result = service.calculateAnalytics(GeoJSONFactory.create(geoJsonString));
+        List<AnalyticsDto> result = service.calculateAnalyticsForPanel(GeoJSONFactory.create(geoJsonString));
 
         //then
         assertEquals(1, result.size());

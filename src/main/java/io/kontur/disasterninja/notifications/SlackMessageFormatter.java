@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.notifications;
 
+import io.kontur.disasterninja.dto.Severity;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
 import org.apache.commons.lang3.StringUtils;
@@ -9,9 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.text.DecimalFormatSymbols;
+import java.util.*;
 
 @Component
 @ConditionalOnProperty(value="notifications.enabled")
@@ -19,31 +19,43 @@ public class SlackMessageFormatter {
 
     private static final String BODY = "{\"text\":\"><%s|%s>%s\"}";
     private static final String gdacsReportLinkPattern = "https://www.gdacs.org/report.aspx?eventtype=%s&eventid=%s";
-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,###.##");
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,###.##",
+            new DecimalFormatSymbols(Locale.US));
     @Value("${notifications.alertUrlPattern:}")
     private String notificationAlertUrlPattern;
 
-    public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties) {
+    public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
+                         Map<String, Double> analytics) {
 
         List<FeedEpisode> eventEpisodes = event.getEpisodes();
         eventEpisodes.sort(Comparator.comparing(FeedEpisode::getUpdatedAt));
 
         FeedEpisode latestEpisode = eventEpisodes.get(eventEpisodes.size() - 1);
-        String alertUrl = createAlertLink(event, latestEpisode);
-        StringBuilder description = new StringBuilder();
-        if (StringUtils.isNoneBlank(latestEpisode.getDescription())) {
-            description.append("\\n>").append(latestEpisode.getDescription());
-        }
         Map<String, Object> episodeDetails = latestEpisode.getEpisodeDetails();
         Map<String, Object> eventDetails = event.getEventDetails();
 
+        StringBuilder description = new StringBuilder();
+        description.append(convertNotificationDescription(latestEpisode));
         description.append(convertUrbanStatistic(urbanPopulationProperties));
         description.append(convertPopulationStatistic(episodeDetails));
         description.append(convertIndustrialStatistic(episodeDetails, eventDetails));
         description.append(convertForestStatistic(episodeDetails, eventDetails));
         description.append(convertFireStatistic(episodeDetails, eventDetails, latestEpisode));
+        description.append(convertOsmQuality(analytics));
 
-        return String.format(BODY, alertUrl, event.getName(), description);
+        String colorCode = getMessageColorCode(event, latestEpisode);
+        String status = getEventStatus(event);
+        String alertUrl = createAlertLink(event, latestEpisode);
+        String title = colorCode + status + event.getName();
+        return String.format(BODY, alertUrl, title, description);
+    }
+
+    private String convertNotificationDescription(FeedEpisode latestEpisode) {
+        String description = latestEpisode.getDescription();
+        if (StringUtils.isBlank(description)) {
+            return "";
+        }
+        return "\\n>" + description;
     }
 
     private String convertUrbanStatistic(Map<String, Object> urbanPopulationProperties) {
@@ -97,6 +109,50 @@ public class SlackMessageFormatter {
         return convertStatistic(patternEpisode, patternEvent, episodeValue, eventValue);
     }
 
+    private String convertOsmQuality(Map<String, Double> analytics) {
+        StringBuilder result = new StringBuilder();
+
+        result.append(convertOsmGapsValues(analytics));
+        result.append(convertNoBuildingsValues(analytics));
+        result.append(convertNoRoadsValue(analytics));
+
+        if (StringUtils.isNotBlank(result)) {
+            return "\\n>OpenStreetMap gaps:" + result;
+        }
+        return "";
+    }
+
+    private String convertOsmGapsValues(Map<String, Double> analytics) {
+        String osmObjects = "\\n>:world_map: %s km² (%s%%) of populated area needs a map for %s people.";
+        String osmGapsArea = formatNumber(analytics.get("osmGapsArea"));
+        String osmGapsPercentage = formatNumber(analytics.get("osmGapsPercentage"));
+        String osmGapsPopulation = formatNumber(analytics.get("osmGapsPopulation"));
+        if (!"0".equals(osmGapsArea) && !"0".equals(osmGapsPopulation)) {
+            return String.format(osmObjects, osmGapsArea, osmGapsPercentage, osmGapsPopulation);
+        }
+        return "";
+    }
+
+    private String convertNoBuildingsValues(Map<String, Double> analytics) {
+        String osmBuildings = "\\n>:house_buildings: Buildings map gaps: %s km² for %s people.";
+        String noBuildingsArea = formatNumber(analytics.get("noBuildingsArea"));
+        String noBuildingsPopulation = formatNumber(analytics.get("noBuildingsPopulation"));
+        if (!"0".equals(noBuildingsArea) && !"0".equals(noBuildingsPopulation)) {
+            return String.format(osmBuildings, noBuildingsArea, noBuildingsPopulation);
+        }
+        return "";
+    }
+
+    private String convertNoRoadsValue(Map<String, Double> analytics) {
+        String osmRoads = "\\n>:motorway: Roads maps gaps: %s km² for %s people.";
+        String noRoadsArea = formatNumber(analytics.get("noRoadsArea"));
+        String noRoadsPopulation = formatNumber(analytics.get("noRoadsPopulation"));
+        if (!"0".equals(noRoadsArea) && !"0".equals(noRoadsPopulation)) {
+            return String.format(osmRoads, noRoadsArea, noRoadsPopulation);
+        }
+        return "";
+    }
+
     private String convertStatistic(String patternEpisode, String patternEvent, String episodeValue,
                                     String eventValue) {
         if ("0".equals(episodeValue) && "0".equals(eventValue)) {
@@ -111,6 +167,33 @@ public class SlackMessageFormatter {
         }
         result.append(".");
         return result.toString();
+    }
+
+    private String getEventStatus(EventApiEventDto event) {
+        return event.getVersion() == 1 ? "" : "[Update] ";
+    }
+
+    private String getMessageColorCode(EventApiEventDto event, FeedEpisode latestEpisode) {
+        String name = event.getName();
+
+        if (StringUtils.isNotBlank(name) && name.startsWith("Green")) {
+            return ":large_green_circle: ";
+        } else if (StringUtils.isNotBlank(name) && name.startsWith("Orange")) {
+            return ":large_orange_circle: ";
+        } else if (StringUtils.isNotBlank(name) && name.startsWith("Red")) {
+            return ":red_circle: ";
+        } else if (Severity.TERMINATION.equals(latestEpisode.getSeverity())) {
+            return "▰▱▱▱▱ ";
+        } else if (Severity.MINOR.equals(latestEpisode.getSeverity())) {
+            return "▰▰▱▱▱ ";
+        } else if (Severity.MODERATE.equals(latestEpisode.getSeverity())) {
+            return "▰▰▰▱▱ ";
+        } else if (Severity.SEVERE.equals(latestEpisode.getSeverity())) {
+            return "▰▰▰▰▱ ";
+        } else if (Severity.EXTREME.equals(latestEpisode.getSeverity())) {
+            return "▰▰▰▰▰ ";
+        }
+        return "";
     }
 
     private String createAlertLink(EventApiEventDto event, FeedEpisode episode) {

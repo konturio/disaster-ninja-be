@@ -4,6 +4,8 @@ import io.kontur.disasterninja.client.EventApiClient;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
+import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
+import io.kontur.disasterninja.service.AnalyticsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +29,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptyMap;
@@ -44,28 +47,31 @@ public class NotificationsProcessor {
     private final EventApiClient eventApiClient;
     private final InsightsApiGraphqlClient insightsApiClient;
     private final SlackMessageFormatter slackMessageFormatter;
+    private final AnalyticsService analyticsService;
+    private final NotificationsAnalyticsConfig notificationsAnalyticsConfig;
 
     @Value("${notifications.slackWebHook:}")
     private String slackWebHookUrl;
 
     public NotificationsProcessor(SlackMessageFormatter slackMessageFormatter,
                                   EventApiClient eventApiClient,
-                                  InsightsApiGraphqlClient insightsApiClient) {
+                                  InsightsApiGraphqlClient insightsApiClient,
+                                  AnalyticsService analyticsService,
+                                  NotificationsAnalyticsConfig notificationsAnalyticsConfig) {
 
         this.slackMessageFormatter = slackMessageFormatter;
         this.eventApiClient = eventApiClient;
         this.insightsApiClient = insightsApiClient;
-    }
-
-    @PostConstruct
-    public void init() {
-        List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, 1);
-        EventApiEventDto latestEvent = events.get(0);
-        latestUpdatedDate = latestEvent.getUpdatedAt();
+        this.analyticsService = analyticsService;
+        this.notificationsAnalyticsConfig = notificationsAnalyticsConfig;
     }
 
     @Scheduled(fixedRate = 60000, initialDelay = 1000)
     public void run() {
+        if (latestUpdatedDate == null) {
+            initUpdateDate();
+            return;
+        }
         try {
             List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, 100);
 
@@ -87,18 +93,26 @@ public class NotificationsProcessor {
         }
     }
 
+    private void initUpdateDate() {
+        List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, 1);
+        EventApiEventDto latestEvent = events.get(0);
+        latestUpdatedDate = latestEvent.getUpdatedAt();
+    }
+
     private void process(EventApiEventDto event, Geometry geometry) {
         LOG.info("New event has been occurred. Sending notifications. Event ID = '{}', name = '{}'",
                 event.getEventId(), event.getName());
 
         Map<String, Object> urbanPopulationProperties = new HashMap<>();
+        Map<String, Double> analytics = new HashMap<>();
         try {
             urbanPopulationProperties = obtainUrbanPopulation(geometry);
+            analytics = obtainAnalytics(geometry);
         } catch (ExecutionException | InterruptedException e) {
             LOG.warn(e.getMessage(), e);
         }
 
-        String message = slackMessageFormatter.format(event, urbanPopulationProperties);
+        String message = slackMessageFormatter.format(event, urbanPopulationProperties, analytics);
         sendNotification(message);
 
         LOG.info("Notifications were sent.");
@@ -133,6 +147,14 @@ public class NotificationsProcessor {
                 .filter(props -> "Kontur Urban Core".equals(props.get("name")))
                 .findFirst()
                 .orElseGet(Collections::emptyMap);
+    }
+
+    private Map<String, Double> obtainAnalytics(Geometry geometry) {
+        List<AnalyticsTabQuery.Function> functionsResults = analyticsService.calculateRawAnalytics(geometry,
+                notificationsAnalyticsConfig.getFunctions());
+        return functionsResults.stream()
+                .collect(Collectors.toMap(AnalyticsTabQuery.Function::id,
+                        value -> Optional.ofNullable(value.result()).orElse(0.0)));
     }
 
     private void sendNotification(String message) {
