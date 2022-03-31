@@ -112,38 +112,29 @@ public class SlackMessageFormatter {
     private String convertOsmQuality(Map<String, Double> analytics) {
         StringBuilder result = new StringBuilder();
 
-        result.append(convertOsmGapsPercentage(analytics));
         result.append(convertOsmGapsValues(analytics));
         result.append(convertNoBuildingsValues(analytics));
         result.append(convertNoRoadsValue(analytics));
 
         if (StringUtils.isNotBlank(result)) {
-            return "\\n>OSM quality:" + result;
-        }
-        return "";
-    }
-
-    private String convertOsmGapsPercentage(Map<String, Double> analytics) {
-        String osmGaps = "\\n>:mag_right: OSM gaps: %s%%.";
-        String osmGapsPercentage = formatNumber(analytics.get("osmGapsPercentage"));
-        if (!"0".equals(osmGapsPercentage)) {
-            return String.format(osmGaps, osmGapsPercentage);
+            return "\\n>OpenStreetMap gaps:" + result;
         }
         return "";
     }
 
     private String convertOsmGapsValues(Map<String, Double> analytics) {
-        String osmObjects = "\\n>:world_map: Populated area without OSM objects: %s km², contains %s people.";
+        String osmObjects = "\\n>:world_map: %s km² (%s%%) of populated area needs a map for %s people.";
         String osmGapsArea = formatNumber(analytics.get("osmGapsArea"));
+        String osmGapsPercentage = formatNumber(analytics.get("osmGapsPercentage"));
         String osmGapsPopulation = formatNumber(analytics.get("osmGapsPopulation"));
         if (!"0".equals(osmGapsArea) && !"0".equals(osmGapsPopulation)) {
-            return String.format(osmObjects, osmGapsArea, osmGapsPopulation);
+            return String.format(osmObjects, osmGapsArea, osmGapsPercentage, osmGapsPopulation);
         }
         return "";
     }
 
     private String convertNoBuildingsValues(Map<String, Double> analytics) {
-        String osmBuildings = "\\n>:house_buildings: Populated area without OSM buildings: %s km², contains %s people.";
+        String osmBuildings = "\\n>:house_buildings: Buildings map gaps: %s km² for %s people.";
         String noBuildingsArea = formatNumber(analytics.get("noBuildingsArea"));
         String noBuildingsPopulation = formatNumber(analytics.get("noBuildingsPopulation"));
         if (!"0".equals(noBuildingsArea) && !"0".equals(noBuildingsPopulation)) {
@@ -153,7 +144,7 @@ public class SlackMessageFormatter {
     }
 
     private String convertNoRoadsValue(Map<String, Double> analytics) {
-        String osmRoads = "\\n>:motorway: Populated area without OSM roads: %s km², contains %s people.";
+        String osmRoads = "\\n>:motorway: Roads maps gaps: %s km² for %s people.";
         String noRoadsArea = formatNumber(analytics.get("noRoadsArea"));
         String noRoadsPopulation = formatNumber(analytics.get("noRoadsPopulation"));
         if (!"0".equals(noRoadsArea) && !"0".equals(noRoadsPopulation)) {
