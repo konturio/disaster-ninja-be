@@ -66,7 +66,7 @@ public class LayerConfigServiceTest {
         Assertions.assertNotNull(hot.getLegend().getSteps());
         assertFalse(hot.isEventIdRequiredForRetrieval());
         //colors are only used for bivariate legends
-        Assertions.assertNull(hot.getLegend().getBivariateColors());
+        Assertions.assertNull(hot.getLegend().getColors());
         Assertions.assertEquals("projectLink", hot.getLegend().getLinkProperty());
         // all 3 steps are present since there is at least one feature for each step
         Assertions.assertEquals(2, hot.getLegend().getSteps().size());
@@ -114,7 +114,7 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("projectLink", hot.getLegend().getLinkProperty());
         Assertions.assertNotNull(hot.getLegend().getSteps());
         //colors are only used for bivariate legends
-        Assertions.assertNull(hot.getLegend().getBivariateColors());
+        Assertions.assertNull(hot.getLegend().getColors());
         // just one step is present since there are no features for step 2 (Published)
         Assertions.assertEquals(1, hot.getLegend().getSteps().size());
 

@@ -102,10 +102,10 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
 
         //legend
         assertNotNull(biv.getLegend());
-        assertNotNull(biv.getLegend().getBivariateAxes());
+        assertNotNull(biv.getLegend().getAxes());
 
         //axisX
-        BivariateLegendAxisDescription x = biv.getLegend().getBivariateAxes().getX();
+        BivariateLegendAxisDescription x = biv.getLegend().getAxes().getX();
         assertEquals("OSM objects (n/km²)", x.getLabel());
         assertEquals(2, x.getQuotient().size());
         assertEquals(2, x.getQuotient().stream().filter(q -> q.equals("count") || q.equals("area_km2")).count());
@@ -115,7 +115,7 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
 
 
         //axisY
-        BivariateLegendAxisDescription y = biv.getLegend().getBivariateAxes().getY();
+        BivariateLegendAxisDescription y = biv.getLegend().getAxes().getY();
         assertEquals("Population (ppl/km²)", y.getLabel());
         assertEquals(2, y.getQuotient().size());
         assertEquals(2, y.getQuotient().stream().filter(q -> q.equals("population") || q.equals("area_km2")).count());
@@ -126,13 +126,11 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         //skipping other params
 
         //colors
-        assertNotNull(biv.getLegend().getBivariateColors());
-        assertEquals(9, biv.getLegend().getBivariateColors().entrySet().size());
+        assertNotNull(biv.getLegend().getColors());
+        assertEquals(9, biv.getLegend().getColors().size());
 
-        String a1 = biv.getLegend().getBivariateColors().get("A1");
-        assertEquals("rgb(111,232,157)", a1);
-        String c3 = biv.getLegend().getBivariateColors().get("C3");
-        assertEquals("rgb(232,232,333)", c3);
+        assertEquals("A1", biv.getLegend().getColors().get(0).getId());
+        assertEquals("rgb(111,232,157)", biv.getLegend().getColors().get(0).getColor());
 
         //copyrights
         assertEquals(3, biv.getCopyrights().size());

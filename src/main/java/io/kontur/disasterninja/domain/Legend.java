@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.domain;
 
 import io.kontur.disasterninja.domain.enums.LegendType;
+import io.kontur.disasterninja.dto.layer.ColorDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,6 @@ import lombok.extern.jackson.Jacksonized;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Data
 @Builder
@@ -24,7 +24,8 @@ public class Legend {
     @Builder.Default
     private List<LegendStep> steps = new ArrayList<>();
     @Builder.Default
-    private Map<String, String> bivariateColors = null;
+    private List<ColorDto> colors = null;
     @Builder.Default
-    private BivariateLegendAxes bivariateAxes = null;
+    private BivariateLegendAxes axes = null;
+    private Tooltip tooltip;
 }

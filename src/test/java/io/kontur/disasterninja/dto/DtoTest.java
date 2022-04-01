@@ -57,7 +57,7 @@ public class DtoTest {
             .legend(Legend.builder().build())
             .build();
         layer.getLegend().setSteps(null);
-        layer.getLegend().setBivariateColors(null);
+        layer.getLegend().setColors(null);
 
         LayerSummaryDto summaryDto = LayerSummaryDto.fromLayer(layer);
         assertNull(summaryDto.getLegend().getSteps());
@@ -83,7 +83,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(), response.get(0).isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
-        Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().toLegend());
+        Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend());
     }
 
     @Test
@@ -127,7 +127,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(), response.get(0).isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
-        Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().toLegend());
+        Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend());
     }
 
     @Test
@@ -151,7 +151,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(), response.get(0).isBoundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
-        Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend().toLegend());
+        Assertions.assertEquals(layer.getLegend(), response.get(0).getLegend());
     }
 
     @Test
@@ -181,7 +181,7 @@ public class DtoTest {
             .tileSize(2)
             .data(geoJSON).build();
         Legend legend = new Legend("legendName", LegendType.SIMPLE, null, new ArrayList<>(),
-                new HashMap<>(), new BivariateLegendAxes());
+                new ArrayList<>(), new BivariateLegendAxes(), null);
         Map<String, Object> map = new HashMap<>();
         map.put("prop", "value");
 
@@ -227,7 +227,7 @@ public class DtoTest {
             .urls(List.of("url-com.com"))
             .tileSize(2)
             .data(geoJSON).build();
-        Legend legend = new Legend("legendName", LegendType.SIMPLE, null, new ArrayList<>(), new HashMap<>(), new BivariateLegendAxes());
+        Legend legend = new Legend("legendName", LegendType.SIMPLE, null, new ArrayList<>(), new ArrayList<>(), new BivariateLegendAxes(), null);
         Map<String, Object> map = new HashMap<>();
         map.put("prop", "value");
         legend.getSteps().add(new LegendStep("param name", null, "param value", null, null, "step name",

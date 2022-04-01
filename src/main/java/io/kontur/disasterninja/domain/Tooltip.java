@@ -1,4 +1,4 @@
-package io.kontur.disasterninja.dto.layer;
+package io.kontur.disasterninja.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ColorDto {
-    private String id;
-    private String color;
+public class Tooltip {
+
+    private String type;
+    private String paramName;
 }
