@@ -144,7 +144,7 @@ public class SlackMessageFormatter {
     }
 
     private String convertNoRoadsValue(Map<String, Double> analytics) {
-        String osmRoads = "\\n>:motorway: Roads maps gaps: %s km² for %s people.";
+        String osmRoads = "\\n>:motorway: Road maps gaps: %s km² for %s people.";
         String noRoadsArea = formatNumber(analytics.get("noRoadsArea"));
         String noRoadsPopulation = formatNumber(analytics.get("noRoadsPopulation"));
         if (!"0".equals(noRoadsArea) && !"0".equals(noRoadsPopulation)) {
