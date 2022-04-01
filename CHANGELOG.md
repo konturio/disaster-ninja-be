@@ -1,6 +1,17 @@
 # Release notes
 
 ## UNRELEASED
+#### Added
+
+#### Changed
+
+#### Removed
+
+#### Installation sequence
+
+
+
+## Release 0.2.0 - 2022-04-01
 
 #### Added
 - appId parameter is added to the next list of endpoints

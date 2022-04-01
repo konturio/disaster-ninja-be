@@ -11,7 +11,7 @@ jar {
 }
 
 group = 'io.kontur'
-version = '0.1.9-SNAPSHOT'
+version = '0.2.0'
 sourceCompatibility = '16'
 targetCompatibility = '16'
 
