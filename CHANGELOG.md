@@ -10,6 +10,11 @@
 #### Installation sequence
 
 
+## Release 0.3.0 - 2022-04-04
+
+#### Added
+- Slack notifications
+
 
 ## Release 0.2.0 - 2022-04-01
 
@@ -19,7 +24,6 @@
   - POST /layers/details
   - POST /layers
   - PUT /layers/{id}
-
 
 #### Changed
 
