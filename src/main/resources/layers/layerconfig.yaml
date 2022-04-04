@@ -83,6 +83,13 @@ configs:
           style:
             width: 1
             color: '#646F78'
+        - stepName: 'Exposure Area'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'globalArea'
+          style:
+            width: 1
+            color: '#051626'
 
   - id: 'eventShape.DROUGHT'
     globalOverlay: false
@@ -105,7 +112,7 @@ configs:
         - stepName: 'Exposure Area'
           stepShape: 'circle'
           paramName: 'areaType'
-          paramValue: 'exposure'
+          paramPattern: 'globalArea|exposure'
           style:
             width: 3
             color: '#051626'
