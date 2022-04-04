@@ -87,7 +87,6 @@ public class WebConfiguration {
                 .build();
     }
 
-
     @Bean
     public RestTemplate userProfileRestTemplate(RestTemplateBuilder builder,
                                                 @Value("${kontur.platform.userProfileApi.url}") String url,

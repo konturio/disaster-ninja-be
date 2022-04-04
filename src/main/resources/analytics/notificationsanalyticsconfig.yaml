@@ -1,0 +1,38 @@
+notificationsanalyticsconfig:
+  functions:
+    - id: osmGapsPercentage
+      function: percentageXWhereNoY
+      arguments:
+      - populated_area_km2
+      - count
+    - id: osmGapsArea
+      function: sumXWhereNoY
+      arguments:
+      - populated_area_km2
+      - count
+    - id: osmGapsPopulation
+      function: sumXWhereNoY
+      arguments:
+      - population
+      - count
+    - id: noBuildingsArea
+      function: sumXWhereNoY
+      arguments:
+      - populated_area_km2
+      - building_count
+    - id: noBuildingsPopulation
+      function: sumXWhereNoY
+      arguments:
+      - population
+      - building_count
+    - id: noRoadsArea
+      function: sumXWhereNoY
+      arguments:
+      - populated_area_km2
+      - highway_length
+    - id: noRoadsPopulation
+      function: sumXWhereNoY
+      arguments:
+      - population
+      - highway_length
+
