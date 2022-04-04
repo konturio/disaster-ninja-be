@@ -300,12 +300,12 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
         Assertions.assertEquals(7, layer.getLegend().getSteps().size());
         Assertions.assertEquals("Centroid", layer.getLegend().getSteps().get(0).getStepName());
-        Assertions.assertEquals("Exposure Area 60 km/h", layer.getLegend().getSteps().get(1).getStepName());
-        Assertions.assertEquals("Exposure Area 90 km/h", layer.getLegend().getSteps().get(2).getStepName());
-        Assertions.assertEquals("Exposure Area 120 km/h", layer.getLegend().getSteps().get(3).getStepName());
-        Assertions.assertEquals("Line Track", layer.getLegend().getSteps().get(4).getStepName());
-        Assertions.assertEquals("Point Track", layer.getLegend().getSteps().get(5).getStepName());
-        Assertions.assertEquals("Uncertainty Cones", layer.getLegend().getSteps().get(6).getStepName());
+        Assertions.assertEquals("Exposure Area 60 km/h", layer.getLegend().getSteps().get(4).getStepName());
+        Assertions.assertEquals("Exposure Area 90 km/h", layer.getLegend().getSteps().get(5).getStepName());
+        Assertions.assertEquals("Exposure Area 120 km/h", layer.getLegend().getSteps().get(6).getStepName());
+        Assertions.assertEquals("Line Track", layer.getLegend().getSteps().get(1).getStepName());
+        Assertions.assertEquals("Point Track", layer.getLegend().getSteps().get(2).getStepName());
+        Assertions.assertEquals("Uncertainty Cones", layer.getLegend().getSteps().get(3).getStepName());
         //skipping other fields
     }
 

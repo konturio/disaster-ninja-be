@@ -46,6 +46,7 @@ configs:
           style:
             width: 3
             color: '#F5A663'
+          order: 10
         - stepName: 'Exposure Area 90 km/h'
           stepShape: 'circle'
           paramName: 'Class'
@@ -53,6 +54,7 @@ configs:
           style:
             width: 3
             color: '#DA5080'
+          order: 11
         - stepName: 'Exposure Area 120 km/h'
           stepShape: 'circle'
           paramName: 'Class'
@@ -60,6 +62,7 @@ configs:
           style:
             width: 2
             color: '#830909'
+          order: 12
         - stepName: 'Line Track'
           stepShape: 'circle'
           paramName: 'areaType'
