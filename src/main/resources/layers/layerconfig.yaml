@@ -113,6 +113,7 @@ configs:
           stepShape: 'circle'
           paramName: 'areaType'
           paramPattern: 'globalArea|exposure'
+          paramValue: 'globalArea'
           style:
             width: 3
             color: '#051626'
@@ -165,6 +166,7 @@ configs:
           stepShape: 'circle'
           paramName: 'areaType'
           paramPattern: 'position|exposure'
+          paramValue: 'exposure'
           style:
             width: 3
             color: '#051626'
