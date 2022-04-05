@@ -170,16 +170,10 @@ configs:
           style:
             width: 3
             color: '#051626'
-        - stepName: 'Exposure Area'
-          stepShape: 'circle'
-          paramName: 'areaType'
-          paramValue: 'alertArea'
-          style:
-            width: 3
-            color: '#051626'
         - stepName: 'Alert Area'
           stepShape: 'circle'
           paramName: 'areaType'
+          paramPattern: 'globalArea|alertArea'
           paramValue: 'globalArea'
           style:
             width: 2
