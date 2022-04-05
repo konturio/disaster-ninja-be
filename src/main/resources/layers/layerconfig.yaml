@@ -34,8 +34,8 @@ configs:
       steps:
         - stepName: 'Centroid'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Point_Centroid'
+          paramName: 'areaType'
+          paramValue: 'centerPoint'
           style:
             circle-radius: 3
             circle-color: '#051626'
@@ -46,6 +46,7 @@ configs:
           style:
             width: 3
             color: '#F5A663'
+          order: 10
         - stepName: 'Exposure Area 90 km/h'
           stepShape: 'circle'
           paramName: 'Class'
@@ -53,6 +54,7 @@ configs:
           style:
             width: 3
             color: '#DA5080'
+          order: 11
         - stepName: 'Exposure Area 120 km/h'
           stepShape: 'circle'
           paramName: 'Class'
@@ -60,28 +62,34 @@ configs:
           style:
             width: 2
             color: '#830909'
+          order: 12
         - stepName: 'Line Track'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramPattern: 'Line_Line_[0-9]+' #all matches to be merged into single step
-          paramValue: 'Line_Line'
+          paramName: 'areaType'
+          paramValue: 'track'
           style:
             color: '#8C949B'
         - stepName: 'Point Track'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramPattern: 'Point_Polygon_Point_[0-9]+' #all matches to be merged into single step
-          paramValue: 'Point_Polygon_Point'
+          paramName: 'areaType'
+          paramValue: 'position'
           style:
             circle-radius: 2
             circle-color: '#051626'
         - stepName: 'Uncertainty Cones'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_Cones'
+          paramName: 'areaType'
+          paramValue: 'alertArea'
           style:
             width: 1
             color: '#646F78'
+        - stepName: 'Exposure Area'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'globalArea'
+          style:
+            width: 1
+            color: '#051626'
 
   - id: 'eventShape.DROUGHT'
     globalOverlay: false
@@ -96,15 +104,16 @@ configs:
       steps:
         - stepName: 'Centroid'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Point_Centroid'
+          paramName: 'areaType'
+          paramValue: 'centerPoint'
           style:
             circle-radius: 3
             circle-color: '#051626'
         - stepName: 'Exposure Area'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_area'
+          paramName: 'areaType'
+          paramPattern: 'globalArea|exposure'
+          paramValue: 'globalArea'
           style:
             width: 3
             color: '#051626'
@@ -122,15 +131,15 @@ configs:
       steps:
         - stepName: 'Centroid'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Point_Centroid'
+          paramName: 'areaType'
+          paramValue: 'centerPoint'
           style:
             circle-radius: 3
             circle-color: '#051626'
         - stepName: 'Exposure Area 100 km'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_Circle'
+          paramName: 'areaType'
+          paramValue: 'alertArea'
           style:
             width: 3
             color: '#646F78'
@@ -148,22 +157,30 @@ configs:
       steps:
         - stepName: 'Centroid'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Point_Centroid'
+          paramName: 'areaType'
+          paramValue: 'centerPoint'
           style:
             circle-radius: 3
             circle-color: '#051626'
         - stepName: 'Exposure Area'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_Affected'
+          paramName: 'areaType'
+          paramPattern: 'position|exposure'
+          paramValue: 'exposure'
+          style:
+            width: 3
+            color: '#051626'
+        - stepName: 'Exposure Area'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'alertArea'
           style:
             width: 3
             color: '#051626'
         - stepName: 'Alert Area'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_Global'
+          paramName: 'areaType'
+          paramValue: 'globalArea'
           style:
             width: 2
             color: '#051626'
@@ -182,15 +199,29 @@ configs:
       steps:
         - stepName: 'Centroid'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Point_Centroid'
+          paramName: 'areaType'
+          paramValue: 'centerPoint'
+          style:
+            circle-radius: 3
+            circle-color: '#051626'
+        - stepName: 'Start point'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'startPoint'
           style:
             circle-radius: 3
             circle-color: '#051626'
         - stepName: 'Exposure Area'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_area'
+          paramName: 'areaType'
+          paramValue: 'exposure'
+          style:
+            width: 3
+            color: '#051626'
+        - stepName: 'Alert Area'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'alertArea'
           style:
             width: 3
             color: '#051626'
@@ -208,15 +239,15 @@ configs:
       steps:
         - stepName: 'Centroid'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Point_Centroid'
+          paramName: 'areaType'
+          paramValue: 'centerPoint'
           style:
             circle-radius: 3
             circle-color: '#051626'
         - stepName: 'Exposure Area 100 km'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_Circle'
+          paramName: 'areaType'
+          paramValue: 'alertArea'
           style:
             width: 3
             color: '#051626'
