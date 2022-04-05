@@ -25,29 +25,35 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class AnalyticsTabService {
-    private static final Logger LOG = LoggerFactory.getLogger(AnalyticsTabService.class);
+public class AnalyticsService {
+    private static final Logger LOG = LoggerFactory.getLogger(AnalyticsService.class);
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
 
     private final AnalyticsTabProperties configuration;
 
-    public List<AnalyticsDto> calculateAnalytics(GeoJSON geoJSON) {
+    public List<AnalyticsDto> calculateAnalyticsForPanel(GeoJSON geoJSON) {
         List<AnalyticsField> fields = configuration.getFields();
-        List<AnalyticsTabQuery.Function> functionsResults = null;
-        List<FunctionArgs> functionArgs = createFunctionArgsList(fields);
+        List<Function> functions = fields.stream()
+                .flatMap(field -> field.getFunctions().stream())
+                .toList();
+        List<AnalyticsTabQuery.Function> functionsResults = calculateRawAnalytics(geoJSON, functions);
+
+        return createResultDto(fields, functionsResults);
+    }
+
+    public List<AnalyticsTabQuery.Function> calculateRawAnalytics(GeoJSON geoJSON, List<Function> functions) {
+        List<FunctionArgs> functionArgs = createFunctionArgsList(functions);
         try {
-            functionsResults = insightsApiGraphqlClient.analyticsTabQuery(geoJSON, functionArgs).get();
+            return insightsApiGraphqlClient.analyticsTabQuery(geoJSON, functionArgs).get();
         } catch (Exception e) {
             LOG.error("Can't load analytics data due to exception in graphql call: {}", e.getMessage(), e);
             throw new WebApplicationException("Exception when getting data from insights-api using apollo client",
                 HttpStatus.BAD_GATEWAY);
         }
-        return createResultDto(fields, functionsResults);
     }
 
-    private List<FunctionArgs> createFunctionArgsList(List<AnalyticsField> fields) {
-        return fields.stream()
-                .flatMap(field -> field.getFunctions().stream())
+    private List<FunctionArgs> createFunctionArgsList(List<Function> functions) {
+        return functions.stream()
                 .map(field -> FunctionArgs.builder()
                         .id(field.getId())
                         .name(field.getFunction())

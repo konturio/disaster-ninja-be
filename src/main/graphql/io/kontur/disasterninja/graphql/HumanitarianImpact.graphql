@@ -1,0 +1,10 @@
+query HumanitarianImpact($polygon: GeoJSON) {
+    polygonStatistic(polygonStatisticRequest:{
+        polygonV2: $polygon
+    }
+    ){
+        analytics {
+            humanitarianImpact
+        }
+    }
+}
