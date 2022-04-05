@@ -204,10 +204,24 @@ configs:
           style:
             circle-radius: 3
             circle-color: '#051626'
+        - stepName: 'Start point'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'startPoint'
+          style:
+            circle-radius: 3
+            circle-color: '#051626'
         - stepName: 'Exposure Area'
           stepShape: 'circle'
           paramName: 'areaType'
           paramValue: 'exposure'
+          style:
+            width: 3
+            color: '#051626'
+        - stepName: 'Alert Area'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'alertArea'
           style:
             width: 3
             color: '#051626'
