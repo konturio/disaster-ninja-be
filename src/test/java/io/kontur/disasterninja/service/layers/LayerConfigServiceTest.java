@@ -19,6 +19,7 @@ import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 import static io.kontur.disasterninja.domain.enums.LegendType.SIMPLE;
 import static io.kontur.disasterninja.dto.EventType.CYCLONE;
+import static io.kontur.disasterninja.dto.EventType.FLOOD;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.EVENT_SHAPE_LAYER_ID;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -277,16 +278,16 @@ public class LayerConfigServiceTest {
             .source(LayerSource.builder()
                 .data(new FeatureCollection(new Feature[]{
                     //random order, some duplicates
-                    feature("Class", "Point_Centroid"),
+                    feature("areaType", "centerPoint"),
                     feature("Class", "Poly_Red"),
                     feature("Class", "Poly_Green"),
                     feature("Class", "Poly_Orange"),
                     feature("Class", "Poly_Orange"),
                     feature("Class", "Poly_Green"),
-                    feature("Class", "Point_Polygon_Point_234"),
+                    feature("areaType", "position"),
                     feature("Class", "Poly_Green"),
-                    feature("Class", "Line_Line_2"),
-                    feature("Class", "Poly_Cones")}
+                    feature("areaType", "track"),
+                    feature("areaType", "alertArea")}
                 ))
                 .build())
             .build();
@@ -299,12 +300,12 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
         Assertions.assertEquals(7, layer.getLegend().getSteps().size());
         Assertions.assertEquals("Centroid", layer.getLegend().getSteps().get(0).getStepName());
-        Assertions.assertEquals("Exposure Area 60 km/h", layer.getLegend().getSteps().get(1).getStepName());
-        Assertions.assertEquals("Exposure Area 90 km/h", layer.getLegend().getSteps().get(2).getStepName());
-        Assertions.assertEquals("Exposure Area 120 km/h", layer.getLegend().getSteps().get(3).getStepName());
-        Assertions.assertEquals("Line Track", layer.getLegend().getSteps().get(4).getStepName());
-        Assertions.assertEquals("Point Track", layer.getLegend().getSteps().get(5).getStepName());
-        Assertions.assertEquals("Uncertainty Cones", layer.getLegend().getSteps().get(6).getStepName());
+        Assertions.assertEquals("Exposure Area 60 km/h", layer.getLegend().getSteps().get(4).getStepName());
+        Assertions.assertEquals("Exposure Area 90 km/h", layer.getLegend().getSteps().get(5).getStepName());
+        Assertions.assertEquals("Exposure Area 120 km/h", layer.getLegend().getSteps().get(6).getStepName());
+        Assertions.assertEquals("Line Track", layer.getLegend().getSteps().get(1).getStepName());
+        Assertions.assertEquals("Point Track", layer.getLegend().getSteps().get(2).getStepName());
+        Assertions.assertEquals("Uncertainty Cones", layer.getLegend().getSteps().get(3).getStepName());
         //skipping other fields
     }
 
@@ -318,10 +319,10 @@ public class LayerConfigServiceTest {
             .source(LayerSource.builder()
                 .data(new FeatureCollection(new Feature[]{
                     //random order, some duplicates
-                    feature("Class", "Point_Centroid"),
-                    feature("Class", "Line_Line_666"),
-                    feature("Class", "Point_Polygon_Point_777"),
-                    feature("Class", "Poly_Cones")}
+                    feature("areaType", "centerPoint"),
+                    feature("areaType", "track"),
+                    feature("areaType", "position"),
+                    feature("areaType", "alertArea")}
                 ))
                 .build())
             .build();
@@ -335,12 +336,37 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals(4, layer.getLegend().getSteps().size());
         Assertions.assertEquals("Centroid", layer.getLegend().getSteps().get(0).getStepName());
         Assertions.assertEquals("Line Track", layer.getLegend().getSteps().get(1).getStepName());
-        Assertions.assertEquals("Line_Line", layer.getLegend().getSteps().get(1).getParamValue());
+        Assertions.assertEquals("track", layer.getLegend().getSteps().get(1).getParamValue());
         Assertions.assertEquals("Point Track", layer.getLegend().getSteps().get(2).getStepName());
-        Assertions.assertEquals("Point_Polygon_Point", layer.getLegend().getSteps().get(2).getParamValue());
+        Assertions.assertEquals("position", layer.getLegend().getSteps().get(2).getParamValue());
         Assertions.assertEquals("Uncertainty Cones", layer.getLegend().getSteps().get(3).getStepName());
         //skipping other fields
         assertTrue(layer.isEventIdRequiredForRetrieval());
+    }
+
+    @Test
+    public void eventShapeFloodExposureStepTest() {
+        //event type = CYCLONE
+        //features with different Class value exist - each should be added to legend
+        Layer layer = Layer.builder()
+            .id(EVENT_SHAPE_LAYER_ID)
+            .eventType(FLOOD)
+            .source(LayerSource.builder()
+                .data(new FeatureCollection(new Feature[]{
+                    //random order, some duplicates
+                    feature("areaType", "position")}
+                ))
+                .build())
+            .build();
+
+        service.applyConfig(layer);
+        assertFalse(layer.isBoundaryRequiredForRetrieval());
+
+        Assertions.assertNotNull(layer.getLegend());
+        assertFalse(layer.getLegend().getSteps().isEmpty());
+        Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
+        Assertions.assertEquals(1, layer.getLegend().getSteps().size());
+        Assertions.assertEquals("Exposure Area", layer.getLegend().getSteps().get(0).getStepName());
     }
 
 
