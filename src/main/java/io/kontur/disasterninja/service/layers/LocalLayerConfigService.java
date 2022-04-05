@@ -34,7 +34,7 @@ public class LocalLayerConfigService implements LayerConfigService {
                                    @Value("${spring.profiles.active:dev}") String profile) {
         try {
             LocalLayersConfig localLayersConfig = convertLayerConfig(layersJsonResource);
-            localLayersConfig.getConfigs().forEach(this::setLegendStepsOrder);
+            localLayersConfig.getConfigs().forEach(this::setLegendStepsOrderIfRequired);
 
             localLayersConfig.getConfigs().forEach((config) -> {
                 if (!config.isTestOnly() || !"prod".equalsIgnoreCase(profile)) {
@@ -107,7 +107,7 @@ public class LocalLayerConfigService implements LayerConfigService {
         return globalOverlays;
     }
 
-    private void setLegendStepsOrder(Layer layer) {
+    private void setLegendStepsOrderIfRequired(Layer layer) {
         if (layer.getLegend() != null && layer.getLegend().getSteps() != null) {
             List<LegendStep> steps = layer.getLegend().getSteps();
             for (int i = 0; i < steps.size(); i++) {
