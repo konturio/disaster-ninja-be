@@ -4,11 +4,12 @@
 #### Added
 
 #### Changed
+- Pass application id into Layers API feature search request
 
 #### Removed
 
 #### Installation sequence
-
+- Don't forget to install Layers API with appId in feature search enpoint 
 
 ## Release 0.3.0 - 2022-04-04
 
