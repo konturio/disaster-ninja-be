@@ -230,6 +230,9 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(r -> {
                     String body = r.getBody().toString();
+                    if (hasJsonPath("$.appId", is(not("a2a353ab-4126-44ef-a25d-a93fee401c1f"))).matches(body)) {
+                        throw new RuntimeException();
+                    }
                     if (hasJsonPath("$.offset", is(0)).matches(body)) {
                         return withSuccess(readFile(this, "layers/layersAPI.features.page1.json"),
                                 MediaType.APPLICATION_JSON).createResponse(r);
@@ -243,7 +246,8 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
                 });
 
         //when
-        List<Feature> features = client.getCollectionFeatures(objectMapper.readValue(json, Geometry.class), "hotProjects");
+        List<Feature> features = client.getCollectionFeatures(objectMapper.readValue(json, Geometry.class),
+                "hotProjects", UUID.fromString("a2a353ab-4126-44ef-a25d-a93fee401c1f"));
 
         //then
         assertEquals(12, features.size());
@@ -252,6 +256,30 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         assertEquals("100", feature.getId());
         assertEquals("ARCHIVED", feature.getProperties().get("status"));
         assertEquals("MultiPolygon", feature.getGeometry().getType());
+    }
+
+    @Test
+    public void getCollectionFeaturesWithoutAppId() throws JsonProcessingException {
+        //given
+        String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
+                "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
+
+        server.expect(ExpectedCount.times(1), requestTo("/collections/hotProjects/items/search"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(r -> {
+                    String body = r.getBody().toString();
+                    if (hasJsonPath("$.appId").matches(body)) {
+                        throw new RuntimeException();
+                    }
+                    return withSuccess().createResponse(r);
+                });
+
+        //when
+        List<Feature> features = client.getCollectionFeatures(objectMapper.readValue(json, Geometry.class),
+                "hotProjects", null);
+
+        //then
+        assertEquals(0, features.size());
     }
 
     @Test
