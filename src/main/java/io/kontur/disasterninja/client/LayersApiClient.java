@@ -70,7 +70,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
 
     public Layer getLayer(Geometry geoJSON, String layerId, UUID appId) {
         String id = getIdWithoutPrefix(layerId);
-        return convertToLayerDetails(geoJSON, getCollection(id, appId));
+        return convertToLayerDetails(geoJSON, getCollection(id, appId), appId);
     }
 
     public Layer createLayer(LayerCreateDto dto) {
@@ -207,7 +207,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         return result;
     }
 
-    public List<Feature> getCollectionFeatures(Geometry geoJson, String collectionId) {
+    public List<Feature> getCollectionFeatures(Geometry geoJson, String collectionId, UUID appId) {
         Assert.notNull(collectionId, "Collection ID should not be null");
 
         List<Feature> result = new ArrayList<>();
@@ -215,6 +215,9 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         Map<String, Object> body = new HashMap<>();
         body.put("geometry", geoJson);
         body.put("limit", pageSize);
+        if (appId != null) {
+            body.put("appId", appId);
+        }
 
         while (true) {
             body.put("offset", result.size());
@@ -277,8 +280,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                 .build();
     }
 
-    private Layer convertToLayerDetails(Geometry geoJSON,
-                                        Collection collection) {
+    private Layer convertToLayerDetails(Geometry geoJSON, Collection collection, UUID appId) {
         if (collection == null) {
             return null;
         }
@@ -286,7 +288,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         if (LAYER_TYPE_TILES.equals(collection.getItemType())) {
             source = createVectorSource(collection);
         } else if (LAYER_TYPE_FEATURE.equals(collection.getItemType())) {
-            source = createFeatureSource(geoJSON, collection.getId());
+            source = createFeatureSource(geoJSON, collection.getId(), appId);
         }
         StyleRuleDto styleRule = collection.getStyleRule();
         return Layer.builder()
@@ -312,8 +314,8 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                 .build();
     }
 
-    private LayerSource createFeatureSource(Geometry geoJSON, String layerId) {
-        List<Feature> features = getCollectionFeatures(geoJSON, layerId);
+    private LayerSource createFeatureSource(Geometry geoJSON, String layerId, UUID appId) {
+        List<Feature> features = getCollectionFeatures(geoJSON, layerId, appId);
         return LayerSource.builder()
                 .type(LayerSourceType.GEOJSON)
                 .data(new FeatureCollection(features.toArray(new Feature[0])))
