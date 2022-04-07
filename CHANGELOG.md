@@ -5,6 +5,7 @@
 
 #### Changed
 - Pass application id into Layers API feature search request
+- #9463 Add tooltip into layers legend
 
 #### Removed
 
