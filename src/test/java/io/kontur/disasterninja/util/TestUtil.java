@@ -2,20 +2,17 @@ package io.kontur.disasterninja.util;
 
 import static io.kontur.disasterninja.domain.enums.LayerStepShape.HEX;
 
-import io.kontur.disasterninja.domain.BivariateLegendAxes;
-import io.kontur.disasterninja.domain.LayerSearchParams;
-import io.kontur.disasterninja.domain.Legend;
-import io.kontur.disasterninja.domain.LegendStep;
+import io.kontur.disasterninja.domain.*;
 import io.kontur.disasterninja.domain.enums.LegendType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
+
+import io.kontur.disasterninja.dto.layer.ColorDto;
 import org.apache.commons.io.IOUtils;
 import org.wololo.geojson.Geometry;
 import org.wololo.geojson.Point;
 
 import java.io.IOException;
-import java.util.UUID;
 
 public final class TestUtil {
 
@@ -28,8 +25,13 @@ public final class TestUtil {
         final String PARAM_VALUE = "qwe";
         final String OTHER_PARAM_VALUE = "asd";
 
+        BivariateLegendAxes axes = new BivariateLegendAxes();
+        axes.setX(new BivariateLegendAxisDescription("xLabel", null, null));
+        axes.setY(new BivariateLegendAxisDescription("yLabel", null, null));
+
         Legend legend = new Legend("legendName", LegendType.SIMPLE, null, new ArrayList<>(),
-                new HashMap<>(), new BivariateLegendAxes());
+                Collections.singletonList(new ColorDto("A1", "rgb(232,232,157)")), axes,
+                new Tooltip("markdown", "tooltipContent"));
         Map<String, Object> map = new HashMap<>();
         map.put("prop", "value");
 

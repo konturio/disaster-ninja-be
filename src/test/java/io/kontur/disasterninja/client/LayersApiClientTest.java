@@ -3,10 +3,10 @@ package io.kontur.disasterninja.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.Legend;
 import io.kontur.disasterninja.domain.enums.LegendType;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
 import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
-import io.kontur.disasterninja.dto.layer.StyleRuleDto;
 import io.kontur.disasterninja.dto.layerapi.Collection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,17 +65,17 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
 
         final String id = "myId";
         final String title = "layer title";
-        final StyleRuleDto styleRuleDto = StyleRuleDto.fromLegend(createLegend());
+        Legend legend = createLegend();
 
         LayerCreateDto dto = new LayerCreateDto();
         dto.setId(id);
         dto.setTitle(title);
-        dto.setLegend(styleRuleDto);
+        dto.setLegend(legend);
 
         Layer layer = client.createLayer(dto);
         assertEquals(LAYER_PREFIX + id, layer.getId());
         assertEquals(title, layer.getName());
-        assertEquals(styleRuleDto.toLegend(), layer.getLegend());
+        assertEquals(legend, layer.getLegend());
         assertTrue(layer.isOwnedByUser());
     }
 
@@ -101,16 +101,16 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
             );
 
         final String title = "layer title";
-        final StyleRuleDto styleRuleDto = StyleRuleDto.fromLegend(createLegend());
+        Legend legend = createLegend();
 
         LayerUpdateDto dto = new LayerUpdateDto();
         dto.setTitle(title);
-        dto.setLegend(styleRuleDto);
+        dto.setLegend(legend);
 
         Layer layer = client.updateLayer(LAYER_PREFIX + id, dto);
         assertEquals(LAYER_PREFIX + id, layer.getId());
         assertEquals(title, layer.getName());
-        assertEquals(styleRuleDto.toLegend(), layer.getLegend());
+        assertEquals(legend, layer.getLegend());
         assertTrue(layer.isOwnedByUser());
     }
 
@@ -195,7 +195,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         assertEquals("tiles", collection.getLinks().get(0).getRel());
         assertEquals("https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf",
                 collection.getLinks().get(0).getHref());
-        assertEquals(LegendType.SIMPLE, collection.getStyleRule().getType());
+        assertEquals(LegendType.SIMPLE.toString(), collection.getStyleRule().get("type").textValue());
     }
 
     @Test
@@ -316,7 +316,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         assertEquals("tiles", collection.getLinks().get(0).getRel());
         assertEquals("https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf",
                 collection.getLinks().get(0).getHref());
-        assertEquals(LegendType.SIMPLE, collection.getStyleRule().getType());
+        assertEquals(LegendType.SIMPLE.toString(), collection.getStyleRule().get("type").textValue());
     }
 
     @Test

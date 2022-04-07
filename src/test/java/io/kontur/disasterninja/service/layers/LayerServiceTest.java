@@ -6,7 +6,6 @@ import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.Legend;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
 import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
-import io.kontur.disasterninja.dto.layer.StyleRuleDto;
 import io.kontur.disasterninja.service.layers.providers.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,6 @@ public class LayerServiceTest {
     final String id = "myId";
     final String title = "layer title";
     final Legend legend = createLegend();
-    final StyleRuleDto styleRuleDto = StyleRuleDto.fromLegend(legend);
     final Layer layer = Layer.builder()
         .id(id)
         .name(title)
@@ -232,7 +230,7 @@ public class LayerServiceTest {
     private LayerUpdateDto updateDto() {
         LayerUpdateDto dto = new LayerUpdateDto();
         dto.setTitle(title);
-        dto.setLegend(styleRuleDto);
+        dto.setLegend(legend);
         return dto;
     }
 
@@ -240,7 +238,7 @@ public class LayerServiceTest {
         LayerCreateDto dto = new LayerCreateDto();
         dto.setId(id);
         dto.setTitle(title);
-        dto.setLegend(styleRuleDto);
+        dto.setLegend(legend);
         return dto;
     }
 

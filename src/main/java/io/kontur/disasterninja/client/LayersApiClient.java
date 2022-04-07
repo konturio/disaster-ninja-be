@@ -4,16 +4,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
+import io.kontur.disasterninja.domain.Legend;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LayerSourceType;
 import io.kontur.disasterninja.dto.AppLayerUpdateDto;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
 import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
-import io.kontur.disasterninja.dto.layer.StyleRuleDto;
 import io.kontur.disasterninja.dto.layerapi.Collection;
 import io.kontur.disasterninja.dto.layerapi.CollectionOwner;
 import io.kontur.disasterninja.dto.layerapi.Link;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
+import io.kontur.disasterninja.util.JsonUtil;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -269,8 +270,8 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                 .category(collection.getCategory() != null ? LayerCategory.fromString(
                         collection.getCategory().getName()) : null)
                 .group(collection.getGroup() != null ? collection.getGroup().getName() : null)
-                .legend(collection.getStyleRule() != null ? collection.getStyleRule()
-                        .toLegend() : null)
+                .legend(collection.getStyleRule() != null ?
+                        JsonUtil.readObjectNode(collection.getStyleRule(), Legend.class) : null)
                 .copyrights(collection.getCopyrights() != null ? singletonList(collection.getCopyrights()) : null)
                 .boundaryRequiredForRetrieval(
                         !LAYER_TYPE_TILES.equals(collection.getItemType()) && !collection.isOwnedByUser())
@@ -290,10 +291,10 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         } else if (LAYER_TYPE_FEATURE.equals(collection.getItemType())) {
             source = createFeatureSource(geoJSON, collection.getId(), appId);
         }
-        StyleRuleDto styleRule = collection.getStyleRule();
         return Layer.builder()
                 .id(getIdWithPrefix(collection.getId()))
-                .legend(styleRule != null ? styleRule.toLegend() : null)
+                .legend(collection.getStyleRule() != null ?
+                        JsonUtil.readObjectNode(collection.getStyleRule(), Legend.class) : null)
                 .source(source)
                 .ownedByUser(collection.isOwnedByUser())
                 .build();
