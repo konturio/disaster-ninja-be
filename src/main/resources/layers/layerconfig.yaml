@@ -247,6 +247,13 @@ configs:
             color: '#051626'
         - stepName: 'Exposure Area'
           stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'exposure'
+          style:
+            width: 3
+            color: '#051626'
+        - stepName: 'Exposure Area'
+          stepShape: 'circle'
           paramName: 'Class'
           paramValue: 'Poly_Cones_0'
           style:

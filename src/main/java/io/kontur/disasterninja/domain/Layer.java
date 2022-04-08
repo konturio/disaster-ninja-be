@@ -9,9 +9,7 @@ import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
 import org.wololo.geojson.Feature;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Data
@@ -129,15 +127,15 @@ public class Layer {
                     break;
                 }
                 for (LegendStep step : stepsToCheck) {
-                    String value = feature.getProperties() == null ? null
+                    String featureValue = feature.getProperties() == null ? null
                             : (String) (feature.getProperties()).get(step.getParamName());
-                    if (value == null) {
+                    if (featureValue == null) {
                         continue;
                     }
                     String paramPattern = step.getParamPattern();
                     //if step.paramPattern is set - filter by pattern and replace feature's value with step.paramValue
                     if (paramPattern != null) {
-                        if (Pattern.compile(paramPattern).matcher(value).matches()) {
+                        if (Pattern.compile(paramPattern).matcher(featureValue).matches()) {
                             //a feature exists for this legend step
                             if (!thisLegend.getSteps().contains(step)) {
                                 thisLegend.getSteps().add(step);
@@ -150,11 +148,22 @@ public class Layer {
                         //otherwise filter by paramValue
                     } else {
                         String paramValue = (String) step.getParamValue(); //nulls not allowed
-                        if (paramValue.equalsIgnoreCase(value)) {
-                            //a feature exists for this legend step
-                            thisLegend.getSteps().add(step);
-                            //no need to check this legend step again
-                            stepsToCheck.remove(step);
+                        if (paramValue.equalsIgnoreCase(featureValue)) {
+                            Optional<LegendStep> sameNameStep = thisLegend.getSteps().stream()
+                                    .filter(s -> s.getStepName() != null &&
+                                            s.getStepName().equals(step.getStepName()))
+                                    .findFirst();
+                            if (sameNameStep.isEmpty()) {
+                                //a feature exists for this legend step
+                                thisLegend.getSteps().add(step);
+                                //no need to check this legend step again
+                                stepsToCheck.remove(step);
+                            } else {
+                                //step with the same name already added to the legend. Don't add duplication to the legend
+                                //add new parameter to feature so that FE is able to recognise style rule
+                                feature.getProperties().put(sameNameStep.get().getParamName(),
+                                        sameNameStep.get().getParamValue());
+                            }
                             break;
                         }
                     }
