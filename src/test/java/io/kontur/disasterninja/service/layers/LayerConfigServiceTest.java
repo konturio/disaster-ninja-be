@@ -18,8 +18,7 @@ import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 import static io.kontur.disasterninja.domain.enums.LegendType.SIMPLE;
-import static io.kontur.disasterninja.dto.EventType.CYCLONE;
-import static io.kontur.disasterninja.dto.EventType.FLOOD;
+import static io.kontur.disasterninja.dto.EventType.*;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.EVENT_SHAPE_LAYER_ID;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -369,5 +368,25 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("Exposure Area", layer.getLegend().getSteps().get(0).getStepName());
     }
 
+    @Test
+    public void eventShapeVolcanoStepsShouldNotBeDuplicated() {
+        Layer layer = Layer.builder()
+                .id(EVENT_SHAPE_LAYER_ID)
+                .eventType(VOLCANO)
+                .source(LayerSource.builder()
+                        .data(new FeatureCollection(new Feature[]{
+                                feature("Class", "Poly_Cones_0"),
+                                feature("areaType", "exposure")}
+                        ))
+                        .build())
+                .build();
 
+        service.applyConfig(layer);
+
+        Assertions.assertNotNull(layer.getLegend());
+        assertFalse(layer.getLegend().getSteps().isEmpty());
+        Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
+        Assertions.assertEquals(1, layer.getLegend().getSteps().size());
+        Assertions.assertEquals("Exposure Area", layer.getLegend().getSteps().get(0).getStepName());
+    }
 }

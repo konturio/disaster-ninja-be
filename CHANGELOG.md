@@ -4,13 +4,14 @@
 #### Added
 
 #### Changed
-- Pass application id into Layers API feature search request
+- #9725 Pass application id into Layers API feature search request
 - #9463 Add tooltip into layers legend
+- #9818 Remove steps duplication in legend. Update volcanoes legend config 
 
 #### Removed
 
 #### Installation sequence
-- Don't forget to install Layers API with appId in feature search enpoint 
+- Don't forget to install Layers API with appId in feature search endpoint 
 
 ## Release 0.3.0 - 2022-04-04
 
