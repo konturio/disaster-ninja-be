@@ -7,6 +7,7 @@
 - #9725 Pass application id into Layers API feature search request
 - #9463 Add tooltip into layers legend
 - #9818 Remove steps duplication in legend. Update volcanoes legend config 
+- #9819 Use displayRule from Layers API to set up boundaryRequiredForRetrieval and eventIdRequiredForRetrieval
 
 #### Removed
 
