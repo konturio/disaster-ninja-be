@@ -25,11 +25,14 @@ public class Collection {
     private String copyrights;
 
     @JsonProperty("properties")
-    private Object properties;
+    private ObjectNode properties;
 
     @JsonAlias("legend")
     @JsonProperty("styleRule")
     private ObjectNode styleRule;
+
+    @JsonProperty("displayRule")
+    private ObjectNode displayRule;
 
     @JsonProperty("group")
     private CollectionGroupProperties group;

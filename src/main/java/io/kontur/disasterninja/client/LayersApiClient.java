@@ -263,6 +263,19 @@ public class LayersApiClient extends RestClientWithBearerAuth {
     }
 
     private Layer convertToLayer(Collection collection) {
+        boolean boundaryRequiredForRetrieval = !LAYER_TYPE_TILES.equals(
+                collection.getItemType()) && !collection.isOwnedByUser();
+        if (collection.getDisplayRule() != null &&
+                collection.getDisplayRule().get("boundaryRequiredForRetrieval") != null) {
+            boundaryRequiredForRetrieval = collection.getDisplayRule().get("boundaryRequiredForRetrieval").asBoolean();
+        }
+
+        boolean eventIdRequiredForRetrieval = false;
+        if (collection.getDisplayRule() != null &&
+                collection.getDisplayRule().get("eventIdRequiredForRetrieval") != null) {
+            eventIdRequiredForRetrieval = collection.getDisplayRule().get("eventIdRequiredForRetrieval").asBoolean();
+        }
+
         return Layer.builder()
                 .id(getIdWithPrefix(collection.getId()))
                 .name(collection.getTitle())
@@ -273,9 +286,8 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                 .legend(collection.getStyleRule() != null ?
                         JsonUtil.readObjectNode(collection.getStyleRule(), Legend.class) : null)
                 .copyrights(collection.getCopyrights() != null ? singletonList(collection.getCopyrights()) : null)
-                .boundaryRequiredForRetrieval(
-                        !LAYER_TYPE_TILES.equals(collection.getItemType()) && !collection.isOwnedByUser())
-                .eventIdRequiredForRetrieval(false)
+                .boundaryRequiredForRetrieval(boundaryRequiredForRetrieval)
+                .eventIdRequiredForRetrieval(eventIdRequiredForRetrieval)
                 .ownedByUser(collection.isOwnedByUser())
                 .featureProperties(collection.getFeatureProperties())
                 .build();
