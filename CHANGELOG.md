@@ -1,6 +1,19 @@
 # Release notes
 
 ## UNRELEASED
+
+#### Added
+
+#### Changed
+
+#### Removed
+
+#### Installation sequence
+
+
+
+## Release 0.4.0 - 2022-04-12
+
 #### Added
 
 #### Changed
@@ -14,10 +27,13 @@
 #### Installation sequence
 - Don't forget to install Layers API with appId in feature search endpoint 
 
+
+
 ## Release 0.3.0 - 2022-04-04
 
 #### Added
 - Slack notifications
+
 
 
 ## Release 0.2.0 - 2022-04-01
