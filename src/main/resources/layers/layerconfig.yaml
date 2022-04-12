@@ -384,7 +384,7 @@ configs:
             text: '{top_user}'
             text-color: 'rgb(0, 145, 0)'
             text-halo-color: 'rgba(255, 255, 255, 0.3)'
-            text-halo-radius: 2
+            text-halo-radius: 1
             text-size: 14
             text-letter-spacing: 0.05
             text-padding: 0
@@ -392,6 +392,8 @@ configs:
             icon-image: 'osm-user-shield'
             icon-text-fit: 'both'
             icon-allow-overlap: true
+            symbol-placement: 'point'
+            max-width: 3
         - stepName: 'Active mappers'
           sourceLayer: 'users'
           stepShape: 'circle'
@@ -401,7 +403,7 @@ configs:
             text: '{top_user}'
             text-color: 'rgb(100, 111, 120)'
             text-halo-color: 'rgba(255, 255, 255, 0.3)'
-            text-halo-radius: 2
+            text-halo-radius: 1
             text-size: 12
             text-letter-spacing: 0.05
             text-padding: 0
@@ -409,6 +411,8 @@ configs:
             icon-image: 'osm-user-shield'
             icon-text-fit: 'both'
             icon-allow-overlap: true
+            symbol-placement: 'point'
+            max-width: 3
         - sourceLayer: 'hexagon'
           style:
             color: 'black'
