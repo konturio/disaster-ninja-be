@@ -5,6 +5,18 @@
 #### Added
 
 #### Changed
+
+#### Removed
+
+#### Installation sequence
+
+
+
+## Release 0.4.1 - 2022-04-13
+
+#### Added
+
+#### Changed
 - #9580 Increase page limit for kcapi and layers api requests from 100 to 1000
 - #9491 Send null statistic to FE for events without statistic 
 
