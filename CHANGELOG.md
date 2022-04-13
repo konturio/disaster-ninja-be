@@ -5,6 +5,7 @@
 #### Added
 
 #### Changed
+- #9580 Increase page limit for kcapi and layers api requests from 100 to 1000
 
 #### Removed
 
