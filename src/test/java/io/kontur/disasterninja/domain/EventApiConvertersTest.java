@@ -132,6 +132,7 @@ public class EventApiConvertersTest {
         event.getEventDetails().put("populatedAreaKm2", 100.12);
         event.getEventDetails().put("osmGapsPercentage", 30);
         event.getEventDetails().put("population", 50);
+        event.getEventDetails().put("loss", 531.14);
         event.setUrls(new ArrayList<>());
         event.getUrls().add("http://google.com");
         EventListDto dto = EventListEventDtoConverter.convert(event);
@@ -141,6 +142,7 @@ public class EventApiConvertersTest {
         assertEquals(100.12, dto.getSettledArea());
         assertEquals(30, dto.getOsmGaps());
         assertEquals(50, dto.getAffectedPopulation());
+        assertEquals(531, dto.getLoss());
         assertEquals(1, dto.getExternalUrls().size());
         assertEquals("http://google.com", dto.getExternalUrls().get(0));
     }

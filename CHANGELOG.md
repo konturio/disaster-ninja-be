@@ -3,6 +3,7 @@
 ## UNRELEASED
 
 #### Added
+- #9951 Total event loss 
 
 #### Changed
 
