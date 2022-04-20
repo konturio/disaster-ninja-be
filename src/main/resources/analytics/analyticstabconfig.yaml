@@ -34,7 +34,7 @@ analyticstab:
           arguments:
             - populated_area_km2
             - count
-    - name: No buildings
+    - name: Buildings unmapped
       description: '% of area, population and settled area where population > 0 and OSM buildings = 0.'
       functions:
         - id: noBuildings0
@@ -55,7 +55,7 @@ analyticstab:
           arguments:
             - populated_area_km2
             - building_count
-    - name: No roads
+    - name: Roads unmapped
       description: '% of area, population and settled area where population > 0 and OSM roads = 0.'
       functions:
         - id: noRoads0
