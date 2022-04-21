@@ -15,6 +15,7 @@ public class EventListDto {
     private Long affectedPopulation;
     private Double settledArea;
     private Long osmGaps;
+    private Long loss;
     private OffsetDateTime updatedAt;
     private List<String> externalUrls;
 }

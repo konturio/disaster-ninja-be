@@ -3,6 +3,7 @@
 ## UNRELEASED
 
 #### Added
+- #9951 Total event loss 
 
 #### Changed
 - #10008 Fix layer config for old events.
