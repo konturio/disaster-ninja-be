@@ -30,6 +30,9 @@ public class EventListEventDtoConverter {
             if (eventDetails.containsKey("populatedAreaKm2")) {
                 dto.setSettledArea(convertDouble(event.getEventDetails().get("populatedAreaKm2")));
             }
+            if (eventDetails.containsKey("loss")) {
+                dto.setLoss(convertLong(event.getEventDetails().get("loss")));
+            }
         }
         dto.setUpdatedAt(event.getUpdatedAt());
 
