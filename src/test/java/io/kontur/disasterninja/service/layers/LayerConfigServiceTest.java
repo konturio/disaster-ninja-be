@@ -389,4 +389,29 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals(1, layer.getLegend().getSteps().size());
         Assertions.assertEquals("Exposure Area", layer.getLegend().getSteps().get(0).getStepName());
     }
+
+    @Test
+    public void eventShapeCycloneStepsShouldNotBeDuplicated() {
+        Layer layer = Layer.builder()
+                .id(EVENT_SHAPE_LAYER_ID)
+                .eventType(CYCLONE)
+                .source(LayerSource.builder()
+                        .data(new FeatureCollection(new Feature[]{
+                                feature("areaType", "track"),
+                                feature("Class", "Line_Line_0"),
+                                feature("areaType", "track"),
+                                feature("Class", "Line_Line_1")
+                        }
+                        ))
+                        .build())
+                .build();
+
+        service.applyConfig(layer);
+
+        Assertions.assertNotNull(layer.getLegend());
+        assertFalse(layer.getLegend().getSteps().isEmpty());
+        Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
+        Assertions.assertEquals(1, layer.getLegend().getSteps().size());
+        Assertions.assertEquals("Line Track", layer.getLegend().getSteps().get(0).getStepName());
+    }
 }

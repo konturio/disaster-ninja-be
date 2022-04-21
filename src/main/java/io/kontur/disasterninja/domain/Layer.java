@@ -137,7 +137,11 @@ public class Layer {
                     if (paramPattern != null) {
                         if (Pattern.compile(paramPattern).matcher(featureValue).matches()) {
                             //a feature exists for this legend step
-                            if (!thisLegend.getSteps().contains(step)) {
+                            Optional<LegendStep> sameNameStep = thisLegend.getSteps().stream()
+                                    .filter(s -> s.getStepName() != null &&
+                                            s.getStepName().equals(step.getStepName()))
+                                    .findFirst();
+                            if (sameNameStep.isEmpty()) {
                                 thisLegend.getSteps().add(step);
                             }
                             //we don't remove step from stepsToCheck as we'll need to replace matched values with step.paramValue in all further features

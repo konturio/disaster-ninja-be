@@ -5,6 +5,7 @@
 #### Added
 
 #### Changed
+- #10008 Fix layer config for old events.
 
 #### Removed
 
