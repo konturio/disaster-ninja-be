@@ -7,6 +7,7 @@
 
 #### Changed
 - #10008 Fix layer config for old events.
+- #9945 Change text in the panel with Analytics
 
 #### Removed
 
