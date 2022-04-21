@@ -15,6 +15,17 @@
 
 
 
+## Release 0.5.0 - 2022-04-21
+
+#### Added
+- #9951 Total event loss 
+
+#### Changed
+- #10008 Fix layer config for old events
+- #9945 Change text in the panel with Analytics
+
+
+
 ## Release 0.4.1 - 2022-04-13
 
 #### Added
