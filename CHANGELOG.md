@@ -3,16 +3,14 @@
 ## UNRELEASED
 
 #### Added
-- #9951 Total event loss 
 
 #### Changed
-- #10008 Fix layer config for old events.
-- #9945 Change text in the panel with Analytics
+- #10012 Use new /layers/collections/{id}/itemsByGeometry endpoint to get list of layers from kcapi 
 
 #### Removed
 
 #### Installation sequence
-
+- Install new kcapi version with new endpoint beforehand.
 
 
 ## Release 0.5.0 - 2022-04-21
