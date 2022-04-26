@@ -53,7 +53,8 @@ class KcApiClientTest {
             .andRespond(request -> {
                 String body = request.getBody().toString();
 
-                if (!hasJsonPath("$.geom", is(json)).matches(body)) {
+                if (!hasJsonPath("$.geom.type", is("Polygon")).matches(body)
+                && hasJsonPath("$.geom.coordinates[0][0][0]", is(-1.0)).matches(body)) {
                     return withStatus(HttpStatus.BAD_REQUEST).createResponse(request);
                 }
 
@@ -86,7 +87,8 @@ class KcApiClientTest {
             .andRespond(request -> {
                 String body = request.getBody().toString();
 
-                if (!hasJsonPath("$.geom", is(json)).matches(body)) {
+                if (!hasJsonPath("$.geom.type", is("Polygon")).matches(body)
+                        && hasJsonPath("$.geom.coordinates[0][0][0]", is(1.83975)).matches(body)) {
                     return withStatus(HttpStatus.BAD_REQUEST).createResponse(request);
                 }
 
@@ -120,7 +122,8 @@ class KcApiClientTest {
                 .andRespond(request -> {
                     String body = request.getBody().toString();
 
-                    if (!hasJsonPath("$.geom", is(json)).matches(body)) {
+                    if (!hasJsonPath("$.geom.type", is("Polygon")).matches(body)
+                            && hasJsonPath("$.geom.coordinates[0][0][0]", is(1.83975)).matches(body)) {
                         return withStatus(HttpStatus.BAD_REQUEST).createResponse(request);
                     }
 
@@ -165,7 +168,8 @@ class KcApiClientTest {
             .andRespond(request -> {
                 String body = request.getBody().toString();
 
-                if (!hasJsonPath("$.geom", is(json)).matches(body)) {
+                if (!hasJsonPath("$.geom.type", is("Polygon")).matches(body)
+                        && hasJsonPath("$.geom.coordinates[0][0][0]", is(-1.0)).matches(body)) {
                     return withStatus(HttpStatus.BAD_REQUEST).createResponse(request);
                 }
 

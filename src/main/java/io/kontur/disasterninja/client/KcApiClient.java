@@ -153,7 +153,7 @@ public class KcApiClient {
 
         Map<String, Object> body = new HashMap<>();
         body.put("limit", pageSize);
-        body.put("geom", geometry.toString());
+        body.put("geom", geometry);
 
         while (true) {
             int offset = i++ * pageSize;
