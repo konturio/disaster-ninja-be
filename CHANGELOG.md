@@ -3,11 +3,9 @@
 ## UNRELEASED
 
 #### Added
-- #9951 Total event loss 
 
 #### Changed
-- #10008 Fix layer config for old events.
-- #9945 Change text in the panel with Analytics
+- #10039 Update Legend Step structure. Add stepIconFill and stepIconStroke
 
 #### Removed
 
