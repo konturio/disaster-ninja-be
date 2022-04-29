@@ -39,12 +39,12 @@ public final class TestUtil {
         legend.getSteps()
             .add(new LegendStep(PARAM_NAME, null, PARAM_VALUE,
                 null, null, "step name",
-                HEX, map, "source-layer"));
+                HEX, map, "source-layer", "fill", "stroke"));
         //non-pattern step (2)
         legend.getSteps()
             .add(new LegendStep(PARAM_NAME, null, OTHER_PARAM_VALUE,
                 null, null, "step name2",
-                HEX, map, "source-layer"));
+                HEX, map, "source-layer", "", ""));
 
         return legend;
     }

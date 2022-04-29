@@ -5,6 +5,7 @@
 #### Added
 
 #### Changed
+- #10039 Update Legend Step structure. Add stepIconFill and stepIconStroke
 - #10012 Use new /layers/collections/{id}/itemsByGeometry endpoint to get list of layers from kcapi 
 
 #### Removed
