@@ -23,7 +23,9 @@
             },
             "paramName": "k_type",
             "paramValue": "callout",
-            "sourceLayer": "hotProjects"
+            "sourceLayer": "hotProjects",
+            "stepIconFill": "#bbd1e6",
+            "stepIconStroke": "#bbd1e6"
           },
           {
             "style": {

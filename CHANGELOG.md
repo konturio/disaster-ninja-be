@@ -13,6 +13,20 @@
 
 
 
+## Release 0.6.0 - 2022-04-29
+
+#### Added
+
+#### Changed
+- #10039 Update Legend Step structure. Add stepIconFill and stepIconStroke
+- #10012 Use new /layers/collections/{id}/itemsByGeometry endpoint to get list of layers from kcapi 
+
+#### Removed
+
+#### Installation sequence
+- Install new kcapi version with new endpoint beforehand.
+
+
 ## Release 0.5.0 - 2022-04-21
 
 #### Added
