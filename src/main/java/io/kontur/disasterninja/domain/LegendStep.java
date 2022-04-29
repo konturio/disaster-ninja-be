@@ -29,6 +29,8 @@ public class LegendStep {
     private final LayerStepShape stepShape;
     private final Map<String, Object> style;
     private final String sourceLayer;
+    private final String stepIconFill;
+    private final String stepIconStroke;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private int order;
 }

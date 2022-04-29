@@ -189,12 +189,12 @@ public class DtoTest {
         legend.getSteps()
             .add(new LegendStep(PARAM_NAME, PARAM_PATTERN, PARAM_VALUE,
             null, null, "step name",
-            HEX, map, "source-layer"));
+            HEX, map, "source-layer", "", ""));
         //non-pattern step (2)
         legend.getSteps()
             .add(new LegendStep(PARAM_NAME, null, OTHER_PARAM_VALUE,
             null, null, "step name2",
-            HEX, map, "source-layer"));
+            HEX, map, "source-layer", "", ""));
 
         Layer layerWithPattern = Layer.builder()
             .id(id)
@@ -231,7 +231,7 @@ public class DtoTest {
         Map<String, Object> map = new HashMap<>();
         map.put("prop", "value");
         legend.getSteps().add(new LegendStep("param name", null, "param value", null, null, "step name",
-            HEX, map, "source-layer"));
+            HEX, map, "source-layer", "", ""));
 
         return Layer.builder()
             .id(id)
