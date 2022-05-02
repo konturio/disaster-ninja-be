@@ -33,10 +33,7 @@ public class FeaturesController {
         array = @ArraySchema(schema = @Schema(implementation = FeatureDto.class))))
     @GetMapping
     public List<FeatureDto> getUserAppFeatures(
-        @RequestParam(name = "appId", defaultValue = "58851b50-9574-4aec-a3a6-425fa18dcb54")
-        @Parameter(name = "appId",
-            example = "58851b50-9574-4aec-a3a6-425fa18dcb54") //DN2_ID, but must be constant here
-            UUID appId) {
+        @RequestParam(name = "appId") @Parameter(name = "appId") UUID appId) {
         return userProfileClient.getUserAppFeatures(appId);
     }
 }
