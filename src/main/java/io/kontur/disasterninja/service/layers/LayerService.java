@@ -42,7 +42,8 @@ public class LayerService {
         Map<String, Layer> layers = new HashMap<>();
 
         //load layers from providers
-        providers.stream().map(it -> {
+        providers.parallelStream()
+                .map(it -> {
                 try {
                     return it.obtainLayers(layerSearchParams);
                 } catch (Exception e) {
