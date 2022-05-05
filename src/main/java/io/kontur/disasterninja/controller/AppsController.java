@@ -64,7 +64,7 @@ public class AppsController {
     @ApiResponse(responseCode = "200",
         content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE))
     @GetMapping(path = "/default_id")
-    public String getDefaultAppId() {
+    public ResponseEntity<String> getDefaultAppId() {
         return userProfileClient.getDefaultAppId();
     }
 
@@ -73,9 +73,7 @@ public class AppsController {
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = AppDto.class)))
     @GetMapping(path = "/{id}")
-    public AppDto get(@PathVariable @Parameter(name = "id",
-            example = "58851b50-9574-4aec-a3a6-425fa18dcb54") //DN2_ID, but must be constant here
-                              UUID id) {
+    public AppDto get(@PathVariable @Parameter(name = "id") UUID id) {
         return userProfileClient.getApp(id);
     }
 

@@ -4,10 +4,16 @@ import io.kontur.disasterninja.dto.AppDto;
 import io.kontur.disasterninja.dto.AppSummaryDto;
 import io.kontur.disasterninja.dto.FeatureDto;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -18,17 +24,21 @@ import static org.springframework.http.HttpMethod.*;
 @Component
 public class UserProfileClient extends RestClientWithBearerAuth {
 
+    private static final Logger LOG = LoggerFactory.getLogger(UserProfileClient.class);
     private static final String FEATURES_USER_FEED_URL = "/features/user_feed";
     private static final String FEATURES_URL = "/features";
     private static final String APP_URL = "/apps";
     private static final String APP_URL_WITH_ID = "/apps/{id}";
     private static final String DEFAULT_APP_ID_URL = "/apps/default_id";
     private final RestTemplate userProfileRestTemplate;
+    private final String defaultAppId;
 
     public UserProfileClient(RestTemplate userProfileRestTemplate,
-                             KeycloakAuthorizationService authorizationService) {
+                             KeycloakAuthorizationService authorizationService,
+                             @Value("${kontur.platform.userProfileApi.defaultAppId:}") String defaultAppId) {
         super(authorizationService);
         this.userProfileRestTemplate = userProfileRestTemplate;
+        this.defaultAppId = defaultAppId;
     }
 
     public String getUserDefaultFeed() {
@@ -65,12 +75,19 @@ public class UserProfileClient extends RestClientWithBearerAuth {
         return response.getBody();
     }
 
-    public String getDefaultAppId() {
-        ResponseEntity<String> response = userProfileRestTemplate
-            .exchange(DEFAULT_APP_ID_URL, HttpMethod.GET, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
-                new ParameterizedTypeReference<>() {
-                });
-        return response.getBody();
+    public ResponseEntity<String> getDefaultAppId() {
+        try {
+            return userProfileRestTemplate
+                    .exchange(DEFAULT_APP_ID_URL, HttpMethod.GET,
+                            httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
+                            new ParameterizedTypeReference<>() {
+                            });
+        } catch (RestClientException ex) {
+            LOG.warn("User Profile Api responded with an error " + ex.getMessage());
+            return StringUtils.isEmpty(defaultAppId)
+                    ? ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+                    : ResponseEntity.ok(defaultAppId);
+        }
     }
 
     public AppDto getApp(UUID id) {
