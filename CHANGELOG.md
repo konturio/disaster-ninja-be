@@ -3,6 +3,18 @@
 ## UNRELEASED
 
 #### Added
+
+#### Changed
+
+#### Removed
+
+#### Installation sequence
+
+
+
+## Release 0.7.0 - 2022-05-05
+
+#### Added
 - #10006 Add fallback for /apps/default_id. Returns preconfigured id when User Profile Api responses with an error.
 
 #### Changed
