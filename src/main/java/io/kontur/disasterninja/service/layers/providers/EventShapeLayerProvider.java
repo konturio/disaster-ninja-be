@@ -12,7 +12,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
-import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
 import java.util.Arrays;
@@ -52,12 +51,10 @@ public class EventShapeLayerProvider implements LayerProvider {
 
         Layer layer = fromEventDto(eventDto);
         if (layer != null && layer.getSource() != null && layer.getSource().getData() != null) {
-            Feature[] filteredFeatures = filterFeaturesByGeometry(layer.getSource().getData().getFeatures(), searchParams.getBoundary());
-            if (filteredFeatures.length == 0) {
+            if (!isIntersectsWithGeometry(layer.getSource().getData().getFeatures(), searchParams.getBoundary())) {
                 LOG.info("No features intersecting with requested boundary {}", searchParams.getBoundary());
                 return null;
             }
-            layer.getSource().setData(new FeatureCollection(filteredFeatures));
         }
         return layer;
     }
@@ -83,22 +80,21 @@ public class EventShapeLayerProvider implements LayerProvider {
         return EVENT_SHAPE_LAYER_ID.equals(layerId);
     }
 
-    private Feature[] filterFeaturesByGeometry(Feature[] input, Geometry geoJson) {
+    private boolean isIntersectsWithGeometry(Feature[] input, Geometry geoJson) {
         if (input == null) {
-            return new Feature[]{};
+            return false;
         }
         if (geoJson == null) {
-            return input;
+            return true;
         }
         PreparedGeometry jtsGeometry = getPreparedGeometryFromRequest(geoJson);
 
         //filter items by geoJson Geometry
         return Arrays.stream(input)
-            .filter(json -> {
+            .anyMatch(json -> {
                 Geometry featureGeom = json.getGeometry();
                 return featureGeom == null || //include items without geometry ("global" ones)
                     jtsGeometry.intersects(getJtsGeometry(featureGeom));
-            })
-            .toArray(Feature[]::new);
+            });
     }
 }
