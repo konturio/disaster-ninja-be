@@ -8,6 +8,7 @@
 #### Changed
 - #10095 Optimize EventShapeLayerProvider
 - #10164 Invoke layers providers in parallel
+- #9900 Format analytical panel numbers.
 
 #### Removed
 

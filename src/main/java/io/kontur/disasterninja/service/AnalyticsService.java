@@ -17,10 +17,9 @@ import org.wololo.geojson.GeoJSON;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
 public class AnalyticsService {
     private static final Logger LOG = LoggerFactory.getLogger(AnalyticsService.class);
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
-
+    private final DecimalFormat numberFormat = new DecimalFormat("#,###.##", new DecimalFormatSymbols(Locale.US));
     private final AnalyticsTabProperties configuration;
 
     public List<AnalyticsDto> calculateAnalyticsForPanel(GeoJSON geoJSON) {
@@ -85,13 +84,15 @@ public class AnalyticsService {
                 switch (function.getPostfix()) {
                     case ("%") -> dto.setPercentValue(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
                             .setScale(0, RoundingMode.UP).intValue());
-                    case ("people on") -> text.append(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
-                                    .setScale(0, RoundingMode.UP).longValue())
+                    case ("people on") -> text.append(numberFormat.format(
+                                BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
+                                    .setScale(0, RoundingMode.UP).longValue()))
                             .append(" ")
                             .append(function.getPostfix())
                             .append(" ");
-                    default -> text.append(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
-                                    .setScale(2, RoundingMode.HALF_UP).doubleValue())
+                    default -> text.append(numberFormat.format(
+                                BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
+                                    .setScale(2, RoundingMode.HALF_UP).doubleValue()))
                             .append(" ")
                             .append(function.getPostfix())
                             .append(" ");
