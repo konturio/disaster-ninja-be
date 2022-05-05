@@ -5,6 +5,7 @@
 #### Added
 
 #### Changed
+- #10164 Invoke layers providers in parallel
 
 #### Removed
 
