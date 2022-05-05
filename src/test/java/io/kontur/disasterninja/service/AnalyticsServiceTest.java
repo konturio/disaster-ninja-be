@@ -70,8 +70,8 @@ class AnalyticsServiceTest {
         analyticsField.setName("name");
 
         List<AnalyticsTabQuery.Function> functionsResults = List.of(new AnalyticsTabQuery.Function("", "functionId", 1.1),
-                new AnalyticsTabQuery.Function("", "functionId1", 2.233333),
-                new AnalyticsTabQuery.Function("", "functionId2", 4.433333));
+                new AnalyticsTabQuery.Function("", "functionId1", 11442.233333),
+                new AnalyticsTabQuery.Function("", "functionId2", 1444.433333));
 
         CompletableFuture<List<AnalyticsTabQuery.Function>> completableFuture = new CompletableFuture();
         completableFuture.complete(functionsResults);
@@ -109,7 +109,7 @@ class AnalyticsServiceTest {
         assertEquals("name", result1.getName());
         assertEquals("description", result1.getDescription());
         assertEquals(2, result1.getPercentValue());
-        assertEquals("3 people on 4.43 km2 ", result1.getText());
+        assertEquals("11,443 people on 1,444.43 km2 ", result1.getText());
     }
 
     @Test
