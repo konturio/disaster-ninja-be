@@ -18,7 +18,7 @@ import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 import static io.kontur.disasterninja.domain.enums.LegendType.SIMPLE;
-import static io.kontur.disasterninja.dto.EventType.CYCLONE;
+import static io.kontur.disasterninja.dto.EventType.*;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.EVENT_SHAPE_LAYER_ID;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -66,7 +66,7 @@ public class LayerConfigServiceTest {
         Assertions.assertNotNull(hot.getLegend().getSteps());
         assertFalse(hot.isEventIdRequiredForRetrieval());
         //colors are only used for bivariate legends
-        Assertions.assertNull(hot.getLegend().getBivariateColors());
+        Assertions.assertNull(hot.getLegend().getColors());
         Assertions.assertEquals("projectLink", hot.getLegend().getLinkProperty());
         // all 3 steps are present since there is at least one feature for each step
         Assertions.assertEquals(2, hot.getLegend().getSteps().size());
@@ -114,7 +114,7 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals("projectLink", hot.getLegend().getLinkProperty());
         Assertions.assertNotNull(hot.getLegend().getSteps());
         //colors are only used for bivariate legends
-        Assertions.assertNull(hot.getLegend().getBivariateColors());
+        Assertions.assertNull(hot.getLegend().getColors());
         // just one step is present since there are no features for step 2 (Published)
         Assertions.assertEquals(1, hot.getLegend().getSteps().size());
 
@@ -277,16 +277,16 @@ public class LayerConfigServiceTest {
             .source(LayerSource.builder()
                 .data(new FeatureCollection(new Feature[]{
                     //random order, some duplicates
-                    feature("Class", "Point_Centroid"),
+                    feature("areaType", "centerPoint"),
                     feature("Class", "Poly_Red"),
                     feature("Class", "Poly_Green"),
                     feature("Class", "Poly_Orange"),
                     feature("Class", "Poly_Orange"),
                     feature("Class", "Poly_Green"),
-                    feature("Class", "Point_Polygon_Point_234"),
+                    feature("areaType", "position"),
                     feature("Class", "Poly_Green"),
-                    feature("Class", "Line_Line_2"),
-                    feature("Class", "Poly_Cones")}
+                    feature("areaType", "track"),
+                    feature("areaType", "alertArea")}
                 ))
                 .build())
             .build();
@@ -299,12 +299,12 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
         Assertions.assertEquals(7, layer.getLegend().getSteps().size());
         Assertions.assertEquals("Centroid", layer.getLegend().getSteps().get(0).getStepName());
-        Assertions.assertEquals("Exposure Area 60 km/h", layer.getLegend().getSteps().get(1).getStepName());
-        Assertions.assertEquals("Exposure Area 90 km/h", layer.getLegend().getSteps().get(2).getStepName());
-        Assertions.assertEquals("Exposure Area 120 km/h", layer.getLegend().getSteps().get(3).getStepName());
-        Assertions.assertEquals("Line Track", layer.getLegend().getSteps().get(4).getStepName());
-        Assertions.assertEquals("Point Track", layer.getLegend().getSteps().get(5).getStepName());
-        Assertions.assertEquals("Uncertainty Cones", layer.getLegend().getSteps().get(6).getStepName());
+        Assertions.assertEquals("Exposure Area 60 km/h", layer.getLegend().getSteps().get(4).getStepName());
+        Assertions.assertEquals("Exposure Area 90 km/h", layer.getLegend().getSteps().get(5).getStepName());
+        Assertions.assertEquals("Exposure Area 120 km/h", layer.getLegend().getSteps().get(6).getStepName());
+        Assertions.assertEquals("Line Track", layer.getLegend().getSteps().get(1).getStepName());
+        Assertions.assertEquals("Point Track", layer.getLegend().getSteps().get(2).getStepName());
+        Assertions.assertEquals("Uncertainty Cones", layer.getLegend().getSteps().get(3).getStepName());
         //skipping other fields
     }
 
@@ -318,10 +318,10 @@ public class LayerConfigServiceTest {
             .source(LayerSource.builder()
                 .data(new FeatureCollection(new Feature[]{
                     //random order, some duplicates
-                    feature("Class", "Point_Centroid"),
-                    feature("Class", "Line_Line_666"),
-                    feature("Class", "Point_Polygon_Point_777"),
-                    feature("Class", "Poly_Cones")}
+                    feature("areaType", "centerPoint"),
+                    feature("areaType", "track"),
+                    feature("areaType", "position"),
+                    feature("areaType", "alertArea")}
                 ))
                 .build())
             .build();
@@ -335,13 +335,83 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals(4, layer.getLegend().getSteps().size());
         Assertions.assertEquals("Centroid", layer.getLegend().getSteps().get(0).getStepName());
         Assertions.assertEquals("Line Track", layer.getLegend().getSteps().get(1).getStepName());
-        Assertions.assertEquals("Line_Line", layer.getLegend().getSteps().get(1).getParamValue());
+        Assertions.assertEquals("track", layer.getLegend().getSteps().get(1).getParamValue());
         Assertions.assertEquals("Point Track", layer.getLegend().getSteps().get(2).getStepName());
-        Assertions.assertEquals("Point_Polygon_Point", layer.getLegend().getSteps().get(2).getParamValue());
+        Assertions.assertEquals("position", layer.getLegend().getSteps().get(2).getParamValue());
         Assertions.assertEquals("Uncertainty Cones", layer.getLegend().getSteps().get(3).getStepName());
         //skipping other fields
         assertTrue(layer.isEventIdRequiredForRetrieval());
     }
 
+    @Test
+    public void eventShapeFloodExposureStepTest() {
+        //event type = CYCLONE
+        //features with different Class value exist - each should be added to legend
+        Layer layer = Layer.builder()
+            .id(EVENT_SHAPE_LAYER_ID)
+            .eventType(FLOOD)
+            .source(LayerSource.builder()
+                .data(new FeatureCollection(new Feature[]{
+                    //random order, some duplicates
+                    feature("areaType", "position")}
+                ))
+                .build())
+            .build();
 
+        service.applyConfig(layer);
+        assertFalse(layer.isBoundaryRequiredForRetrieval());
+
+        Assertions.assertNotNull(layer.getLegend());
+        assertFalse(layer.getLegend().getSteps().isEmpty());
+        Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
+        Assertions.assertEquals(1, layer.getLegend().getSteps().size());
+        Assertions.assertEquals("Exposure Area", layer.getLegend().getSteps().get(0).getStepName());
+    }
+
+    @Test
+    public void eventShapeVolcanoStepsShouldNotBeDuplicated() {
+        Layer layer = Layer.builder()
+                .id(EVENT_SHAPE_LAYER_ID)
+                .eventType(VOLCANO)
+                .source(LayerSource.builder()
+                        .data(new FeatureCollection(new Feature[]{
+                                feature("Class", "Poly_Cones_0"),
+                                feature("areaType", "exposure")}
+                        ))
+                        .build())
+                .build();
+
+        service.applyConfig(layer);
+
+        Assertions.assertNotNull(layer.getLegend());
+        assertFalse(layer.getLegend().getSteps().isEmpty());
+        Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
+        Assertions.assertEquals(1, layer.getLegend().getSteps().size());
+        Assertions.assertEquals("Exposure Area", layer.getLegend().getSteps().get(0).getStepName());
+    }
+
+    @Test
+    public void eventShapeCycloneStepsShouldNotBeDuplicated() {
+        Layer layer = Layer.builder()
+                .id(EVENT_SHAPE_LAYER_ID)
+                .eventType(CYCLONE)
+                .source(LayerSource.builder()
+                        .data(new FeatureCollection(new Feature[]{
+                                feature("areaType", "track"),
+                                feature("Class", "Line_Line_0"),
+                                feature("areaType", "track"),
+                                feature("Class", "Line_Line_1")
+                        }
+                        ))
+                        .build())
+                .build();
+
+        service.applyConfig(layer);
+
+        Assertions.assertNotNull(layer.getLegend());
+        assertFalse(layer.getLegend().getSteps().isEmpty());
+        Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
+        Assertions.assertEquals(1, layer.getLegend().getSteps().size());
+        Assertions.assertEquals("Line Track", layer.getLegend().getSteps().get(0).getStepName());
+    }
 }

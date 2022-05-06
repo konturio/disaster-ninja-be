@@ -3,10 +3,10 @@ package io.kontur.disasterninja.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.Legend;
 import io.kontur.disasterninja.domain.enums.LegendType;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
 import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
-import io.kontur.disasterninja.dto.layer.StyleRuleDto;
 import io.kontur.disasterninja.dto.layerapi.Collection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,17 +65,17 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
 
         final String id = "myId";
         final String title = "layer title";
-        final StyleRuleDto styleRuleDto = StyleRuleDto.fromLegend(createLegend());
+        Legend legend = createLegend();
 
         LayerCreateDto dto = new LayerCreateDto();
         dto.setId(id);
         dto.setTitle(title);
-        dto.setLegend(styleRuleDto);
+        dto.setLegend(legend);
 
         Layer layer = client.createLayer(dto);
         assertEquals(LAYER_PREFIX + id, layer.getId());
         assertEquals(title, layer.getName());
-        assertEquals(styleRuleDto.toLegend(), layer.getLegend());
+        assertEquals(legend, layer.getLegend());
         assertTrue(layer.isOwnedByUser());
     }
 
@@ -101,16 +101,16 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
             );
 
         final String title = "layer title";
-        final StyleRuleDto styleRuleDto = StyleRuleDto.fromLegend(createLegend());
+        Legend legend = createLegend();
 
         LayerUpdateDto dto = new LayerUpdateDto();
         dto.setTitle(title);
-        dto.setLegend(styleRuleDto);
+        dto.setLegend(legend);
 
         Layer layer = client.updateLayer(LAYER_PREFIX + id, dto);
         assertEquals(LAYER_PREFIX + id, layer.getId());
         assertEquals(title, layer.getName());
-        assertEquals(styleRuleDto.toLegend(), layer.getLegend());
+        assertEquals(legend, layer.getLegend());
         assertTrue(layer.isOwnedByUser());
     }
 
@@ -195,7 +195,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         assertEquals("tiles", collection.getLinks().get(0).getRel());
         assertEquals("https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf",
                 collection.getLinks().get(0).getHref());
-        assertEquals(LegendType.SIMPLE, collection.getStyleRule().getType());
+        assertEquals(LegendType.SIMPLE.toString(), collection.getStyleRule().get("type").textValue());
     }
 
     @Test
@@ -230,6 +230,9 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(r -> {
                     String body = r.getBody().toString();
+                    if (hasJsonPath("$.appId", is(not("a2a353ab-4126-44ef-a25d-a93fee401c1f"))).matches(body)) {
+                        throw new RuntimeException();
+                    }
                     if (hasJsonPath("$.offset", is(0)).matches(body)) {
                         return withSuccess(readFile(this, "layers/layersAPI.features.page1.json"),
                                 MediaType.APPLICATION_JSON).createResponse(r);
@@ -243,7 +246,8 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
                 });
 
         //when
-        List<Feature> features = client.getCollectionFeatures(objectMapper.readValue(json, Geometry.class), "hotProjects");
+        List<Feature> features = client.getCollectionFeatures(objectMapper.readValue(json, Geometry.class),
+                "hotProjects", UUID.fromString("a2a353ab-4126-44ef-a25d-a93fee401c1f"));
 
         //then
         assertEquals(12, features.size());
@@ -252,6 +256,30 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         assertEquals("100", feature.getId());
         assertEquals("ARCHIVED", feature.getProperties().get("status"));
         assertEquals("MultiPolygon", feature.getGeometry().getType());
+    }
+
+    @Test
+    public void getCollectionFeaturesWithoutAppId() throws JsonProcessingException {
+        //given
+        String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
+                "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
+
+        server.expect(ExpectedCount.times(1), requestTo("/collections/hotProjects/items/search"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(r -> {
+                    String body = r.getBody().toString();
+                    if (hasJsonPath("$.appId").matches(body)) {
+                        throw new RuntimeException();
+                    }
+                    return withSuccess().createResponse(r);
+                });
+
+        //when
+        List<Feature> features = client.getCollectionFeatures(objectMapper.readValue(json, Geometry.class),
+                "hotProjects", null);
+
+        //then
+        assertEquals(0, features.size());
     }
 
     @Test
@@ -288,7 +316,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         assertEquals("tiles", collection.getLinks().get(0).getRel());
         assertEquals("https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf",
                 collection.getLinks().get(0).getHref());
-        assertEquals(LegendType.SIMPLE, collection.getStyleRule().getType());
+        assertEquals(LegendType.SIMPLE.toString(), collection.getStyleRule().get("type").textValue());
     }
 
     @Test

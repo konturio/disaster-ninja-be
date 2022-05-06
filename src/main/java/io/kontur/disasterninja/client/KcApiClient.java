@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.locationtech.jts.algorithm.Centroid;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.slf4j.Logger;
@@ -23,11 +22,9 @@ import org.wololo.geojson.Geometry;
 import org.wololo.geojson.Point;
 import org.wololo.jts2geojson.GeoJSONWriter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import javax.validation.constraints.NotNull;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static io.kontur.disasterninja.service.converter.GeometryConverter.*;
 
@@ -77,19 +74,7 @@ public class KcApiClient {
     }
 
     public List<Feature> getCollectionItemsByGeometry(Geometry geoJson, String collectionId) {
-        PreparedGeometry geoJsonGeometry = getPreparedGeometryFromRequest(geoJson);
-
-        //1 get items by bbox
-        List<Feature> features = getCollectionItems(collectionId, geoJsonGeometry.getGeometry());
-
-        //2 filter items by geoJson Geometry
-        return features.stream()
-            .filter(json -> {
-                Geometry featureGeom = json.getGeometry();
-                return featureGeom == null || //include items without geometry ("global" ones)
-                    geoJsonGeometry.intersects(getJtsGeometry(featureGeom));
-            })
-            .collect(Collectors.toList());
+        return getCollectionItems(collectionId, geoJson);
     }
 
     /**
@@ -99,7 +84,7 @@ public class KcApiClient {
     public List<Feature> getCollectionItemsByCentroidGeometry(Geometry geoJson, String collectionId) {
         PreparedGeometry geoJsonGeometry = getPreparedGeometryFromRequest(geoJson);
         //1 get items by bbox
-        List<Feature> features = getCollectionItems(collectionId, geoJsonGeometry.getGeometry());
+        List<Feature> features = getCollectionItems(collectionId, geoJson);
 
         //2 filter items by geoJson Geometry
         return features.stream()
@@ -159,59 +144,40 @@ public class KcApiClient {
     }
 
     protected List<Feature> getCollectionItems(String collectionId,
-                                               org.locationtech.jts.geom.Geometry boundary) {
-        String uri = "/collections/" + collectionId + "/items?limit={limit}&offset={offset}";
-        String bbox = null;
-        if (boundary != null) {
-            Envelope env = boundary.getEnvelopeInternal(); //Z axis not taken into account
-            bbox = Stream.of(env.getMinX(), env.getMinY(), env.getMaxX(), env.getMaxY())
-                .map(String::valueOf).reduce((a, b) -> a + "," + b).get();
-            uri += "&bbox={bbox}";
-        }
+                                               @NotNull Geometry geometry) {
+        String uri = "/collections/" + collectionId + "/itemsByGeometry";
 
         int i = 0;
 
-        if (bbox == null) {
-            LOG.info("Getting features of collection {}", collectionId);
-        } else {
-            LOG.info("Getting features of collection {} with bbox {}", collectionId, bbox);
-        }
-
         List<Feature> result = new ArrayList<>();
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("limit", pageSize);
+        body.put("geom", geometry);
 
         while (true) {
             int offset = i++ * pageSize;
+            body.put("offset", offset);
 
             ResponseEntity<KcApiFeatureCollection> response = kcApiRestTemplate
-                .exchange(uri, HttpMethod.GET, new HttpEntity<>(null,
-                    null), new ParameterizedTypeReference<>() {
-                }, pageSize, offset, bbox);
+                .exchange(uri, HttpMethod.POST, new HttpEntity<>(body, null),
+                        new ParameterizedTypeReference<>() {});
 
-            KcApiFeatureCollection body = response.getBody();
-            if (body == null) {
-                if (bbox == null) {
-                    LOG.info("Empty response returned for collection {}", collectionId);
-                } else {
-                    LOG.info("Empty response returned for collection {} and bbox {}", collectionId, bbox);
-                }
+            KcApiFeatureCollection responseBody = response.getBody();
+            if (responseBody == null) {
                 break;
             }
 
-            if (body.getFeatures() == null) {
+            if (responseBody.getFeatures() == null) {
                 break;
             }
 
-            result.addAll(List.of(body.getFeatures()));
-            if (result.size() == body.getNumberMatched()) {
+            result.addAll(List.of(responseBody.getFeatures()));
+            if (result.size() == responseBody.getNumberMatched()) {
                 break;
             }
         }
 
-        if (bbox == null) {
-            LOG.info("{} features loaded for collection {}", result.size(), collectionId);
-        } else {
-            LOG.info("{} features loaded for collection {} with bbox {}", result.size(), collectionId, bbox);
-        }
         return result;
     }
 

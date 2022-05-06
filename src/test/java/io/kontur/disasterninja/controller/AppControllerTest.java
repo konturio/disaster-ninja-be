@@ -23,6 +23,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.wololo.geojson.Point;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -44,7 +45,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @RestClientTest(components = {UserProfileClient.class, LayersApiClient.class})
 @AutoConfigureWebClient(registerRestTemplate = true)
 public class AppControllerTest extends TestDependingOnUserAuth {
-    private static final UUID DN2_ID = UUID.fromString("58851b50-9574-4aec-a3a6-425fa18dcb54");
+    private static final UUID DN2_ID = UUID.fromString("1b303b14-ddce-42b9-b907-d31ed488e301");
     @Autowired
     private MockRestServiceServer mockServer;
     @Autowired
@@ -90,14 +91,14 @@ public class AppControllerTest extends TestDependingOnUserAuth {
 
     @Test
     public void getDefaultAppIdUnauthenticated() {
-        String dn2AppId = "58851b50-9574-4aec-a3a6-425fa18dcb54";
+        String dn2AppId = UUID.randomUUID().toString();
         givenUserIsNotAuthenticated();
         mockServer.expect(requestTo(PATH + "/" + "default_id"))
             .andExpect(method(GET))
             .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
             .andRespond(withSuccess(dn2AppId, MediaType.TEXT_PLAIN));
 
-        String result = appsController.getDefaultAppId();
+        String result = appsController.getDefaultAppId().getBody();
         assertEquals(dn2AppId, result);
     }
 
@@ -117,6 +118,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         assertFalse(result.getOwnedByUser());
         assertEquals(28, result.getFeatures().size());
         assertNull(result.getCenterGeometry());
+        assertNull(result.getZoom());
         assertTrue(result.isPublic());
     }
 
@@ -141,6 +143,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         assertTrue(result.getFeatures().contains("url_store"));
         assertTrue(geometriesAreEqual(new Point(new double[]{125.6, 10.1}), result.getCenterGeometry()));
         assertFalse(result.isPublic());
+        assertEquals(BigDecimal.valueOf(123.456), result.getZoom());
     }
 
     @Test
@@ -201,6 +204,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         assertEquals(request.getFeatures(), result.getFeatures());
         assertEquals(request.isPublic(), result.isPublic());
         assertTrue(geometriesAreEqual(request.getCenterGeometry(), result.getCenterGeometry()));
+        assertEquals(request.getZoom(), result.getZoom());
 
         assertEquals(appId, result.getId());
         assertEquals(true, result.getOwnedByUser());
@@ -310,6 +314,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         dto.setPublic(true);
         dto.setFeatures(List.of("map_layers_panel"));
         dto.setCenterGeometry(new Point(new double[]{1d, 2d}));
+        dto.setZoom(BigDecimal.valueOf(1.2345));
         return dto;
     }
 

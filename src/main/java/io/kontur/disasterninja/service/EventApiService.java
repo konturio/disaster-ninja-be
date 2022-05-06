@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 
+import static java.util.Comparator.*;
+
 @Service
 @RequiredArgsConstructor
 public class EventApiService {
@@ -53,8 +55,9 @@ public class EventApiService {
      * -for events with no humanitarian impact: by the last updates time
      */
     private void sort(List<EventListDto> eventList) {
-        eventList.sort(Comparator.comparing(EventListDto::getAffectedPopulation)
-                .thenComparing(EventListDto::getUpdatedAt).reversed());
+        eventList.sort(Comparator.comparing(EventListDto::getAffectedPopulation, nullsFirst(naturalOrder()))
+                .thenComparing(EventListDto::getUpdatedAt)
+                .reversed());
     }
 }
 

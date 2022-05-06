@@ -91,6 +91,8 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         assertEquals("(c) Kontur", layer.getCopyrights().get(0));
         assertEquals(LegendType.SIMPLE, layer.getLegend().getType());
         assertEquals("hotProjects", layer.getLegend().getSteps().get(0).getSourceLayer());
+        assertEquals("#bbd1e6", layer.getLegend().getSteps().get(0).getStepIconFill());
+        assertEquals("#bbd1e6", layer.getLegend().getSteps().get(0).getStepIconStroke());
         assertFalse(layer.isBoundaryRequiredForRetrieval());
 
         Layer userLayer = layers.get(12);

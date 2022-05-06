@@ -4,16 +4,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
+import io.kontur.disasterninja.domain.Legend;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LayerSourceType;
 import io.kontur.disasterninja.dto.AppLayerUpdateDto;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
 import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
-import io.kontur.disasterninja.dto.layer.StyleRuleDto;
 import io.kontur.disasterninja.dto.layerapi.Collection;
 import io.kontur.disasterninja.dto.layerapi.CollectionOwner;
 import io.kontur.disasterninja.dto.layerapi.Link;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
+import io.kontur.disasterninja.util.JsonUtil;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +71,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
 
     public Layer getLayer(Geometry geoJSON, String layerId, UUID appId) {
         String id = getIdWithoutPrefix(layerId);
-        return convertToLayerDetails(geoJSON, getCollection(id, appId));
+        return convertToLayerDetails(geoJSON, getCollection(id, appId), appId);
     }
 
     public Layer createLayer(LayerCreateDto dto) {
@@ -207,7 +208,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         return result;
     }
 
-    public List<Feature> getCollectionFeatures(Geometry geoJson, String collectionId) {
+    public List<Feature> getCollectionFeatures(Geometry geoJson, String collectionId, UUID appId) {
         Assert.notNull(collectionId, "Collection ID should not be null");
 
         List<Feature> result = new ArrayList<>();
@@ -215,6 +216,9 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         Map<String, Object> body = new HashMap<>();
         body.put("geometry", geoJson);
         body.put("limit", pageSize);
+        if (appId != null) {
+            body.put("appId", appId);
+        }
 
         while (true) {
             body.put("offset", result.size());
@@ -259,6 +263,19 @@ public class LayersApiClient extends RestClientWithBearerAuth {
     }
 
     private Layer convertToLayer(Collection collection) {
+        boolean boundaryRequiredForRetrieval = !LAYER_TYPE_TILES.equals(
+                collection.getItemType()) && !collection.isOwnedByUser();
+        if (collection.getDisplayRule() != null &&
+                collection.getDisplayRule().get("boundaryRequiredForRetrieval") != null) {
+            boundaryRequiredForRetrieval = collection.getDisplayRule().get("boundaryRequiredForRetrieval").asBoolean();
+        }
+
+        boolean eventIdRequiredForRetrieval = false;
+        if (collection.getDisplayRule() != null &&
+                collection.getDisplayRule().get("eventIdRequiredForRetrieval") != null) {
+            eventIdRequiredForRetrieval = collection.getDisplayRule().get("eventIdRequiredForRetrieval").asBoolean();
+        }
+
         return Layer.builder()
                 .id(getIdWithPrefix(collection.getId()))
                 .name(collection.getTitle())
@@ -266,19 +283,17 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                 .category(collection.getCategory() != null ? LayerCategory.fromString(
                         collection.getCategory().getName()) : null)
                 .group(collection.getGroup() != null ? collection.getGroup().getName() : null)
-                .legend(collection.getStyleRule() != null ? collection.getStyleRule()
-                        .toLegend() : null)
+                .legend(collection.getStyleRule() != null ?
+                        JsonUtil.readObjectNode(collection.getStyleRule(), Legend.class) : null)
                 .copyrights(collection.getCopyrights() != null ? singletonList(collection.getCopyrights()) : null)
-                .boundaryRequiredForRetrieval(
-                        !LAYER_TYPE_TILES.equals(collection.getItemType()) && !collection.isOwnedByUser())
-                .eventIdRequiredForRetrieval(false)
+                .boundaryRequiredForRetrieval(boundaryRequiredForRetrieval)
+                .eventIdRequiredForRetrieval(eventIdRequiredForRetrieval)
                 .ownedByUser(collection.isOwnedByUser())
                 .featureProperties(collection.getFeatureProperties())
                 .build();
     }
 
-    private Layer convertToLayerDetails(Geometry geoJSON,
-                                        Collection collection) {
+    private Layer convertToLayerDetails(Geometry geoJSON, Collection collection, UUID appId) {
         if (collection == null) {
             return null;
         }
@@ -286,12 +301,12 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         if (LAYER_TYPE_TILES.equals(collection.getItemType())) {
             source = createVectorSource(collection);
         } else if (LAYER_TYPE_FEATURE.equals(collection.getItemType())) {
-            source = createFeatureSource(geoJSON, collection.getId());
+            source = createFeatureSource(geoJSON, collection.getId(), appId);
         }
-        StyleRuleDto styleRule = collection.getStyleRule();
         return Layer.builder()
                 .id(getIdWithPrefix(collection.getId()))
-                .legend(styleRule != null ? styleRule.toLegend() : null)
+                .legend(collection.getStyleRule() != null ?
+                        JsonUtil.readObjectNode(collection.getStyleRule(), Legend.class) : null)
                 .source(source)
                 .ownedByUser(collection.isOwnedByUser())
                 .build();
@@ -312,8 +327,8 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                 .build();
     }
 
-    private LayerSource createFeatureSource(Geometry geoJSON, String layerId) {
-        List<Feature> features = getCollectionFeatures(geoJSON, layerId);
+    private LayerSource createFeatureSource(Geometry geoJSON, String layerId, UUID appId) {
+        List<Feature> features = getCollectionFeatures(geoJSON, layerId, appId);
         return LayerSource.builder()
                 .type(LayerSourceType.GEOJSON)
                 .data(new FeatureCollection(features.toArray(new Feature[0])))

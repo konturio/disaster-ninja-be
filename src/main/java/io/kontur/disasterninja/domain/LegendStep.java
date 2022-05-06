@@ -1,6 +1,6 @@
 package io.kontur.disasterninja.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.kontur.disasterninja.domain.enums.LayerStepShape;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +29,8 @@ public class LegendStep {
     private final LayerStepShape stepShape;
     private final Map<String, Object> style;
     private final String sourceLayer;
-    @JsonIgnore
+    private final String stepIconFill;
+    private final String stepIconStroke;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private int order;
 }

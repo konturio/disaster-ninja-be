@@ -34,8 +34,8 @@ configs:
       steps:
         - stepName: 'Centroid'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Point_Centroid'
+          paramName: 'areaType'
+          paramValue: 'centerPoint'
           style:
             circle-radius: 3
             circle-color: '#051626'
@@ -46,6 +46,7 @@ configs:
           style:
             width: 3
             color: '#F5A663'
+          order: 100
         - stepName: 'Exposure Area 90 km/h'
           stepShape: 'circle'
           paramName: 'Class'
@@ -53,6 +54,7 @@ configs:
           style:
             width: 3
             color: '#DA5080'
+          order: 110
         - stepName: 'Exposure Area 120 km/h'
           stepShape: 'circle'
           paramName: 'Class'
@@ -60,6 +62,42 @@ configs:
           style:
             width: 2
             color: '#830909'
+          order: 120
+        - stepName: 'Line Track'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'track'
+          style:
+            color: '#8C949B'
+        - stepName: 'Point Track'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'position'
+          style:
+            circle-radius: 2
+            circle-color: '#051626'
+        - stepName: 'Uncertainty Cones'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'alertArea'
+          style:
+            width: 1
+            color: '#646F78'
+        - stepName: 'Exposure Area'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'globalArea'
+          style:
+            width: 1
+            color: '#051626'
+        #TODO Remove below config in #9831
+        - stepName: 'Centroid'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Point_Centroid'
+          style:
+            circle-radius: 3
+            circle-color: '#051626'
         - stepName: 'Line Track'
           stepShape: 'circle'
           paramName: 'Class'
@@ -96,6 +134,22 @@ configs:
       steps:
         - stepName: 'Centroid'
           stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'centerPoint'
+          style:
+            circle-radius: 3
+            circle-color: '#051626'
+        - stepName: 'Exposure Area'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramPattern: 'globalArea|exposure'
+          paramValue: 'globalArea'
+          style:
+            width: 3
+            color: '#051626'
+        #TODO Remove below config in #9831
+        - stepName: 'Centroid'
+          stepShape: 'circle'
           paramName: 'Class'
           paramValue: 'Point_Centroid'
           style:
@@ -122,6 +176,21 @@ configs:
       steps:
         - stepName: 'Centroid'
           stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'centerPoint'
+          style:
+            circle-radius: 3
+            circle-color: '#051626'
+        - stepName: 'Exposure Area 100 km'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'alertArea'
+          style:
+            width: 3
+            color: '#646F78'
+        #TODO Remove below config in #9831
+        - stepName: 'Centroid'
+          stepShape: 'circle'
           paramName: 'Class'
           paramValue: 'Point_Centroid'
           style:
@@ -146,6 +215,31 @@ configs:
       name: 'Event shape'
       type: 'simple'
       steps:
+        - stepName: 'Centroid'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'centerPoint'
+          style:
+            circle-radius: 3
+            circle-color: '#051626'
+        - stepName: 'Exposure Area'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramPattern: 'position|exposure'
+          paramValue: 'exposure'
+          style:
+            width: 3
+            color: '#051626'
+        - stepName: 'Alert Area'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramPattern: 'globalArea|alertArea'
+          paramValue: 'globalArea'
+          style:
+            width: 2
+            color: '#051626'
+            opacity: 0.5
+        #TODO Remove below config in #9831
         - stepName: 'Centroid'
           stepShape: 'circle'
           paramName: 'Class'
@@ -182,6 +276,35 @@ configs:
       steps:
         - stepName: 'Centroid'
           stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'centerPoint'
+          style:
+            circle-radius: 3
+            circle-color: '#051626'
+        - stepName: 'Start point'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'startPoint'
+          style:
+            circle-radius: 3
+            circle-color: '#051626'
+        - stepName: 'Exposure Area'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'exposure'
+          style:
+            width: 3
+            color: '#051626'
+        - stepName: 'Alert Area'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'alertArea'
+          style:
+            width: 3
+            color: '#051626'
+        #TODO Remove below config in #9831
+        - stepName: 'Centroid'
+          stepShape: 'circle'
           paramName: 'Class'
           paramValue: 'Point_Centroid'
           style:
@@ -208,15 +331,22 @@ configs:
       steps:
         - stepName: 'Centroid'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Point_Centroid'
+          paramName: 'areaType'
+          paramValue: 'centerPoint'
           style:
             circle-radius: 3
             circle-color: '#051626'
         - stepName: 'Exposure Area 100 km'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_Circle'
+          paramName: 'areaType'
+          paramValue: 'alertArea'
+          style:
+            width: 3
+            color: '#051626'
+        - stepName: 'Exposure Area'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'exposure'
           style:
             width: 3
             color: '#051626'
@@ -251,6 +381,21 @@ configs:
             width: 2
             color: '#051626'
             opacity: 0.3
+        #TODO Remove below config in #9831
+        - stepName: 'Centroid'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Point_Centroid'
+          style:
+            circle-radius: 3
+            circle-color: '#051626'
+        - stepName: 'Exposure Area 100 km'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_Circle'
+          style:
+            width: 3
+            color: '#051626'
 
   # --- empty template ---
   #- id: 'eventShape.'
@@ -352,7 +497,7 @@ configs:
             text: '{top_user}'
             text-color: 'rgb(0, 145, 0)'
             text-halo-color: 'rgba(255, 255, 255, 0.3)'
-            text-halo-radius: 2
+            text-halo-radius: 1
             text-size: 14
             text-letter-spacing: 0.05
             text-padding: 0
@@ -360,6 +505,8 @@ configs:
             icon-image: 'osm-user-shield'
             icon-text-fit: 'both'
             icon-allow-overlap: true
+            symbol-placement: 'point'
+            max-width: 3
         - stepName: 'Active mappers'
           sourceLayer: 'users'
           stepShape: 'circle'
@@ -369,7 +516,7 @@ configs:
             text: '{top_user}'
             text-color: 'rgb(100, 111, 120)'
             text-halo-color: 'rgba(255, 255, 255, 0.3)'
-            text-halo-radius: 2
+            text-halo-radius: 1
             text-size: 12
             text-letter-spacing: 0.05
             text-padding: 0
@@ -377,6 +524,8 @@ configs:
             icon-image: 'osm-user-shield'
             icon-text-fit: 'both'
             icon-allow-overlap: true
+            symbol-placement: 'point'
+            max-width: 3
         - sourceLayer: 'hexagon'
           style:
             color: 'black'

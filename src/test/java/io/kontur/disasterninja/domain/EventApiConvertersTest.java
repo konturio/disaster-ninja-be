@@ -15,8 +15,7 @@ import java.util.List;
 
 import static io.kontur.disasterninja.dto.EventType.CYCLONE;
 import static io.kontur.disasterninja.dto.EventType.OTHER;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EventApiConvertersTest {
     private static EventApiEventDto testEvent() {
@@ -105,7 +104,9 @@ public class EventApiConvertersTest {
 
         assertEquals(event.getProperName(), dto.getEventName());
         assertEquals(event.getLocation(), dto.getLocation());
-        assertEquals(0L, dto.getSettledArea());
+        assertNull(dto.getAffectedPopulation());
+        assertNull(dto.getOsmGaps());
+        assertNull(dto.getSettledArea());
         assertTrue(dto.getExternalUrls().isEmpty());
     }
 
@@ -118,7 +119,9 @@ public class EventApiConvertersTest {
 
         assertEquals(event.getProperName(), dto.getEventName());
         assertEquals(event.getLocation(), dto.getLocation());
-        assertEquals(0L, dto.getSettledArea());
+        assertNull(dto.getAffectedPopulation());
+        assertNull(dto.getOsmGaps());
+        assertNull(dto.getSettledArea());
         assertTrue(dto.getExternalUrls().isEmpty());
     }
 
@@ -127,6 +130,9 @@ public class EventApiConvertersTest {
         EventApiEventDto event = testEvent();
         event.setEventDetails(new HashMap<>());
         event.getEventDetails().put("populatedAreaKm2", 100.12);
+        event.getEventDetails().put("osmGapsPercentage", 30);
+        event.getEventDetails().put("population", 50);
+        event.getEventDetails().put("loss", 531.14);
         event.setUrls(new ArrayList<>());
         event.getUrls().add("http://google.com");
         EventListDto dto = EventListEventDtoConverter.convert(event);
@@ -134,6 +140,9 @@ public class EventApiConvertersTest {
         assertEquals(event.getProperName(), dto.getEventName());
         assertEquals(event.getLocation(), dto.getLocation());
         assertEquals(100.12, dto.getSettledArea());
+        assertEquals(30, dto.getOsmGaps());
+        assertEquals(50, dto.getAffectedPopulation());
+        assertEquals(531, dto.getLoss());
         assertEquals(1, dto.getExternalUrls().size());
         assertEquals("http://google.com", dto.getExternalUrls().get(0));
     }

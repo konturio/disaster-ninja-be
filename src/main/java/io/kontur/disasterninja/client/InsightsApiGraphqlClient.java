@@ -5,11 +5,15 @@ import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Input;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.dto.BivariateStatisticDto;
 import io.kontur.disasterninja.graphql.AdvancedAnalyticalPanelQuery;
 import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
 import io.kontur.disasterninja.graphql.type.AdvancedAnalyticsRequest;
+import io.kontur.disasterninja.graphql.HumanitarianImpactQuery;
 import io.kontur.disasterninja.graphql.type.FunctionArgs;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
@@ -17,8 +21,12 @@ import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.SimpleTimer;
 import io.prometheus.client.Summary;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.wololo.geojson.Feature;
+import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.GeoJSON;
+import org.wololo.geojson.Geometry;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -67,6 +75,37 @@ public class InsightsApiGraphqlClient {
                             future.complete(response.getData().polygonStatistic().analytics().functions());
                         }
                         future.complete(List.of());
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull ApolloException e) {
+                        observeMetricsAndCompleteExceptionally(e, future, timer);
+                    }
+                });
+        return future;
+    }
+
+    public CompletableFuture<FeatureCollection> humanitarianImpactQuery(Geometry polygon) {
+        CompletableFuture<FeatureCollection> future = new CompletableFuture<>();
+        SimpleTimer timer = new SimpleTimer();
+        apolloClient
+                .query(new HumanitarianImpactQuery(Input.optional(polygon)))
+                .enqueue(new ApolloCall.Callback<>() {
+                    @Override
+                    public void onResponse(@NotNull Response<HumanitarianImpactQuery.Data> response) {
+                        metrics.labels(SUCCESS).observe(timer.elapsedSeconds());
+
+                        if (response.getData() != null && response.getData().polygonStatistic() != null &&
+                                response.getData().polygonStatistic().analytics() != null &&
+                                response.getData().polygonStatistic().analytics().humanitarianImpact() != null) {
+                            String json = response.getData().polygonStatistic().analytics().humanitarianImpact();
+                            try {
+                                future.complete(new ObjectMapper().readValue(json, FeatureCollection.class));
+                            } catch (JsonProcessingException e) {
+                                throw new WebApplicationException("Unable to convert response", HttpStatus.INTERNAL_SERVER_ERROR);
+                            }
+                        }
+                        future.complete(new FeatureCollection(new Feature[0]));
                     }
 
                     @Override

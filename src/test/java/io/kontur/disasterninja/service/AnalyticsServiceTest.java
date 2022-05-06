@@ -28,7 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AnalyticsTabServiceTest {
+class AnalyticsServiceTest {
 
     @Mock
     private InsightsApiGraphqlClient insightsApiGraphqlClient;
@@ -37,7 +37,7 @@ class AnalyticsTabServiceTest {
     private AnalyticsTabProperties configuration;
 
     @InjectMocks
-    private AnalyticsTabService service;
+    private AnalyticsService service;
 
     @Test
     public void calculateAnalyticsTest() {
@@ -70,8 +70,8 @@ class AnalyticsTabServiceTest {
         analyticsField.setName("name");
 
         List<AnalyticsTabQuery.Function> functionsResults = List.of(new AnalyticsTabQuery.Function("", "functionId", 1.1),
-                new AnalyticsTabQuery.Function("", "functionId1", 2.233333),
-                new AnalyticsTabQuery.Function("", "functionId2", 4.433333));
+                new AnalyticsTabQuery.Function("", "functionId1", 11442.233333),
+                new AnalyticsTabQuery.Function("", "functionId2", 1444.433333));
 
         CompletableFuture<List<AnalyticsTabQuery.Function>> completableFuture = new CompletableFuture();
         completableFuture.complete(functionsResults);
@@ -83,7 +83,7 @@ class AnalyticsTabServiceTest {
         when(insightsApiGraphqlClient.analyticsTabQuery(geoJSONArgumentCaptor.capture(), functionArgsArgumentCaptor.capture())).thenReturn(completableFuture);
 
         //when
-        List<AnalyticsDto> result = service.calculateAnalytics(GeoJSONFactory.create(geoJsonString));
+        List<AnalyticsDto> result = service.calculateAnalyticsForPanel(GeoJSONFactory.create(geoJsonString));
 
         //then
         GeoJSON geoJSONCaptorValue = geoJSONArgumentCaptor.getValue();
@@ -109,7 +109,7 @@ class AnalyticsTabServiceTest {
         assertEquals("name", result1.getName());
         assertEquals("description", result1.getDescription());
         assertEquals(2, result1.getPercentValue());
-        assertEquals("3 people on 4.43 km2 ", result1.getText());
+        assertEquals("11,443 people on 1,444.43 km2 ", result1.getText());
     }
 
     @Test
@@ -144,7 +144,7 @@ class AnalyticsTabServiceTest {
 
         //when
         try {
-            service.calculateAnalytics(GeoJSONFactory.create(geoJsonString));
+            service.calculateAnalyticsForPanel(GeoJSONFactory.create(geoJsonString));
             throw new RuntimeException("expected exception was not thrown");
         } catch (WebApplicationException e) {
             assertEquals("Exception when getting data from insights-api using apollo client", e.getMessage());
@@ -185,7 +185,7 @@ class AnalyticsTabServiceTest {
         when(insightsApiGraphqlClient.analyticsTabQuery(any(GeoJSON.class), anyList())).thenReturn(completableFuture);
 
         //when
-        List<AnalyticsDto> result = service.calculateAnalytics(GeoJSONFactory.create(geoJsonString));
+        List<AnalyticsDto> result = service.calculateAnalyticsForPanel(GeoJSONFactory.create(geoJsonString));
 
         //then
         assertEquals(1, result.size());

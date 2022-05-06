@@ -21,13 +21,18 @@ public class EventListEventDtoConverter {
         dto.setSeverity(event.getEpisodes().get(0).getSeverity());
         Map<String, Object> eventDetails = event.getEventDetails();
         if (eventDetails != null) {
-            dto.setAffectedPopulation(convertLong(eventDetails.get("population")));
-            dto.setOsmGaps(convertLong(eventDetails.get("osmGapsPercentage")));
-            dto.setSettledArea(convertDouble(event.getEventDetails().get("populatedAreaKm2")));
-        } else {
-            dto.setAffectedPopulation(0L);
-            dto.setSettledArea(0d);
-            dto.setOsmGaps(0L);
+            if (eventDetails.containsKey("population")) {
+                dto.setAffectedPopulation(convertLong(eventDetails.get("population")));
+            }
+            if (eventDetails.containsKey("osmGapsPercentage")) {
+                dto.setOsmGaps(convertLong(eventDetails.get("osmGapsPercentage")));
+            }
+            if (eventDetails.containsKey("populatedAreaKm2")) {
+                dto.setSettledArea(convertDouble(event.getEventDetails().get("populatedAreaKm2")));
+            }
+            if (eventDetails.containsKey("loss")) {
+                dto.setLoss(convertLong(event.getEventDetails().get("loss")));
+            }
         }
         dto.setUpdatedAt(event.getUpdatedAt());
 

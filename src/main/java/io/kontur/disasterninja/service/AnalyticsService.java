@@ -17,37 +17,42 @@ import org.wololo.geojson.GeoJSON;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class AnalyticsTabService {
-    private static final Logger LOG = LoggerFactory.getLogger(AnalyticsTabService.class);
+public class AnalyticsService {
+    private static final Logger LOG = LoggerFactory.getLogger(AnalyticsService.class);
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
-
+    private final DecimalFormat numberFormat = new DecimalFormat("#,###.##", new DecimalFormatSymbols(Locale.US));
     private final AnalyticsTabProperties configuration;
 
-    public List<AnalyticsDto> calculateAnalytics(GeoJSON geoJSON) {
+    public List<AnalyticsDto> calculateAnalyticsForPanel(GeoJSON geoJSON) {
         List<AnalyticsField> fields = configuration.getFields();
-        List<AnalyticsTabQuery.Function> functionsResults = null;
-        List<FunctionArgs> functionArgs = createFunctionArgsList(fields);
+        List<Function> functions = fields.stream()
+                .flatMap(field -> field.getFunctions().stream())
+                .toList();
+        List<AnalyticsTabQuery.Function> functionsResults = calculateRawAnalytics(geoJSON, functions);
+
+        return createResultDto(fields, functionsResults);
+    }
+
+    public List<AnalyticsTabQuery.Function> calculateRawAnalytics(GeoJSON geoJSON, List<Function> functions) {
+        List<FunctionArgs> functionArgs = createFunctionArgsList(functions);
         try {
-            functionsResults = insightsApiGraphqlClient.analyticsTabQuery(geoJSON, functionArgs).get();
+            return insightsApiGraphqlClient.analyticsTabQuery(geoJSON, functionArgs).get();
         } catch (Exception e) {
             LOG.error("Can't load analytics data due to exception in graphql call: {}", e.getMessage(), e);
             throw new WebApplicationException("Exception when getting data from insights-api using apollo client",
                 HttpStatus.BAD_GATEWAY);
         }
-        return createResultDto(fields, functionsResults);
     }
 
-    private List<FunctionArgs> createFunctionArgsList(List<AnalyticsField> fields) {
-        return fields.stream()
-                .flatMap(field -> field.getFunctions().stream())
+    private List<FunctionArgs> createFunctionArgsList(List<Function> functions) {
+        return functions.stream()
                 .map(field -> FunctionArgs.builder()
                         .id(field.getId())
                         .name(field.getFunction())
@@ -79,13 +84,15 @@ public class AnalyticsTabService {
                 switch (function.getPostfix()) {
                     case ("%") -> dto.setPercentValue(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
                             .setScale(0, RoundingMode.UP).intValue());
-                    case ("people on") -> text.append(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
-                                    .setScale(0, RoundingMode.UP).longValue())
+                    case ("people on") -> text.append(numberFormat.format(
+                                BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
+                                    .setScale(0, RoundingMode.UP).longValue()))
                             .append(" ")
                             .append(function.getPostfix())
                             .append(" ");
-                    default -> text.append(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
-                                    .setScale(2, RoundingMode.HALF_UP).doubleValue())
+                    default -> text.append(numberFormat.format(
+                                BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
+                                    .setScale(2, RoundingMode.HALF_UP).doubleValue()))
                             .append(" ")
                             .append(function.getPostfix())
                             .append(" ");

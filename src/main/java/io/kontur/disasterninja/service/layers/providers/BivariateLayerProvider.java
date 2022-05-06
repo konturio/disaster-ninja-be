@@ -4,6 +4,7 @@ import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.domain.*;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.dto.BivariateStatisticDto;
+import io.kontur.disasterninja.dto.layer.ColorDto;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -167,14 +168,14 @@ public class BivariateLayerProvider implements LayerProvider {
             yAxis.setQuotient(y.quotient());
         }
         //colors matrix
-        Map<String, String> colors = requireNonNull(overlay.colors()).stream()
-                .collect(Collectors.toMap(BivariateLayerLegendQuery.Color::id,
-                        c -> requireNonNull(c.color())));
+        List<ColorDto> colors = requireNonNull(overlay.colors()).stream()
+                .map(c -> new ColorDto(c.id(), c.color()))
+                .collect(Collectors.toList());
 
         return Legend.builder()
                 .type(BIVARIATE)
-                .bivariateColors(colors)
-                .bivariateAxes(BivariateLegendAxes.builder()
+                .colors(colors)
+                .axes(BivariateLegendAxes.builder()
                         .x(xAxis)
                         .y(yAxis)
                         .build())
@@ -183,8 +184,8 @@ public class BivariateLayerProvider implements LayerProvider {
 
     private List<String> copyrightsFromIndicators(Legend legend, List<BivariateLayerLegendQuery.Indicator> indicators) {
         Set<String> quotient = new HashSet<>();
-        quotient.addAll(legend.getBivariateAxes().getX().getQuotient());
-        quotient.addAll(legend.getBivariateAxes().getY().getQuotient());
+        quotient.addAll(legend.getAxes().getX().getQuotient());
+        quotient.addAll(legend.getAxes().getY().getQuotient());
 
         Set<String> copyrights = new HashSet<>();
         quotient.forEach(q ->

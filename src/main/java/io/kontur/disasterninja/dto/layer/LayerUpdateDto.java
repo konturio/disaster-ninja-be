@@ -3,6 +3,7 @@ package io.kontur.disasterninja.dto.layer;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.kontur.disasterninja.domain.Legend;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -24,7 +25,7 @@ public class LayerUpdateDto {
     @JsonAlias("legend")
     @JsonProperty("styleRule")
     @Schema(name = "legend")
-    private StyleRuleDto legend;
+    private Legend legend;
     private ObjectNode featureProperties;
     private UUID appId;
 }
