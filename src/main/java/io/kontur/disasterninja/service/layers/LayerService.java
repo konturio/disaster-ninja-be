@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.FeatureCollection;
 
@@ -40,12 +42,16 @@ public class LayerService {
 
     public List<Layer> getList(LayerSearchParams layerSearchParams) {
         Map<String, Layer> layers = new HashMap<>();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         //load layers from providers
         providers.parallelStream()
                 .map(it -> {
                 try {
-                    return it.obtainLayers(layerSearchParams);
+                    SecurityContextHolder.getContext().setAuthentication(authentication); //pass authentication into the thread
+                    List<Layer> layerList = it.obtainLayers(layerSearchParams);
+                    SecurityContextHolder.getContext().setAuthentication(null);
+                    return layerList;
                 } catch (Exception e) {
                     LOG.error("Caught exception while obtaining layers from {}: {}", it.getClass().getSimpleName(),
                         e.getMessage(), e);
