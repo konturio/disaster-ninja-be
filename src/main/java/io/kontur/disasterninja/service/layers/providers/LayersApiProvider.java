@@ -14,6 +14,7 @@ import org.wololo.geojson.Geometry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
 import static io.kontur.disasterninja.dto.layerapi.CollectionOwner.*;
@@ -27,14 +28,15 @@ public class LayersApiProvider implements LayerProvider {
     private final LayersApiClient layersApiClient;
 
     @Override
-    public List<Layer> obtainLayers(LayerSearchParams searchParams) {
+    public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
         if (isUserAuthenticated()) {
             List<Layer> result = new ArrayList<>();
             result.addAll(obtainNonUserOwnedLayersByGeometry(searchParams.getBoundary(), searchParams.getAppId()));
             result.addAll(obtainAllUserOwnedLayers(searchParams.getAppId()));
-            return result;
+            return CompletableFuture.completedFuture(result);
         } else {
-            return obtainLayersByGeometry(searchParams.getBoundary(), searchParams.getAppId());
+            return CompletableFuture.completedFuture(
+                    obtainLayersByGeometry(searchParams.getBoundary(), searchParams.getAppId()));
         }
     }
 

@@ -12,6 +12,7 @@ import org.wololo.geojson.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
@@ -42,9 +43,9 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
     }
 
     @Test
-    public void list_emptyGeoJson() {
+    public void list_emptyGeoJson() throws ExecutionException, InterruptedException {
         //no geojson => no result
-        assertNull(osmLayerProvider.obtainLayers(emptyParams()));
+        assertTrue(osmLayerProvider.obtainLayers(emptyParams()).get().isEmpty());
     }
 
     @Test
@@ -61,9 +62,9 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
     }
 
     @Test
-    public void list() {
+    public void list() throws ExecutionException, InterruptedException {
         Geometry point = new Point(new double[]{1.722946974, 6.266307793});
-        List<Layer> result = osmLayerProvider.obtainLayers(LayerSearchParams.builder().boundary(point).build());
+        List<Layer> result = osmLayerProvider.obtainLayers(LayerSearchParams.builder().boundary(point).build()).get();
 
         assertEquals(10, result.size()); //9 layers without geometry, 1 matching
 

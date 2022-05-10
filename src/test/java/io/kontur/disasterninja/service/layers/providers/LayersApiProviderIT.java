@@ -22,6 +22,7 @@ import org.wololo.geojson.Geometry;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static io.kontur.disasterninja.dto.layerapi.CollectionOwner.ME;
@@ -50,7 +51,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
     }
 
     @Test
-    public void getLayers() throws JsonProcessingException {
+    public void getLayers() throws JsonProcessingException, ExecutionException, InterruptedException {
         //given
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
                 "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
@@ -77,7 +78,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
 
         //when
         Geometry geometry = objectMapper.readValue(json, Geometry.class);
-        List<Layer> layers = provider.obtainLayers(LayerSearchParams.builder().boundary(geometry).build());
+        List<Layer> layers = provider.obtainLayers(LayerSearchParams.builder().boundary(geometry).build()).get();
 
         //then
         assertEquals(13, layers.size());

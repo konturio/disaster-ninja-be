@@ -15,7 +15,9 @@ import org.wololo.geojson.Feature;
 import org.wololo.geojson.Geometry;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.config.logging.LogHttpTraceRepository.LOG;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
@@ -30,12 +32,12 @@ public class EventShapeLayerProvider implements LayerProvider {
     private final EventApiService eventApiService;
 
     @Override
-    public List<Layer> obtainLayers(LayerSearchParams searchParams) {
+    public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
         if (searchParams.getEventId() == null || searchParams.getEventFeed() == null) {
-            return null;
+            return CompletableFuture.completedFuture(Collections.emptyList());
         }
         Layer layer = obtainLayer(EVENT_SHAPE_LAYER_ID, searchParams);
-        return layer == null ? null : List.of(layer);
+        return CompletableFuture.completedFuture(layer == null ? Collections.emptyList() : List.of(layer));
     }
 
     @Override

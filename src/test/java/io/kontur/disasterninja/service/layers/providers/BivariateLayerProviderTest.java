@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
 import static io.kontur.disasterninja.service.layers.providers.BivariateLayerProvider.LAYER_PREFIX;
@@ -69,10 +70,10 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
     }
 
     @Test
-    public void bivariateListExceptionTest() {
+    public void bivariateListExceptionTest() throws ExecutionException, InterruptedException {
         when(insightsApiGraphqlClient.getBivariateStatistic()).thenThrow(new ApolloException("hello world"));
 
-        assertTrue(bivariateLayerProvider.obtainLayers(emptyParams()).isEmpty());
+        assertTrue(bivariateLayerProvider.obtainLayers(emptyParams()).get().isEmpty());
     }
 
     @Test
@@ -83,8 +84,8 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
     }
 
     @Test
-    public void listTest() {
-        List<Layer> layers = bivariateLayerProvider.obtainLayers(emptyParams());
+    public void listTest() throws ExecutionException, InterruptedException {
+        List<Layer> layers = bivariateLayerProvider.obtainLayers(emptyParams()).get();
         assertEquals(1, layers.size());
     }
 
@@ -138,8 +139,8 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
     }
 
     @Test
-    public void copyrightLinkMarkdown_8657() {
-        List<Layer> layers = bivariateLayerProvider.obtainLayers(emptyParams());
+    public void copyrightLinkMarkdown_8657() throws ExecutionException, InterruptedException {
+        List<Layer> layers = bivariateLayerProvider.obtainLayers(emptyParams()).get();
         assertThat(layers.get(0).getCopyrights(), hasItems("copyrights [https://kontur.io/](https://kontur.io/)", "copyrights1", "copyrights2"));
     }
 

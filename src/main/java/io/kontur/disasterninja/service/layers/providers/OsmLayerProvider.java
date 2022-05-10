@@ -14,10 +14,8 @@ import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.client.KcApiClient.OSM_LAYERS;
@@ -63,12 +61,12 @@ public class OsmLayerProvider implements LayerProvider {
     }
 
     @Override
-    public List<Layer> obtainLayers(LayerSearchParams searchParams) {
+    public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
         if (searchParams.getBoundary() == null) {
-            return null;
+            return CompletableFuture.completedFuture(Collections.emptyList());
         }
         List<Feature> osmLayers = kcApiClient.getCollectionItemsByGeometry(searchParams.getBoundary(), OSM_LAYERS);
-        return fromOsmLayers(osmLayers);
+        return CompletableFuture.completedFuture(fromOsmLayers(osmLayers));
     }
 
     /**

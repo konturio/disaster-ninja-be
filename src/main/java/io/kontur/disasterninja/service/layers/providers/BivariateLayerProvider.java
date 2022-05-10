@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class BivariateLayerProvider implements LayerProvider {
     @PostConstruct
     @Scheduled(initialDelayString = "${kontur.platform.insightsApi.layersReloadInterval}",
         fixedRateString = "${kontur.platform.insightsApi.layersReloadInterval}")
-    private void reloadLayers() {
+    public void reloadLayers() {
         LOG.info("Loading bivariate layers from insights-api");
         try {
             BivariateStatisticDto bivariateStatisticDto = insightsApiGraphqlClient.getBivariateStatistic().get();
@@ -65,9 +66,9 @@ public class BivariateLayerProvider implements LayerProvider {
      * @return Bivariate layers from insights-api graphql api
      */
     @Override
-    public List<Layer> obtainLayers(LayerSearchParams searchParams) {
+    public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
         reloadLayersIfEmpty();
-        return bivariateLayers.values().stream().toList();
+        return CompletableFuture.completedFuture(bivariateLayers.values().stream().toList());
     }
 
     @Override
