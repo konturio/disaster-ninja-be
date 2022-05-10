@@ -26,7 +26,6 @@ public class AsyncExecutionConfiguration extends AsyncConfigurerSupport {
     @Bean
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(2);
         executor.setMaxPoolSize(Runtime.getRuntime().availableProcessors() - 1);
         executor.setThreadNamePrefix("async-thread-");
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
