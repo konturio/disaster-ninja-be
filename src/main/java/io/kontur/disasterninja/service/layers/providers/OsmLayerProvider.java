@@ -91,7 +91,7 @@ public class OsmLayerProvider implements LayerProvider {
      */
     List<Layer> fromOsmLayers(List<Feature> dto) {
         if (dto == null) {
-            return null;
+            return Collections.emptyList();
         }
         return dto.stream().filter(Objects::nonNull).map(it -> fromOsmLayer(it, false))
             .collect(Collectors.toList());

@@ -56,6 +56,7 @@ public class LayerService {
                 .filter(Objects::nonNull)
                 .toList()
                 .stream()
+                .filter(Objects::nonNull)
                 .map(CompletableFuture::join)
                 .flatMap(List::stream)
                 .filter(Objects::nonNull)
