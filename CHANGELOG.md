@@ -5,6 +5,18 @@
 #### Added
 
 #### Changed
+
+#### Removed
+
+#### Installation sequence
+
+
+
+## Release 0.8.0 - 2022-05-12
+
+#### Added
+
+#### Changed
 - #10207 Refactor Layers providers parallel invocation
 
 #### Removed
