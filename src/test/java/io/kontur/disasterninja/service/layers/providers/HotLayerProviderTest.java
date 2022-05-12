@@ -12,6 +12,7 @@ import org.wololo.geojson.FeatureCollection;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
@@ -36,8 +37,8 @@ public class HotLayerProviderTest extends LayerProvidersTest {
 
 
     @Test
-    public void list_emptyGeojson() {
-        assertNull(hotLayerProvider.obtainLayers(emptyParams()));
+    public void list_emptyGeojson() throws ExecutionException, InterruptedException {
+        assertTrue(hotLayerProvider.obtainLayers(emptyParams()).get().isEmpty());
     }
 
     @Test
@@ -48,8 +49,8 @@ public class HotLayerProviderTest extends LayerProvidersTest {
     }
 
     @Test
-    public void list() {
-        List<Layer> results = hotLayerProvider.obtainLayers(paramsWithSomeBoundary()); //filtering is done in kcApiClient so not testing it here
+    public void list() throws ExecutionException, InterruptedException {
+        List<Layer> results = hotLayerProvider.obtainLayers(paramsWithSomeBoundary()).get(); //filtering is done in kcApiClient so not testing it here
         assertEquals(1, results.size());
         Layer result = results.get(0);
         assertLayer(result);
@@ -62,9 +63,9 @@ public class HotLayerProviderTest extends LayerProvidersTest {
     }
 
     @Test
-    public void listNoIntersection() {
+    public void listNoIntersection() throws ExecutionException, InterruptedException {
         Mockito.when(kcApiClient.getCollectionItemsByCentroidGeometry(any(), any())).thenReturn(List.of());
-        assertNull(hotLayerProvider.obtainLayers(paramsWithSomeBoundary()));
+        assertTrue(hotLayerProvider.obtainLayers(paramsWithSomeBoundary()).get().isEmpty());
     }
 
     @Test

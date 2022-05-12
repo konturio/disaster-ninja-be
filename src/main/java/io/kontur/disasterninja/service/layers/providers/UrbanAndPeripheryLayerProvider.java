@@ -13,6 +13,7 @@ import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.NAME;
@@ -29,15 +30,16 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
     private final InsightsApiClient insightsApiClient;
 
     @Override
-    public List<Layer> obtainLayers(LayerSearchParams searchParams) {
+    public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
         if (searchParams.getBoundary() == null) {
-            return null;
+            return CompletableFuture.completedFuture(Collections.emptyList());
         }
         org.wololo.geojson.FeatureCollection features = insightsApiClient
             .getUrbanCoreAndSettledPeripheryLayers(searchParams.getBoundary());
-        return providedLayers.stream().map(layerId -> urbanOrPeripheryLayer(features, layerId, false))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+        List<Layer> layers = providedLayers.stream().map(layerId -> urbanOrPeripheryLayer(features, layerId, false))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(layers);
     }
 
     /**

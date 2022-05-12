@@ -2,8 +2,10 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSearchParams;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface LayerProvider {
     String HOT_LAYER_ID = "hotProjects";
@@ -16,7 +18,8 @@ public interface LayerProvider {
      *
      * @return list of layers available from this LayerProvider.
      */
-    List<Layer> obtainLayers(LayerSearchParams searchParams);
+    @Async
+    CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams);
 
     Layer obtainLayer(String layerId, LayerSearchParams searchParams);
 

@@ -14,6 +14,7 @@ import org.wololo.geojson.Point;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.SETTLED_PERIPHERY_LAYER_ID;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.URBAN_CORE_LAYER_ID;
@@ -35,7 +36,7 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
     }
 
     @Test
-    public void listOneLayerNotPresentTest() throws IOException {
+    public void listOneLayerNotPresentTest() throws IOException, ExecutionException, InterruptedException {
         //#8516
         FeatureCollection fc = objectMapper.readValue(
             getClass().getResource("/io/kontur/disasterninja/client/layers/population.json"),
@@ -45,13 +46,13 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
         Mockito.when(insightsApiClient.getUrbanCoreAndSettledPeripheryLayers(any()))
             .thenReturn(fc);
         List<Layer> layers = urbanAndPeripheryLayerProvider.obtainLayers(LayerSearchParams
-            .builder().boundary(new Point(new double[]{1d, 2d})).build());
+            .builder().boundary(new Point(new double[]{1d, 2d})).build()).get();
         assertEquals(1, layers.size());
     }
 
     @Test
-    public void listEmptyGeojsonTest() {
-        assertNull(urbanAndPeripheryLayerProvider.obtainLayers(emptyParams()));
+    public void listEmptyGeojsonTest() throws ExecutionException, InterruptedException {
+        assertTrue(urbanAndPeripheryLayerProvider.obtainLayers(emptyParams()).get().isEmpty());
     }
 
     @Test
@@ -65,9 +66,9 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
     }
 
     @Test
-    public void listTest() throws IOException {
+    public void listTest() throws IOException, ExecutionException, InterruptedException {
         List<Layer> results = urbanAndPeripheryLayerProvider.obtainLayers(LayerSearchParams
-            .builder().boundary(new Point(new double[]{1d, 2d})).build());
+            .builder().boundary(new Point(new double[]{1d, 2d})).build()).get();
         Layer urbanCore = results.stream().filter(it -> URBAN_CORE_LAYER_ID.equals(it.getId())).findAny().get();
         Layer periphery = results.stream().filter(it -> SETTLED_PERIPHERY_LAYER_ID.equals(it.getId())).findAny().get();
 

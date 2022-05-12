@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import static io.kontur.disasterninja.dto.EventType.EARTHQUAKE;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.EVENT_SHAPE_LAYER_ID;
@@ -41,8 +42,8 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
     }
 
     @Test
-    public void list_emptyEventId() {
-        assertNull(eventShapeLayerProvider.obtainLayers(emptyParams()));
+    public void list_emptyEventId() throws ExecutionException, InterruptedException {
+        assertTrue(eventShapeLayerProvider.obtainLayers(emptyParams()).get().isEmpty());
     }
 
     @Test
@@ -73,8 +74,8 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
     }
 
     @Test
-    public void list_Earthquake() {
-        List<Layer> results = eventShapeLayerProvider.obtainLayers(someEventIdEventFeedParams());
+    public void list_Earthquake() throws ExecutionException, InterruptedException {
+        List<Layer> results = eventShapeLayerProvider.obtainLayers(someEventIdEventFeedParams()).get();
         assertEquals(1, results.size());
         Layer result = results.get(0);
 
@@ -123,7 +124,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
     }
 
     @Test
-    public void list_Default() throws IOException {
+    public void list_Default() throws IOException, ExecutionException, InterruptedException {
         EventDto eventDto = objectMapper.readValue(getClass()
                 .getResource("/io/kontur/disasterninja/client/layers/eventdto.json"),
             EventDto.class);
@@ -137,7 +138,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
         });
         Mockito.when(eventApiService.getEvent(any(), any())).thenReturn(eventDto);
 
-        List<Layer> result = eventShapeLayerProvider.obtainLayers(someEventIdEventFeedParams());
+        List<Layer> result = eventShapeLayerProvider.obtainLayers(someEventIdEventFeedParams()).get();
         assertEquals(1, result.size());
 
         Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.get(0).getId());
@@ -146,10 +147,10 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
     }
 
     @Test
-    public void list_NoIntersection() {
-        assertNull(eventShapeLayerProvider.obtainLayers(LayerSearchParams.builder()
+    public void list_NoIntersection() throws ExecutionException, InterruptedException {
+        assertTrue(eventShapeLayerProvider.obtainLayers(LayerSearchParams.builder()
             .boundary(new Point(new double[]{0d, 0d}))
-            .eventId(UUID.randomUUID()).eventFeed("some-feed").build()));
+            .eventId(UUID.randomUUID()).eventFeed("some-feed").build()).get().isEmpty());
     }
 
     @Test

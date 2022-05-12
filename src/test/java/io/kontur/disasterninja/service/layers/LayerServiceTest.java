@@ -19,6 +19,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
 import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
@@ -64,11 +65,12 @@ public class LayerServiceTest {
 
     @BeforeEach
     public void beforeEach() {
-        when(hotLayerProvider.obtainLayers(any())).thenReturn(new ArrayList<>());
-        when(osmLayerProvider.obtainLayers(any())).thenReturn(new ArrayList<>());
-        when(urbanAndPeripheryLayerProvider.obtainLayers(any())).thenReturn(new ArrayList<>());
-        when(eventApiProvider.obtainLayers(any())).thenReturn(new ArrayList<>());
-        when(bivariateLayerProvider.obtainLayers(any())).thenReturn(new ArrayList<>());
+        when(hotLayerProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(new ArrayList<Layer>()));
+        when(osmLayerProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(new ArrayList<Layer>()));
+        when(urbanAndPeripheryLayerProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(new ArrayList<Layer>()));
+        when(eventApiProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(new ArrayList<Layer>()));
+        when(bivariateLayerProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(new ArrayList<Layer>()));
+        when(layersApiProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(new ArrayList<Layer>()));
         //add other providers
     }
 
@@ -141,7 +143,7 @@ public class LayerServiceTest {
     public void getListShouldWorkEvenIfSomeProvidersThrowTest() {
         when(hotLayerProvider.obtainLayers(any())).thenThrow(HttpClientErrorException.create(HttpStatus.BAD_REQUEST,
             "fail", null,null, Charset.defaultCharset()));
-        when(layersApiProvider.obtainLayers(any())).thenReturn(List.of(layer));
+        when(layersApiProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(List.of(layer)));
 
         List<Layer> result = layerService.getList(paramsWithSomeBoundary());
         assertFalse(result.isEmpty());

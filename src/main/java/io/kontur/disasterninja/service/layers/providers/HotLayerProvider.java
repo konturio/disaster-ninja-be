@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.client.KcApiClient.HOT_PROJECTS;
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
@@ -28,12 +30,12 @@ public class HotLayerProvider implements LayerProvider {
     private final KcApiClient kcApiClient;
 
     @Override
-    public List<Layer> obtainLayers(LayerSearchParams searchParams) {
+    public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
         if (searchParams.getBoundary() == null) {
-            return null;
+            return CompletableFuture.completedFuture(Collections.emptyList());
         }
         Layer layer = obtainLayer(HOT_LAYER_ID, searchParams);
-        return layer == null ? null : List.of(layer);
+        return CompletableFuture.completedFuture(layer == null ? Collections.emptyList() : List.of(layer));
     }
 
     /**

@@ -5,6 +5,7 @@
 #### Added
 
 #### Changed
+- #10207 Refactor Layers providers parallel invocation
 
 #### Removed
 

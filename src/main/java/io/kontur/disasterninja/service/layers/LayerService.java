@@ -11,18 +11,19 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.FeatureCollection;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
 @RequiredArgsConstructor
 public class LayerService {
+
     private static final Logger LOG = LoggerFactory.getLogger(LayerService.class);
     final LayerConfigService layerConfigService;
     final List<LayerProvider> providers;
@@ -41,28 +42,25 @@ public class LayerService {
     }
 
     public List<Layer> getList(LayerSearchParams layerSearchParams) {
-        Map<String, Layer> layers = new HashMap<>();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         //load layers from providers
-        providers.parallelStream()
+        Map<String, Layer> layers = providers.stream()
                 .map(it -> {
-                try {
-                    SecurityContextHolder.getContext().setAuthentication(authentication); //pass authentication into the thread
-                    List<Layer> layerList = it.obtainLayers(layerSearchParams);
-                    SecurityContextHolder.getContext().setAuthentication(null);
-                    return layerList;
-                } catch (Exception e) {
-                    LOG.error("Caught exception while obtaining layers from {}: {}", it.getClass().getSimpleName(),
-                        e.getMessage(), e);
-                    return null;
-                }
-            })
-            .filter(Objects::nonNull)
-            .reduce(new ArrayList<>(), (a, b) -> {
-                a.addAll(b);
-                return a;
-            }).forEach(l -> layers.put(l.getId(), l)); //if there are multiple layers with same id - just one of them will be kept
+                    try {
+                        return it.obtainLayers(layerSearchParams);
+                    } catch (Exception e) {
+                        LOG.error("Caught exception while obtaining layers from {}: {}", it.getClass().getSimpleName(),
+                                e.getMessage(), e);
+                        return CompletableFuture.completedFuture(Collections.<Layer>emptyList());
+                    }
+                })
+                .filter(Objects::nonNull)
+                .toList()
+                .stream()
+                .filter(Objects::nonNull)
+                .map(CompletableFuture::join)
+                .flatMap(List::stream)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(Layer::getId, layer -> layer, (layer, layer2) -> layer2));
 
         //apply layer configs
         layers.values().forEach(layerConfigService::applyConfig);
