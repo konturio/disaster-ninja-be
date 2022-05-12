@@ -1,11 +1,9 @@
 plugins {
     id 'com.apollographql.apollo' version '2.5.10'
-    id 'org.springframework.boot' version '2.5.5'
+    id 'org.springframework.boot' version '2.6.7'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'jacoco'
-    id 'pmd'
-    id "com.github.spotbugs" version "5.0.6"
     id "org.owasp.dependencycheck" version "7.1.0.1"
 }
 
@@ -48,10 +46,6 @@ dependencies {
     testImplementation 'com.jayway.jsonpath:json-path-assert:2.6.0'
 }
 
-build {
-    finalizedBy "dependencyCheckAnalyze"
-}
-
 test {
     useJUnitPlatform()
     finalizedBy("jacocoTestReport")
@@ -70,37 +64,7 @@ jacocoTestReport {
     }
 }
 
-pmd {
-    toolVersion "6.45.0"
-    ruleSets = [] //disable default rules
-    ruleSetConfig = resources.text.fromFile("reports/pmd-ruleset.xml")
-    ignoreFailures = true
-
-    pmdMain {
-        exclude '**/graphql/**' //exclude generated code
-        reportsDir = file("$buildDir/reports/pmd/")
-    }
-    pmdTest {
-        enabled = false
-    }
-}
-
-spotbugs {
-    spotbugsMain {
-        ignoreFailures = true
-        excludeFilter = file("$projectDir/reports/spotbugs-excludeFilter.xml")
-        reports {
-            html {
-                required = true
-                outputLocation = file("$buildDir/reports/spotbugs/index.html")
-            }
-        }
-    }
-    spotbugsTest {
-        enabled = false
-    }
-}
-
 dependencyCheck {
     outputDirectory = "$buildDir/reports/owasp"
+    failBuildOnCVSS = 9
 }
