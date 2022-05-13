@@ -122,7 +122,7 @@ public class LayerController {
             .appId(dto.getAppId())
             .eventId(dto.getEventId())
             .eventFeed(dto.getEventFeed())
-            .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))
+            .boundary(geometryTransformer.validateAndFixGeometry(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON())))
             .build();
     }
 
@@ -131,7 +131,7 @@ public class LayerController {
             .appId(dto.getAppId())
             .eventId(dto.getEventId())
             .eventFeed(dto.getEventFeed())
-            .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))
+            .boundary(geometryTransformer.validateAndFixGeometry(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON())))
             .build();
     }
 }

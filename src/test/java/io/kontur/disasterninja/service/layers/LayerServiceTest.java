@@ -140,17 +140,6 @@ public class LayerServiceTest {
     }
 
     @Test
-    public void getListShouldWorkEvenIfSomeProvidersThrowTest() {
-        when(hotLayerProvider.obtainLayers(any())).thenThrow(HttpClientErrorException.create(HttpStatus.BAD_REQUEST,
-            "fail", null,null, Charset.defaultCharset()));
-        when(layersApiProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(List.of(layer)));
-
-        List<Layer> result = layerService.getList(paramsWithSomeBoundary());
-        assertFalse(result.isEmpty());
-        assertTrue(result.contains(layer));
-    }
-
-    @Test
     public void getShouldThrowIfAnyProviderThrowsTest() {
         when(hotLayerProvider.isApplicable(any())).thenReturn(true);
         when(hotLayerProvider.obtainLayer(any(), any())).thenThrow(HttpClientErrorException.create(HttpStatus.NOT_FOUND,

@@ -5,11 +5,25 @@ import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.*;
+import org.locationtech.jts.geom.util.GeometryFixer;
+import org.wololo.jts2geojson.GeoJSONReader;
+import org.wololo.jts2geojson.GeoJSONWriter;
 
 @Service
 public class GeometryTransformer {
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final GeoJSONReader reader = new GeoJSONReader();
+    private static final GeoJSONWriter writer = new GeoJSONWriter();
+
+    public Geometry validateAndFixGeometry(Geometry input) {
+        org.locationtech.jts.geom.Geometry geometry = reader.read(input);
+        if (!geometry.isValid()) {
+            return writer.write(GeometryFixer.fix(geometry));
+        }
+        return input;
+    }
+
     /**
      * Finds all nested features, collects their geometries.
      *

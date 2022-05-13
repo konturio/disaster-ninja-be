@@ -29,7 +29,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
-    implementation 'org.wololo:jts2geojson:0.16.1'
+    implementation 'org.locationtech.jts:jts-core:1.18.2'
+    implementation 'org.wololo:jts2geojson:0.17.0', {
+        exclude group: 'org.locationtech.jts:jts-core:1.18.1'
+    }
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.2'
     implementation 'com.apollographql.apollo:apollo-runtime:2.5.10'
 
