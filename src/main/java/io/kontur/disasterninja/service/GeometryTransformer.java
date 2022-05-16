@@ -17,6 +17,9 @@ public class GeometryTransformer {
     private static final GeoJSONWriter writer = new GeoJSONWriter();
 
     public Geometry validateAndFixGeometry(Geometry input) {
+        if (input == null) {
+            return null;
+        }
         org.locationtech.jts.geom.Geometry geometry = reader.read(input);
         if (!geometry.isValid()) {
             return writer.write(GeometryFixer.fix(geometry));
