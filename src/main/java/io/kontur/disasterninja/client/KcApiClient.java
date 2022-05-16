@@ -2,6 +2,7 @@ package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import lombok.Getter;
 import org.locationtech.jts.algorithm.Centroid;
 import org.locationtech.jts.geom.Coordinate;
@@ -16,10 +17,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.wololo.geojson.Feature;
-import org.wololo.geojson.FeatureCollection;
-import org.wololo.geojson.Geometry;
-import org.wololo.geojson.Point;
+import org.wololo.geojson.*;
 import org.wololo.jts2geojson.GeoJSONWriter;
 
 import javax.validation.constraints.NotNull;
@@ -181,6 +179,9 @@ public class KcApiClient {
         return result;
     }
 
+    @JsonSubTypes( {
+            @JsonSubTypes.Type(value=KcApiFeatureCollection.class, name="FeatureCollection"  )
+    })
     @Getter
     private static class KcApiFeatureCollection extends FeatureCollection {
         private final int numberMatched;

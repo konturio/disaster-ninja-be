@@ -13,6 +13,11 @@ import org.wololo.geojson.Geometry;
 
 import java.util.List;
 
+import static io.kontur.disasterninja.util.TestUtil.paramsWithSomeBoundary;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
 @Disabled("just for local debugging")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class LayerServiceIT {
@@ -29,5 +34,15 @@ public class LayerServiceIT {
                 .boundary(new ObjectMapper().readValue(json, Geometry.class))
                 .build());
         Assertions.assertFalse(layers.isEmpty());
+    }
+
+    @Test
+    public void exceptionsAreNotPropagatedTest() {
+        LayerSearchParams params = spy(paramsWithSomeBoundary());
+        when(params.getEventId()).then((i) -> new RuntimeException());
+
+        List<Layer> layers = layerService.getList(params);
+
+        assertFalse(layers.isEmpty());
     }
 }

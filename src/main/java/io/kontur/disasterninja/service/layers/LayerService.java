@@ -44,15 +44,17 @@ public class LayerService {
     public List<Layer> getList(LayerSearchParams layerSearchParams) {
         //load layers from providers
         Map<String, Layer> layers = providers.stream()
-                .map(it -> {
-                    try {
-                        return it.obtainLayers(layerSearchParams);
-                    } catch (Exception e) {
-                        LOG.error("Caught exception while obtaining layers from {}: {}", it.getClass().getSimpleName(),
-                                e.getMessage(), e);
-                        return CompletableFuture.completedFuture(Collections.<Layer>emptyList());
-                    }
-                })
+                .map(it -> it
+                        .obtainLayers(layerSearchParams)
+                        .handle((l, ex) -> {
+                            if (ex != null) {
+                                LOG.error("Caught exception while obtaining layers from {}: {}",
+                                        it.getClass().getSimpleName(),
+                                        ex.getMessage(), ex);
+                                return Collections.<Layer>emptyList();
+                            }
+                            return l;
+                        }))
                 .filter(Objects::nonNull)
                 .toList()
                 .stream()
