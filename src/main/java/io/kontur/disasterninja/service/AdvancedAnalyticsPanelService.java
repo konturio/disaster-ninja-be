@@ -39,7 +39,7 @@ public class AdvancedAnalyticsPanelService {
         List<AdvancedAnalyticsRequestValuesDto> values = argAdvancedAnalyticsRequest.getValues();
         List<AdvancedAnalyticsRequest> returnList = new ArrayList<>();
         if (values != null && !values.isEmpty()) {
-            values.stream().map(r -> returnList.add(AdvancedAnalyticsRequest.builder().numerator(r.getNumerator()).denominator(r.getDenominator()).calculations(r.getCalculations()).build())).toList();
+            values.forEach(r -> returnList.add(AdvancedAnalyticsRequest.builder().numerator(r.getNumerator()).denominator(r.getDenominator()).calculations(r.getCalculations()).build()));
             return returnList;
         } else {
             return null;
