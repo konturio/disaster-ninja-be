@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.wololo.geojson.GeoJSON;
 
 import java.util.*;
 
@@ -23,23 +22,11 @@ public class AdvancedAnalyticsPanelService {
     private static final Logger LOG = LoggerFactory.getLogger(AdvancedAnalyticsPanelService.class);
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
 
-    public List<AdvancedAnalyticsDto> calculateAnalytics_v2(AdvancedAnalyticsRequestDto argAdvancedAnalyticsRequest) {
+    public List<AdvancedAnalyticsDto> calculateAnalytics(AdvancedAnalyticsRequestDto argAdvancedAnalyticsRequest) {
         List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic> analyticsResult;
         List<AdvancedAnalyticsRequest> request = createRequest(argAdvancedAnalyticsRequest);
         try {
             analyticsResult = insightsApiGraphqlClient.advancedAnalyticsPanelQuery(argAdvancedAnalyticsRequest.getFeatures(), request).get();
-        } catch (Exception e) {
-            LOG.error("Can't load advanced analytics data due to exception in graphql call: {}", e.getMessage(), e);
-            throw new WebApplicationException("Exception when getting data from insights-api using apollo client",
-                    HttpStatus.BAD_GATEWAY);
-        }
-        return createResultDto(analyticsResult);
-    }
-
-    public List<AdvancedAnalyticsDto> calculateAnalytics(GeoJSON geoJSON) {
-        List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic> analyticsResult;
-        try {
-            analyticsResult = insightsApiGraphqlClient.advancedAnalyticsPanelQuery(geoJSON).get();
         } catch (Exception e) {
             LOG.error("Can't load advanced analytics data due to exception in graphql call: {}", e.getMessage(), e);
             throw new WebApplicationException("Exception when getting data from insights-api using apollo client",

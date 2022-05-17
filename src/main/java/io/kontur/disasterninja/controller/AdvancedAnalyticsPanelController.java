@@ -34,7 +34,7 @@ public class AdvancedAnalyticsPanelController {
     @PostMapping("/v2")
     public List<AdvancedAnalyticsDto> getAdvancedAnalyticsTab(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Polygon in GeoJSON format. Send polygon as FeatureCollection")
                                                               @RequestBody AdvancedAnalyticsRequestDto advancedAnalyticsRequest) {
-        return advancedAnalyticsPanelService.calculateAnalytics_v2(advancedAnalyticsRequest);
+        return advancedAnalyticsPanelService.calculateAnalytics(advancedAnalyticsRequest);
     }
 
     @Operation(summary = "Calculate data for advanced analytics panel using insights-api service",
@@ -45,7 +45,7 @@ public class AdvancedAnalyticsPanelController {
     @PostMapping
     public List<AdvancedAnalyticsDto> getAdvancedAnalyticsTab(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Polygon in GeoJSON format. Send polygon as FeatureCollection")
                                                               @RequestBody(required = false) GeoJSON geoJSON) {
-        return advancedAnalyticsPanelService.calculateAnalytics(geoJSON);
+        return advancedAnalyticsPanelService.calculateAnalytics(new AdvancedAnalyticsRequestDto(null, geoJSON));
     }
 
 }

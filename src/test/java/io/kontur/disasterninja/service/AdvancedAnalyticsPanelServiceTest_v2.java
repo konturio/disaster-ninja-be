@@ -77,7 +77,7 @@ class AdvancedAnalyticsPanelServiceTest_v2 {
         //when
         AdvancedAnalyticsRequestDto requestDto = new AdvancedAnalyticsRequestDto();
         requestDto.setFeatures(GeoJSONFactory.create(geoJsonString));
-        List<AdvancedAnalyticsDto> result = service.calculateAnalytics_v2(requestDto);
+        List<AdvancedAnalyticsDto> result = service.calculateAnalytics(requestDto);
 
         //then
         GeoJSON geoJSONCaptorValue = geoJSONArgumentCaptor.getValue();
@@ -157,7 +157,7 @@ class AdvancedAnalyticsPanelServiceTest_v2 {
         try {
             AdvancedAnalyticsRequestDto requestDto = new AdvancedAnalyticsRequestDto();
             requestDto.setFeatures(GeoJSONFactory.create(geoJsonString));
-            service.calculateAnalytics_v2(requestDto);
+            service.calculateAnalytics(requestDto);
             throw new RuntimeException("expected exception was not thrown");
         } catch (WebApplicationException e) {
             assertEquals("Exception when getting data from insights-api using apollo client", e.getMessage());
