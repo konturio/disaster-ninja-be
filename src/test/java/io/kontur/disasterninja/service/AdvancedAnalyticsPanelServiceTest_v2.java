@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.wololo.geojson.GeoJSON;
 import org.wololo.geojson.GeoJSONFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -76,6 +77,12 @@ class AdvancedAnalyticsPanelServiceTest_v2 {
 
         //when
         AdvancedAnalyticsRequestDto requestDto = new AdvancedAnalyticsRequestDto();
+        //added values to get desired layer
+        List<String> calculations = new ArrayList<>();
+        calculations.add("sum");
+        List<AdvancedAnalyticsRequestValuesDto> reqList = new ArrayList<>();
+        reqList.add(new AdvancedAnalyticsRequestValuesDto("forest", "one", calculations));
+        requestDto.setValues(reqList);
         requestDto.setFeatures(GeoJSONFactory.create(geoJsonString));
         List<AdvancedAnalyticsDto> result = service.calculateAnalytics(requestDto);
 

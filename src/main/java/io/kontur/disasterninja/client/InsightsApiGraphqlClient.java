@@ -116,33 +116,6 @@ public class InsightsApiGraphqlClient {
         return future;
     }
 
-    public CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> advancedAnalyticsPanelQuery(GeoJSON polygon) {
-        CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> future = new CompletableFuture<>();
-        SimpleTimer timer = new SimpleTimer();
-        apolloClient
-                .query(new AdvancedAnalyticalPanelQuery(Input.optional(polygon), Input.optional(null)))
-                .enqueue(new ApolloCall.Callback<>() {
-                    @Override
-                    public void onResponse(@NotNull Response<AdvancedAnalyticalPanelQuery.Data> response) {
-                        metrics.labels(SUCCESS).observe(timer.elapsedSeconds());
-
-                        if (response.getData() != null && response.getData().polygonStatistic() != null &&
-                                response.getData().polygonStatistic().analytics() != null &&
-                                response.getData().polygonStatistic().analytics().advancedAnalytics() != null) {
-                            future.complete(response.getData().polygonStatistic().analytics().advancedAnalytics());
-                        }
-                        future.complete(List.of());
-                    }
-
-                    @Override
-                    public void onFailure(@NotNull ApolloException e) {
-                        observeMetricsAndCompleteExceptionally(e, future, timer);
-                    }
-                });
-        return future;
-    }
-
-
     public CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> advancedAnalyticsPanelQuery(GeoJSON argPolygon, List<AdvancedAnalyticsRequest> argRequest) {
         CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> future = new CompletableFuture<>();
         SimpleTimer timer = new SimpleTimer();
