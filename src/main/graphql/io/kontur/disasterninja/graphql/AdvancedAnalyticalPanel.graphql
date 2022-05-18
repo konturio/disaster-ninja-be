@@ -1,10 +1,10 @@
-query AdvancedAnalyticalPanel($polygon: GeoJSON) {
+query AdvancedAnalyticalPanel($polygon: GeoJSON, $advancedAnalyticsRequestArray: [AdvancedAnalyticsRequest]) {
     polygonStatistic(polygonStatisticRequest:{
         polygonV2: $polygon
     }
     ){
         analytics {
-            advancedAnalytics {
+            advancedAnalytics(args: $advancedAnalyticsRequestArray) {
                 numerator,
                 denominator,
                 numeratorLabel,

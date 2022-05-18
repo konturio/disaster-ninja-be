@@ -48,7 +48,7 @@ public class InsightsApiGraphqlClientTest {
         """;
         List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic> result = null;
         try {
-            result = client.advancedAnalyticsPanelQuery(GeoJSONFactory.create(geoJsonString)).get();
+            result = client.advancedAnalyticsPanelQuery(GeoJSONFactory.create(geoJsonString), null).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

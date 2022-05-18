@@ -12,6 +12,7 @@ import io.kontur.disasterninja.dto.BivariateStatisticDto;
 import io.kontur.disasterninja.graphql.AdvancedAnalyticalPanelQuery;
 import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
+import io.kontur.disasterninja.graphql.type.AdvancedAnalyticsRequest;
 import io.kontur.disasterninja.graphql.HumanitarianImpactQuery;
 import io.kontur.disasterninja.graphql.type.FunctionArgs;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -115,11 +116,11 @@ public class InsightsApiGraphqlClient {
         return future;
     }
 
-    public CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> advancedAnalyticsPanelQuery(GeoJSON polygon) {
+    public CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> advancedAnalyticsPanelQuery(GeoJSON argPolygon, List<AdvancedAnalyticsRequest> argRequest) {
         CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> future = new CompletableFuture<>();
         SimpleTimer timer = new SimpleTimer();
         apolloClient
-                .query(new AdvancedAnalyticalPanelQuery(Input.optional(polygon)))
+                .query(new AdvancedAnalyticalPanelQuery(Input.optional(argPolygon), Input.optional(argRequest)))
                 .enqueue(new ApolloCall.Callback<>() {
                     @Override
                     public void onResponse(@NotNull Response<AdvancedAnalyticalPanelQuery.Data> response) {
@@ -174,8 +175,8 @@ public class InsightsApiGraphqlClient {
     }
 
     public <T> void observeMetricsAndCompleteExceptionally(@NotNull ApolloException e,
-                                                                  @NotNull CompletableFuture<T> future,
-                                                                  @NotNull SimpleTimer timer) {
+                                                           @NotNull CompletableFuture<T> future,
+                                                           @NotNull SimpleTimer timer) {
         metrics.labels(FAILED).observe(timer.elapsedSeconds());
         future.completeExceptionally(e);
     }

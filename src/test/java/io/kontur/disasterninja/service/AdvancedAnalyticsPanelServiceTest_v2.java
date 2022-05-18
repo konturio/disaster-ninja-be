@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.wololo.geojson.GeoJSON;
 import org.wololo.geojson.GeoJSONFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AdvancedAnalyticsPanelServiceTest {
+class AdvancedAnalyticsPanelServiceTest_v2 {
 
     private final String NUMERATOR = "covid19_vaccines";
     private final String DENOMINATOR1 = "area_km2";
@@ -61,7 +62,7 @@ class AdvancedAnalyticsPanelServiceTest {
 
         List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic> analyticsResults = List.of(
                 new AdvancedAnalyticalPanelQuery.AdvancedAnalytic(
-                        "analytics1",NUMERATOR, DENOMINATOR1, NUMERATOR_LABEL, DENOMINATOR_LABEL1,
+                       "analytics1",NUMERATOR, DENOMINATOR1, NUMERATOR_LABEL, DENOMINATOR_LABEL1,
                         analyticsList),
                 new AdvancedAnalyticalPanelQuery.AdvancedAnalytic(
                         "analytics1",NUMERATOR, DENOMINATOR2, NUMERATOR_LABEL, DENOMINATOR_LABEL2,
@@ -71,11 +72,19 @@ class AdvancedAnalyticsPanelServiceTest {
         completableFuture.complete(analyticsResults);
 
         ArgumentCaptor<GeoJSON> geoJSONArgumentCaptor = ArgumentCaptor.forClass(GeoJSON.class);
-        ArgumentCaptor<List<AdvancedAnalyticsRequest>> listArgumentCaptor = ArgumentCaptor.forClass(null);
-        when(insightsApiGraphqlClient.advancedAnalyticsPanelQuery(geoJSONArgumentCaptor.capture(),listArgumentCaptor.capture())).thenReturn(completableFuture);
+        ArgumentCaptor<List<AdvancedAnalyticsRequest>> listArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        when(insightsApiGraphqlClient.advancedAnalyticsPanelQuery(geoJSONArgumentCaptor.capture(), listArgumentCaptor.capture())).thenReturn(completableFuture);
 
         //when
-        List<AdvancedAnalyticsDto> result = service.calculateAnalytics(new AdvancedAnalyticsRequestDto(null, GeoJSONFactory.create(geoJsonString)));
+        AdvancedAnalyticsRequestDto requestDto = new AdvancedAnalyticsRequestDto();
+        //added values to get desired layer
+        List<String> calculations = new ArrayList<>();
+        calculations.add("sum");
+        List<AdvancedAnalyticsRequestValuesDto> reqList = new ArrayList<>();
+        reqList.add(new AdvancedAnalyticsRequestValuesDto("forest", "one", calculations));
+        requestDto.setValues(reqList);
+        requestDto.setFeatures(GeoJSONFactory.create(geoJsonString));
+        List<AdvancedAnalyticsDto> result = service.calculateAnalytics(requestDto);
 
         //then
         GeoJSON geoJSONCaptorValue = geoJSONArgumentCaptor.getValue();
@@ -153,7 +162,9 @@ class AdvancedAnalyticsPanelServiceTest {
 
         //when
         try {
-            service.calculateAnalytics(new AdvancedAnalyticsRequestDto(null, GeoJSONFactory.create(geoJsonString)));
+            AdvancedAnalyticsRequestDto requestDto = new AdvancedAnalyticsRequestDto();
+            requestDto.setFeatures(GeoJSONFactory.create(geoJsonString));
+            service.calculateAnalytics(requestDto);
             throw new RuntimeException("expected exception was not thrown");
         } catch (WebApplicationException e) {
             assertEquals("Exception when getting data from insights-api using apollo client", e.getMessage());
