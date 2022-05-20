@@ -182,14 +182,16 @@ public class KcApiClient {
     }
 
     @Getter
-    private static class KcApiFeatureCollection extends FeatureCollection {
+    private static class KcApiFeatureCollection {
+        private final Feature[] features;
         private final int numberMatched;
         private final int numberReturned;
+
         @JsonCreator
         public KcApiFeatureCollection(@JsonProperty("features") Feature[] features,
                                       @JsonProperty("numberReturned") int numberReturned,
                                       @JsonProperty("numberMatched") int numberMatched) {
-            super(features);
+            this.features = features;
             this.numberMatched = numberMatched;
             this.numberReturned = numberReturned;
         }
