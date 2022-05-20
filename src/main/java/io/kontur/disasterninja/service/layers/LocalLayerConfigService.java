@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class LocalLayerConfigService implements LayerConfigService {
+public class LocalLayerConfigService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalLayerConfigService.class);
     private final Map<String, Layer> globalOverlays = new HashMap<>();
@@ -42,7 +42,6 @@ public class LocalLayerConfigService implements LayerConfigService {
                     if (source != null && source.getUrls() != null) {
                         source.setUrls(source.getUrls().stream()
                             .map(it -> {
-                                //todo spring messages?
                                 if (it.contains("{tilesHost}")) {
                                     return it.replaceAll("\\{tilesHost}", tilesHost);
                                 } else {
@@ -65,7 +64,6 @@ public class LocalLayerConfigService implements LayerConfigService {
         }
     }
 
-    @Override
     public void applyConfig(Layer input) {
         Layer config = getConfigForRegularLayer(input);
 
@@ -95,14 +93,6 @@ public class LocalLayerConfigService implements LayerConfigService {
         return regularLayers.get(input.getId());
     }
 
-    private String getConfigLayerId(Layer layer) {
-        if (layer.getEventType() != null) {
-            return layer.getId() + "." + layer.getEventType().toString();
-        }
-        return layer.getId();
-    }
-
-    @Override
     public Map<String, Layer> getGlobalOverlays() {
         return globalOverlays;
     }

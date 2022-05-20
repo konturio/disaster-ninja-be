@@ -1,6 +1,6 @@
 package io.kontur.disasterninja.service.layers.providers;
 
-import io.kontur.disasterninja.client.InsightsApiClient;
+import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSearchParams;
@@ -14,10 +14,11 @@ import org.wololo.geojson.Point;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static io.kontur.disasterninja.service.layers.providers.LayerProvider.SETTLED_PERIPHERY_LAYER_ID;
-import static io.kontur.disasterninja.service.layers.providers.LayerProvider.URBAN_CORE_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.UrbanAndPeripheryLayerProvider.SETTLED_PERIPHERY_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.UrbanAndPeripheryLayerProvider.URBAN_CORE_LAYER_ID;
 import static io.kontur.disasterninja.util.TestUtil.emptyParams;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,14 +26,14 @@ import static org.mockito.ArgumentMatchers.any;
 public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
 
     @MockBean
-    InsightsApiClient insightsApiClient;
+    InsightsApiGraphqlClient insightsApiClient;
 
     @BeforeEach
     private void init() throws IOException {
-        Mockito.when(insightsApiClient.getUrbanCoreAndSettledPeripheryLayers(any()))
-            .thenReturn(objectMapper.readValue(
+        Mockito.when(insightsApiClient.humanitarianImpactQuery(any()))
+            .thenReturn(CompletableFuture.completedFuture(objectMapper.readValue(
                 getClass().getResource("/io/kontur/disasterninja/client/layers/population.json"),
-                FeatureCollection.class));
+                FeatureCollection.class)));
     }
 
     @Test
@@ -43,8 +44,8 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
             FeatureCollection.class);
         fc.getFeatures()[1] = null; //remove one of layers
 
-        Mockito.when(insightsApiClient.getUrbanCoreAndSettledPeripheryLayers(any()))
-            .thenReturn(fc);
+        Mockito.when(insightsApiClient.humanitarianImpactQuery(any()))
+            .thenReturn(CompletableFuture.completedFuture(fc));
         List<Layer> layers = urbanAndPeripheryLayerProvider.obtainLayers(LayerSearchParams
             .builder().boundary(new Point(new double[]{1d, 2d})).build()).get();
         assertEquals(1, layers.size());

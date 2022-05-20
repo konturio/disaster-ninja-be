@@ -27,6 +27,7 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 @RequiredArgsConstructor
 public class HotLayerProvider implements LayerProvider {
 
+    public static final String HOT_LAYER_ID = "hotProjects";
     private final KcApiClient kcApiClient;
 
     @Override
@@ -50,7 +51,7 @@ public class HotLayerProvider implements LayerProvider {
             throw new WebApplicationException("GeoJson boundary must be specified for layer " + layerId,
                 HttpStatus.BAD_REQUEST);
         }
-        //todo now only features whose Centroid intersects with requested geoJson are included (same as in DN1) #7768
+
         //it's possible that the centroid does intersect with the geoJson, but geometries themselves do not!
         List<Feature> hotProjectLayers = kcApiClient.getCollectionItemsByCentroidGeometry(searchParams.getBoundary(), HOT_PROJECTS);
         return fromHotProjectLayers(hotProjectLayers);

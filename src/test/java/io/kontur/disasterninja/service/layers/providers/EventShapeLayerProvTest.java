@@ -20,7 +20,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import static io.kontur.disasterninja.dto.EventType.EARTHQUAKE;
-import static io.kontur.disasterninja.service.layers.providers.LayerProvider.EVENT_SHAPE_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.EventShapeLayerProvider.EVENT_SHAPE_LAYER_ID;
 import static io.kontur.disasterninja.util.TestUtil.emptyParams;
 import static io.kontur.disasterninja.util.TestUtil.someEventIdEventFeedParams;
 import static org.junit.jupiter.api.Assertions.*;

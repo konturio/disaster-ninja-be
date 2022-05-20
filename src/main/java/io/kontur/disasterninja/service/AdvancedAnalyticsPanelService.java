@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class AdvancedAnalyticsPanelService {
+
     private static final Logger LOG = LoggerFactory.getLogger(AdvancedAnalyticsPanelService.class);
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
 

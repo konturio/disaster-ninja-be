@@ -31,14 +31,14 @@ public class UserProfileClient extends RestClientWithBearerAuth {
     private static final String APP_URL_WITH_ID = "/apps/{id}";
     private static final String DEFAULT_APP_ID_URL = "/apps/default_id";
     private final RestTemplate userProfileRestTemplate;
-    private final String defaultAppId;
+
+    @Value("${kontur.platform.userProfileApi.defaultAppId:}")
+    private String defaultAppId;
 
     public UserProfileClient(RestTemplate userProfileRestTemplate,
-                             KeycloakAuthorizationService authorizationService,
-                             @Value("${kontur.platform.userProfileApi.defaultAppId:}") String defaultAppId) {
+                             KeycloakAuthorizationService authorizationService) {
         super(authorizationService);
         this.userProfileRestTemplate = userProfileRestTemplate;
-        this.defaultAppId = defaultAppId;
     }
 
     public String getUserDefaultFeed() {

@@ -25,7 +25,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public class LayerService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LayerService.class);
-    final LayerConfigService layerConfigService;
+    final LocalLayerConfigService layerConfigService;
     final List<LayerProvider> providers;
     private final LayersApiClient layersApiClient;
 

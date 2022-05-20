@@ -16,8 +16,6 @@ import io.kontur.disasterninja.dto.layerapi.Link;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import io.kontur.disasterninja.util.JsonUtil;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -43,7 +41,6 @@ import static java.util.Collections.singletonList;
 public class LayersApiClient extends RestClientWithBearerAuth {
 
     public static final String LAYER_PREFIX = "KLA__";
-    private static final Logger LOG = LoggerFactory.getLogger(LayersApiClient.class);
 
     private static final String APPS_URI = "/apps/%s";
     private static final String COLLECTIONS_URI = "/collections";
@@ -55,6 +52,8 @@ public class LayersApiClient extends RestClientWithBearerAuth {
     private final RestTemplate layersApiRestTemplate;
     @Value("${kontur.platform.layersApi.pageSize}")
     private int pageSize;
+    @Value("${kontur.platform.userProfileApi.defaultAppId:}")
+    private String defaultAppId;
 
     public LayersApiClient(RestTemplate layersApiRestTemplate,
                            KeycloakAuthorizationService authorizationService) {
@@ -181,7 +180,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         body.put("limit", pageSize);
         if (appId == null) {
             //TODO remove default value after DN2 FE is updated with application functionality
-            body.put("appId", UUID.fromString("58851b50-9574-4aec-a3a6-425fa18dcb54"));
+            body.put("appId", UUID.fromString(defaultAppId));
         } else {
             body.put("appId", appId);
         }
@@ -247,7 +246,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         body.put("collectionIds", singletonList(collectionId));
         if (appId == null) {
             //TODO remove default value after DN2 FE is updated with application functionality
-            body.put("appId", UUID.fromString("58851b50-9574-4aec-a3a6-425fa18dcb54"));
+            body.put("appId", UUID.fromString(defaultAppId));
         } else {
             body.put("appId", appId);
         }

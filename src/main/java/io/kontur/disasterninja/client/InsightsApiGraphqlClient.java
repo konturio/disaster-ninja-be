@@ -53,7 +53,6 @@ public class InsightsApiGraphqlClient {
             CollectorRegistry collectorRegistry = ((PrometheusMeterRegistry) meterRegistry).getPrometheusRegistry();
             metrics = metricsBuilder.register(collectorRegistry);
         } else {
-            //for tests only
             metrics = metricsBuilder.create();
         }
     }

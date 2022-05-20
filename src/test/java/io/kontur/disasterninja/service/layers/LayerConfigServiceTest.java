@@ -19,8 +19,8 @@ import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 import static io.kontur.disasterninja.domain.enums.LegendType.SIMPLE;
 import static io.kontur.disasterninja.dto.EventType.*;
-import static io.kontur.disasterninja.service.layers.providers.LayerProvider.EVENT_SHAPE_LAYER_ID;
-import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.EventShapeLayerProvider.EVENT_SHAPE_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.HotLayerProvider.HOT_LAYER_ID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

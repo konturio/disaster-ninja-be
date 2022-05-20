@@ -15,7 +15,7 @@ import org.wololo.geojson.Point;
 
 import java.util.UUID;
 
-import static io.kontur.disasterninja.service.layers.providers.LayerProvider.EVENT_SHAPE_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.EventShapeLayerProvider.EVENT_SHAPE_LAYER_ID;
 
 @Disabled("just for local debugging")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

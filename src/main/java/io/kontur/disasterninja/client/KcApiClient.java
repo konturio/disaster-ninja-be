@@ -83,7 +83,7 @@ public class KcApiClient {
      */
     public List<Feature> getCollectionItemsByCentroidGeometry(Geometry geoJson, String collectionId) {
         PreparedGeometry geoJsonGeometry = getPreparedGeometryFromRequest(geoJson);
-        //1 get items by bbox
+        //1 get items
         List<Feature> features = getCollectionItems(collectionId, geoJson);
 
         //2 filter items by geoJson Geometry

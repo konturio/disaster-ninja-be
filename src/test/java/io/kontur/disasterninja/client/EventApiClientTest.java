@@ -56,7 +56,7 @@ class EventApiClientTest extends TestDependingOnUserAuth {
             });
 
         //when
-        List<EventApiEventDto> events = client.getEvents(null);
+        List<EventApiEventDto> events = client.getEvents("testFeedName");
 
         //then
         verify(securityContext, times(1)).getAuthentication();
@@ -73,7 +73,7 @@ class EventApiClientTest extends TestDependingOnUserAuth {
                 .andRespond(withSuccess(readFile(this, "EventApiClientTest.testGetEvent.response.json"),
                         MediaType.APPLICATION_JSON));
         //when
-        EventApiEventDto event = client.getEvent(UUID.fromString("1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"), null);
+        EventApiEventDto event = client.getEvent(UUID.fromString("1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"), "testFeedName");
 
         //then
         verify(securityContext, times(1)).getAuthentication();

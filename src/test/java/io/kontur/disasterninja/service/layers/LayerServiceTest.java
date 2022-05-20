@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
-import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.HotLayerProvider.HOT_LAYER_ID;
 import static io.kontur.disasterninja.util.TestUtil.createLegend;
 import static io.kontur.disasterninja.util.TestUtil.paramsWithSomeBoundary;
 import static org.junit.jupiter.api.Assertions.*;

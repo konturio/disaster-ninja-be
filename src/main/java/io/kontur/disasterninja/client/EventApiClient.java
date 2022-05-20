@@ -34,8 +34,6 @@ public class EventApiClient extends RestClientWithBearerAuth {
 
     private final RestTemplate restTemplate;
 
-    @Value("${kontur.platform.event-api.feed}")
-    private String defaultEventApiFeed; //todo will be removed - as this param will be provided in all FE requests
     @Value("${kontur.platform.event-api.pageSize}")
     private int pageSize;
 
@@ -54,9 +52,6 @@ public class EventApiClient extends RestClientWithBearerAuth {
     }
 
     public List<EventApiEventDto> getEvents(String eventApiFeed) {
-        if (eventApiFeed == null) {
-            eventApiFeed = defaultEventApiFeed;
-        }
         OffsetDateTime after = OffsetDateTime.now()
             .minusDays(4);
 
@@ -86,8 +81,8 @@ public class EventApiClient extends RestClientWithBearerAuth {
         return result;
     }
 
-    public List<EventApiEventDto> getLatestEvents(List<String> acceptableTypes, int limit) {
-        String uri = String.format(EVENT_API_LATEST_EVENTS_URI, defaultEventApiFeed, limit);
+    public List<EventApiEventDto> getLatestEvents(List<String> acceptableTypes, String feedName, int limit) {
+        String uri = String.format(EVENT_API_LATEST_EVENTS_URI, feedName, limit);
         if (!CollectionUtils.isEmpty(acceptableTypes)) {
             uri += "&types=" + String.join(",", acceptableTypes);
         }
@@ -109,9 +104,6 @@ public class EventApiClient extends RestClientWithBearerAuth {
     public EventApiEventDto getEvent(UUID eventId, String eventApiFeed) {
         if (eventId == null) {
             return null;
-        }
-        if (eventApiFeed == null) {
-            eventApiFeed = defaultEventApiFeed;
         }
         String uri = String.format(EVENT_API_EVENT_ID_URI, eventApiFeed, eventId);
         ResponseEntity<EventApiEventDto> response = restTemplate

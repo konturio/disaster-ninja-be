@@ -34,7 +34,6 @@ public class Layer {
     private Integer maxZoom; //for 'vector' and 'raster' only (see source.type)
     private Integer minZoom; //for 'vector' and 'raster' only (see source.type)
     private LayerSource source;
-    //test-only layers
     private boolean testOnly;
     private Integer orderIndex; //for sorting bivariate presets
     private boolean ownedByUser;

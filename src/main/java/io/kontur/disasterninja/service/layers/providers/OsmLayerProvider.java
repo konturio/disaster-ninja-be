@@ -6,7 +6,7 @@ import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
-import io.kontur.disasterninja.service.layers.LayerConfigService;
+import io.kontur.disasterninja.service.layers.LocalLayerConfigService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 public class OsmLayerProvider implements LayerProvider {
 
     private final KcApiClient kcApiClient;
-    private final LayerConfigService layerConfigService;
+    private final LocalLayerConfigService layerConfigService;
     private Set<String> globalOverlays;
 
     @PostConstruct
@@ -119,8 +119,7 @@ public class OsmLayerProvider implements LayerProvider {
             String url = getFeatureProperty(f, URL, String.class);
 
             builder.source(LayerSource.builder()
-                .type(RASTER) //todo agreed to hardcode for now
-//                    .tileSize() //todo
+                .type(RASTER)
                 .urls(url != null ? List.of(url) : null)
 
                 .data(new FeatureCollection(new Feature[]{f}))

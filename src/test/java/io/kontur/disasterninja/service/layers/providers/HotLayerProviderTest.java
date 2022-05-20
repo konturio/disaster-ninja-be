@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
-import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.HotLayerProvider.HOT_LAYER_ID;
 import static io.kontur.disasterninja.util.TestUtil.emptyParams;
 import static io.kontur.disasterninja.util.TestUtil.paramsWithSomeBoundary;
 import static org.junit.jupiter.api.Assertions.*;
