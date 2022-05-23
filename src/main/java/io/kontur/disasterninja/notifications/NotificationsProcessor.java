@@ -34,14 +34,15 @@ import java.util.stream.Stream;
 import static java.util.Collections.emptyMap;
 
 @Component
-@ConditionalOnProperty(value="notifications.enabled")
+@ConditionalOnProperty(value = "notifications.enabled")
 public class NotificationsProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationsProcessor.class);
     private static volatile OffsetDateTime latestUpdatedDate = null;
     private static final GeoJSONReader geoJSONReader = new GeoJSONReader();
     private static final GeoJSONWriter geoJSONWriter = new GeoJSONWriter();
-    private static final List<String> acceptableTypes = Arrays.asList("FLOOD", "EARTHQUAKE", "CYCLONE", "VOLCANO", "WILDFIRE");
+    private static final List<String> acceptableTypes = Arrays.asList("FLOOD", "EARTHQUAKE", "CYCLONE", "VOLCANO",
+            "WILDFIRE");
 
     private final EventApiClient eventApiClient;
     private final InsightsApiGraphqlClient insightsApiClient;

@@ -2,7 +2,8 @@ package io.kontur.disasterninja.service;
 
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
-import io.kontur.disasterninja.dto.*;
+import io.kontur.disasterninja.dto.AdvancedAnalyticsDto;
+import io.kontur.disasterninja.dto.AdvancedAnalyticsValuesDto;
 import io.kontur.disasterninja.graphql.AdvancedAnalyticalPanelQuery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,17 +60,18 @@ class AdvancedAnalyticsPanelServiceTest {
 
         List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic> analyticsResults = List.of(
                 new AdvancedAnalyticalPanelQuery.AdvancedAnalytic(
-                       "analytics1",NUMERATOR, DENOMINATOR1, NUMERATOR_LABEL, DENOMINATOR_LABEL1,
+                        "analytics1", NUMERATOR, DENOMINATOR1, NUMERATOR_LABEL, DENOMINATOR_LABEL1,
                         analyticsList),
                 new AdvancedAnalyticalPanelQuery.AdvancedAnalytic(
-                        "analytics1",NUMERATOR, DENOMINATOR2, NUMERATOR_LABEL, DENOMINATOR_LABEL2,
+                        "analytics1", NUMERATOR, DENOMINATOR2, NUMERATOR_LABEL, DENOMINATOR_LABEL2,
                         analyticsList));
 
         CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> completableFuture = new CompletableFuture();
         completableFuture.complete(analyticsResults);
 
         ArgumentCaptor<GeoJSON> geoJSONArgumentCaptor = ArgumentCaptor.forClass(GeoJSON.class);
-        when(insightsApiGraphqlClient.advancedAnalyticsPanelQuery(geoJSONArgumentCaptor.capture())).thenReturn(completableFuture);
+        when(insightsApiGraphqlClient.advancedAnalyticsPanelQuery(geoJSONArgumentCaptor.capture())).thenReturn(
+                completableFuture);
 
         //when
         List<AdvancedAnalyticsDto> result = service.calculateAnalytics(GeoJSONFactory.create(geoJsonString));
@@ -137,13 +139,14 @@ class AdvancedAnalyticsPanelServiceTest {
 
         List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic> analyticsResults = List.of(
                 new AdvancedAnalyticalPanelQuery.AdvancedAnalytic(
-                        "analytics1",NUMERATOR, DENOMINATOR1, NUMERATOR_LABEL, DENOMINATOR_LABEL1,
+                        "analytics1", NUMERATOR, DENOMINATOR1, NUMERATOR_LABEL, DENOMINATOR_LABEL1,
                         analyticsList),
                 new AdvancedAnalyticalPanelQuery.AdvancedAnalytic(
-                        "analytics1",NUMERATOR, DENOMINATOR2, NUMERATOR_LABEL, DENOMINATOR_LABEL2,
+                        "analytics1", NUMERATOR, DENOMINATOR2, NUMERATOR_LABEL, DENOMINATOR_LABEL2,
                         analyticsList));
 
-        CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> completableFuture = mock(CompletableFuture.class);
+        CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> completableFuture = mock(
+                CompletableFuture.class);
 
         when(insightsApiGraphqlClient.advancedAnalyticsPanelQuery(any(GeoJSON.class))).thenReturn(completableFuture);
         when(completableFuture.get()).thenThrow(new InterruptedException());

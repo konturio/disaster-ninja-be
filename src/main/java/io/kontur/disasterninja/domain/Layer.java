@@ -9,13 +9,17 @@ import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
 import org.wololo.geojson.Feature;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Data
 @Builder
 @Jacksonized
 public class Layer {
+
     private final String id;
     private boolean globalOverlay;
     private boolean displayLegendIfNoFeaturesExist;
@@ -85,7 +89,8 @@ public class Layer {
         LayerSource otherSource = other.getSource();
         if (otherSource != null) {
             this.source = new LayerSource(otherSource.getType(), otherSource.getTileSize(),
-                    otherSource.getUrls(), this.source != null ? this.source.getData() : null); //sic! source.data is not replaced
+                    otherSource.getUrls(),
+                    this.source != null ? this.source.getData() : null); //sic! source.data is not replaced
         }
 
         this.ownedByUser = other.ownedByUser;

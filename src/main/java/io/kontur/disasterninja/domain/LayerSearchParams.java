@@ -9,6 +9,7 @@ import java.util.UUID;
 @Data
 @Builder
 public class LayerSearchParams {
+
     private final Geometry boundary;
     private final UUID appId;
     private final UUID eventId;
@@ -16,9 +17,9 @@ public class LayerSearchParams {
 
     public LayerSearchParams getCopyWithoutBoundary() {
         return LayerSearchParams.builder()
-            .appId(appId)
-            .eventId(eventId)
-            .eventFeed(eventFeed)
-            .build();
+                .appId(appId)
+                .eventId(eventId)
+                .eventFeed(eventFeed)
+                .build();
     }
 }

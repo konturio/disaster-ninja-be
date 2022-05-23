@@ -16,6 +16,6 @@ public class LayerDetailsDto {
 
     public static LayerDetailsDto fromLayer(Layer layer) {
         return layer == null ? null : new LayerDetailsDto(layer.getId(), layer.getMaxZoom(), layer.getMinZoom(),
-            LayerSourceDto.fromLayerSource(layer.getSource()), layer.getLegend(), layer.isOwnedByUser());
+                LayerSourceDto.fromLayerSource(layer.getSource()), layer.getLegend(), layer.isOwnedByUser());
     }
 }

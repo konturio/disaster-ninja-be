@@ -37,10 +37,10 @@ public class LayerServiceTest {
     final String title = "layer title";
     final Legend legend = createLegend();
     final Layer layer = Layer.builder()
-        .id(id)
-        .name(title)
-        .legend(legend)
-        .build();
+            .id(id)
+            .name(title)
+            .legend(legend)
+            .build();
 
     final Layer userLayer = Layer.builder().id(LAYER_PREFIX + "userLayer").build();
     final Layer commonLayer = Layer.builder().id(LAYER_PREFIX + "commonLayer").build();
@@ -65,12 +65,18 @@ public class LayerServiceTest {
 
     @BeforeEach
     public void beforeEach() {
-        when(hotLayerProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(new ArrayList<Layer>()));
-        when(osmLayerProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(new ArrayList<Layer>()));
-        when(urbanAndPeripheryLayerProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(new ArrayList<Layer>()));
-        when(eventApiProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(new ArrayList<Layer>()));
-        when(bivariateLayerProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(new ArrayList<Layer>()));
-        when(layersApiProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(new ArrayList<Layer>()));
+        when(hotLayerProvider.obtainLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<Layer>()));
+        when(osmLayerProvider.obtainLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<Layer>()));
+        when(urbanAndPeripheryLayerProvider.obtainLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<Layer>()));
+        when(eventApiProvider.obtainLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<Layer>()));
+        when(bivariateLayerProvider.obtainLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<Layer>()));
+        when(layersApiProvider.obtainLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<Layer>()));
         //add other providers
     }
 
@@ -80,7 +86,7 @@ public class LayerServiceTest {
         givenCommonLayerIsReturnedOnlyWhenQueriedWithGeometry();
 
         List<Layer> result = layerService.get(List.of(commonLayer.getId()), List.of(userLayer.getId()),
-            paramsWithSomeBoundary());
+                paramsWithSomeBoundary());
         assertEquals(2, result.size());
         assertTrue(result.contains(userLayer));
         assertTrue(result.contains(commonLayer));
@@ -93,7 +99,7 @@ public class LayerServiceTest {
 
         try {
             layerService.get(List.of(userLayer.getId()), List.of(commonLayer.getId()),
-                paramsWithSomeBoundary());
+                    paramsWithSomeBoundary());
             throw new RuntimeException("Expected exception was not thrown!");
         } catch (WebApplicationException e) {
             assertEquals("Layer not found / no layer data found by id and boundary!", e.getMessage());
@@ -106,24 +112,28 @@ public class LayerServiceTest {
         when(layersApiProvider.obtainLayer(any(), any())).thenReturn(userLayer);
 
         List<Layer> result = layerService.get(List.of(userLayer.getId()), List.of(userLayer.getId()),
-            paramsWithSomeBoundary());
+                paramsWithSomeBoundary());
         verify(layersApiProvider, times(1)).obtainLayer(eq(userLayer.getId()),
-            argThat(p -> p.getBoundary() != null));
+                argThat(p -> p.getBoundary() != null));
         verify(layersApiProvider, times(1)).obtainLayer(eq(userLayer.getId()),
-            argThat(p -> p.getBoundary() == null));
+                argThat(p -> p.getBoundary() == null));
         assertEquals(1, result.size());
     }
 
     private void givenUserLayerIsReturnedOnlyWhenQueriedWithoutGeometry() {
         when(layersApiProvider.isApplicable(any())).thenReturn(true);
-        when(layersApiProvider.obtainLayer(eq(userLayer.getId()), argThat(p -> p.getBoundary() != null))).thenReturn(null);
-        when(layersApiProvider.obtainLayer(eq(userLayer.getId()), argThat(p -> p.getBoundary() == null))).thenReturn(userLayer);
+        when(layersApiProvider.obtainLayer(eq(userLayer.getId()), argThat(p -> p.getBoundary() != null))).thenReturn(
+                null);
+        when(layersApiProvider.obtainLayer(eq(userLayer.getId()), argThat(p -> p.getBoundary() == null))).thenReturn(
+                userLayer);
     }
 
     private void givenCommonLayerIsReturnedOnlyWhenQueriedWithGeometry() {
         when(layersApiProvider.isApplicable(any())).thenReturn(true);
-        when(layersApiProvider.obtainLayer(eq(commonLayer.getId()), argThat(p -> p.getBoundary() != null))).thenReturn(commonLayer);
-        when(layersApiProvider.obtainLayer(eq(commonLayer.getId()), argThat(p -> p.getBoundary() == null))).thenReturn(null);
+        when(layersApiProvider.obtainLayer(eq(commonLayer.getId()), argThat(p -> p.getBoundary() != null))).thenReturn(
+                commonLayer);
+        when(layersApiProvider.obtainLayer(eq(commonLayer.getId()), argThat(p -> p.getBoundary() == null))).thenReturn(
+                null);
     }
 
     @Test
@@ -142,7 +152,7 @@ public class LayerServiceTest {
     @Test
     public void getListShouldWorkEvenIfSomeProvidersThrowTest() {
         when(hotLayerProvider.obtainLayers(any())).thenThrow(HttpClientErrorException.create(HttpStatus.BAD_REQUEST,
-            "fail", null,null, Charset.defaultCharset()));
+                "fail", null, null, Charset.defaultCharset()));
         when(layersApiProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(List.of(layer)));
 
         List<Layer> result = layerService.getList(paramsWithSomeBoundary());
@@ -154,7 +164,7 @@ public class LayerServiceTest {
     public void getShouldThrowIfAnyProviderThrowsTest() {
         when(hotLayerProvider.isApplicable(any())).thenReturn(true);
         when(hotLayerProvider.obtainLayer(any(), any())).thenThrow(HttpClientErrorException.create(HttpStatus.NOT_FOUND,
-            "not found", null,null, Charset.defaultCharset()));
+                "not found", null, null, Charset.defaultCharset()));
         when(layersApiProvider.isApplicable(any())).thenReturn(true);
         when(layersApiProvider.obtainLayer(any(), any())).thenReturn(userLayer);
 
@@ -170,7 +180,7 @@ public class LayerServiceTest {
     public void globalOverlaysGetTest() {
         //all providers return nothing (= no features matched by geometry), so global overlay should be returned
         List<Layer> layers = layerService.get(List.of("activeContributors"),
-            List.of(), paramsWithSomeBoundary());
+                List.of(), paramsWithSomeBoundary());
         assertEquals(1, layers.size());
         System.out.println(layers);
     }
@@ -211,7 +221,7 @@ public class LayerServiceTest {
 
         LayerUpdateDto dto = updateDto();
         assertThrows(HttpClientErrorException.Forbidden.class,
-            () -> layerService.update("123", dto));
+                () -> layerService.update("123", dto));
     }
 
     @Test
@@ -226,7 +236,7 @@ public class LayerServiceTest {
         givenLayerApiDeleteRespondsWith401();
 
         assertThrows(HttpClientErrorException.Unauthorized.class,
-            () -> layerService.delete("123"));
+                () -> layerService.delete("123"));
     }
 
     private LayerUpdateDto updateDto() {
@@ -246,20 +256,20 @@ public class LayerServiceTest {
 
     private void givenLayerApiCreateRespondsWith403() {
         when(layersApiClient.createLayer(any()))
-            .thenThrow(HttpClientErrorException.create(HttpStatus.FORBIDDEN, "forbidden",
-                new HttpHeaders(), null, Charset.defaultCharset()));
+                .thenThrow(HttpClientErrorException.create(HttpStatus.FORBIDDEN, "forbidden",
+                        new HttpHeaders(), null, Charset.defaultCharset()));
     }
 
     private void givenLayerApiUpdateRespondsWith403() {
         when(layersApiClient.updateLayer(any(), any()))
-            .thenThrow(HttpClientErrorException.create(HttpStatus.FORBIDDEN, "forbidden",
-                new HttpHeaders(), null, Charset.defaultCharset()));
+                .thenThrow(HttpClientErrorException.create(HttpStatus.FORBIDDEN, "forbidden",
+                        new HttpHeaders(), null, Charset.defaultCharset()));
     }
 
     private void givenLayerApiDeleteRespondsWith401() {
         doThrow(HttpClientErrorException.create(HttpStatus.UNAUTHORIZED, "unauthorized",
-            new HttpHeaders(), null, Charset.defaultCharset()))
-            .when(layersApiClient).deleteLayer(any());
+                new HttpHeaders(), null, Charset.defaultCharset()))
+                .when(layersApiClient).deleteLayer(any());
     }
 
     private void assertLayer(Layer layer) {

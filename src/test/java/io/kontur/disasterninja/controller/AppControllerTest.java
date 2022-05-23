@@ -45,6 +45,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @RestClientTest(components = {UserProfileClient.class, LayersApiClient.class})
 @AutoConfigureWebClient(registerRestTemplate = true)
 public class AppControllerTest extends TestDependingOnUserAuth {
+
     private static final UUID DN2_ID = UUID.fromString("1b303b14-ddce-42b9-b907-d31ed488e301");
     @Autowired
     private MockRestServiceServer mockServer;
@@ -63,9 +64,9 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     public void getAppsListUnauthenticated() throws IOException {
         givenUserIsNotAuthenticated();
         mockServer.expect(requestTo(PATH))
-            .andExpect(method(GET))
-            .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
-            .andRespond(withSuccess(readFile(this, "ups/publicApps.json"), MediaType.APPLICATION_JSON));
+                .andExpect(method(GET))
+                .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
+                .andRespond(withSuccess(readFile(this, "ups/publicApps.json"), MediaType.APPLICATION_JSON));
 
         List<AppSummaryDto> result = appsController.getList();
 
@@ -77,16 +78,16 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     public void getAppsList() throws IOException {
         givenUserIsLoggedIn();
         mockServer.expect(requestTo(PATH))
-            .andExpect(method(GET))
-            .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
-            .andRespond(withSuccess(readFile(this, "ups/privateApps.json"), MediaType.APPLICATION_JSON));
+                .andExpect(method(GET))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andRespond(withSuccess(readFile(this, "ups/privateApps.json"), MediaType.APPLICATION_JSON));
 
         List<AppSummaryDto> result = appsController.getList();
 
         assertEquals(2, result.size());
         assertTrue(result.contains(new AppSummaryDto(DN2_ID, "DN2")));
         assertTrue(result.contains(new AppSummaryDto(UUID.fromString("58851b50-9574-4aec-a3a6-425fa18dcb11"),
-            "my-private-app")));
+                "my-private-app")));
     }
 
     @Test
@@ -94,9 +95,9 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         String dn2AppId = UUID.randomUUID().toString();
         givenUserIsNotAuthenticated();
         mockServer.expect(requestTo(PATH + "/" + "default_id"))
-            .andExpect(method(GET))
-            .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
-            .andRespond(withSuccess(dn2AppId, MediaType.TEXT_PLAIN));
+                .andExpect(method(GET))
+                .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
+                .andRespond(withSuccess(dn2AppId, MediaType.TEXT_PLAIN));
 
         String result = appsController.getDefaultAppId().getBody();
         assertEquals(dn2AppId, result);
@@ -106,9 +107,9 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     public void getAppUnauthenticated() throws IOException {
         givenUserIsNotAuthenticated();
         mockServer.expect(requestTo(PATH + "/" + DN2_ID))
-            .andExpect(method(GET))
-            .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
-            .andRespond(withSuccess(readFile(this, "ups/dn2App.json"), MediaType.APPLICATION_JSON));
+                .andExpect(method(GET))
+                .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
+                .andRespond(withSuccess(readFile(this, "ups/dn2App.json"), MediaType.APPLICATION_JSON));
 
         AppDto result = appsController.get(DN2_ID);
 
@@ -127,9 +128,9 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         givenUserIsLoggedIn();
         UUID appId = UUID.fromString("58851b50-9574-4aec-a3a6-425fa18dcb11");
         mockServer.expect(requestTo(PATH + "/" + appId))
-            .andExpect(method(GET))
-            .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
-            .andRespond(withSuccess(readFile(this, "ups/privateApp.json"), MediaType.APPLICATION_JSON));
+                .andExpect(method(GET))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andRespond(withSuccess(readFile(this, "ups/privateApp.json"), MediaType.APPLICATION_JSON));
 
         AppDto result = appsController.get(appId);
 
@@ -151,8 +152,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         givenUserIsLoggedIn();
         UUID appId = UUID.randomUUID();
         mockServer.expect(requestTo(PATH + "/" + appId))
-            .andExpect(method(DELETE))
-            .andRespond(withStatus(HttpStatus.NO_CONTENT));
+                .andExpect(method(DELETE))
+                .andRespond(withStatus(HttpStatus.NO_CONTENT));
 
         assertEquals(HttpStatus.NO_CONTENT, appsController.delete(appId).getStatusCode());
     }
@@ -169,10 +170,10 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         String dto = objectMapper.writeValueAsString(update);
 
         mockServer.expect(requestTo(PATH + "/" + appId))
-            .andExpect(method(PUT))
-            .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
-            .andExpect(content().json(dto, true))
-            .andRespond(withSuccess(dto, MediaType.APPLICATION_JSON));
+                .andExpect(method(PUT))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andExpect(content().json(dto, true))
+                .andRespond(withSuccess(dto, MediaType.APPLICATION_JSON));
 
         AppDto result = appsController.update(appId, update);
         assertEquals(update, result);
@@ -193,10 +194,10 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         String responseJson = objectMapper.writeValueAsString(response);
 
         mockServer.expect(requestTo(PATH))
-            .andExpect(method(POST))
-            .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
-            .andExpect(content().json(requestJson, true))
-            .andRespond(withSuccess(responseJson, MediaType.APPLICATION_JSON));
+                .andExpect(method(POST))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andExpect(content().json(requestJson, true))
+                .andRespond(withSuccess(responseJson, MediaType.APPLICATION_JSON));
 
         AppDto result = appsController.create(request);
         assertEquals(request.getDescription(), result.getDescription());
@@ -209,7 +210,6 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         assertEquals(appId, result.getId());
         assertEquals(true, result.getOwnedByUser());
     }
-
 
     @Test
     public void test404isPassedToTheClient() {
@@ -224,7 +224,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         givenUserIsLoggedIn();
         mockServer.expect(anything()).andRespond(MockRestResponseCreators.withStatus(HttpStatus.FORBIDDEN));
 
-        assertThrows(HttpClientErrorException.Forbidden.class, () -> appsController.update(UUID.randomUUID(), createAppDto()));
+        assertThrows(HttpClientErrorException.Forbidden.class,
+                () -> appsController.update(UUID.randomUUID(), createAppDto()));
     }
 
     @Test
@@ -244,7 +245,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         mockServer.expect(requestTo(String.format("/apps/%s?includeDefaultCollections=true", appID)))
                 .andExpect(method(GET))
                 .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
-                .andRespond(withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"), MediaType.APPLICATION_JSON));
+                .andRespond(
+                        withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"), MediaType.APPLICATION_JSON));
 
         //WHEN
         List<Layer> result = appsController.getListOfLayers(appID);
@@ -263,7 +265,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         mockServer.expect(requestTo(String.format("/apps/%s?includeDefaultCollections=true", appID)))
                 .andExpect(method(GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
-                .andRespond(withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"), MediaType.APPLICATION_JSON));
+                .andRespond(
+                        withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"), MediaType.APPLICATION_JSON));
 
         //WHEN
         List<Layer> result = appsController.getListOfLayers(appID);

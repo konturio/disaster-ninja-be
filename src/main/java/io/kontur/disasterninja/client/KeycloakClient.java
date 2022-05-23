@@ -42,7 +42,8 @@ public class KeycloakClient {
 
         ResponseEntity<TokenResponse> response = restTemplate
                 .exchange(String.format("/realms/%s/protocol/openid-connect/token", keycloakRealm),
-                        HttpMethod.POST, new HttpEntity<>(params, headers), new ParameterizedTypeReference<>() {});
+                        HttpMethod.POST, new HttpEntity<>(params, headers), new ParameterizedTypeReference<>() {
+                        });
 
         return Objects.requireNonNull(response.getBody());
     }

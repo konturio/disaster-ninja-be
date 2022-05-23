@@ -1,18 +1,16 @@
 package io.kontur.disasterninja.util;
 
-import static io.kontur.disasterninja.domain.enums.LayerStepShape.HEX;
-
 import io.kontur.disasterninja.domain.*;
 import io.kontur.disasterninja.domain.enums.LegendType;
-
-import java.util.*;
-
 import io.kontur.disasterninja.dto.layer.ColorDto;
 import org.apache.commons.io.IOUtils;
 import org.wololo.geojson.Geometry;
 import org.wololo.geojson.Point;
 
 import java.io.IOException;
+import java.util.*;
+
+import static io.kontur.disasterninja.domain.enums.LayerStepShape.HEX;
 
 public final class TestUtil {
 
@@ -37,14 +35,14 @@ public final class TestUtil {
 
         //pattern step (1)
         legend.getSteps()
-            .add(new LegendStep(PARAM_NAME, null, PARAM_VALUE,
-                null, null, "step name",
-                HEX, map, "source-layer", "fill", "stroke"));
+                .add(new LegendStep(PARAM_NAME, null, PARAM_VALUE,
+                        null, null, "step name",
+                        HEX, map, "source-layer", "fill", "stroke"));
         //non-pattern step (2)
         legend.getSteps()
-            .add(new LegendStep(PARAM_NAME, null, OTHER_PARAM_VALUE,
-                null, null, "step name2",
-                HEX, map, "source-layer", "", ""));
+                .add(new LegendStep(PARAM_NAME, null, OTHER_PARAM_VALUE,
+                        null, null, "step name2",
+                        HEX, map, "source-layer", "", ""));
 
         return legend;
     }

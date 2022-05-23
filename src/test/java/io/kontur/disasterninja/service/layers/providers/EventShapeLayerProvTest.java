@@ -36,9 +36,9 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
     @BeforeEach
     private void init() throws IOException {
         Mockito.when(eventApiService.getEvent(any(), any())).thenReturn(
-            objectMapper.readValue(
-                getClass().getResource("/io/kontur/disasterninja/client/layers/eventdto.json"),
-                EventDto.class));
+                objectMapper.readValue(
+                        getClass().getResource("/io/kontur/disasterninja/client/layers/eventdto.json"),
+                        EventDto.class));
     }
 
     @Test
@@ -50,25 +50,25 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
     public void get_emptyEventIdEventFeed() {
         assertThrows(WebApplicationException.class, () -> {
             assertNull(eventShapeLayerProvider.obtainLayer(EVENT_SHAPE_LAYER_ID, LayerSearchParams.builder()
-                .boundary(someGeometry).build())
+                    .boundary(someGeometry).build())
             );
         });
 
         assertThrows(WebApplicationException.class, () -> {
             assertNull(eventShapeLayerProvider.obtainLayer(EVENT_SHAPE_LAYER_ID, LayerSearchParams.builder()
-                .boundary(someGeometry)
-                .eventId(UUID.randomUUID())
-                //no event feed
-                .build())
+                    .boundary(someGeometry)
+                    .eventId(UUID.randomUUID())
+                    //no event feed
+                    .build())
             );
         });
 
         assertThrows(WebApplicationException.class, () -> {
             assertNull(eventShapeLayerProvider.obtainLayer(EVENT_SHAPE_LAYER_ID, LayerSearchParams.builder()
-                .boundary(someGeometry)
-                .eventFeed("some-feed")
-                //no event id
-                .build())
+                    .boundary(someGeometry)
+                    .eventFeed("some-feed")
+                    //no event id
+                    .build())
             );
         });
     }
@@ -102,8 +102,8 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
     @Test
     public void get_Default() throws IOException {
         EventDto eventDto = objectMapper.readValue(getClass()
-                .getResource("/io/kontur/disasterninja/client/layers/eventdto.json"),
-            EventDto.class);
+                        .getResource("/io/kontur/disasterninja/client/layers/eventdto.json"),
+                EventDto.class);
         //remove "Class" entries from features properties
         eventDto.setEventType(null);
         Arrays.stream(eventDto.getLatestEpisodeGeojson().getFeatures()).forEach(feature -> {
@@ -126,8 +126,8 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
     @Test
     public void list_Default() throws IOException, ExecutionException, InterruptedException {
         EventDto eventDto = objectMapper.readValue(getClass()
-                .getResource("/io/kontur/disasterninja/client/layers/eventdto.json"),
-            EventDto.class);
+                        .getResource("/io/kontur/disasterninja/client/layers/eventdto.json"),
+                EventDto.class);
 
         //remove "Class" entries from features properties
         eventDto.setEventType(null);
@@ -149,14 +149,14 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
     @Test
     public void list_NoIntersection() throws ExecutionException, InterruptedException {
         assertTrue(eventShapeLayerProvider.obtainLayers(LayerSearchParams.builder()
-            .boundary(new Point(new double[]{0d, 0d}))
-            .eventId(UUID.randomUUID()).eventFeed("some-feed").build()).get().isEmpty());
+                .boundary(new Point(new double[]{0d, 0d}))
+                .eventId(UUID.randomUUID()).eventFeed("some-feed").build()).get().isEmpty());
     }
 
     @Test
     public void get_NoIntersection() {
         assertNull(eventShapeLayerProvider.obtainLayer(EVENT_SHAPE_LAYER_ID, LayerSearchParams.builder()
-            .boundary(new Point(new double[]{0d, 0d}))
-            .eventId(UUID.randomUUID()).eventFeed("some-feed").build()));
+                .boundary(new Point(new double[]{0d, 0d}))
+                .eventId(UUID.randomUUID()).eventFeed("some-feed").build()));
     }
 }

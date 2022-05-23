@@ -70,8 +70,8 @@ public class EventDtoConverter {
 
         GeometryFactory geometryFactory = new GeometryFactory(episodeGeometries.get(0).getPrecisionModel());
         org.locationtech.jts.geom.Geometry unitedGeometry = geometryFactory
-            .createGeometryCollection(episodeGeometries.toArray(new org.locationtech.jts.geom.Geometry[0]))
-            .union();
+                .createGeometryCollection(episodeGeometries.toArray(new org.locationtech.jts.geom.Geometry[0]))
+                .union();
         return new FeatureCollection(new Feature[]{new Feature(geoJSONWriter.write(unitedGeometry), emptyMap())});
     }
 }

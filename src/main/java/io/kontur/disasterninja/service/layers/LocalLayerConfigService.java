@@ -41,13 +41,13 @@ public class LocalLayerConfigService {
                     LayerSource source = config.getSource();
                     if (source != null && source.getUrls() != null) {
                         source.setUrls(source.getUrls().stream()
-                            .map(it -> {
-                                if (it.contains("{tilesHost}")) {
-                                    return it.replaceAll("\\{tilesHost}", tilesHost);
-                                } else {
-                                    return it;
-                                }
-                            }).collect(Collectors.toList()));
+                                .map(it -> {
+                                    if (it.contains("{tilesHost}")) {
+                                        return it.replaceAll("\\{tilesHost}", tilesHost);
+                                    } else {
+                                        return it;
+                                    }
+                                }).collect(Collectors.toList()));
                     }
                     if (config.isGlobalOverlay()) {
                         globalOverlays.put(config.getId(), config);
@@ -57,7 +57,8 @@ public class LocalLayerConfigService {
                 }
             });
 
-            LOG.info("Loaded {} regular layer configurations: {}", regularLayers.values().size(), regularLayers.keySet());
+            LOG.info("Loaded {} regular layer configurations: {}", regularLayers.values().size(),
+                    regularLayers.keySet());
             LOG.info("Loaded {} global overlay layers: {}", globalOverlays.values().size(), globalOverlays.keySet());
         } catch (Exception e) {
             LOG.error("Cannot load layer configurations! {}", e.getMessage(), e);

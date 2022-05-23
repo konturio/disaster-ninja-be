@@ -29,12 +29,11 @@ public class HotLayerProviderTest extends LayerProvidersTest {
     @BeforeEach
     public void init() throws IOException {
         Mockito.when(kcApiClient.getCollectionItemsByCentroidGeometry(any(), any())).thenReturn(
-            List.of(objectMapper.readValue(
-                    getClass().getResource("/io/kontur/disasterninja/client/layers/hotprojects.json"),
-                    FeatureCollection.class)
-                .getFeatures()));
+                List.of(objectMapper.readValue(
+                                getClass().getResource("/io/kontur/disasterninja/client/layers/hotprojects.json"),
+                                FeatureCollection.class)
+                        .getFeatures()));
     }
-
 
     @Test
     public void list_emptyGeojson() throws ExecutionException, InterruptedException {
@@ -50,7 +49,8 @@ public class HotLayerProviderTest extends LayerProvidersTest {
 
     @Test
     public void list() throws ExecutionException, InterruptedException {
-        List<Layer> results = hotLayerProvider.obtainLayers(paramsWithSomeBoundary()).get(); //filtering is done in kcApiClient so not testing it here
+        List<Layer> results = hotLayerProvider.obtainLayers(paramsWithSomeBoundary())
+                .get(); //filtering is done in kcApiClient so not testing it here
         assertEquals(1, results.size());
         Layer result = results.get(0);
         assertLayer(result);
@@ -81,11 +81,11 @@ public class HotLayerProviderTest extends LayerProvidersTest {
         Assertions.assertEquals(10, result.getSource().getData().getFeatures().length);
         //some random features fields
         Assertions.assertEquals("Polygon", result.getSource().getData().getFeatures()[0].getGeometry()
-            .getType());
+                .getType());
         Assertions.assertNull(result.getDescription()); //defaults are set later by LayerConfigService
         Assertions.assertEquals(100, result.getSource().getData().getFeatures()[0].getProperties()
-            .get(PROJECT_ID));
+                .get(PROJECT_ID));
         Assertions.assertEquals(HOT_PROJECTS_URL + 100, result.getSource().getData().getFeatures()[0].getProperties()
-            .get(PROJECT_LINK));
+                .get(PROJECT_LINK));
     }
 }

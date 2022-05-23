@@ -81,7 +81,8 @@ public class LayerService {
     public List<Layer> get(List<String> layersToRetrieveWithGeometryFilter,
                            List<String> layersToRetrieveWithoutGeometryFilter, LayerSearchParams searchParams) {
         List<Layer> layersFoundWithGeometryFilter = get(layersToRetrieveWithGeometryFilter, searchParams);
-        List<Layer> layersFoundWithoutGeometryFilter = get(layersToRetrieveWithoutGeometryFilter, searchParams.getCopyWithoutBoundary());
+        List<Layer> layersFoundWithoutGeometryFilter = get(layersToRetrieveWithoutGeometryFilter,
+                searchParams.getCopyWithoutBoundary());
 
         return mergeLayerListsByLayerId(layersFoundWithGeometryFilter, layersFoundWithoutGeometryFilter);
     }
@@ -93,7 +94,7 @@ public class LayerService {
             return List.of();
         }
 
-        for (String layerId: layerIds) {
+        for (String layerId : layerIds) {
             Layer layer = getFromProvidersOrGlobalOverlays(layerId, searchParams);
             if (layer != null) {
                 result.add(layer);

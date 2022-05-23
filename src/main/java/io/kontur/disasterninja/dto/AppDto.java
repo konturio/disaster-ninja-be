@@ -13,6 +13,7 @@ import static io.kontur.disasterninja.service.GeometryTransformer.geometriesAreE
 
 @Data
 public class AppDto {
+
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private UUID id;
     private String name;
@@ -29,13 +30,13 @@ public class AppDto {
         if (this == o) return true;
         if (!(o instanceof AppDto appDto)) return false;
         return isPublic == appDto.isPublic
-            && Objects.equals(id, appDto.id)
-            && Objects.equals(name, appDto.name)
-            && Objects.equals(description, appDto.description)
-            && Objects.equals(ownedByUser, appDto.ownedByUser)
-            && Objects.equals(features, appDto.features)
-            && geometriesAreEqual(centerGeometry, appDto.centerGeometry)
-            && Objects.equals(zoom, appDto.zoom);
+                && Objects.equals(id, appDto.id)
+                && Objects.equals(name, appDto.name)
+                && Objects.equals(description, appDto.description)
+                && Objects.equals(ownedByUser, appDto.ownedByUser)
+                && Objects.equals(features, appDto.features)
+                && geometriesAreEqual(centerGeometry, appDto.centerGeometry)
+                && Objects.equals(zoom, appDto.zoom);
     }
 
     @Override

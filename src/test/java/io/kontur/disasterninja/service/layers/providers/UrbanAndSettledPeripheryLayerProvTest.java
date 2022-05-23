@@ -31,23 +31,23 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
     @BeforeEach
     private void init() throws IOException {
         Mockito.when(insightsApiClient.humanitarianImpactQuery(any()))
-            .thenReturn(CompletableFuture.completedFuture(objectMapper.readValue(
-                getClass().getResource("/io/kontur/disasterninja/client/layers/population.json"),
-                FeatureCollection.class)));
+                .thenReturn(CompletableFuture.completedFuture(objectMapper.readValue(
+                        getClass().getResource("/io/kontur/disasterninja/client/layers/population.json"),
+                        FeatureCollection.class)));
     }
 
     @Test
     public void listOneLayerNotPresentTest() throws IOException, ExecutionException, InterruptedException {
         //#8516
         FeatureCollection fc = objectMapper.readValue(
-            getClass().getResource("/io/kontur/disasterninja/client/layers/population.json"),
-            FeatureCollection.class);
+                getClass().getResource("/io/kontur/disasterninja/client/layers/population.json"),
+                FeatureCollection.class);
         fc.getFeatures()[1] = null; //remove one of layers
 
         Mockito.when(insightsApiClient.humanitarianImpactQuery(any()))
-            .thenReturn(CompletableFuture.completedFuture(fc));
+                .thenReturn(CompletableFuture.completedFuture(fc));
         List<Layer> layers = urbanAndPeripheryLayerProvider.obtainLayers(LayerSearchParams
-            .builder().boundary(new Point(new double[]{1d, 2d})).build()).get();
+                .builder().boundary(new Point(new double[]{1d, 2d})).build()).get();
         assertEquals(1, layers.size());
     }
 
@@ -69,34 +69,34 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
     @Test
     public void listTest() throws IOException, ExecutionException, InterruptedException {
         List<Layer> results = urbanAndPeripheryLayerProvider.obtainLayers(LayerSearchParams
-            .builder().boundary(new Point(new double[]{1d, 2d})).build()).get();
+                .builder().boundary(new Point(new double[]{1d, 2d})).build()).get();
         Layer urbanCore = results.stream().filter(it -> URBAN_CORE_LAYER_ID.equals(it.getId())).findAny().get();
         Layer periphery = results.stream().filter(it -> SETTLED_PERIPHERY_LAYER_ID.equals(it.getId())).findAny().get();
 
         assertEquals("Kontur Urban Core", urbanCore.getName());
         assertEquals("Kontur Urban Core highlights most populated region affected. For this" +
-            " event 102411536 people reside on 139417.01km² (out of total 150665683 people on 1631751.6km²). This" +
-            " area should have higher priority in humanitarian activities.", urbanCore.getDescription());
+                " event 102411536 people reside on 139417.01km² (out of total 150665683 people on 1631751.6km²). This" +
+                " area should have higher priority in humanitarian activities.", urbanCore.getDescription());
         assertNull(urbanCore.getGroup()); //defaults are set later by LayerConfigService
 
         assertNotNull(periphery);
         assertEquals("Kontur Settled Periphery", periphery.getName());
         assertEquals("Kontur Settled Periphery is complimentary to Kontur Urban Core and shows" +
-            " a spread-out part of the population in the region. For this event it adds 48254147 people on" +
-            " 1492334.59km² on top of Kontur Urban Core.", periphery.getDescription());
+                " a spread-out part of the population in the region. For this event it adds 48254147 people on" +
+                " 1492334.59km² on top of Kontur Urban Core.", periphery.getDescription());
         assertNull(periphery.getGroup()); //defaults are set later by LayerConfigService
     }
 
     @Test
     public void getPeripheryTest() throws IOException {
         Layer periphery = urbanAndPeripheryLayerProvider.obtainLayer(SETTLED_PERIPHERY_LAYER_ID, LayerSearchParams
-            .builder().boundary(new Point(new double[]{1d, 2d})).build());
+                .builder().boundary(new Point(new double[]{1d, 2d})).build());
 
         assertNotNull(periphery);
         assertEquals("Kontur Settled Periphery", periphery.getName());
         assertEquals("Kontur Settled Periphery is complimentary to Kontur Urban Core and shows" +
-            " a spread-out part of the population in the region. For this event it adds 48254147 people on" +
-            " 1492334.59km² on top of Kontur Urban Core.", periphery.getDescription());
+                " a spread-out part of the population in the region. For this event it adds 48254147 people on" +
+                " 1492334.59km² on top of Kontur Urban Core.", periphery.getDescription());
         assertNull(periphery.getGroup()); //defaults are set later by LayerConfigService
 
 
@@ -104,26 +104,26 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
         assertNotNull(periphery.getSource());
         assertTrue(periphery.getSource().getData().getFeatures()[0].getGeometry() instanceof MultiPolygon);
         assertEquals(122, ((MultiPolygon) periphery.getSource().getData().getFeatures()[0].getGeometry())
-            .getCoordinates().length);
+                .getCoordinates().length);
 
     }
 
     @Test
     public void getUrbanTest() throws IOException {
         Layer urban = urbanAndPeripheryLayerProvider.obtainLayer(URBAN_CORE_LAYER_ID, LayerSearchParams
-            .builder().boundary(new Point(new double[]{1d, 2d})).build());
+                .builder().boundary(new Point(new double[]{1d, 2d})).build());
 
         assertNotNull(urban);
         assertEquals("Kontur Urban Core", urban.getName());
         assertEquals("Kontur Urban Core highlights most populated region affected. For this event 102411536" +
-            " people reside on 139417.01km² (out of total 150665683 people on 1631751.6km²). This area should have " +
-            "higher priority in humanitarian activities.", urban.getDescription());
+                " people reside on 139417.01km² (out of total 150665683 people on 1631751.6km²). This area should have " +
+                "higher priority in humanitarian activities.", urban.getDescription());
         assertNull(urban.getGroup()); //defaults are set later by LayerConfigService
 
         //source
         assertNotNull(urban.getSource());
         assertTrue(urban.getSource().getData().getFeatures()[0].getGeometry() instanceof MultiPolygon);
         assertEquals(164, ((MultiPolygon) urban.getSource().getData().getFeatures()[0].getGeometry())
-            .getCoordinates().length);
+                .getCoordinates().length);
     }
 }

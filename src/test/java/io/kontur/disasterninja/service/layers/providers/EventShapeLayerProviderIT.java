@@ -20,6 +20,7 @@ import static io.kontur.disasterninja.service.layers.providers.EventShapeLayerPr
 @Disabled("just for local debugging")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class EventShapeLayerProviderIT {
+
     @Autowired
     EventShapeLayerProvider provider;
     @Autowired
@@ -34,7 +35,7 @@ public class EventShapeLayerProviderIT {
                 .eventId(UUID.fromString("29a8c8f6-0121-4a3e-8065-41ce0028f8d2")) //sonic
 //                .eventId(UUID.fromString("905e27af-15d7-4c40-9b08-03436855ea51")) //zigzag
                 .boundary(new Point(new double[]{152.5386, -5.3964}))
-            .build());
+                .build());
         layerConfigService.applyConfig(l);
 
         System.out.println(objectMapper.writeValueAsString(LayerSummaryDto.fromLayer(l)));

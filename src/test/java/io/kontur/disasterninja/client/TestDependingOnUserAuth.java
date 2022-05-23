@@ -30,9 +30,9 @@ public abstract class TestDependingOnUserAuth {
 
     protected void givenJwtTokenIs(String tokenValue) {
         Jwt jwt = Jwt.withTokenValue(tokenValue)
-            .claim("some", "claim")
-            .header(HttpHeaders.AUTHORIZATION, tokenValue)
-            .build();
+                .claim("some", "claim")
+                .header(HttpHeaders.AUTHORIZATION, tokenValue)
+                .build();
 
         Authentication authentication = new JwtAuthenticationToken(jwt);
         securityContext = mock(SecurityContext.class);

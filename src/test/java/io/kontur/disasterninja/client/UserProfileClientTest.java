@@ -15,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest(UserProfileClient.class)
 @AutoConfigureWebClient(registerRestTemplate = true)
@@ -34,9 +35,9 @@ class UserProfileClientTest extends TestDependingOnUserAuth {
         givenJwtTokenIs(getUserToken());
 
         server.expect(ExpectedCount.times(1), requestTo("/features/user_feed"))
-            .andExpect(method(HttpMethod.GET))
-            .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
-            .andRespond(r -> withSuccess(USER_FEED, MediaType.APPLICATION_JSON).createResponse(r));
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andRespond(r -> withSuccess(USER_FEED, MediaType.APPLICATION_JSON).createResponse(r));
 
         //when
         String feed = client.getUserDefaultFeed();
@@ -52,9 +53,9 @@ class UserProfileClientTest extends TestDependingOnUserAuth {
         givenUserIsNotAuthenticated();
 
         server.expect(ExpectedCount.times(1), requestTo("/features/user_feed"))
-            .andExpect(method(HttpMethod.GET))
-            .andExpect(headerDoesNotExist("Authorization"))
-            .andRespond(r -> withSuccess(DEFAULT_FEED, MediaType.APPLICATION_JSON).createResponse(r));
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(headerDoesNotExist("Authorization"))
+                .andRespond(r -> withSuccess(DEFAULT_FEED, MediaType.APPLICATION_JSON).createResponse(r));
 
         //when
         String feed = client.getUserDefaultFeed();
@@ -69,9 +70,9 @@ class UserProfileClientTest extends TestDependingOnUserAuth {
         givenUserIsNotAuthenticated();
 
         server.expect(ExpectedCount.times(1), requestTo("/features/user_feed"))
-            .andExpect(method(HttpMethod.GET))
-            .andExpect(header(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue()))
-            .andRespond(r -> withSuccess(DEFAULT_FEED, MediaType.APPLICATION_JSON).createResponse(r));
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(header(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue()))
+                .andRespond(r -> withSuccess(DEFAULT_FEED, MediaType.APPLICATION_JSON).createResponse(r));
 
         client.getUserDefaultFeed();
     }
@@ -110,7 +111,7 @@ class UserProfileClientTest extends TestDependingOnUserAuth {
 
         //then
         verify(securityContext, times(1)).getAuthentication();
-        assertEquals(ReflectionTestUtils.getField(client,"defaultAppId"), result.getBody());
+        assertEquals(ReflectionTestUtils.getField(client, "defaultAppId"), result.getBody());
     }
 
 }

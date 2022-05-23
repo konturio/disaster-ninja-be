@@ -55,13 +55,13 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     @Test
     public void createLayerTest() {
         server.expect(ExpectedCount.times(1), requestTo("/collections"))
-            .andExpect(method(HttpMethod.POST))
-            .andExpect(jsonPath("$.itemType", is(LAYER_TYPE_FEATURE)))
-            .andRespond(r ->
-                withSuccess(readFile(this, "layers/layersAPI.layer.created.json"),
-                    MediaType.APPLICATION_JSON)
-                    .createResponse(r)
-            );
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(jsonPath("$.itemType", is(LAYER_TYPE_FEATURE)))
+                .andRespond(r ->
+                        withSuccess(readFile(this, "layers/layersAPI.layer.created.json"),
+                                MediaType.APPLICATION_JSON)
+                                .createResponse(r)
+                );
 
         final String id = "myId";
         final String title = "layer title";
@@ -82,8 +82,8 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     @Test
     public void createLayerNegativeTest() {
         server.expect(ExpectedCount.times(1), requestTo("/collections"))
-            .andExpect(method(HttpMethod.POST))
-            .andRespond(withStatus(HttpStatus.BAD_REQUEST));
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withStatus(HttpStatus.BAD_REQUEST));
 
         assertThrows(HttpClientErrorException.BadRequest.class, () -> client.createCollection(null));
     }
@@ -92,13 +92,13 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     public void updateLayerTest() {
         final String id = "myId";
         server.expect(ExpectedCount.times(1), requestTo("/collections/" + id))
-            .andExpect(method(HttpMethod.PUT))
-            .andExpect(jsonPath("$.itemType", is(LAYER_TYPE_FEATURE)))
-            .andRespond(r ->
-                withSuccess(readFile(this, "layers/layersAPI.layer.created.json"),
-                    MediaType.APPLICATION_JSON)
-                    .createResponse(r)
-            );
+                .andExpect(method(HttpMethod.PUT))
+                .andExpect(jsonPath("$.itemType", is(LAYER_TYPE_FEATURE)))
+                .andRespond(r ->
+                        withSuccess(readFile(this, "layers/layersAPI.layer.created.json"),
+                                MediaType.APPLICATION_JSON)
+                                .createResponse(r)
+                );
 
         final String title = "layer title";
         Legend legend = createLegend();
@@ -118,8 +118,8 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     public void updateLayerNegativeTest() {
         final String id = "myId";
         server.expect(ExpectedCount.times(1), requestTo("/collections/" + id))
-            .andExpect(method(HttpMethod.PUT))
-            .andRespond(withStatus(HttpStatus.NOT_FOUND));
+                .andExpect(method(HttpMethod.PUT))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
         assertThrows(HttpClientErrorException.NotFound.class, () -> client.updateCollection(id, null));
     }
@@ -128,8 +128,8 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     public void deleteLayerTest() {
         final String id = "myId";
         server.expect(ExpectedCount.times(1), requestTo("/collections/" + id))
-            .andExpect(method(HttpMethod.DELETE))
-            .andRespond(withSuccess());
+                .andExpect(method(HttpMethod.DELETE))
+                .andRespond(withSuccess());
 
         client.deleteLayer(LAYER_PREFIX + id);
     }
@@ -138,8 +138,8 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     public void deleteLayerNegativeTest() {
         final String id = "myId";
         server.expect(ExpectedCount.times(1), requestTo("/collections/" + id))
-            .andExpect(method(HttpMethod.DELETE))
-            .andRespond(withStatus(HttpStatus.NOT_FOUND));
+                .andExpect(method(HttpMethod.DELETE))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
         assertThrows(Exception.class, () -> client.deleteCollection(id));
     }
@@ -148,9 +148,9 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     public void thereIsCacheControlNoCacheHeaderInRequest() {
         final String id = "myId";
         server.expect(ExpectedCount.times(1), requestTo("/collections/" + id))
-            .andExpect(method(HttpMethod.DELETE))
-            .andExpect(header(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue()))
-            .andRespond(withSuccess());
+                .andExpect(method(HttpMethod.DELETE))
+                .andExpect(header(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue()))
+                .andRespond(withSuccess());
 
         client.deleteLayer(LAYER_PREFIX + id);
     }
@@ -206,15 +206,15 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         UUID appId = UUID.randomUUID();
 
         server.expect(ExpectedCount.times(2), requestTo("/collections/search"))
-            .andExpect(request -> {
-                String s = request.getBody().toString();
-                assertThat(s, hasJsonPath("$.appId", is(appId.toString())));
-            })
+                .andExpect(request -> {
+                    String s = request.getBody().toString();
+                    assertThat(s, hasJsonPath("$.appId", is(appId.toString())));
+                })
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(r -> withSuccess().createResponse(r));
         //when
         List<Collection> collections = client.getCollections(objectMapper.readValue(json, Geometry.class),
-            null, appId);
+                null, appId);
 
         //then
         assertEquals(0, collections.size());
@@ -328,7 +328,8 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
 
         server.expect(ExpectedCount.times(1), requestTo("/collections/" + id + "/items"))
                 .andExpect(method(HttpMethod.PUT))
-                .andExpect(r -> assertThat(r.getBody().toString(), equalTo(new ObjectMapper().writeValueAsString(body))))
+                .andExpect(
+                        r -> assertThat(r.getBody().toString(), equalTo(new ObjectMapper().writeValueAsString(body))))
                 .andRespond(r ->
                         withSuccess(readFile(this, "layers/layersAPI.features.updated.json"),
                                 MediaType.APPLICATION_JSON)
@@ -355,6 +356,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
 
         //WHEN
         //THEN
-        assertThrows(HttpClientErrorException.NotFound.class, () -> client.updateLayerFeatures(id, new FeatureCollection(new Feature[0])));
+        assertThrows(HttpClientErrorException.NotFound.class,
+                () -> client.updateLayerFeatures(id, new FeatureCollection(new Feature[0])));
     }
 }

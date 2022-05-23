@@ -49,11 +49,12 @@ public class HotLayerProvider implements LayerProvider {
         }
         if (searchParams.getBoundary() == null) {
             throw new WebApplicationException("GeoJson boundary must be specified for layer " + layerId,
-                HttpStatus.BAD_REQUEST);
+                    HttpStatus.BAD_REQUEST);
         }
 
         //it's possible that the centroid does intersect with the geoJson, but geometries themselves do not!
-        List<Feature> hotProjectLayers = kcApiClient.getCollectionItemsByCentroidGeometry(searchParams.getBoundary(), HOT_PROJECTS);
+        List<Feature> hotProjectLayers = kcApiClient.getCollectionItemsByCentroidGeometry(searchParams.getBoundary(),
+                HOT_PROJECTS);
         return fromHotProjectLayers(hotProjectLayers);
     }
 
@@ -71,19 +72,19 @@ public class HotLayerProvider implements LayerProvider {
         }
         //The entire collection is one layer
         Layer.LayerBuilder builder = Layer.builder()
-            .id(HOT_LAYER_ID)
-            .source(LayerSource.builder() //source is required to calculate this layers legend
-                .type(GEOJSON)
-                //enrich features with HOT Project URL
-                .data(new FeatureCollection(dto.stream().peek(f -> {
-                    if (f.getProperties() != null) {
-                        Integer projectId = getFeatureProperty(f, PROJECT_ID, Integer.class);
-                        if (projectId != null) {
-                            f.getProperties().put(PROJECT_LINK, HOT_PROJECTS_URL + projectId);
-                        }
-                    }
-                }).toArray(Feature[]::new)))
-            .build());
+                .id(HOT_LAYER_ID)
+                .source(LayerSource.builder() //source is required to calculate this layers legend
+                        .type(GEOJSON)
+                        //enrich features with HOT Project URL
+                        .data(new FeatureCollection(dto.stream().peek(f -> {
+                            if (f.getProperties() != null) {
+                                Integer projectId = getFeatureProperty(f, PROJECT_ID, Integer.class);
+                                if (projectId != null) {
+                                    f.getProperties().put(PROJECT_LINK, HOT_PROJECTS_URL + projectId);
+                                }
+                            }
+                        }).toArray(Feature[]::new)))
+                        .build());
         return builder.build();
         //the rest params are set by LayerConfigService
     }

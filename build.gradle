@@ -17,7 +17,6 @@ targetCompatibility = '16'
 
 repositories {
     mavenCentral()
-//    mavenLocal()
 }
 
 dependencies {

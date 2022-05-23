@@ -18,6 +18,7 @@ import static io.kontur.disasterninja.dto.EventType.OTHER;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EventApiConvertersTest {
+
     private static EventApiEventDto testEvent() {
         EventApiEventDto event = new EventApiEventDto();
         event.setProperName("proper name");
@@ -146,7 +147,6 @@ public class EventApiConvertersTest {
         assertEquals(1, dto.getExternalUrls().size());
         assertEquals("http://google.com", dto.getExternalUrls().get(0));
     }
-
 
     @Test
     public void eventListDtoTestNames() {

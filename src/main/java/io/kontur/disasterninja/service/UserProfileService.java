@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserProfileService {
+
     private static final Logger LOG = LoggerFactory.getLogger(UserProfileService.class);
     private final UserProfileClient client;
 

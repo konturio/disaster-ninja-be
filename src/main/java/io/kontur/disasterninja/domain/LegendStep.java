@@ -16,6 +16,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class LegendStep {
+
     private final String paramName;
     /**
      * nullable, internal (not disclosed to DTO). If specified - it's used in features filtering but

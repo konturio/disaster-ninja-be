@@ -11,10 +11,13 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Component
-@ConditionalOnProperty(value="notifications.enabled")
+@ConditionalOnProperty(value = "notifications.enabled")
 public class SlackMessageFormatter {
 
     private static final String BODY = "{\"text\":\"><%s|%s>%s\"}";

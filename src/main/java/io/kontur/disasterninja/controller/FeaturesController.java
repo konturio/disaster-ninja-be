@@ -23,17 +23,18 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping(FeaturesController.PATH)
 public class FeaturesController {
+
     public static final String PATH = "/features";
     private final UserProfileClient userProfileClient;
 
     @Operation(tags = "Features", summary =
-        "Get features for app id allowed for user by username retrieved from token "
-            + "(including public ones)")
+            "Get features for app id allowed for user by username retrieved from token "
+                    + "(including public ones)")
     @ApiResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON_VALUE,
-        array = @ArraySchema(schema = @Schema(implementation = FeatureDto.class))))
+            array = @ArraySchema(schema = @Schema(implementation = FeatureDto.class))))
     @GetMapping
     public List<FeatureDto> getUserAppFeatures(
-        @RequestParam(name = "appId") @Parameter(name = "appId") UUID appId) {
+            @RequestParam(name = "appId") @Parameter(name = "appId") UUID appId) {
         return userProfileClient.getUserAppFeatures(appId);
     }
 }
