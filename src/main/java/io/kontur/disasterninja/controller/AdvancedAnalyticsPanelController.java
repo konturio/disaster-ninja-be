@@ -31,7 +31,7 @@ public class AdvancedAnalyticsPanelController {
             description = "Calculate advanced analytics to test the concept of getting analytical data automatically so analytical data makes sense.")
     @ApiResponse(responseCode = "200", description = "Successful operation",
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AdvancedAnalyticsDto.class))))
-    @PostMapping("/v2")
+    @PostMapping("/layers")
     public List<AdvancedAnalyticsDto> getAdvancedAnalyticsTab(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Polygon in GeoJSON format. Send polygon as FeatureCollection")
                                                               @RequestBody AdvancedAnalyticsRequestDto advancedAnalyticsRequest) {
         return advancedAnalyticsPanelService.calculateAnalytics(advancedAnalyticsRequest);
