@@ -83,6 +83,9 @@ public class AnalyticsService {
             StringBuilder text = new StringBuilder();
             List<Function> currentFunctionsList = field.getFunctions();
             for (Function function : currentFunctionsList) {
+                if (functionsResultsMap.get(function.getId()) == null) {
+                    continue;
+                }
                 switch (function.getPostfix()) {
                     case ("%") -> dto.setPercentValue(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
                             .setScale(0, RoundingMode.UP).intValue());
