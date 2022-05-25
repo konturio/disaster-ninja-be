@@ -3,8 +3,10 @@
 ## UNRELEASED
 
 #### Added
+- #10323 Add jib plugin
 
 #### Changed
+- #10323 Update the service to java 17
 
 #### Removed
 
