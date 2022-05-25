@@ -24,7 +24,7 @@ class AnalyticsTabPropertiesTest {
     }
 
     @Test
-    public void populationTest(){
+    public void populationTest() {
         List<AnalyticsField> fieldList = configuration.getFields().stream()
                 .filter(field -> field.getName().equals("Population")).toList();
         assertEquals(1, fieldList.size());
@@ -32,7 +32,7 @@ class AnalyticsTabPropertiesTest {
     }
 
     @Test
-    public void osmGapsTest(){
+    public void osmGapsTest() {
         List<AnalyticsField> fieldList = configuration.getFields().stream()
                 .filter(field -> field.getName().equals("OSM Gaps")).toList();
         assertEquals(1, fieldList.size());
@@ -40,7 +40,7 @@ class AnalyticsTabPropertiesTest {
     }
 
     @Test
-    public void noBuildingsTest(){
+    public void noBuildingsTest() {
         List<AnalyticsField> fieldList = configuration.getFields().stream()
                 .filter(field -> field.getName().equals("Buildings unmapped")).toList();
         assertEquals(1, fieldList.size());
@@ -48,7 +48,7 @@ class AnalyticsTabPropertiesTest {
     }
 
     @Test
-    public void noRoadsTest(){
+    public void noRoadsTest() {
         List<AnalyticsField> fieldList = configuration.getFields().stream()
                 .filter(field -> field.getName().equals("Roads unmapped")).toList();
         assertEquals(1, fieldList.size());

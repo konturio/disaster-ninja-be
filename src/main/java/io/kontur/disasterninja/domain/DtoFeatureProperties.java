@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.domain;
 
 public class DtoFeatureProperties {
+
     public static final String PROJECT_LINK = "projectLink"; //PROJECT_LINK value is also specified in layerconfig.yaml
     public static final String HOT_PROJECTS_URL = "https://tasks.hotosm.org/project/";
     //common

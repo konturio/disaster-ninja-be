@@ -10,6 +10,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 public class LayerDetailsSearchDto {
+
     private final GeoJSON geoJSON;
     private final List<String> layersToRetrieveWithGeometryFilter;
     private final List<String> layersToRetrieveWithoutGeometryFilter;

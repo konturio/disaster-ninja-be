@@ -2,7 +2,8 @@ package io.kontur.disasterninja.service;
 
 import io.kontur.disasterninja.client.KeycloakClient;
 import io.kontur.disasterninja.dto.TokenResponse;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

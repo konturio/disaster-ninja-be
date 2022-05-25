@@ -8,6 +8,7 @@ import java.util.*;
 
 @Data
 public class EventApiEventDto {
+
     private UUID eventId;
     private Long version;
     private String name;

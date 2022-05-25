@@ -53,12 +53,12 @@ public class InsightsApiGraphqlClient {
             CollectorRegistry collectorRegistry = ((PrometheusMeterRegistry) meterRegistry).getPrometheusRegistry();
             metrics = metricsBuilder.register(collectorRegistry);
         } else {
-            //for tests only
             metrics = metricsBuilder.create();
         }
     }
 
-    public CompletableFuture<List<AnalyticsTabQuery.Function>> analyticsTabQuery(GeoJSON polygon, List<FunctionArgs> functionArgs) {
+    public CompletableFuture<List<AnalyticsTabQuery.Function>> analyticsTabQuery(GeoJSON polygon,
+                                                                                 List<FunctionArgs> functionArgs) {
         CompletableFuture<List<AnalyticsTabQuery.Function>> future = new CompletableFuture<>();
         SimpleTimer timer = new SimpleTimer();
         apolloClient
@@ -101,7 +101,8 @@ public class InsightsApiGraphqlClient {
                             try {
                                 future.complete(new ObjectMapper().readValue(json, FeatureCollection.class));
                             } catch (JsonProcessingException e) {
-                                throw new WebApplicationException("Unable to convert response", HttpStatus.INTERNAL_SERVER_ERROR);
+                                throw new WebApplicationException("Unable to convert response",
+                                        HttpStatus.INTERNAL_SERVER_ERROR);
                             }
                         }
                         future.complete(new FeatureCollection(new Feature[0]));
@@ -115,7 +116,8 @@ public class InsightsApiGraphqlClient {
         return future;
     }
 
-    public CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> advancedAnalyticsPanelQuery(GeoJSON polygon) {
+    public CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> advancedAnalyticsPanelQuery(
+            GeoJSON polygon) {
         CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> future = new CompletableFuture<>();
         SimpleTimer timer = new SimpleTimer();
         apolloClient
@@ -174,8 +176,8 @@ public class InsightsApiGraphqlClient {
     }
 
     public <T> void observeMetricsAndCompleteExceptionally(@NotNull ApolloException e,
-                                                                  @NotNull CompletableFuture<T> future,
-                                                                  @NotNull SimpleTimer timer) {
+                                                           @NotNull CompletableFuture<T> future,
+                                                           @NotNull SimpleTimer timer) {
         metrics.labels(FAILED).observe(timer.elapsedSeconds());
         future.completeExceptionally(e);
     }

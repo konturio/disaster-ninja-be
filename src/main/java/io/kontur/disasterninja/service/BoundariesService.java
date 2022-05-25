@@ -17,7 +17,7 @@ public class BoundariesService {
 
     private final GeometryTransformer geometryTransformer;
 
-    public FeatureCollection getBoundaries(GeoJSON geoJSON){
+    public FeatureCollection getBoundaries(GeoJSON geoJSON) {
         Geometry geometry = geometryTransformer.getGeometryFromGeoJson(geoJSON);
         Point point = geometryTransformer.getPointFromGeometry(geometry);
         List<Feature> featureList = kcApiClient.getCollectionItemsByPoint(point, BOUNDS);

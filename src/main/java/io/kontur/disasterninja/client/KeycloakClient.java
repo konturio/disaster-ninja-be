@@ -9,9 +9,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 @Component
@@ -45,7 +42,8 @@ public class KeycloakClient {
 
         ResponseEntity<TokenResponse> response = restTemplate
                 .exchange(String.format("/realms/%s/protocol/openid-connect/token", keycloakRealm),
-                        HttpMethod.POST, new HttpEntity<>(params, headers), new ParameterizedTypeReference<>() {});
+                        HttpMethod.POST, new HttpEntity<>(params, headers), new ParameterizedTypeReference<>() {
+                        });
 
         return Objects.requireNonNull(response.getBody());
     }

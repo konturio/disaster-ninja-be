@@ -7,6 +7,7 @@
 
 #### Changed
 - #10323 Update the service to java 17
+- #10339 Removed call to insights-api /population/humanitarian_impact. Started to use graphql instead
 
 #### Removed
 

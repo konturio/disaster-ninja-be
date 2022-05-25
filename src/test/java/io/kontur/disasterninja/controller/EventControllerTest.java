@@ -9,11 +9,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class EventControllerTest {
+
     private final EventApiService eventApiService = mock(EventApiService.class);
     private final UserProfileService userProfileService = mock(UserProfileService.class);
     private EventFeedDto publicFeed1;
@@ -85,12 +86,12 @@ public class EventControllerTest {
 
     private void givenEventApiReturnsTwoFeeds() {
         when(eventApiService.getUserFeeds())
-            .thenReturn(Lists.newArrayList(feed(1), feed(2)));
+                .thenReturn(Lists.newArrayList(feed(1), feed(2)));
     }
 
     private void givenEventApiReturnsOnlyFeed2() {
         when(eventApiService.getUserFeeds())
-            .thenReturn(List.of(feed(2)));
+                .thenReturn(List.of(feed(2)));
     }
 
     private void givenUpsReturnsNoDefaultFeed() {

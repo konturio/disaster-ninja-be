@@ -31,6 +31,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @RestClientTest(UserProfileClient.class)
 @AutoConfigureWebClient(registerRestTemplate = true)
 public class FeatureControllerTest extends TestDependingOnUserAuth {
+
     @Autowired
     private MockRestServiceServer userProfileApi;
     @Autowired
@@ -47,10 +48,10 @@ public class FeatureControllerTest extends TestDependingOnUserAuth {
         //given
         givenUserIsNotAuthenticated();
         userProfileApi.expect(ExpectedCount.once(), requestTo(PATH))
-            .andExpect(method(HttpMethod.GET))
-            .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
-            .andRespond(withSuccess(readFile(this, "ups/dn2Features.json"),
-                MediaType.APPLICATION_JSON));
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
+                .andRespond(withSuccess(readFile(this, "ups/dn2Features.json"),
+                        MediaType.APPLICATION_JSON));
 
         //when
         List<FeatureDto> response = featuresController.getUserAppFeatures(null);
@@ -58,7 +59,7 @@ public class FeatureControllerTest extends TestDependingOnUserAuth {
         //then
         assertEquals(28, response.size());
         assertTrue(response.contains(
-            new FeatureDto("episode_list", "Episode list", UI_PANEL))); //just random feature
+                new FeatureDto("episode_list", "Episode list", UI_PANEL))); //just random feature
     }
 
     @Test
@@ -67,10 +68,10 @@ public class FeatureControllerTest extends TestDependingOnUserAuth {
         UUID appId = UUID.randomUUID();
         givenUserIsNotAuthenticated();
         userProfileApi.expect(ExpectedCount.once(), requestToUriTemplate(PATH + "?appId={appId}", appId))
-            .andExpect(method(HttpMethod.GET))
-            .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
-            .andRespond(withSuccess(readFile(this, "ups/someAppFeatures.json"),
-                MediaType.APPLICATION_JSON));
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
+                .andRespond(withSuccess(readFile(this, "ups/someAppFeatures.json"),
+                        MediaType.APPLICATION_JSON));
 
         //when
         List<FeatureDto> response = featuresController.getUserAppFeatures(appId);
@@ -87,10 +88,10 @@ public class FeatureControllerTest extends TestDependingOnUserAuth {
         UUID appId = UUID.randomUUID();
         //given
         userProfileApi.expect(ExpectedCount.once(), requestToUriTemplate(PATH + "?appId={appId}", appId))
-            .andExpect(method(HttpMethod.GET))
-            .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
-            .andRespond(withSuccess(readFile(this, "ups/someAppFeatures.json"),
-                MediaType.APPLICATION_JSON));
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andRespond(withSuccess(readFile(this, "ups/someAppFeatures.json"),
+                        MediaType.APPLICATION_JSON));
 
         //when
         List<FeatureDto> response = featuresController.getUserAppFeatures(appId);
@@ -105,9 +106,9 @@ public class FeatureControllerTest extends TestDependingOnUserAuth {
         UUID appId = UUID.randomUUID();
         //given
         userProfileApi.expect(ExpectedCount.once(), requestToUriTemplate(PATH + "?appId={appId}", appId))
-            .andExpect(method(HttpMethod.GET))
-            .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
-            .andRespond(MockRestResponseCreators.withStatus(HttpStatus.NOT_FOUND));
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andRespond(MockRestResponseCreators.withStatus(HttpStatus.NOT_FOUND));
 
         //when-then
         assertThrows(HttpClientErrorException.NotFound.class, () -> featuresController.getUserAppFeatures(appId));
@@ -119,9 +120,9 @@ public class FeatureControllerTest extends TestDependingOnUserAuth {
         UUID appId = UUID.randomUUID();
         //given
         userProfileApi.expect(ExpectedCount.once(), requestToUriTemplate(PATH + "?appId={appId}", appId))
-            .andExpect(method(HttpMethod.GET))
-            .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
-            .andRespond(MockRestResponseCreators.withStatus(HttpStatus.FORBIDDEN));
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andRespond(MockRestResponseCreators.withStatus(HttpStatus.FORBIDDEN));
 
         //when-then
         assertThrows(HttpClientErrorException.Forbidden.class, () -> featuresController.getUserAppFeatures(appId));
@@ -133,9 +134,9 @@ public class FeatureControllerTest extends TestDependingOnUserAuth {
         UUID appId = UUID.randomUUID();
         //given
         userProfileApi.expect(ExpectedCount.once(), requestToUriTemplate(PATH + "?appId={appId}", appId))
-            .andExpect(method(HttpMethod.GET))
-            .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
-            .andRespond(MockRestResponseCreators.withStatus(HttpStatus.UNAUTHORIZED));
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
+                .andRespond(MockRestResponseCreators.withStatus(HttpStatus.UNAUTHORIZED));
 
         //when-then
         assertThrows(HttpClientErrorException.Unauthorized.class, () -> featuresController.getUserAppFeatures(appId));

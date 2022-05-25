@@ -19,13 +19,14 @@ import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 import static io.kontur.disasterninja.domain.enums.LegendType.SIMPLE;
 import static io.kontur.disasterninja.dto.EventType.*;
-import static io.kontur.disasterninja.service.layers.providers.LayerProvider.EVENT_SHAPE_LAYER_ID;
-import static io.kontur.disasterninja.service.layers.providers.LayerProvider.HOT_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.EventShapeLayerProvider.EVENT_SHAPE_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.HotLayerProvider.HOT_LAYER_ID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class LayerConfigServiceTest {
+
     @Autowired
     LocalLayerConfigService service;
 
@@ -43,15 +44,15 @@ public class LayerConfigServiceTest {
     @Test
     public void hotWithFeaturesForAllStepsTest() {
         Layer hot = Layer.builder()
-            .id(HOT_LAYER_ID)
-            .source(LayerSource.builder()
-                .type(GEOJSON)
-                .data(new FeatureCollection(
-                    new Feature[]{
-                        feature("status", "Active"),
-                        feature("status", "Archived"),
-                        feature("status", "Published")}
-                )).build()).build();
+                .id(HOT_LAYER_ID)
+                .source(LayerSource.builder()
+                        .type(GEOJSON)
+                        .data(new FeatureCollection(
+                                new Feature[]{
+                                        feature("status", "Active"),
+                                        feature("status", "Archived"),
+                                        feature("status", "Published")}
+                        )).build()).build();
         service.applyConfig(hot);
 
         assertFalse(hot.isGlobalOverlay());
@@ -87,20 +88,21 @@ public class LayerConfigServiceTest {
         //#8748 text-offset is a List of Numbers, not Map or String
         Assertions.assertTrue(hot.getLegend().getSteps().get(0).getStyle().get("text-offset") instanceof List);
         Assertions.assertEquals(0, ((List<?>) hot.getLegend().getSteps().get(0).getStyle().get("text-offset")).get(0));
-        Assertions.assertEquals(0.6, ((List<?>) hot.getLegend().getSteps().get(0).getStyle().get("text-offset")).get(1));
+        Assertions.assertEquals(0.6,
+                ((List<?>) hot.getLegend().getSteps().get(0).getStyle().get("text-offset")).get(1));
     }
 
     @Test
     public void hotWithFeaturesForSomeStepsTest() {
         Layer hot = Layer.builder()
-            .id(HOT_LAYER_ID)
-            .source(LayerSource.builder()
-                .type(GEOJSON)
-                .data(new FeatureCollection(
-                    new Feature[]{
-                        feature("status", "Archived"),
-                        feature("status", "Archived")}
-                )).build()).build();
+                .id(HOT_LAYER_ID)
+                .source(LayerSource.builder()
+                        .type(GEOJSON)
+                        .data(new FeatureCollection(
+                                new Feature[]{
+                                        feature("status", "Archived"),
+                                        feature("status", "Archived")}
+                        )).build()).build();
         service.applyConfig(hot);
 
         assertFalse(hot.isGlobalOverlay());
@@ -130,8 +132,8 @@ public class LayerConfigServiceTest {
     @Test
     public void hotWithoutFeaturesTest() {
         Layer hot = Layer.builder()
-            .id(HOT_LAYER_ID)
-            .build();
+                .id(HOT_LAYER_ID)
+                .build();
         service.applyConfig(hot);
 
         assertFalse(hot.isGlobalOverlay());
@@ -151,8 +153,8 @@ public class LayerConfigServiceTest {
     @Test
     public void urbanTest() {
         Layer urban = Layer.builder()
-            .id("kontur_urban_core")
-            .build();
+                .id("kontur_urban_core")
+                .build();
         service.applyConfig(urban);
 
         assertFalse(urban.isGlobalOverlay());
@@ -169,8 +171,8 @@ public class LayerConfigServiceTest {
     @Test
     public void settledPeripheryTest() {
         Layer urban = Layer.builder()
-            .id("kontur_settled_periphery")
-            .build();
+                .id("kontur_settled_periphery")
+                .build();
         service.applyConfig(urban);
 
         assertFalse(urban.isGlobalOverlay());
@@ -187,9 +189,9 @@ public class LayerConfigServiceTest {
     @Test
     public void activeContributorsWithoutFeaturesTest() {
         Layer activeContributors = Layer.builder()
-            .id("activeContributors")
-            .source(LayerSource.builder().data(new FeatureCollection(null)).build())
-            .build();
+                .id("activeContributors")
+                .source(LayerSource.builder().data(new FeatureCollection(null)).build())
+                .build();
         service.applyConfig(activeContributors);
         //layer
         assertTrue(activeContributors.isGlobalOverlay());
@@ -226,8 +228,8 @@ public class LayerConfigServiceTest {
     public void eventShapeTest() {
         //base config params
         Layer eventShape = Layer.builder()
-            .id(EVENT_SHAPE_LAYER_ID)
-            .build();
+                .id(EVENT_SHAPE_LAYER_ID)
+                .build();
         service.applyConfig(eventShape);
         //layer
         assertFalse(eventShape.isGlobalOverlay());
@@ -249,11 +251,11 @@ public class LayerConfigServiceTest {
     public void eventShapeDefaultTest() {
         //eventShape without 'Class' property in features - uses basic config
         Layer layer = Layer.builder()
-            .id(EVENT_SHAPE_LAYER_ID)
-            .source(LayerSource.builder()
-                .data(new FeatureCollection(new Feature[]{feature("some", "value")}))
-                .build())
-            .build();
+                .id(EVENT_SHAPE_LAYER_ID)
+                .source(LayerSource.builder()
+                        .data(new FeatureCollection(new Feature[]{feature("some", "value")}))
+                        .build())
+                .build();
 
         service.applyConfig(layer);
 
@@ -272,24 +274,24 @@ public class LayerConfigServiceTest {
         //event type = CYCLONE
         //features with different Class value exist - each should be added to legend
         Layer layer = Layer.builder()
-            .id(EVENT_SHAPE_LAYER_ID)
-            .eventType(CYCLONE)
-            .source(LayerSource.builder()
-                .data(new FeatureCollection(new Feature[]{
-                    //random order, some duplicates
-                    feature("areaType", "centerPoint"),
-                    feature("Class", "Poly_Red"),
-                    feature("Class", "Poly_Green"),
-                    feature("Class", "Poly_Orange"),
-                    feature("Class", "Poly_Orange"),
-                    feature("Class", "Poly_Green"),
-                    feature("areaType", "position"),
-                    feature("Class", "Poly_Green"),
-                    feature("areaType", "track"),
-                    feature("areaType", "alertArea")}
-                ))
-                .build())
-            .build();
+                .id(EVENT_SHAPE_LAYER_ID)
+                .eventType(CYCLONE)
+                .source(LayerSource.builder()
+                        .data(new FeatureCollection(new Feature[]{
+                                //random order, some duplicates
+                                feature("areaType", "centerPoint"),
+                                feature("Class", "Poly_Red"),
+                                feature("Class", "Poly_Green"),
+                                feature("Class", "Poly_Orange"),
+                                feature("Class", "Poly_Orange"),
+                                feature("Class", "Poly_Green"),
+                                feature("areaType", "position"),
+                                feature("Class", "Poly_Green"),
+                                feature("areaType", "track"),
+                                feature("areaType", "alertArea")}
+                        ))
+                        .build())
+                .build();
 
         service.applyConfig(layer);
         assertFalse(layer.isBoundaryRequiredForRetrieval());
@@ -313,18 +315,18 @@ public class LayerConfigServiceTest {
         //event type = CYCLONE
         //features with different Class value exist - each should be added to legend
         Layer layer = Layer.builder()
-            .id(EVENT_SHAPE_LAYER_ID)
-            .eventType(CYCLONE)
-            .source(LayerSource.builder()
-                .data(new FeatureCollection(new Feature[]{
-                    //random order, some duplicates
-                    feature("areaType", "centerPoint"),
-                    feature("areaType", "track"),
-                    feature("areaType", "position"),
-                    feature("areaType", "alertArea")}
-                ))
-                .build())
-            .build();
+                .id(EVENT_SHAPE_LAYER_ID)
+                .eventType(CYCLONE)
+                .source(LayerSource.builder()
+                        .data(new FeatureCollection(new Feature[]{
+                                //random order, some duplicates
+                                feature("areaType", "centerPoint"),
+                                feature("areaType", "track"),
+                                feature("areaType", "position"),
+                                feature("areaType", "alertArea")}
+                        ))
+                        .build())
+                .build();
 
         service.applyConfig(layer);
         assertFalse(layer.isBoundaryRequiredForRetrieval());
@@ -348,15 +350,15 @@ public class LayerConfigServiceTest {
         //event type = CYCLONE
         //features with different Class value exist - each should be added to legend
         Layer layer = Layer.builder()
-            .id(EVENT_SHAPE_LAYER_ID)
-            .eventType(FLOOD)
-            .source(LayerSource.builder()
-                .data(new FeatureCollection(new Feature[]{
-                    //random order, some duplicates
-                    feature("areaType", "position")}
-                ))
-                .build())
-            .build();
+                .id(EVENT_SHAPE_LAYER_ID)
+                .eventType(FLOOD)
+                .source(LayerSource.builder()
+                        .data(new FeatureCollection(new Feature[]{
+                                //random order, some duplicates
+                                feature("areaType", "position")}
+                        ))
+                        .build())
+                .build();
 
         service.applyConfig(layer);
         assertFalse(layer.isBoundaryRequiredForRetrieval());

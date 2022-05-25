@@ -29,13 +29,14 @@ import java.util.stream.Collectors;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Profile("!" + WebSecurityConfiguration.JWT_AUTH_DISABLED)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
     public static final String JWT_AUTH_DISABLED = "jwtAuthDisabled";
 
     @Bean
     public Converter<Jwt, AbstractAuthenticationToken> jwtAuthenticationConverter() {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(
-            jwtGrantedAuthoritiesConverter());
+                jwtGrantedAuthoritiesConverter());
         return jwtAuthenticationConverter;
     }
 
@@ -52,15 +53,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                     if (realmAccess.containsKey(ClaimParams.ROLES)) {
                         JSONArray realmRoles = (JSONArray) realmAccess.get(ClaimParams.ROLES);
                         List<SimpleGrantedAuthority> keycloakAuthorities = realmRoles.stream()
-                            .map(role -> new SimpleGrantedAuthority(
-                                ClaimParams.ROLE_PREFIX + role))
-                            .collect(Collectors.toList());
+                                .map(role -> new SimpleGrantedAuthority(
+                                        ClaimParams.ROLE_PREFIX + role))
+                                .collect(Collectors.toList());
                         grantedAuthorities.addAll(keycloakAuthorities);
                     }
                 }
                 if (jwt.hasClaim(ClaimParams.USERNAME)) {
                     grantedAuthorities.add(new SimpleGrantedAuthority(
-                        ClaimParams.USERNAME_PREFIX + jwt.getClaim(ClaimParams.USERNAME)));
+                            ClaimParams.USERNAME_PREFIX + jwt.getClaim(ClaimParams.USERNAME)));
                 }
                 return grantedAuthorities;
             }
@@ -70,23 +71,24 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-            .csrf()
-            .ignoringRequestMatchers(new AntPathRequestMatcher("/advanced_polygon_details/**", "POST"))
-            .ignoringRequestMatchers(new AntPathRequestMatcher("/polygon_details/**", "POST"))
-            .ignoringRequestMatchers(new AntPathRequestMatcher("/boundaries/**", "POST"))
-            .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/details/**", "POST"))
-            .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/search/**", "POST"))
+                .csrf()
+                .ignoringRequestMatchers(new AntPathRequestMatcher("/advanced_polygon_details/**", "POST"))
+                .ignoringRequestMatchers(new AntPathRequestMatcher("/polygon_details/**", "POST"))
+                .ignoringRequestMatchers(new AntPathRequestMatcher("/boundaries/**", "POST"))
+                .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/details/**", "POST"))
+                .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/search/**", "POST"))
 
-            .and()
-            .headers().cacheControl().disable()
-            .and()
-            .oauth2ResourceServer(resourceServerConfigurer -> resourceServerConfigurer
-                .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(
-                    jwtAuthenticationConverter()))
-            );
+                .and()
+                .headers().cacheControl().disable()
+                .and()
+                .oauth2ResourceServer(resourceServerConfigurer -> resourceServerConfigurer
+                        .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(
+                                jwtAuthenticationConverter()))
+                );
     }
 
     public static class ClaimParams {
+
         public static final String ROLE_PREFIX = "ROLE_";
         public static final String USERNAME_PREFIX = "USERNAME_";
 

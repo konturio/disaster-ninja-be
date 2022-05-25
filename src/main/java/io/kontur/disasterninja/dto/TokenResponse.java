@@ -1,9 +1,13 @@
 package io.kontur.disasterninja.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Getter
+@Setter
+@AllArgsConstructor
 public class TokenResponse {
 
     @JsonProperty("access_token")
@@ -12,24 +16,4 @@ public class TokenResponse {
     @JsonProperty("expires_in")
     private Long expiresIn;
 
-    public TokenResponse(String accessToken, Long expiresIn) {
-        this.accessToken = accessToken;
-        this.expiresIn = expiresIn;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public Long getExpiresIn() {
-        return expiresIn;
-    }
-
-    public void setExpiresIn(Long expiresIn) {
-        this.expiresIn = expiresIn;
-    }
 }

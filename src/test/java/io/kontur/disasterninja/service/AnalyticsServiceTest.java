@@ -69,7 +69,8 @@ class AnalyticsServiceTest {
         analyticsField.setDescription("description");
         analyticsField.setName("name");
 
-        List<AnalyticsTabQuery.Function> functionsResults = List.of(new AnalyticsTabQuery.Function("", "functionId", 1.1),
+        List<AnalyticsTabQuery.Function> functionsResults = List.of(
+                new AnalyticsTabQuery.Function("", "functionId", 1.1),
                 new AnalyticsTabQuery.Function("", "functionId1", 11442.233333),
                 new AnalyticsTabQuery.Function("", "functionId2", 1444.433333));
 
@@ -80,7 +81,8 @@ class AnalyticsServiceTest {
         ArgumentCaptor<List<FunctionArgs>> functionArgsArgumentCaptor = ArgumentCaptor.forClass(List.class);
 
         when(configuration.getFields()).thenReturn(List.of(analyticsField));
-        when(insightsApiGraphqlClient.analyticsTabQuery(geoJSONArgumentCaptor.capture(), functionArgsArgumentCaptor.capture())).thenReturn(completableFuture);
+        when(insightsApiGraphqlClient.analyticsTabQuery(geoJSONArgumentCaptor.capture(),
+                functionArgsArgumentCaptor.capture())).thenReturn(completableFuture);
 
         //when
         List<AnalyticsDto> result = service.calculateAnalyticsForPanel(GeoJSONFactory.create(geoJsonString));
@@ -152,7 +154,7 @@ class AnalyticsServiceTest {
     }
 
     @Test
-    public void calculateAnalyticsTestZeroResults(){
+    public void calculateAnalyticsTestZeroResults() {
         //given
         String geoJsonString = """
                 {"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[27.2021484375,54.13347814286039],[26.9989013671875,53.82335438174398],[27.79541015625,53.70321053273598],[27.960205078125,53.90110181472825],[28.004150390625,54.081951104880396],[27.6470947265625,54.21707306629117],[27.2021484375,54.13347814286039]]]}}]}";
@@ -175,7 +177,8 @@ class AnalyticsServiceTest {
         analyticsField.setDescription("description");
         analyticsField.setName("name");
 
-        List<AnalyticsTabQuery.Function> functionsResults = List.of(new AnalyticsTabQuery.Function("", "functionId", 0.0),
+        List<AnalyticsTabQuery.Function> functionsResults = List.of(
+                new AnalyticsTabQuery.Function("", "functionId", 0.0),
                 new AnalyticsTabQuery.Function("", "functionId1", null));
 
         CompletableFuture<List<AnalyticsTabQuery.Function>> completableFuture = new CompletableFuture();

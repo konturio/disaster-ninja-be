@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class LocalLayerConfigService implements LayerConfigService {
+public class LocalLayerConfigService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalLayerConfigService.class);
     private final Map<String, Layer> globalOverlays = new HashMap<>();
@@ -41,14 +41,13 @@ public class LocalLayerConfigService implements LayerConfigService {
                     LayerSource source = config.getSource();
                     if (source != null && source.getUrls() != null) {
                         source.setUrls(source.getUrls().stream()
-                            .map(it -> {
-                                //todo spring messages?
-                                if (it.contains("{tilesHost}")) {
-                                    return it.replaceAll("\\{tilesHost}", tilesHost);
-                                } else {
-                                    return it;
-                                }
-                            }).collect(Collectors.toList()));
+                                .map(it -> {
+                                    if (it.contains("{tilesHost}")) {
+                                        return it.replaceAll("\\{tilesHost}", tilesHost);
+                                    } else {
+                                        return it;
+                                    }
+                                }).collect(Collectors.toList()));
                     }
                     if (config.isGlobalOverlay()) {
                         globalOverlays.put(config.getId(), config);
@@ -58,14 +57,14 @@ public class LocalLayerConfigService implements LayerConfigService {
                 }
             });
 
-            LOG.info("Loaded {} regular layer configurations: {}", regularLayers.values().size(), regularLayers.keySet());
+            LOG.info("Loaded {} regular layer configurations: {}", regularLayers.values().size(),
+                    regularLayers.keySet());
             LOG.info("Loaded {} global overlay layers: {}", globalOverlays.values().size(), globalOverlays.keySet());
         } catch (Exception e) {
             LOG.error("Cannot load layer configurations! {}", e.getMessage(), e);
         }
     }
 
-    @Override
     public void applyConfig(Layer input) {
         Layer config = getConfigForRegularLayer(input);
 
@@ -95,14 +94,6 @@ public class LocalLayerConfigService implements LayerConfigService {
         return regularLayers.get(input.getId());
     }
 
-    private String getConfigLayerId(Layer layer) {
-        if (layer.getEventType() != null) {
-            return layer.getId() + "." + layer.getEventType().toString();
-        }
-        return layer.getId();
-    }
-
-    @Override
     public Map<String, Layer> getGlobalOverlays() {
         return globalOverlays;
     }

@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AnalyticsService {
+
     private static final Logger LOG = LoggerFactory.getLogger(AnalyticsService.class);
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
     private final DecimalFormat numberFormat = new DecimalFormat("#,###.##", new DecimalFormatSymbols(Locale.US));
@@ -47,7 +48,7 @@ public class AnalyticsService {
         } catch (Exception e) {
             LOG.error("Can't load analytics data due to exception in graphql call: {}", e.getMessage(), e);
             throw new WebApplicationException("Exception when getting data from insights-api using apollo client",
-                HttpStatus.BAD_GATEWAY);
+                    HttpStatus.BAD_GATEWAY);
         }
     }
 
@@ -69,7 +70,8 @@ public class AnalyticsService {
         return null;
     }
 
-    private List<AnalyticsDto> createResultDto(List<AnalyticsField> fields, List<AnalyticsTabQuery.Function> functionsResults) {
+    private List<AnalyticsDto> createResultDto(List<AnalyticsField> fields,
+                                               List<AnalyticsTabQuery.Function> functionsResults) {
         List<AnalyticsDto> result = new ArrayList<>();
 
         Map<String, Double> functionsResultsMap = functionsResults.stream()
@@ -85,14 +87,14 @@ public class AnalyticsService {
                     case ("%") -> dto.setPercentValue(BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
                             .setScale(0, RoundingMode.UP).intValue());
                     case ("people on") -> text.append(numberFormat.format(
-                                BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
-                                    .setScale(0, RoundingMode.UP).longValue()))
+                                    BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
+                                            .setScale(0, RoundingMode.UP).longValue()))
                             .append(" ")
                             .append(function.getPostfix())
                             .append(" ");
                     default -> text.append(numberFormat.format(
-                                BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
-                                    .setScale(2, RoundingMode.HALF_UP).doubleValue()))
+                                    BigDecimal.valueOf(functionsResultsMap.get(function.getId()))
+                                            .setScale(2, RoundingMode.HALF_UP).doubleValue()))
                             .append(" ")
                             .append(function.getPostfix())
                             .append(" ");

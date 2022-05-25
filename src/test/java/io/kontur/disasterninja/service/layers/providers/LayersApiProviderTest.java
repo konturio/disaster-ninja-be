@@ -15,6 +15,7 @@ import java.util.UUID;
 import static org.mockito.Mockito.*;
 
 public class LayersApiProviderTest extends TestDependingOnUserAuth {
+
     @Mock
     LayersApiClient client = mock(LayersApiClient.class);
     LayersApiProvider provider = new LayersApiProvider(client);

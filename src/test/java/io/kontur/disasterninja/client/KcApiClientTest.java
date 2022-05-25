@@ -22,12 +22,10 @@ import java.util.List;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static io.kontur.disasterninja.client.KcApiClient.HOT_PROJECTS;
 import static io.kontur.disasterninja.client.KcApiClient.OSM_LAYERS;
-import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.LAYER_TYPE_FEATURE;
 import static io.kontur.disasterninja.util.TestUtil.readFile;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -48,25 +46,25 @@ class KcApiClientTest {
 
         //given
         server.expect(ExpectedCount.times(1), r -> assertThat(r.getURI().toString(), containsString(
-                "/collections/hotProjects/itemsByGeometry")))
-            .andExpect(method(HttpMethod.POST))
-            .andRespond(request -> {
-                String body = request.getBody().toString();
+                        "/collections/hotProjects/itemsByGeometry")))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(request -> {
+                    String body = request.getBody().toString();
 
-                if (!hasJsonPath("$.geom.type", is("Polygon")).matches(body)
-                && hasJsonPath("$.geom.coordinates[0][0][0]", is(-1.0)).matches(body)) {
-                    return withStatus(HttpStatus.BAD_REQUEST).createResponse(request);
-                }
+                    if (!hasJsonPath("$.geom.type", is("Polygon")).matches(body)
+                            && hasJsonPath("$.geom.coordinates[0][0][0]", is(-1.0)).matches(body)) {
+                        return withStatus(HttpStatus.BAD_REQUEST).createResponse(request);
+                    }
 
-                return withSuccess(readFile(this, "layers/hotprojects.json")
-                                .replaceAll("\"numberMatched\": 8305,", "\"numberMatched\": 10,")
-                                .replaceAll("\"numberReturned\": 10", "\"numberReturned\": 10"),
-                        MediaType.APPLICATION_JSON).createResponse(request);
-            });
+                    return withSuccess(readFile(this, "layers/hotprojects.json")
+                                    .replaceAll("\"numberMatched\": 8305,", "\"numberMatched\": 10,")
+                                    .replaceAll("\"numberReturned\": 10", "\"numberReturned\": 10"),
+                            MediaType.APPLICATION_JSON).createResponse(request);
+                });
 
         //when
         List<Feature> features = client.getCollectionItemsByCentroidGeometry(objectMapper.readValue(json,
-            Geometry.class), HOT_PROJECTS);
+                Geometry.class), HOT_PROJECTS);
 
         //then
         assertEquals(1, features.size());
@@ -78,33 +76,33 @@ class KcApiClientTest {
     @Test
     public void collectionByGeometryOnePageTest() throws IOException {
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
-            "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
+                "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
 
         //given
         server.expect(ExpectedCount.times(1), r -> assertThat(r.getURI().toString(), containsString(
                         "/collections/osmlayer/itemsByGeometry")))
-            .andExpect(method(HttpMethod.POST))
-            .andRespond(request -> {
-                String body = request.getBody().toString();
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(request -> {
+                            String body = request.getBody().toString();
 
-                if (!hasJsonPath("$.geom.type", is("Polygon")).matches(body)
-                        && hasJsonPath("$.geom.coordinates[0][0][0]", is(1.83975)).matches(body)) {
-                    return withStatus(HttpStatus.BAD_REQUEST).createResponse(request);
-                }
+                            if (!hasJsonPath("$.geom.type", is("Polygon")).matches(body)
+                                    && hasJsonPath("$.geom.coordinates[0][0][0]", is(1.83975)).matches(body)) {
+                                return withStatus(HttpStatus.BAD_REQUEST).createResponse(request);
+                            }
 
-                //first page request
-                if (hasJsonPath("$.offset", is(0)).matches(body)) {
-                        return withSuccess(readFile(this, "layers/osmlayer.json"),
-                            MediaType.APPLICATION_JSON).createResponse(request);
-                    }
-                    //no more requests expected
-                    throw new RuntimeException("incorrect request uri!");
-                }
-            );
+                            //first page request
+                            if (hasJsonPath("$.offset", is(0)).matches(body)) {
+                                return withSuccess(readFile(this, "layers/osmlayer.json"),
+                                        MediaType.APPLICATION_JSON).createResponse(request);
+                            }
+                            //no more requests expected
+                            throw new RuntimeException("incorrect request uri!");
+                        }
+                );
 
         //when
         List<Feature> events = client.getCollectionItemsByGeometry(objectMapper.readValue(json,
-            Geometry.class), "osmlayer");
+                Geometry.class), "osmlayer");
 
         //then
         assertEquals(10, events.size());
@@ -113,7 +111,7 @@ class KcApiClientTest {
     @Test
     public void collectionByGeometryThreePagesTest() throws IOException {
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
-            "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
+                "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
 
         //given
         server.expect(ExpectedCount.times(3), r -> assertThat(r.getURI().toString(), matchesRegex(
@@ -151,7 +149,7 @@ class KcApiClientTest {
 
         //when
         List<Feature> events = client.getCollectionItemsByGeometry(objectMapper.readValue(json,
-            Geometry.class), "osmlayer");
+                Geometry.class), "osmlayer");
 
         //then
         assertEquals(22, events.size());
@@ -163,36 +161,36 @@ class KcApiClientTest {
 
         //given
         server.expect(ExpectedCount.times(3), r -> assertThat(r.getURI().toString(), matchesRegex(
-                "/collections/osmlayer/itemsByGeometry")))
-            .andExpect(method(HttpMethod.POST))
-            .andRespond(request -> {
-                String body = request.getBody().toString();
+                        "/collections/osmlayer/itemsByGeometry")))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(request -> {
+                    String body = request.getBody().toString();
 
-                if (!hasJsonPath("$.geom.type", is("Polygon")).matches(body)
-                        && hasJsonPath("$.geom.coordinates[0][0][0]", is(-1.0)).matches(body)) {
-                    return withStatus(HttpStatus.BAD_REQUEST).createResponse(request);
-                }
+                    if (!hasJsonPath("$.geom.type", is("Polygon")).matches(body)
+                            && hasJsonPath("$.geom.coordinates[0][0][0]", is(-1.0)).matches(body)) {
+                        return withStatus(HttpStatus.BAD_REQUEST).createResponse(request);
+                    }
 
-                //first page request
-                if (hasJsonPath("$.offset", is(0)).matches(body)) {
+                    //first page request
+                    if (hasJsonPath("$.offset", is(0)).matches(body)) {
 
-                    return withSuccess(readFile(this, "layers/osmlayer.json")
-                            .replaceAll("\"numberMatched\": 10,", "\"numberMatched\": 22,"),
-                        MediaType.APPLICATION_JSON).createResponse(request);
-                }
-                //second page request
-                if (hasJsonPath("$.offset", is(10)).matches(body)) {
-                    return withSuccess(readFile(this, "layers/osmlayer.json")
-                            .replaceAll("\"numberMatched\": 10,", "\"numberMatched\": 22,"),
-                        MediaType.APPLICATION_JSON).createResponse(request);
-                }
-                //third page request (just 2 features)
-                if (hasJsonPath("$.offset", is(20)).matches(body)) {
-                    return withSuccess(readFile(this, "layers/osmlayer_2.json"),
-                        MediaType.APPLICATION_JSON).createResponse(request);
-                }
-                throw new RuntimeException("incorrect request uri!");
-            });
+                        return withSuccess(readFile(this, "layers/osmlayer.json")
+                                        .replaceAll("\"numberMatched\": 10,", "\"numberMatched\": 22,"),
+                                MediaType.APPLICATION_JSON).createResponse(request);
+                    }
+                    //second page request
+                    if (hasJsonPath("$.offset", is(10)).matches(body)) {
+                        return withSuccess(readFile(this, "layers/osmlayer.json")
+                                        .replaceAll("\"numberMatched\": 10,", "\"numberMatched\": 22,"),
+                                MediaType.APPLICATION_JSON).createResponse(request);
+                    }
+                    //third page request (just 2 features)
+                    if (hasJsonPath("$.offset", is(20)).matches(body)) {
+                        return withSuccess(readFile(this, "layers/osmlayer_2.json"),
+                                MediaType.APPLICATION_JSON).createResponse(request);
+                    }
+                    throw new RuntimeException("incorrect request uri!");
+                });
 
         //when
         List<Feature> events = client.getCollectionItems("osmlayer", objectMapper.readValue(json,
@@ -206,17 +204,17 @@ class KcApiClientTest {
     public void singleFeatureFromCollectionTest() {
         //given
         server.expect(ExpectedCount.times(1), r -> assertThat(r.getURI().toString(), endsWith(
-                "/collections/osmlayer/items/Benin_cotonou_pleiade_2016")))
-            .andExpect(method(HttpMethod.GET))
-            .andRespond(request -> {
-                    return withSuccess(readFile(this, "layers/osmlayer_feature.json"),
-                        MediaType.APPLICATION_JSON).createResponse(request);
-                }
-            );
+                        "/collections/osmlayer/items/Benin_cotonou_pleiade_2016")))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(request -> {
+                            return withSuccess(readFile(this, "layers/osmlayer_feature.json"),
+                                    MediaType.APPLICATION_JSON).createResponse(request);
+                        }
+                );
 
         //when
         Feature event = client.getFeatureFromCollection(null, "Benin_cotonou_pleiade_2016",
-            OSM_LAYERS); //not limited by geoJson
+                OSM_LAYERS); //not limited by geoJson
 
         //then
         assertEquals("Benin_cotonou_pleiade_2016", event.getId());
@@ -228,17 +226,18 @@ class KcApiClientTest {
     public void singleFeatureFromCollectionWithBoundaryTest() {
         //given
         server.expect(ExpectedCount.times(1), r -> assertThat(r.getURI().toString(), endsWith(
-                "/collections/osmlayer/items/Benin_cotonou_pleiade_2016")))
-            .andExpect(method(HttpMethod.GET))
-            .andRespond(request -> {
-                    return withSuccess(readFile(this, "layers/osmlayer_feature.json"),
-                        MediaType.APPLICATION_JSON).createResponse(request);
-                }
-            );
+                        "/collections/osmlayer/items/Benin_cotonou_pleiade_2016")))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(request -> {
+                            return withSuccess(readFile(this, "layers/osmlayer_feature.json"),
+                                    MediaType.APPLICATION_JSON).createResponse(request);
+                        }
+                );
 
         //when geoJson intersects with layer
         Geometry geoJson = new Point(new double[]{1.722946974, 6.266307793});
-        Feature event = client.getFeatureFromCollection(geoJson, "Benin_cotonou_pleiade_2016", OSM_LAYERS); //limited by geoJson
+        Feature event = client.getFeatureFromCollection(geoJson, "Benin_cotonou_pleiade_2016",
+                OSM_LAYERS); //limited by geoJson
 
         //then
         assertEquals("Benin_cotonou_pleiade_2016", event.getId());
@@ -250,18 +249,19 @@ class KcApiClientTest {
     public void singleFeatureFromCollectionWithNotIntersectingBoundaryTest() {
         //given
         server.expect(ExpectedCount.times(1), r -> assertThat(r.getURI().toString(), endsWith(
-                "/collections/osmlayer/items/Benin_cotonou_pleiade_2016")))
-            .andExpect(method(HttpMethod.GET))
-            .andRespond(request -> {
-                    return withSuccess(readFile(this, "layers/osmlayer_feature.json"),
-                        MediaType.APPLICATION_JSON).createResponse(request);
-                }
-            );
+                        "/collections/osmlayer/items/Benin_cotonou_pleiade_2016")))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(request -> {
+                            return withSuccess(readFile(this, "layers/osmlayer_feature.json"),
+                                    MediaType.APPLICATION_JSON).createResponse(request);
+                        }
+                );
 
         //when
         //1 geoJson intersects with layer
         Geometry geoJson = new Point(new double[]{0, 0});
-        Feature event = client.getFeatureFromCollection(geoJson, "Benin_cotonou_pleiade_2016", OSM_LAYERS); //limited by geoJson
+        Feature event = client.getFeatureFromCollection(geoJson, "Benin_cotonou_pleiade_2016",
+                OSM_LAYERS); //limited by geoJson
 
         //then
         assertNull(event);

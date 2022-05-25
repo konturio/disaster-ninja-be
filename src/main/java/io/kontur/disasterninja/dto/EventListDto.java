@@ -8,6 +8,7 @@ import java.util.UUID;
 
 @Data
 public class EventListDto {
+
     private UUID eventId;
     private String eventName;
     private String location;
