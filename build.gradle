@@ -4,6 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'jacoco'
+    id 'com.google.cloud.tools.jib' version '3.2.1'
 }
 
 jar {
@@ -12,12 +13,11 @@ jar {
 
 group = 'io.kontur'
 version = '0.9.0-SNAPSHOT'
-sourceCompatibility = '16'
-targetCompatibility = '16'
+sourceCompatibility = '17'
+targetCompatibility = '17'
 
 repositories {
     mavenCentral()
-//    mavenLocal()
 }
 
 dependencies {
@@ -60,5 +60,19 @@ jacocoTestReport {
     reports {
         csv.enabled true
         csv.destination file("${buildDir}/jacoco.csv")
+    }
+}
+
+jib {
+    from {
+        image = 'https://docker.io/library/openjdk:17-alpine'
+    }
+    to {
+        image = 'disaster-ninja-be'
+        tags = [version]
+    }
+    container {
+        mainClass = 'io.kontur.disasterninja.DisasterNinjaApplication'
+        ports = ['8627']
     }
 }
