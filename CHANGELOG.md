@@ -5,6 +5,7 @@
 #### Added
 
 #### Changed
+- #10432 Fixed error propagation to client while searching layers
 
 #### Removed
 
