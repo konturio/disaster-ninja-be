@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 @Service
 @Order(HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "kontur.platform.insightsApi.url")
 public class BivariateLayerProvider implements LayerProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(BivariateLayerProvider.class);

@@ -13,6 +13,7 @@ import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.web.client.RestTemplateExchangeTagsProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -68,6 +69,7 @@ public class WebConfiguration {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "kontur.platform.insightsApi.url")
     public RestTemplate insightsApiRestTemplate(RestTemplateBuilder builder,
                                                 @Value("${kontur.platform.insightsApi.url}") String eventApiUrl,
                                                 @Value("${kontur.platform.insightsApi.connectionTimeout}") Integer connectionTimeout,
@@ -137,6 +139,7 @@ public class WebConfiguration {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "kontur.platform.insightsApi.url")
     public ApolloClient insightsApiApolloClient(@Value("${kontur.platform.insightsApi.url}") String insightsApiUrl,
                                                 @Value("${graphql.apollo.maxIdleConnections}") Integer maxIdleConnections,
                                                 @Value("${graphql.apollo.keepAliveDuration}") Integer keepAliveDuration,
