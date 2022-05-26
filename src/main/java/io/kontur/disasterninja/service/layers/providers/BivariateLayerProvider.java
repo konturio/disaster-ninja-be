@@ -35,8 +35,8 @@ public class BivariateLayerProvider implements LayerProvider {
     private static final String MARKDOWN_LINK_PATTERN = "[%s](%s)";
     private static final Pattern URL_SEARCH_PATTERN = Pattern.compile("(http|ftp|https):\\/\\/([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-])");
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
-    @Value("${kontur.platform.tiles.host}")
-    private String tilesHost;
+    @Value("${kontur.platform.insightsApi.url}")
+    private String insightsApiUrl;
     private volatile Map<String, Layer> bivariateLayers = new ConcurrentHashMap<>();
 
     @PostConstruct
@@ -112,7 +112,7 @@ public class BivariateLayerProvider implements LayerProvider {
             .description(overlay.description())
             .source(LayerSource.builder()
                 .type(VECTOR)
-                .urls(List.of(tilesHost + "/tiles/stats/{z}/{x}/{y}.mvt"))
+                .urls(List.of(insightsApiUrl + "/tiles/{z}/{x}/{y}.mvt"))
                 .tileSize(512)
                 .build())
             .legend(legend)
