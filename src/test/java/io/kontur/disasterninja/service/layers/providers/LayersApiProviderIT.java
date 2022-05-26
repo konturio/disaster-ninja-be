@@ -56,7 +56,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
                 "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
 
-        server.expect(ExpectedCount.times(3), requestTo("/collections/search"))
+        server.expect(ExpectedCount.times(3), requestTo("https://test.test/layers/collections/search"))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header("Authorization", "Bearer " + getUserToken()))
                 .andRespond(r -> {
@@ -119,7 +119,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
                 "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
         UUID appId = UUID.randomUUID();
 
-        server.expect(ExpectedCount.times(1), requestTo("/collections/search"))
+        server.expect(ExpectedCount.times(1), requestTo("https://test.test/layers/collections/search"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(r -> {
                     String body = r.getBody().toString();
@@ -158,7 +158,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
                 "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
         UUID appId = UUID.randomUUID();
 
-        server.expect(ExpectedCount.times(1), requestTo("/collections/search"))
+        server.expect(ExpectedCount.times(1), requestTo("https://test.test/layers/collections/search"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(r -> {
                     String body = r.getBody().toString();
@@ -173,7 +173,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
                     }
                 });
 
-        server.expect(ExpectedCount.times(2), requestTo("/collections/hotProjects_feature_type/items/search"))
+        server.expect(ExpectedCount.times(2), requestTo("https://test.test/layers/collections/hotProjects_feature_type/items/search"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(r -> {
                     String body = r.getBody().toString();
