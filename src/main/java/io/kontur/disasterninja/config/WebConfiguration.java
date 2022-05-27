@@ -7,12 +7,15 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
+import io.kontur.disasterninja.client.InsightsApiGraphqlClientDummy;
 import io.kontur.disasterninja.config.metrics.ParamLessRestTemplateExchangeTagsProvider;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.web.client.RestTemplateExchangeTagsProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -153,6 +156,12 @@ public class WebConfiguration {
                         .connectionPool(new ConnectionPool(maxIdleConnections, keepAliveDuration, TimeUnit.SECONDS))
                         .build())
                 .build();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(InsightsApiGraphqlClient.class)
+    public InsightsApiGraphqlClient insightsApiGraphqlClientDummy() {
+        return new InsightsApiGraphqlClientDummy();
     }
 
 }
