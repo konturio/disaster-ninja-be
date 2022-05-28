@@ -1,21 +1,28 @@
 package io.kontur.disasterninja.client;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
 @Component
+@RequiredArgsConstructor
 public class InsightsApiClient {
 
     private static final String INSIGHTS_API_HUM_IMPACT_URI = "/population/humanitarian_impact";
 
-    @Autowired
-    RestTemplate insightsApiRestTemplate;
+    private static final String INSIGHTS_API_TILE_MVT_URI = "/tiles/%s/%s/%s.mvt";
+
+    private final RestTemplate insightsApiRestTemplate;
 
     public FeatureCollection getUrbanCoreAndSettledPeripheryLayers(Geometry geoJSON) {
         return insightsApiRestTemplate.postForEntity(INSIGHTS_API_HUM_IMPACT_URI,
             geoJSON, FeatureCollection.class).getBody();
+    }
+
+    public byte[] getTileMvt(Integer z, Integer x, Integer y) {
+        return insightsApiRestTemplate.getForEntity(String.format(INSIGHTS_API_TILE_MVT_URI, z, x, y), byte[].class)
+                .getBody();
     }
 }

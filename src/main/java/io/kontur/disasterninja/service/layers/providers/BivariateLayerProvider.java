@@ -37,6 +37,8 @@ public class BivariateLayerProvider implements LayerProvider {
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
     @Value("${kontur.platform.insightsApi.url}")
     private String insightsApiUrl;
+    @Value("${kontur.platform.dn-api.url}")
+    private String dnApi;
     private volatile Map<String, Layer> bivariateLayers = new ConcurrentHashMap<>();
 
     @PostConstruct
@@ -112,7 +114,7 @@ public class BivariateLayerProvider implements LayerProvider {
             .description(overlay.description())
             .source(LayerSource.builder()
                 .type(VECTOR)
-                .urls(List.of(insightsApiUrl + "/tiles/{z}/{x}/{y}.mvt"))
+                .urls(List.of(dnApi + "/tiles/{z}/{x}/{y}.mvt"))
                 .tileSize(512)
                 .build())
             .legend(legend)

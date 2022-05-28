@@ -12,6 +12,7 @@ import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
 import java.io.IOException;
+import java.util.Random;
 
 import static io.kontur.disasterninja.util.TestUtil.readFile;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -48,5 +49,27 @@ class InsightsApiClientTest {
 
         //then
         assertEquals(2, events.getFeatures().length);
+    }
+
+    @Test
+    public void testGetTileMvt(){
+        byte[] result = new byte[100];
+        new Random().nextBytes(result);
+        Integer z = 4;
+        Integer x = 8;
+        Integer y = 6;
+
+        //given
+        server.expect(r -> assertThat(r.getURI().toString(),
+                        equalTo(String.format("/tiles/%s/%s/%s.mvt", z, x, y))))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(result,
+                        MediaType.parseMediaType("application/vnd.mapbox-vector-tile")));
+
+        //when
+        byte[] tile = client.getTileMvt(z, x, y);
+
+        //then
+        assertEquals(100, tile.length);
     }
 }
