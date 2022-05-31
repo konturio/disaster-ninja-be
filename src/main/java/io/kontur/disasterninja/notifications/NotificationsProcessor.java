@@ -24,7 +24,6 @@ import org.wololo.geojson.GeometryCollection;
 import org.wololo.jts2geojson.GeoJSONReader;
 import org.wololo.jts2geojson.GeoJSONWriter;
 
-import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -35,14 +34,15 @@ import java.util.stream.Stream;
 import static java.util.Collections.emptyMap;
 
 @Component
-@ConditionalOnProperty(value="notifications.enabled")
+@ConditionalOnProperty(value = "notifications.enabled")
 public class NotificationsProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationsProcessor.class);
     private static volatile OffsetDateTime latestUpdatedDate = null;
     private static final GeoJSONReader geoJSONReader = new GeoJSONReader();
     private static final GeoJSONWriter geoJSONWriter = new GeoJSONWriter();
-    private static final List<String> acceptableTypes = Arrays.asList("FLOOD", "EARTHQUAKE", "CYCLONE", "VOLCANO", "WILDFIRE");
+    private static final List<String> acceptableTypes = Arrays.asList("FLOOD", "EARTHQUAKE", "CYCLONE", "VOLCANO",
+            "WILDFIRE");
 
     private final EventApiClient eventApiClient;
     private final InsightsApiGraphqlClient insightsApiClient;
@@ -52,6 +52,8 @@ public class NotificationsProcessor {
 
     @Value("${notifications.slackWebHook:}")
     private String slackWebHookUrl;
+    @Value("${notifications.feed}")
+    private String eventApiFeed;
 
     public NotificationsProcessor(SlackMessageFormatter slackMessageFormatter,
                                   EventApiClient eventApiClient,
@@ -73,7 +75,7 @@ public class NotificationsProcessor {
             return;
         }
         try {
-            List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, 100);
+            List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, eventApiFeed, 100);
 
             for (EventApiEventDto event : events) {
                 if (event.getUpdatedAt().isBefore(latestUpdatedDate)
@@ -94,7 +96,7 @@ public class NotificationsProcessor {
     }
 
     private void initUpdateDate() {
-        List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, 1);
+        List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, eventApiFeed, 1);
         EventApiEventDto latestEvent = events.get(0);
         latestUpdatedDate = latestEvent.getUpdatedAt();
     }

@@ -23,9 +23,9 @@ public enum LayerStepShape {
             return null;
         }
         return Arrays.stream(LayerStepShape.values())
-            .filter(t -> t.value.equals(value))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("No enum constant with value " + value));
+                .filter(t -> t.value.equals(value))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No enum constant with value " + value));
     }
 
     @JsonValue

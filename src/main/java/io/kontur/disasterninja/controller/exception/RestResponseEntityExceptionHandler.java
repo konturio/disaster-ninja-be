@@ -13,13 +13,15 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.http.HttpStatus.BAD_GATEWAY;
+
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+
     private static final Logger LOG = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
 
     @Override

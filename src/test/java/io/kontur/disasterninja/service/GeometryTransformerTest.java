@@ -40,7 +40,7 @@ class GeometryTransformerTest {
     }
 
     @Test
-    public void getPointFromGeometryMoreThanOneElementTest(){
+    public void getPointFromGeometryMoreThanOneElementTest() {
         FeatureCollection fc = new FeatureCollection(new Feature[]{
                 new Feature(new Point(new double[]{1, 0}), new HashMap<>()),
                 new Feature(new Point(new double[]{2, 0}), new HashMap<>())});
@@ -48,26 +48,26 @@ class GeometryTransformerTest {
         try {
             geometryTransformer.getPointFromGeometry(geometry);
             throw new RuntimeException("expected exception was not thrown");
-        } catch (WebApplicationException e){
+        } catch (WebApplicationException e) {
             assertEquals("Geometry contains more than one element", e.getMessage());
         }
     }
 
     @Test
-    public void getPointFromGeometryNotAPointTest(){
+    public void getPointFromGeometryNotAPointTest() {
         FeatureCollection fc = new FeatureCollection(new Feature[]{
                 new Feature(new LineString(new double[][]{{1.1, 2.2}, {3.3, 4.4}}), new HashMap<>())});
         Geometry geometry = geometryTransformer.getGeometryFromGeoJson(fc);
         try {
             geometryTransformer.getPointFromGeometry(geometry);
             throw new RuntimeException("expected exception was not thrown");
-        } catch (WebApplicationException e){
+        } catch (WebApplicationException e) {
             assertEquals("Geometry is not a point", e.getMessage());
         }
     }
 
     @Test
-    public void getPointFromGeometry(){
+    public void getPointFromGeometry() {
         FeatureCollection fc = new FeatureCollection(new Feature[]{
                 new Feature(new Point(new double[]{1, 0}), new HashMap<>())});
         Geometry geometry = geometryTransformer.getGeometryFromGeoJson(fc);

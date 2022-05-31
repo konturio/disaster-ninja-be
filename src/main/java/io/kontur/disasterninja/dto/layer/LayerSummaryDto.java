@@ -25,9 +25,9 @@ public class LayerSummaryDto {
 
     public static LayerSummaryDto fromLayer(Layer layer) {
         return layer == null ? null : new LayerSummaryDto(layer.getId(), layer.getName(),
-            layer.getDescription(), layer.getCategory() == null ? null : layer.getCategory(),
-            layer.getGroup(), layer.isBoundaryRequiredForRetrieval(), layer.isEventIdRequiredForRetrieval(),
-            layer.getLegend(),
-            layer.getCopyrights(), layer.isOwnedByUser(), layer.getFeatureProperties());
+                layer.getDescription(), layer.getCategory() == null ? null : layer.getCategory(),
+                layer.getGroup(), layer.isBoundaryRequiredForRetrieval(), layer.isEventIdRequiredForRetrieval(),
+                layer.getLegend(),
+                layer.getCopyrights(), layer.isOwnedByUser(), layer.getFeatureProperties());
     }
 }

@@ -16,7 +16,7 @@ public enum EventType {
     VOLCANO("Volcano"),
     OTHER("Other");
 
-    private String name;
+    private final String name;
 
     EventType(String name) {
         this.name = name;

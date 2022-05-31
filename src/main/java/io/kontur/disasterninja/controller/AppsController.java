@@ -62,7 +62,7 @@ public class AppsController {
 
     @Operation(summary = "Get default app id")
     @ApiResponse(responseCode = "200",
-        content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE))
+            content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE))
     @GetMapping(path = "/default_id")
     public ResponseEntity<String> getDefaultAppId() {
         return userProfileClient.getDefaultAppId();

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -29,11 +30,14 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 @Service
 @Order(HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "kontur.platform.insightsApi.url")
 public class BivariateLayerProvider implements LayerProvider {
+
     private static final Logger LOG = LoggerFactory.getLogger(BivariateLayerProvider.class);
     public static final String LAYER_PREFIX = "BIV__";
     private static final String MARKDOWN_LINK_PATTERN = "[%s](%s)";
-    private static final Pattern URL_SEARCH_PATTERN = Pattern.compile("(http|ftp|https):\\/\\/([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-])");
+    private static final Pattern URL_SEARCH_PATTERN = Pattern.compile(
+            "(http|ftp|https):\\/\\/([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-])");
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
     @Value("${kontur.platform.insightsApi.url}")
     private String insightsApiUrl;
@@ -41,7 +45,7 @@ public class BivariateLayerProvider implements LayerProvider {
 
     @PostConstruct
     @Scheduled(initialDelayString = "${kontur.platform.insightsApi.layersReloadInterval}",
-        fixedRateString = "${kontur.platform.insightsApi.layersReloadInterval}")
+            fixedRateString = "${kontur.platform.insightsApi.layersReloadInterval}")
     public void reloadLayers() {
         LOG.info("Loading bivariate layers from insights-api");
         try {
@@ -49,11 +53,10 @@ public class BivariateLayerProvider implements LayerProvider {
             if (bivariateStatisticDto != null && bivariateStatisticDto.getOverlays() != null) {
                 synchronized (this) {
                     bivariateLayers = bivariateStatisticDto.getOverlays().stream()
-                        .map(overlay -> fromOverlay(overlay, bivariateStatisticDto.getIndicators()))
-                        .collect(Collectors.toMap(Layer::getId, it -> it));
+                            .map(overlay -> fromOverlay(overlay, bivariateStatisticDto.getIndicators()))
+                            .collect(Collectors.toMap(Layer::getId, it -> it));
                 }
-                LOG.info("Loaded bivariate layers: {}",
-                    String.join(", ", bivariateLayers.keySet()));
+                LOG.info("Loaded bivariate layers: {}", String.join(", ", bivariateLayers.keySet()));
             } else {
                 LOG.error("Can't load list of available bivariate layers: no overlays received");
             }
@@ -98,7 +101,8 @@ public class BivariateLayerProvider implements LayerProvider {
         }
     }
 
-    protected Layer fromOverlay(BivariateLayerLegendQuery.Overlay overlay, List<BivariateLayerLegendQuery.Indicator> indicators) {
+    protected Layer fromOverlay(BivariateLayerLegendQuery.Overlay overlay,
+                                List<BivariateLayerLegendQuery.Indicator> indicators) {
         if (overlay == null) {
             return null;
         }
@@ -107,25 +111,25 @@ public class BivariateLayerProvider implements LayerProvider {
         List<String> copyrights = copyrightsFromIndicators(legend, indicators);
 
         return Layer.builder()
-            .id(getIdWithPrefix(overlay.name()))
-            .name(overlay.name())
-            .description(overlay.description())
-            .source(LayerSource.builder()
-                .type(VECTOR)
-                .urls(List.of(insightsApiUrl + "/tiles/{z}/{x}/{y}.mvt"))
-                .tileSize(512)
-                .build())
-            .legend(legend)
-            .copyrights(copyrights)
-            .maxZoom(8)
-            .globalOverlay(true)
-            .boundaryRequiredForRetrieval(false)
-            .eventIdRequiredForRetrieval(false)
-            .displayLegendIfNoFeaturesExist(true)
-            .category(LayerCategory.OVERLAY)
-            .group("bivariate")
-            .orderIndex(overlay.order())
-            .build();
+                .id(getIdWithPrefix(overlay.name()))
+                .name(overlay.name())
+                .description(overlay.description())
+                .source(LayerSource.builder()
+                        .type(VECTOR)
+                        .urls(List.of(insightsApiUrl + "/tiles/{z}/{x}/{y}.mvt"))
+                        .tileSize(512)
+                        .build())
+                .legend(legend)
+                .copyrights(copyrights)
+                .maxZoom(8)
+                .globalOverlay(true)
+                .boundaryRequiredForRetrieval(false)
+                .eventIdRequiredForRetrieval(false)
+                .displayLegendIfNoFeaturesExist(true)
+                .category(LayerCategory.OVERLAY)
+                .group("bivariate")
+                .orderIndex(overlay.order())
+                .build();
     }
 
     private String getIdWithPrefix(String id) {
@@ -198,7 +202,8 @@ public class BivariateLayerProvider implements LayerProvider {
                         .stream()
                         .map(str -> URL_SEARCH_PATTERN.matcher(str)
                                 .replaceAll(matchResult ->
-                                        String.format(MARKDOWN_LINK_PATTERN, matchResult.group(0), matchResult.group(0))))
+                                        String.format(MARKDOWN_LINK_PATTERN, matchResult.group(0),
+                                                matchResult.group(0))))
                         .forEach(copyrights::add)
         );
         return copyrights.stream().toList();

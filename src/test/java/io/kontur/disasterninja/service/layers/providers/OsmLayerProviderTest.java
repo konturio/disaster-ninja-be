@@ -30,15 +30,16 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
     private void init() throws IOException {
         //list
         Mockito.when(kcApiClient.getCollectionItemsByGeometry(any(), any())).thenReturn(
-            List.of(objectMapper.readValue(
-                    getClass().getResource("/io/kontur/disasterninja/client/layers/osmlayer.json"),
-                    FeatureCollection.class)
-                .getFeatures())
+                List.of(objectMapper.readValue(
+                                getClass().getResource("/io/kontur/disasterninja/client/layers/osmlayer.json"),
+                                FeatureCollection.class)
+                        .getFeatures())
         );
         //single
         Mockito.when(kcApiClient.getFeatureFromCollection(any(), any(), any())).thenReturn(
-            objectMapper.readValue(getClass().getResource("/io/kontur/disasterninja/client/layers/osmlayer_feature.json"),
-                Feature.class)
+                objectMapper.readValue(
+                        getClass().getResource("/io/kontur/disasterninja/client/layers/osmlayer_feature.json"),
+                        Feature.class)
         );
     }
 
@@ -56,9 +57,10 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
         //source
         assertTrue(layer.getSource().getData().getFeatures().length > 0);
         assertEquals(RASTER, layer.getSource().getType());
-        assertEquals(List.of("https://geoxxx.agrocampus-ouest.fr/owsifl/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetTile&" +
-            "VERSION=1.0.0&LAYER=Benin:cotonou_pleiade_2016&STYLE=&FORMAT=image/jpeg&tileMatrixSet=EPSG:3857&tileMatrix=" +
-            "EPSG:3857:{zoom}&tileRow={y}&tileCol={x}"), layer.getSource().getUrls());
+        assertEquals(
+                List.of("https://geoxxx.agrocampus-ouest.fr/owsifl/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetTile&" +
+                        "VERSION=1.0.0&LAYER=Benin:cotonou_pleiade_2016&STYLE=&FORMAT=image/jpeg&tileMatrixSet=EPSG:3857&tileMatrix=" +
+                        "EPSG:3857:{zoom}&tileRow={y}&tileCol={x}"), layer.getSource().getUrls());
     }
 
     @Test
@@ -69,7 +71,7 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
         assertEquals(10, result.size()); //9 layers without geometry, 1 matching
 
         Layer bygeom = result.stream().filter(it -> "Benin_cotonou_pleiade_2016".equals(it.getId()))
-            .findAny().get();
+                .findAny().get();
         assertNotNull(bygeom);
 
         //feature without geometry is included
@@ -85,7 +87,7 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
 
         Layer layer2 = result.stream().filter(it -> "EOXAT2018CLOUDLESS".equals(it.getId())).findAny().get();
         assertEquals("Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH" +
-            " (Contains modified Copernicus Sentinel data 2017 & 2018)", layer2.getCopyrights().get(0));
+                " (Contains modified Copernicus Sentinel data 2017 & 2018)", layer2.getCopyrights().get(0));
         assertEquals("photo", layer2.getGroup());
 
         Layer layer3 = result.stream().filter(it -> "OSM_Inspector-Addresses".equals(it.getId())).findAny().get();
@@ -95,7 +97,7 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
     @Test
     public void get() {
         Layer layer1 = osmLayerProvider.obtainLayer("Benin_cotonou_pleiade_2016", LayerSearchParams
-            .builder().boundary(new Point(new double[]{1.722946974, 6.266307793})).build());
+                .builder().boundary(new Point(new double[]{1.722946974, 6.266307793})).build());
 
         assertEquals("Benin: Cotonou Pleiade 2016", layer1.getName());
         assertEquals(BASE, layer1.getCategory());
@@ -106,13 +108,14 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
         assertEquals(6, layer1.getMinZoom());
         //source
         assertEquals(RASTER, layer1.getSource().getType());
-        assertEquals(List.of("https://geoxxx.agrocampus-ouest.fr/owsifl/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetTile&" +
-            "VERSION=1.0.0&LAYER=Benin:cotonou_pleiade_2016&STYLE=&FORMAT=image/jpeg&tileMatrixSet=EPSG:3857&tileMatrix=" +
-            "EPSG:3857:{zoom}&tileRow={y}&tileCol={x}"), layer1.getSource().getUrls());
+        assertEquals(
+                List.of("https://geoxxx.agrocampus-ouest.fr/owsifl/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetTile&" +
+                        "VERSION=1.0.0&LAYER=Benin:cotonou_pleiade_2016&STYLE=&FORMAT=image/jpeg&tileMatrixSet=EPSG:3857&tileMatrix=" +
+                        "EPSG:3857:{zoom}&tileRow={y}&tileCol={x}"), layer1.getSource().getUrls());
 
         assertNotNull(layer1.getSource().getData().getFeatures());
         assertTrue(layer1.getSource().getData().getFeatures()[0].getGeometry() instanceof MultiPolygon);
         assertEquals(51, ((MultiPolygon) layer1.getSource().getData().getFeatures()[0].getGeometry())
-            .getCoordinates()[0][0].length);
+                .getCoordinates()[0][0].length);
     }
 }

@@ -6,7 +6,7 @@ import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
-import io.kontur.disasterninja.service.layers.LayerConfigService;
+import io.kontur.disasterninja.service.layers.LocalLayerConfigService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 public class OsmLayerProvider implements LayerProvider {
 
     private final KcApiClient kcApiClient;
-    private final LayerConfigService layerConfigService;
+    private final LocalLayerConfigService layerConfigService;
     private Set<String> globalOverlays;
 
     @PostConstruct
@@ -78,7 +78,8 @@ public class OsmLayerProvider implements LayerProvider {
         if (!isApplicable(layerId)) {
             return null;
         }
-        return fromOsmLayer(kcApiClient.getFeatureFromCollection(searchParams.getBoundary(), layerId, OSM_LAYERS), true);
+        return fromOsmLayer(kcApiClient.getFeatureFromCollection(searchParams.getBoundary(), layerId, OSM_LAYERS),
+                true);
     }
 
     @Override
@@ -94,7 +95,7 @@ public class OsmLayerProvider implements LayerProvider {
             return Collections.emptyList();
         }
         return dto.stream().filter(Objects::nonNull).map(it -> fromOsmLayer(it, false))
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     /**
@@ -106,25 +107,24 @@ public class OsmLayerProvider implements LayerProvider {
         }
         String copyright = getMapValueFromProperty(f, ATTRIBUTION, TEXT, String.class);
         Layer.LayerBuilder builder = Layer.builder()
-            .id((String) f.getId())
-            .name(getFeatureProperty(f, NAME, String.class))
-            .description(getFeatureProperty(f, DESCRIPTION, String.class))
-            .category(layerCategory(f))
-            .group(getFeatureProperty(f, CATEGORY, String.class))
-            .copyrights(copyright == null ? null : List.of(copyright))
-            .maxZoom(getFeatureProperty(f, MAX_ZOOM, Integer.class))
-            .minZoom(getFeatureProperty(f, MIN_ZOOM, Integer.class));
+                .id((String) f.getId())
+                .name(getFeatureProperty(f, NAME, String.class))
+                .description(getFeatureProperty(f, DESCRIPTION, String.class))
+                .category(layerCategory(f))
+                .group(getFeatureProperty(f, CATEGORY, String.class))
+                .copyrights(copyright == null ? null : List.of(copyright))
+                .maxZoom(getFeatureProperty(f, MAX_ZOOM, Integer.class))
+                .minZoom(getFeatureProperty(f, MIN_ZOOM, Integer.class));
 
         if (includeSourceData) {
             String url = getFeatureProperty(f, URL, String.class);
 
             builder.source(LayerSource.builder()
-                .type(RASTER) //todo agreed to hardcode for now
-//                    .tileSize() //todo
-                .urls(url != null ? List.of(url) : null)
+                    .type(RASTER)
+                    .urls(url != null ? List.of(url) : null)
 
-                .data(new FeatureCollection(new Feature[]{f}))
-                .build());
+                    .data(new FeatureCollection(new Feature[]{f}))
+                    .build());
         }
         return builder.build();
     }
