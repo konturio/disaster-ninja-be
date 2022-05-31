@@ -3,7 +3,8 @@
 ## UNRELEASED
 
 #### Added
-- #10323 Add jib plugin
+- #10323 Add Dockerfile
+- #10342 Configure github ci
 
 #### Changed
 - #10323 Update the service to java 17

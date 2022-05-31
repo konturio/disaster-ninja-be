@@ -4,7 +4,6 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'jacoco'
-    id 'com.google.cloud.tools.jib' version '3.2.1'
 }
 
 jar {
@@ -33,6 +32,10 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.8'
     implementation 'com.apollographql.apollo:apollo-runtime:2.5.11'
 
+//    to be used with logback.xml.do-not-use
+//    implementation 'ch.qos.logback.contrib:logback-jackson:0.1.5'
+//    implementation 'ch.qos.logback.contrib:logback-json-classic:0.1.5'
+
     //health
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus:1.9.0'
@@ -60,19 +63,5 @@ jacocoTestReport {
     reports {
         csv.enabled true
         csv.destination file("${buildDir}/jacoco.csv")
-    }
-}
-
-jib {
-    from {
-        image = 'https://docker.io/library/openjdk:17-alpine'
-    }
-    to {
-        image = 'disaster-ninja-be'
-        tags = [version]
-    }
-    container {
-        mainClass = 'io.kontur.disasterninja.DisasterNinjaApplication'
-        ports = ['8627']
     }
 }
