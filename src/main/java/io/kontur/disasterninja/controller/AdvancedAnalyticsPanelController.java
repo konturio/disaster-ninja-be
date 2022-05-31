@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.controller;
 
 import io.kontur.disasterninja.dto.AdvancedAnalyticsDto;
+import io.kontur.disasterninja.dto.AdvancedAnalyticsRequestDto;
 import io.kontur.disasterninja.service.AdvancedAnalyticsPanelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -30,10 +31,22 @@ public class AdvancedAnalyticsPanelController {
             description = "Calculate advanced analytics to test the concept of getting analytical data automatically so analytical data makes sense.")
     @ApiResponse(responseCode = "200", description = "Successful operation",
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AdvancedAnalyticsDto.class))))
+    @PostMapping("/layers")
+    public List<AdvancedAnalyticsDto> getAdvancedAnalyticsTab(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Polygon in GeoJSON format. Send polygon as FeatureCollection")
+                                                              @RequestBody AdvancedAnalyticsRequestDto advancedAnalyticsRequest) {
+        return advancedAnalyticsPanelService.calculateAnalytics(advancedAnalyticsRequest);
+    }
+
+    @Operation(summary = "Calculate data for advanced analytics panel using insights-api service",
+            tags = {"Analytics tab"},
+            description = "Calculate advanced analytics to test the concept of getting analytical data automatically so analytical data makes sense.")
+    @ApiResponse(responseCode = "200", description = "Successful operation",
+            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AdvancedAnalyticsDto.class))))
     @PostMapping
     public List<AdvancedAnalyticsDto> getAdvancedAnalyticsTab(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Polygon in GeoJSON format. Send polygon as FeatureCollection")
             @RequestBody(required = false) GeoJSON geoJSON) {
-        return advancedAnalyticsPanelService.calculateAnalytics(geoJSON);
+        return advancedAnalyticsPanelService.calculateAnalytics(new AdvancedAnalyticsRequestDto(null, geoJSON));
     }
+
 }

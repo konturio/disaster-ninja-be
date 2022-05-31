@@ -107,7 +107,13 @@ type Analytics {
   thermalSpotStatistic: ThermalSpotStatistic
   urbanCore: UrbanCore
   functions(args: [FunctionArgs]): [FunctionResult]
-  advancedAnalytics: [AdvancedAnalytics]
+  advancedAnalytics(args: [AdvancedAnalyticsRequest]): [AdvancedAnalytics]
+}
+
+input AdvancedAnalyticsRequest {
+  numerator: String
+  denominator: String
+  calculations: [String]
 }
 
 type AdvancedAnalytics {

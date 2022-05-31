@@ -3,6 +3,7 @@ package io.kontur.disasterninja.client;
 import io.kontur.disasterninja.dto.BivariateStatisticDto;
 import io.kontur.disasterninja.graphql.AdvancedAnalyticalPanelQuery;
 import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
+import io.kontur.disasterninja.graphql.type.AdvancedAnalyticsRequest;
 import io.kontur.disasterninja.graphql.type.FunctionArgs;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.GeoJSON;
@@ -19,7 +20,7 @@ public interface InsightsApiGraphqlClient {
     CompletableFuture<FeatureCollection> humanitarianImpactQuery(Geometry polygon);
 
     CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> advancedAnalyticsPanelQuery(
-            GeoJSON polygon);
+            GeoJSON argPolygon, List<AdvancedAnalyticsRequest> argRequest);
 
     CompletableFuture<BivariateStatisticDto> getBivariateStatistic();
 }

@@ -13,6 +13,7 @@ import io.kontur.disasterninja.graphql.AdvancedAnalyticalPanelQuery;
 import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
 import io.kontur.disasterninja.graphql.HumanitarianImpactQuery;
+import io.kontur.disasterninja.graphql.type.AdvancedAnalyticsRequest;
 import io.kontur.disasterninja.graphql.type.FunctionArgs;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
@@ -119,11 +120,11 @@ public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
     }
 
     public CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> advancedAnalyticsPanelQuery(
-            GeoJSON polygon) {
+            GeoJSON argPolygon, List<AdvancedAnalyticsRequest> argRequest) {
         CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> future = new CompletableFuture<>();
         SimpleTimer timer = new SimpleTimer();
         apolloClient
-                .query(new AdvancedAnalyticalPanelQuery(Input.optional(polygon)))
+                .query(new AdvancedAnalyticalPanelQuery(Input.optional(argPolygon), Input.optional(argRequest)))
                 .enqueue(new ApolloCall.Callback<>() {
                     @Override
                     public void onResponse(@NotNull Response<AdvancedAnalyticalPanelQuery.Data> response) {
