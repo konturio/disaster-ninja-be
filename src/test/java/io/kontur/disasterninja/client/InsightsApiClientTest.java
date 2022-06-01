@@ -52,7 +52,7 @@ class InsightsApiClientTest {
     }
 
     @Test
-    public void testGetTileMvt(){
+    public void testGetBivariateTileMvt(){
         byte[] result = new byte[100];
         new Random().nextBytes(result);
         Integer z = 4;
@@ -61,13 +61,13 @@ class InsightsApiClientTest {
 
         //given
         server.expect(r -> assertThat(r.getURI().toString(),
-                        equalTo(String.format("/tiles/%s/%s/%s.mvt", z, x, y))))
+                        equalTo(String.format("/tiles/bivariate/v1/%s/%s/%s.mvt", z, x, y))))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(result,
                         MediaType.parseMediaType("application/vnd.mapbox-vector-tile")));
 
         //when
-        byte[] tile = client.getTileMvt(z, x, y);
+        byte[] tile = client.getBivariateTileMvt(z, x, y);
 
         //then
         assertEquals(100, tile.length);

@@ -23,18 +23,18 @@ class TileServiceTest {
     private TileService service;
 
     @Test
-    public void getTileMvtTest() {
+    public void getBivariateTileMvtTest() {
         byte[] result = new byte[100];
         new Random().nextBytes(result);
         Integer z = 4;
         Integer x = 8;
         Integer y = 6;
 
-        when(insightsApiClient.getTileMvt(z, x, y)).thenReturn(result);
+        when(insightsApiClient.getBivariateTileMvt(z, x, y)).thenReturn(result);
 
-        byte[] tile = service.getTileMvt(z, x, y);
+        byte[] tile = service.getBivariateTileMvt(z, x, y);
 
-        verify(insightsApiClient).getTileMvt(z, x, y);
+        verify(insightsApiClient).getBivariateTileMvt(z, x, y);
         assertEquals(100, tile.length);
     }
 }
