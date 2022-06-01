@@ -3,6 +3,18 @@
 ## UNRELEASED
 
 #### Added
+
+#### Changed
+
+#### Removed
+
+#### Installation sequence
+
+
+
+## Release 0.10.0 - 2022-06-01
+
+#### Added
 - #10323 Add Dockerfile
 - #10342 Configure github ci
 
