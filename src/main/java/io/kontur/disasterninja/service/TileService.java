@@ -10,7 +10,7 @@ public class TileService {
 
     private final InsightsApiClient insightsApiClient;
 
-    public byte[] getTileMvt(Integer z, Integer x, Integer y){
-        return insightsApiClient.getTileMvt(z, x, y);
+    public byte[] getBivariateTileMvt(Integer z, Integer x, Integer y){
+        return insightsApiClient.getBivariateTileMvt(z, x, y);
     }
 }

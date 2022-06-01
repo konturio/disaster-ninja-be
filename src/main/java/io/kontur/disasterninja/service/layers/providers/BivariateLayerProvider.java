@@ -35,8 +35,6 @@ public class BivariateLayerProvider implements LayerProvider {
     private static final String MARKDOWN_LINK_PATTERN = "[%s](%s)";
     private static final Pattern URL_SEARCH_PATTERN = Pattern.compile("(http|ftp|https):\\/\\/([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-])");
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
-    @Value("${kontur.platform.insightsApi.url}")
-    private String insightsApiUrl;
     @Value("${kontur.platform.dn-api.url}")
     private String dnApi;
     private volatile Map<String, Layer> bivariateLayers = new ConcurrentHashMap<>();
