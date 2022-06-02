@@ -18,9 +18,9 @@ public enum LegendType {
     @JsonCreator
     public static LegendType fromString(String value) {
         return Arrays.stream(LegendType.values())
-            .filter(t -> t.value.equals(value))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("No enum constant with value " + value));
+                .filter(t -> t.value.equals(value))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No enum constant with value " + value));
     }
 
     @JsonValue

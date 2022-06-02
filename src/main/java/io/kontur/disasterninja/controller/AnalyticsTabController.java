@@ -31,8 +31,9 @@ public class AnalyticsTabController {
     @ApiResponse(responseCode = "200", description = "Successful operation",
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AnalyticsDto.class))))
     @PostMapping
-    public List<AnalyticsDto> getAnalyticsTab(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Polygon in GeoJSON format. Send polygon as FeatureCollection")
-                                              @RequestBody GeoJSON geoJSON) {
+    public List<AnalyticsDto> getAnalyticsTab(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Polygon in GeoJSON format. Send polygon as FeatureCollection")
+            @RequestBody GeoJSON geoJSON) {
         return analyticsService.calculateAnalyticsForPanel(geoJSON);
     }
 }

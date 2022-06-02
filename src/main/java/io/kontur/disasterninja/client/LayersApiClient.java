@@ -16,8 +16,6 @@ import io.kontur.disasterninja.dto.layerapi.Link;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import io.kontur.disasterninja.util.JsonUtil;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -43,7 +41,6 @@ import static java.util.Collections.singletonList;
 public class LayersApiClient extends RestClientWithBearerAuth {
 
     public static final String LAYER_PREFIX = "KLA__";
-    private static final Logger LOG = LoggerFactory.getLogger(LayersApiClient.class);
 
     private static final String APPS_URI = "/apps/%s";
     private static final String COLLECTIONS_URI = "/collections";
@@ -55,6 +52,8 @@ public class LayersApiClient extends RestClientWithBearerAuth {
     private final RestTemplate layersApiRestTemplate;
     @Value("${kontur.platform.layersApi.pageSize}")
     private int pageSize;
+    @Value("${kontur.platform.userProfileApi.defaultAppId:}")
+    private String defaultAppId;
 
     public LayersApiClient(RestTemplate layersApiRestTemplate,
                            KeycloakAuthorizationService authorizationService) {
@@ -94,9 +93,10 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         String id = getIdWithoutPrefix(layerId);
 
         ResponseEntity<FeatureCollection> response = layersApiRestTemplate
-            .exchange(String.format(UPDATE_FEATURES_URL, id), HttpMethod.PUT,
-                httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(body), new ParameterizedTypeReference<>() {
-                });
+                .exchange(String.format(UPDATE_FEATURES_URL, id), HttpMethod.PUT,
+                        httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(body),
+                        new ParameterizedTypeReference<>() {
+                        });
         return response.getBody();
     }
 
@@ -106,9 +106,10 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                 .encode()
                 .toUriString();
         ResponseEntity<ApplicationDto> response = layersApiRestTemplate
-            .exchange(urlTemplate, HttpMethod.GET,
-                httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null), new ParameterizedTypeReference<>() {
-                });
+                .exchange(urlTemplate, HttpMethod.GET,
+                        httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
+                        new ParameterizedTypeReference<>() {
+                        });
         ApplicationDto body = response.getBody();
         if (body == null || CollectionUtils.isEmpty(body.getDefaultCollections())) {
             return emptyList();
@@ -126,9 +127,9 @@ public class LayersApiClient extends RestClientWithBearerAuth {
 
         ResponseEntity<ApplicationDto> response = layersApiRestTemplate
                 .exchange(String.format(APPS_URI, appId.toString()), HttpMethod.PUT,
-                    httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(new ApplicationUpdateDto(false,
-                        true, layersToUpdate)), new ParameterizedTypeReference<>() {
-                    });
+                        httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(new ApplicationUpdateDto(false,
+                                true, layersToUpdate)), new ParameterizedTypeReference<>() {
+                        });
         ApplicationDto body = response.getBody();
         if (body == null || CollectionUtils.isEmpty(body.getDefaultCollections())) {
             return emptyList();
@@ -149,25 +150,26 @@ public class LayersApiClient extends RestClientWithBearerAuth {
 
     protected Collection createCollection(LayerCreateDto dto) {
         ResponseEntity<Collection> response = layersApiRestTemplate
-            .exchange(COLLECTIONS_URI, HttpMethod.POST, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(dto),
-                new ParameterizedTypeReference<>() {
-                });
+                .exchange(COLLECTIONS_URI, HttpMethod.POST, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(dto),
+                        new ParameterizedTypeReference<>() {
+                        });
         return response.getBody();
     }
 
     protected Collection updateCollection(String id, LayerUpdateDto dto) {
         ResponseEntity<Collection> response = layersApiRestTemplate
-            .exchange(String.format(COLLECTION_BY_ID_URL, id), HttpMethod.PUT,
-                httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(dto), new ParameterizedTypeReference<>() {
-                });
+                .exchange(String.format(COLLECTION_BY_ID_URL, id), HttpMethod.PUT,
+                        httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(dto), new ParameterizedTypeReference<>() {
+                        });
         return response.getBody();
     }
 
     protected void deleteCollection(String id) {
         layersApiRestTemplate
-            .exchange(String.format(COLLECTION_BY_ID_URL, id), HttpMethod.DELETE,
-                httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null), new ParameterizedTypeReference<>() {
-                });
+                .exchange(String.format(COLLECTION_BY_ID_URL, id), HttpMethod.DELETE,
+                        httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
+                        new ParameterizedTypeReference<>() {
+                        });
     }
 
     protected List<Collection> getCollections(Geometry geoJson, CollectionOwner collectionOwner, UUID appId) {
@@ -181,7 +183,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         body.put("limit", pageSize);
         if (appId == null) {
             //TODO remove default value after DN2 FE is updated with application functionality
-            body.put("appId", UUID.fromString("58851b50-9574-4aec-a3a6-425fa18dcb54"));
+            body.put("appId", UUID.fromString(defaultAppId));
         } else {
             body.put("appId", appId);
         }
@@ -190,9 +192,10 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             body.put("offset", result.size());
 
             ResponseEntity<ApiCollections> response = layersApiRestTemplate
-                .exchange(LAYERS_SEARCH_URI, HttpMethod.POST,
-                    httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(body), new ParameterizedTypeReference<>() {
-                    });
+                    .exchange(LAYERS_SEARCH_URI, HttpMethod.POST,
+                            httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(body),
+                            new ParameterizedTypeReference<>() {
+                            });
 
             ApiCollections responseBody = response.getBody();
             if (responseBody == null || CollectionUtils.isEmpty(responseBody.getCollections())) {
@@ -224,9 +227,10 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             body.put("offset", result.size());
 
             ResponseEntity<ApiFeatureCollection> response = layersApiRestTemplate
-                .exchange(String.format(LAYERS_FEATURES_SEARCH_URI, collectionId), HttpMethod.POST,
-                    httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(body), new ParameterizedTypeReference<>() {
-                    });
+                    .exchange(String.format(LAYERS_FEATURES_SEARCH_URI, collectionId), HttpMethod.POST,
+                            httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(body),
+                            new ParameterizedTypeReference<>() {
+                            });
 
             ApiFeatureCollection responseBody = response.getBody();
             if (responseBody == null || CollectionUtils.isEmpty(responseBody.getFeatures())) {
@@ -247,15 +251,16 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         body.put("collectionIds", singletonList(collectionId));
         if (appId == null) {
             //TODO remove default value after DN2 FE is updated with application functionality
-            body.put("appId", UUID.fromString("58851b50-9574-4aec-a3a6-425fa18dcb54"));
+            body.put("appId", UUID.fromString(defaultAppId));
         } else {
             body.put("appId", appId);
         }
 
         ResponseEntity<ApiCollections> response = layersApiRestTemplate
-            .exchange(LAYERS_SEARCH_URI, HttpMethod.POST, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(body),
-                new ParameterizedTypeReference<>() {
-                });
+                .exchange(LAYERS_SEARCH_URI, HttpMethod.POST,
+                        httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(body),
+                        new ParameterizedTypeReference<>() {
+                        });
         if (response.getBody() != null && !CollectionUtils.isEmpty(response.getBody().collections)) {
             return response.getBody().collections.get(0);
         }

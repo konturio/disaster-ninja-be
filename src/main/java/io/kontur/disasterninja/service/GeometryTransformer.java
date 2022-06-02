@@ -1,7 +1,7 @@
 package io.kontur.disasterninja.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
+import io.kontur.disasterninja.util.JsonUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.*;
@@ -9,7 +9,6 @@ import org.wololo.geojson.*;
 @Service
 public class GeometryTransformer {
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
     /**
      * Finds all nested features, collects their geometries.
      *
@@ -55,6 +54,6 @@ public class GeometryTransformer {
 
     public static boolean geometriesAreEqual(org.wololo.geojson.Geometry geometry1,
                                              org.wololo.geojson.Geometry geometry2) {
-        return objectMapper.valueToTree(geometry1).equals(objectMapper.valueToTree(geometry2));
+        return JsonUtil.writeObjectNode(geometry1).equals(JsonUtil.writeObjectNode(geometry2));
     }
 }

@@ -38,26 +38,28 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
                         "label1", "label2", "label3", "label4"),
                         List.of("count", "area_km2")),
                 new BivariateLayerLegendQuery.Y("Axis", "Population (ppl/km²)", steps1(0d, 10d, 20d, 10000d,
-                    "label11", "label12", "label13", "label14"),
-                    List.of("population", "area_km2")),
-            List.of(new BivariateLayerLegendQuery.Color("OverlayColor", "A1", "rgb(111,232,157)"),
-                new BivariateLayerLegendQuery.Color("OverlayColor", "A2", "rgb(222,232,157)"),
-                new BivariateLayerLegendQuery.Color("OverlayColor", "A3", "rgb(333,232,157)"),
-                new BivariateLayerLegendQuery.Color("OverlayColor", "B1", "rgb(232,111,157)"),
-                new BivariateLayerLegendQuery.Color("OverlayColor", "B2", "rgb(232,222,157)"),
-                new BivariateLayerLegendQuery.Color("OverlayColor", "B3", "rgb(232,333,157)"),
-                new BivariateLayerLegendQuery.Color("OverlayColor", "C1", "rgb(232,232,111)"),
-                new BivariateLayerLegendQuery.Color("OverlayColor", "C2", "rgb(232,232,222)"),
-                new BivariateLayerLegendQuery.Color("OverlayColor", "C3", "rgb(232,232,333)")),
-            1
+                        "label11", "label12", "label13", "label14"),
+                        List.of("population", "area_km2")),
+                List.of(new BivariateLayerLegendQuery.Color("OverlayColor", "A1", "rgb(111,232,157)"),
+                        new BivariateLayerLegendQuery.Color("OverlayColor", "A2", "rgb(222,232,157)"),
+                        new BivariateLayerLegendQuery.Color("OverlayColor", "A3", "rgb(333,232,157)"),
+                        new BivariateLayerLegendQuery.Color("OverlayColor", "B1", "rgb(232,111,157)"),
+                        new BivariateLayerLegendQuery.Color("OverlayColor", "B2", "rgb(232,222,157)"),
+                        new BivariateLayerLegendQuery.Color("OverlayColor", "B3", "rgb(232,333,157)"),
+                        new BivariateLayerLegendQuery.Color("OverlayColor", "C1", "rgb(232,232,111)"),
+                        new BivariateLayerLegendQuery.Color("OverlayColor", "C2", "rgb(232,232,222)"),
+                        new BivariateLayerLegendQuery.Color("OverlayColor", "C3", "rgb(232,232,333)")),
+                1
         );
         List<BivariateLayerLegendQuery.Indicator> indicators = List.of(
                 new BivariateLayerLegendQuery.Indicator("Indicator",
-                        "area_km2", "Area", List.of(List.of("neutral"), List.of("neutral")), List.of("copyrights https://kontur.io/")),
+                        "area_km2", "Area", List.of(List.of("neutral"), List.of("neutral")),
+                        List.of("copyrights https://kontur.io/")),
                 new BivariateLayerLegendQuery.Indicator("Indicator",
                         "count", "OSM Objects", List.of(List.of("bad"), List.of("good")), List.of("copyrights1")),
                 new BivariateLayerLegendQuery.Indicator("Indicator",
-                        "population", "Population", List.of(List.of("unimportant"), List.of("important")), List.of("copyrights1", "copyrights2")));
+                        "population", "Population", List.of(List.of("unimportant"), List.of("important")),
+                        List.of("copyrights1", "copyrights2")));
 
         BivariateStatisticDto dto = BivariateStatisticDto.builder()
                 .overlays(List.of(overlay))
@@ -111,7 +113,8 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         assertEquals(2, x.getQuotient().size());
         assertEquals(2, x.getQuotient().stream().filter(q -> q.equals("count") || q.equals("area_km2")).count());
         assertEquals(4, x.getSteps().stream().filter(q -> (q.getValue().equals(0d) && (q.getLabel().equals("label1")))
-                || (q.getValue().equals(1d) && q.getLabel().equals("label2")) || (q.getValue().equals(2d) && q.getLabel().equals("label3"))
+                || (q.getValue().equals(1d) && q.getLabel().equals("label2")) || (q.getValue()
+                .equals(2d) && q.getLabel().equals("label3"))
                 || (q.getValue().equals(1000d) && q.getLabel().equals("label4"))).count());
 
 
@@ -121,7 +124,8 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         assertEquals(2, y.getQuotient().size());
         assertEquals(2, y.getQuotient().stream().filter(q -> q.equals("population") || q.equals("area_km2")).count());
         assertEquals(4, y.getSteps().stream().filter(q -> (q.getValue().equals(0d) && q.getLabel().equals("label11"))
-                || (q.getValue().equals(10d) && q.getLabel().equals("label12")) || (q.getValue().equals(20d) && q.getLabel().equals("label13"))
+                || (q.getValue().equals(10d) && q.getLabel().equals("label12")) || (q.getValue()
+                .equals(20d) && q.getLabel().equals("label13"))
                 || (q.getValue().equals(10000d) && q.getLabel().equals("label14"))).count());
 
         //skipping other params
@@ -141,7 +145,8 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
     @Test
     public void copyrightLinkMarkdown_8657() throws ExecutionException, InterruptedException {
         List<Layer> layers = bivariateLayerProvider.obtainLayers(emptyParams()).get();
-        assertThat(layers.get(0).getCopyrights(), hasItems("copyrights [https://kontur.io/](https://kontur.io/)", "copyrights1", "copyrights2"));
+        assertThat(layers.get(0).getCopyrights(),
+                hasItems("copyrights [https://kontur.io/](https://kontur.io/)", "copyrights1", "copyrights2"));
     }
 
     private List<BivariateLayerLegendQuery.Step> steps(double d1, double d2, double d3, double d4,

@@ -66,9 +66,9 @@ class EventApiServiceTest {
 
         }
         Authentication authentication = new JwtAuthenticationToken(Jwt.withTokenValue(tokenValue)
-            .claim("some", "claim")
-            .header(HttpHeaders.AUTHORIZATION, tokenValue)
-            .build());
+                .claim("some", "claim")
+                .header(HttpHeaders.AUTHORIZATION, tokenValue)
+                .build());
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
@@ -130,7 +130,6 @@ class EventApiServiceTest {
         assertEquals(1, events.get(0).getExternalUrls().size());
         assertEquals("http://google.com", events.get(0).getExternalUrls().get(0));
     }
-
 
     @Test
     public void testGetEvent() {

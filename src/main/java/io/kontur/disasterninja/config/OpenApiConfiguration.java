@@ -24,23 +24,23 @@ public class OpenApiConfiguration {
         server.setUrl(environment.getProperty("server.servlet.context-path"));
 
         OpenAPI openAPI = new OpenAPI().info(new Info()
-                .title("Disaster Ninja"))
-            .servers(Collections.singletonList(server));
+                        .title("Disaster Ninja"))
+                .servers(Collections.singletonList(server));
 
         boolean isJwtAuthDisabledProfileActive =
-            Arrays.asList(environment.getActiveProfiles()).contains(JWT_AUTH_DISABLED);
+                Arrays.asList(environment.getActiveProfiles()).contains(JWT_AUTH_DISABLED);
 
         if (!isJwtAuthDisabledProfileActive) {
             String securitySchemeName = "bearerAuth";
 
             openAPI.addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
-                .components(new Components()
-                    .addSecuritySchemes(securitySchemeName,
-                        new SecurityScheme()
-                            .name(securitySchemeName)
-                            .type(SecurityScheme.Type.HTTP)
-                            .scheme("bearer")
-                            .bearerFormat("JWT")));
+                    .components(new Components()
+                            .addSecuritySchemes(securitySchemeName,
+                                    new SecurityScheme()
+                                            .name(securitySchemeName)
+                                            .type(SecurityScheme.Type.HTTP)
+                                            .scheme("bearer")
+                                            .bearerFormat("JWT")));
         }
 
         return openAPI;

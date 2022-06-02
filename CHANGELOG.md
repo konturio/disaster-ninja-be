@@ -12,6 +12,23 @@
 
 
 
+## Release 0.10.0 - 2022-06-01
+
+#### Added
+- #10323 Add Dockerfile
+- #10342 Configure github ci
+
+#### Changed
+- #10323 Update the service to java 17
+- #10339 Removed call to insights-api /population/humanitarian_impact. Started to use graphql instead
+- #10328 Disable insights api integration on missing config
+
+#### Removed
+
+#### Installation sequence
+
+
+
 ## Release 0.9.0 - 2022-05-26
 
 #### Added

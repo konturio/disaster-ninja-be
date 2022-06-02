@@ -7,12 +7,16 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
+import io.kontur.disasterninja.client.InsightsApiGraphqlClientDummy;
 import io.kontur.disasterninja.config.metrics.ParamLessRestTemplateExchangeTagsProvider;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.web.client.RestTemplateExchangeTagsProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -37,9 +41,9 @@ public class WebConfiguration {
                                              @Value("${kontur.platform.event-api.connectionTimeout}") Integer connectionTimeout,
                                              @Value("${kontur.platform.event-api.readTimeout}") Integer readTimeout) {
         return builder
-            .rootUri(eventApiUrl)
-            .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
-            .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
+                .rootUri(eventApiUrl)
+                .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
+                .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
                 .build();
     }
 
@@ -49,34 +53,35 @@ public class WebConfiguration {
                                           @Value("${kontur.platform.kcApi.connectionTimeout}") Integer connectionTimeout,
                                           @Value("${kontur.platform.kcApi.readTimeout}") Integer readTimeout) {
         return builder
-            .rootUri(eventApiUrl)
-            .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
-            .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
-            .build();
+                .rootUri(eventApiUrl)
+                .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
+                .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
+                .build();
     }
 
     @Bean
     public RestTemplate layersApiRestTemplate(RestTemplateBuilder builder,
-                                          @Value("${kontur.platform.layersApi.url}") String apiUrl,
-                                          @Value("${kontur.platform.layersApi.connectionTimeout}") Integer connectionTimeout,
-                                          @Value("${kontur.platform.layersApi.readTimeout}") Integer readTimeout) {
+                                              @Value("${kontur.platform.layersApi.url}") String apiUrl,
+                                              @Value("${kontur.platform.layersApi.connectionTimeout}") Integer connectionTimeout,
+                                              @Value("${kontur.platform.layersApi.readTimeout}") Integer readTimeout) {
         return builder
-            .rootUri(apiUrl)
-            .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
-            .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
-            .build();
+                .rootUri(apiUrl)
+                .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
+                .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
+                .build();
     }
 
     @Bean
+    @ConditionalOnProperty(name = "kontur.platform.insightsApi.url")
     public RestTemplate insightsApiRestTemplate(RestTemplateBuilder builder,
                                                 @Value("${kontur.platform.insightsApi.url}") String eventApiUrl,
                                                 @Value("${kontur.platform.insightsApi.connectionTimeout}") Integer connectionTimeout,
                                                 @Value("${kontur.platform.insightsApi.readTimeout}") Integer readTimeout) {
         return builder
-            .rootUri(eventApiUrl)
-            .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
-            .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
-            .build();
+                .rootUri(eventApiUrl)
+                .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
+                .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
+                .build();
     }
 
     @Bean
@@ -93,10 +98,10 @@ public class WebConfiguration {
                                                 @Value("${kontur.platform.userProfileApi.connectionTimeout}") Integer connectionTimeout,
                                                 @Value("${kontur.platform.userProfileApi.readTimeout}") Integer readTimeout) {
         return builder
-            .rootUri(url)
-            .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
-            .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
-            .build();
+                .rootUri(url)
+                .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
+                .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
+                .build();
     }
 
     @Bean
@@ -111,6 +116,7 @@ public class WebConfiguration {
     }
 
     private static class GeoJSONDeserializer extends JsonDeserializer<GeoJSON> {
+
         @Override
         public GeoJSON deserialize(JsonParser p, DeserializationContext ctxt) {
             try {
@@ -126,6 +132,7 @@ public class WebConfiguration {
     }
 
     private static class GeoJsonDeserializerCustomizer implements Jackson2ObjectMapperBuilderCustomizer {
+
         @Override
         public void customize(Jackson2ObjectMapperBuilder jacksonObjectMapperBuilder) {
             jacksonObjectMapperBuilder.featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -133,20 +140,28 @@ public class WebConfiguration {
             jacksonObjectMapperBuilder.deserializerByType(GeoJSON.class, new GeoJSONDeserializer());
         }
     }
+
     @Bean
+    @ConditionalOnProperty(name = "kontur.platform.insightsApi.url")
     public ApolloClient insightsApiApolloClient(@Value("${kontur.platform.insightsApi.url}") String insightsApiUrl,
                                                 @Value("${graphql.apollo.maxIdleConnections}") Integer maxIdleConnections,
                                                 @Value("${graphql.apollo.keepAliveDuration}") Integer keepAliveDuration,
                                                 @Value("${graphql.apollo.connectionTimeout}") Integer connectionTimeout,
-                                                @Value("${graphql.apollo.readTimeout}") Integer readTimeout){
+                                                @Value("${graphql.apollo.readTimeout}") Integer readTimeout) {
         return ApolloClient.builder()
-                .serverUrl(insightsApiUrl+"/graphql")
+                .serverUrl(insightsApiUrl + "/graphql")
                 .okHttpClient(new OkHttpClient().newBuilder()
                         .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                         .readTimeout(readTimeout, TimeUnit.SECONDS)
                         .connectionPool(new ConnectionPool(maxIdleConnections, keepAliveDuration, TimeUnit.SECONDS))
                         .build())
                 .build();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(InsightsApiGraphqlClient.class)
+    public InsightsApiGraphqlClient insightsApiGraphqlClientDummy() {
+        return new InsightsApiGraphqlClientDummy();
     }
 
 }

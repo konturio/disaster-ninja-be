@@ -58,10 +58,10 @@ public abstract class RestClientWithBearerAuth {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof BearerTokenAuthenticationToken bearerToken) {
             return bearerToken.getToken() == null ? null :
-                bearerToken.getToken();
+                    bearerToken.getToken();
         } else if (authentication instanceof JwtAuthenticationToken jwtToken) {
             return jwtToken.getToken() == null ? null
-                : jwtToken.getToken().getTokenValue();
+                    : jwtToken.getToken().getTokenValue();
         }
         return null;
     }

@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.wololo.geojson.Feature;
-import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 import org.wololo.geojson.Point;
 import org.wololo.jts2geojson.GeoJSONWriter;
@@ -50,9 +49,9 @@ public class KcApiClient {
         LOG.info("Getting feature by id {} from collection {}", featureId, collectionId);
 
         ResponseEntity<Feature> response = kcApiRestTemplate
-            .exchange(uri, HttpMethod.GET, new HttpEntity<>(null,
-                null), new ParameterizedTypeReference<>() {
-            }, collectionId, featureId);
+                .exchange(uri, HttpMethod.GET, new HttpEntity<>(null,
+                        null), new ParameterizedTypeReference<>() {
+                }, collectionId, featureId);
 
         Feature body = response.getBody();
         if (body == null) {
@@ -62,7 +61,7 @@ public class KcApiClient {
 
         if (geoJson != null && body.getGeometry() != null) {
             if (getPreparedGeometryFromRequest(geoJson).intersects(
-                getJtsGeometry(body.getGeometry()))) {
+                    getJtsGeometry(body.getGeometry()))) {
                 return body;
             } else {
                 LOG.info("Feature {} does not intersect with requested boundary {}", body.getId(), geoJson);
@@ -83,30 +82,30 @@ public class KcApiClient {
      */
     public List<Feature> getCollectionItemsByCentroidGeometry(Geometry geoJson, String collectionId) {
         PreparedGeometry geoJsonGeometry = getPreparedGeometryFromRequest(geoJson);
-        //1 get items by bbox
+        //1 get items
         List<Feature> features = getCollectionItems(collectionId, geoJson);
 
         //2 filter items by geoJson Geometry
         return features.stream()
-            .map(feature -> {
-                Geometry featureGeom = feature.getGeometry();
-                //include items without geometry ("global" ones)
-                if (featureGeom == null) {
-                    return feature;
-                }
+                .map(feature -> {
+                    Geometry featureGeom = feature.getGeometry();
+                    //include items without geometry ("global" ones)
+                    if (featureGeom == null) {
+                        return feature;
+                    }
 
-                //if feature's centroid intersects with requested geoJson - return the feature with centroid's geometry
-                Coordinate featureCentroid = new Centroid(getJtsGeometry(featureGeom)).getCentroid();
-                org.locationtech.jts.geom.Point centroidPoint = geometryFactory.createPoint(featureCentroid);
-                if (geoJsonGeometry.intersects(centroidPoint)) {
-                    return new Feature(feature.getId(), writer.write(centroidPoint), feature.getProperties());
-                }
+                    //if feature's centroid intersects with requested geoJson - return the feature with centroid's geometry
+                    Coordinate featureCentroid = new Centroid(getJtsGeometry(featureGeom)).getCentroid();
+                    org.locationtech.jts.geom.Point centroidPoint = geometryFactory.createPoint(featureCentroid);
+                    if (geoJsonGeometry.intersects(centroidPoint)) {
+                        return new Feature(feature.getId(), writer.write(centroidPoint), feature.getProperties());
+                    }
 
-                //no intersection
-                return null;
-            })
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                    //no intersection
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     public List<Feature> getCollectionItemsByPoint(Point point, String collectionId) {
@@ -119,9 +118,9 @@ public class KcApiClient {
             int offset = i++ * pageSize;
 
             ResponseEntity<KcApiFeatureCollection> response = kcApiRestTemplate
-                .exchange(uri, HttpMethod.GET, new HttpEntity<>(null,
-                    null), new ParameterizedTypeReference<>() {
-                }, getJtsGeometryFromRequest(point).toString(), pageSize, offset);
+                    .exchange(uri, HttpMethod.GET, new HttpEntity<>(null,
+                            null), new ParameterizedTypeReference<>() {
+                    }, getJtsGeometryFromRequest(point).toString(), pageSize, offset);
 
             KcApiFeatureCollection body = response.getBody();
             if (body == null) {
@@ -160,8 +159,9 @@ public class KcApiClient {
             body.put("offset", offset);
 
             ResponseEntity<KcApiFeatureCollection> response = kcApiRestTemplate
-                .exchange(uri, HttpMethod.POST, new HttpEntity<>(body, null),
-                        new ParameterizedTypeReference<>() {});
+                    .exchange(uri, HttpMethod.POST, new HttpEntity<>(body, null),
+                            new ParameterizedTypeReference<>() {
+                            });
 
             KcApiFeatureCollection responseBody = response.getBody();
             if (responseBody == null) {
@@ -182,14 +182,17 @@ public class KcApiClient {
     }
 
     @Getter
-    private static class KcApiFeatureCollection extends FeatureCollection {
+    private static class KcApiFeatureCollection {
+
+        private final Feature[] features;
         private final int numberMatched;
         private final int numberReturned;
+
         @JsonCreator
         public KcApiFeatureCollection(@JsonProperty("features") Feature[] features,
                                       @JsonProperty("numberReturned") int numberReturned,
                                       @JsonProperty("numberMatched") int numberMatched) {
-            super(features);
+            this.features = features;
             this.numberMatched = numberMatched;
             this.numberReturned = numberReturned;
         }

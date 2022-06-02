@@ -29,6 +29,8 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 @Order(HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
 public class EventShapeLayerProvider implements LayerProvider {
+
+    public static final String EVENT_SHAPE_LAYER_ID = "eventShape";
     private final EventApiService eventApiService;
 
     @Override
@@ -47,7 +49,7 @@ public class EventShapeLayerProvider implements LayerProvider {
         }
         if (searchParams.getEventId() == null || searchParams.getEventFeed() == null) {
             throw new WebApplicationException("EventId and EventFeed must be provided when requesting layer " + layerId,
-                HttpStatus.BAD_REQUEST);
+                    HttpStatus.BAD_REQUEST);
         }
         EventDto eventDto = eventApiService.getEvent(searchParams.getEventId(), searchParams.getEventFeed());
 
@@ -61,20 +63,20 @@ public class EventShapeLayerProvider implements LayerProvider {
         return layer;
     }
 
-    Layer fromEventDto(EventDto eventDto) {
+    private Layer fromEventDto(EventDto eventDto) {
         if (eventDto == null) {
             return null;
         }
 
         return Layer.builder()
-            .eventType(eventDto.getEventType())
-            .id(EVENT_SHAPE_LAYER_ID)
-            .source(LayerSource.builder()
-                .type(GEOJSON)
-                .data(eventDto.getLatestEpisodeGeojson()) //sic!
-                .build())
-            .eventIdRequiredForRetrieval(true)
-            .build();
+                .eventType(eventDto.getEventType())
+                .id(EVENT_SHAPE_LAYER_ID)
+                .source(LayerSource.builder()
+                        .type(GEOJSON)
+                        .data(eventDto.getLatestEpisodeGeojson()) //sic!
+                        .build())
+                .eventIdRequiredForRetrieval(true)
+                .build();
     }
 
     @Override
@@ -93,10 +95,10 @@ public class EventShapeLayerProvider implements LayerProvider {
 
         //filter items by geoJson Geometry
         return Arrays.stream(input)
-            .anyMatch(json -> {
-                Geometry featureGeom = json.getGeometry();
-                return featureGeom == null || //include items without geometry ("global" ones)
-                    jtsGeometry.intersects(getJtsGeometry(featureGeom));
-            });
+                .anyMatch(json -> {
+                    Geometry featureGeom = json.getGeometry();
+                    return featureGeom == null || //include items without geometry ("global" ones)
+                            jtsGeometry.intersects(getJtsGeometry(featureGeom));
+                });
     }
 }

@@ -26,7 +26,7 @@ class BoundariesServiceTest {
     private BoundariesService boundariesService;
 
     @Test
-    public void getBoundariesTest(){
+    public void getBoundariesTest() {
         //given
         String geoJsonString = """
                 {

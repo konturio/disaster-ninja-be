@@ -56,20 +56,23 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
                 "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
 
-        server.expect(ExpectedCount.times(3), requestTo("/collections/search"))
-            .andExpect(method(HttpMethod.POST))
-            .andExpect(header("Authorization", "Bearer " + getUserToken()))
+        server.expect(ExpectedCount.times(3), requestTo("https://test.test/layers/collections/search"))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(header("Authorization", "Bearer " + getUserToken()))
                 .andRespond(r -> {
                     String body = r.getBody().toString();
                     if (hasJsonPath("$.collectionOwner", is(ME.name())).matches(body)) {
-                        return withSuccess(readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.layers.ownedByUser.json"),
-                            MediaType.APPLICATION_JSON).createResponse(r);
+                        return withSuccess(readFile(this,
+                                        "/io/kontur/disasterninja/client/layers/layersAPI.layers.ownedByUser.json"),
+                                MediaType.APPLICATION_JSON).createResponse(r);
                     } else if (hasJsonPath("$.offset", is(0)).matches(body)) {
-                        return withSuccess(readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.layers.page1.json"),
-                            MediaType.APPLICATION_JSON).createResponse(r);
+                        return withSuccess(
+                                readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.layers.page1.json"),
+                                MediaType.APPLICATION_JSON).createResponse(r);
                     } else if (hasJsonPath("$.offset", is(10)).matches(body)) {
-                        return withSuccess(readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.layers.page2.json"),
-                            MediaType.APPLICATION_JSON).createResponse(r);
+                        return withSuccess(
+                                readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.layers.page2.json"),
+                                MediaType.APPLICATION_JSON).createResponse(r);
                     } else {
                         throw new RuntimeException();
                     }
@@ -116,14 +119,15 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
                 "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
         UUID appId = UUID.randomUUID();
 
-        server.expect(ExpectedCount.times(1), requestTo("/collections/search"))
+        server.expect(ExpectedCount.times(1), requestTo("https://test.test/layers/collections/search"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(r -> {
                     String body = r.getBody().toString();
                     if (hasJsonPath("$.collectionIds", hasSize(1)).matches(body) &&
                             hasJsonPath("$.collectionIds", contains("hotProjects")).matches(body) &&
                             hasJsonPath("$.appId", is(appId.toString())).matches(body)) {
-                        return withSuccess(readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.search.hotProjects.response.json"),
+                        return withSuccess(readFile(this,
+                                        "/io/kontur/disasterninja/client/layers/layersAPI.search.hotProjects.response.json"),
                                 MediaType.APPLICATION_JSON).createResponse(r);
                     } else {
                         throw new RuntimeException();
@@ -133,7 +137,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         //when
         Geometry geometry = objectMapper.readValue(json, Geometry.class);
         Layer layer = provider.obtainLayer("KLA__hotProjects", LayerSearchParams.builder()
-            .boundary(geometry).appId(appId).build());
+                .boundary(geometry).appId(appId).build());
 
         //then
         assertEquals("KLA__hotProjects", layer.getId());
@@ -141,7 +145,8 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         LayerSource source = layer.getSource();
         assertEquals(LayerSourceType.VECTOR, source.getType());
         assertEquals(1, source.getUrls().size());
-        assertEquals("https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf", source.getUrls().get(0));
+        assertEquals("https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf",
+                source.getUrls().get(0));
         assertNull(source.getData());
         assertEquals(LegendType.SIMPLE, layer.getLegend().getType());
     }
@@ -153,29 +158,32 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
                 "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
         UUID appId = UUID.randomUUID();
 
-        server.expect(ExpectedCount.times(1), requestTo("/collections/search"))
+        server.expect(ExpectedCount.times(1), requestTo("https://test.test/layers/collections/search"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(r -> {
                     String body = r.getBody().toString();
                     if (hasJsonPath("$.collectionIds", hasSize(1)).matches(body) &&
                             hasJsonPath("$.collectionIds", contains("hotProjects_feature_type")).matches(body) &&
                             hasJsonPath("$.appId", is(appId.toString())).matches(body)) {
-                        return withSuccess(readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.layer.geojson.json"),
+                        return withSuccess(
+                                readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.layer.geojson.json"),
                                 MediaType.APPLICATION_JSON).createResponse(r);
                     } else {
                         throw new RuntimeException();
                     }
                 });
 
-        server.expect(ExpectedCount.times(2), requestTo("/collections/hotProjects_feature_type/items/search"))
+        server.expect(ExpectedCount.times(2), requestTo("https://test.test/layers/collections/hotProjects_feature_type/items/search"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(r -> {
                     String body = r.getBody().toString();
                     if (hasJsonPath("$.offset", is(0)).matches(body)) {
-                        return withSuccess(readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.features.page1.json"),
+                        return withSuccess(
+                                readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.features.page1.json"),
                                 MediaType.APPLICATION_JSON).createResponse(r);
                     } else if (hasJsonPath("$.offset", is(10)).matches(body)) {
-                        return withSuccess(readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.features.page2.json"),
+                        return withSuccess(
+                                readFile(this, "/io/kontur/disasterninja/client/layers/layersAPI.features.page2.json"),
                                 MediaType.APPLICATION_JSON).createResponse(r);
                     } else {
                         throw new RuntimeException();
@@ -186,7 +194,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         //when
         Geometry geometry = objectMapper.readValue(json, Geometry.class);
         Layer layer = provider.obtainLayer("KLA__hotProjects_feature_type", LayerSearchParams.builder()
-            .boundary(geometry).appId(appId).build());
+                .boundary(geometry).appId(appId).build());
 
         //then
         assertEquals("KLA__hotProjects_feature_type", layer.getId());
@@ -198,6 +206,5 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         assertEquals(12, source.getData().getFeatures().length);
         assertEquals("100", source.getData().getFeatures()[0].getId());
     }
-
 
 }

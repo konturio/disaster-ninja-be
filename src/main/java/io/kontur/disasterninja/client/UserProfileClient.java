@@ -31,21 +31,22 @@ public class UserProfileClient extends RestClientWithBearerAuth {
     private static final String APP_URL_WITH_ID = "/apps/{id}";
     private static final String DEFAULT_APP_ID_URL = "/apps/default_id";
     private final RestTemplate userProfileRestTemplate;
-    private final String defaultAppId;
+
+    @Value("${kontur.platform.userProfileApi.defaultAppId:}")
+    private String defaultAppId;
 
     public UserProfileClient(RestTemplate userProfileRestTemplate,
-                             KeycloakAuthorizationService authorizationService,
-                             @Value("${kontur.platform.userProfileApi.defaultAppId:}") String defaultAppId) {
+                             KeycloakAuthorizationService authorizationService) {
         super(authorizationService);
         this.userProfileRestTemplate = userProfileRestTemplate;
-        this.defaultAppId = defaultAppId;
     }
 
     public String getUserDefaultFeed() {
         ResponseEntity<String> response = userProfileRestTemplate
-            .exchange(FEATURES_USER_FEED_URL, HttpMethod.GET,
-                httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null), new ParameterizedTypeReference<>() {
-                });
+                .exchange(FEATURES_USER_FEED_URL, HttpMethod.GET,
+                        httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
+                        new ParameterizedTypeReference<>() {
+                        });
 
         return response.getBody();
     }
@@ -59,18 +60,18 @@ public class UserProfileClient extends RestClientWithBearerAuth {
         }
 
         ResponseEntity<List<FeatureDto>> response = userProfileRestTemplate
-            .exchange(url, HttpMethod.GET, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
-                new ParameterizedTypeReference<>() {
-                }, appId);
+                .exchange(url, HttpMethod.GET, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
+                        new ParameterizedTypeReference<>() {
+                        }, appId);
 
         return response.getBody();
     }
 
     public List<AppSummaryDto> getAppsList() {
         ResponseEntity<List<AppSummaryDto>> response = userProfileRestTemplate
-            .exchange(APP_URL, HttpMethod.GET, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
-                new ParameterizedTypeReference<>() {
-                });
+                .exchange(APP_URL, HttpMethod.GET, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
+                        new ParameterizedTypeReference<>() {
+                        });
 
         return response.getBody();
     }
@@ -108,8 +109,8 @@ public class UserProfileClient extends RestClientWithBearerAuth {
 
     private ResponseEntity<AppDto> sendAppRequest(String url, Object queryParam, HttpMethod method, AppDto body) {
         return userProfileRestTemplate
-            .exchange(url, method, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(body),
-                new ParameterizedTypeReference<>() {
-                }, queryParam);
+                .exchange(url, method, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(body),
+                        new ParameterizedTypeReference<>() {
+                        }, queryParam);
     }
 }

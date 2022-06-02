@@ -33,7 +33,7 @@ public class LogHttpTraceRepository implements HttpTraceRepository {
             LOG.warn(message);
         }
 
-        if (trace.getTimeTaken() > 30_000){
+        if (trace.getTimeTaken() > 30_000) {
             LOG.warn("[slow_request] " + message);
         }
     }

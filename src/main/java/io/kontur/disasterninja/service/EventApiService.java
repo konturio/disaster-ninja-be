@@ -1,13 +1,14 @@
 package io.kontur.disasterninja.service;
 
 import io.kontur.disasterninja.client.EventApiClient;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.dto.EventFeedDto;
 import io.kontur.disasterninja.dto.EventListDto;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
-import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.service.converter.EventDtoConverter;
 import io.kontur.disasterninja.service.converter.EventListEventDtoConverter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +16,14 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 
-import static java.util.Comparator.*;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsFirst;
 
 @Service
 @RequiredArgsConstructor
 public class EventApiService {
+
     private final EventApiClient client;
 
     public List<EventListDto> getEvents(String feed) {

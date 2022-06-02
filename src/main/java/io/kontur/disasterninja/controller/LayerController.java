@@ -29,6 +29,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping(LayerController.PATH)
 @RequiredArgsConstructor
 public class LayerController {
+
     public static final String PATH = "/layers";
     public static final String PATH_SEARCH = "/search";
     public static final String PATH_DETAILS = "/details";
@@ -37,25 +38,25 @@ public class LayerController {
 
     @Operation(tags = "Layers", summary = "Create a new layer")
     @ApiResponse(responseCode = "200", description = "Successfully created a layer", content = @Content(
-        mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = LayerSummaryDto.class)))
+            mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = LayerSummaryDto.class)))
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @PreAuthorize("isAuthenticated()")
     public LayerSummaryDto create(@RequestBody
                                   @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                                      description = "Layer data")
-                                      LayerCreateDto dto) {
+                                          description = "Layer data")
+                                  LayerCreateDto dto) {
         Layer layer = layerService.create(dto);
         return LayerSummaryDto.fromLayer(layer);
     }
 
     @Operation(tags = "Layers", summary = "Update an existing layer")
     @ApiResponse(responseCode = "200", description = "Successfully updated a layer", content = @Content(
-        mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = LayerSummaryDto.class)))
+            mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = LayerSummaryDto.class)))
     @PutMapping(path = "/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @PreAuthorize("isAuthenticated()")
     public LayerSummaryDto update(@PathVariable String id, @RequestBody
-                                      @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                                          description = "Layer data") LayerUpdateDto dto) {
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Layer data") LayerUpdateDto dto) {
         Layer layer = layerService.update(id, dto);
         return LayerSummaryDto.fromLayer(layer);
     }
@@ -71,36 +72,36 @@ public class LayerController {
 
     @Operation(tags = "Layers", summary = "Get List of available layers")
     @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = APPLICATION_JSON_VALUE,
-        array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
+            array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
     @PostMapping(path = PATH_SEARCH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<LayerSummaryDto> getSummaries(@RequestBody
                                               @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                                                  description = "geoJSON boundary: only layers containing features" +
-                                                      " intersecting with the boundary and global layers will be" +
-                                                      " returned; eventId: Event Id for EventShape layer")
-                                                  LayerSummarySearchDto inputDto) {
+                                                      description = "geoJSON boundary: only layers containing features" +
+                                                              " intersecting with the boundary and global layers will be" +
+                                                              " returned; eventId: Event Id for EventShape layer")
+                                              LayerSummarySearchDto inputDto) {
         LayerSearchParams searchParams = createLayerSearchParams(inputDto);
         return layerService.getList(searchParams)
-            .stream().map(LayerSummaryDto::fromLayer)
-            .collect(Collectors.toList());
+                .stream().map(LayerSummaryDto::fromLayer)
+                .collect(Collectors.toList());
     }
 
     @Operation(tags = "Layers", summary = "Get Layers by their ids")
     @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = APPLICATION_JSON_VALUE,
-        array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
+            array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
     @PostMapping(path = PATH_DETAILS, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<LayerDetailsDto> getDetails(@RequestBody
                                             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                                                description = "geoJSON boundary; eventId: Event Id for" +
-                                                    " EventShape layer; List of layer ids which should be retrieved" +
-                                                    " using the provided boundary; List of layer ids which" +
-                                                    " should be retrieved ignoring the boundary")
-                                                LayerDetailsSearchDto inputDto) {
+                                                    description = "geoJSON boundary; eventId: Event Id for" +
+                                                            " EventShape layer; List of layer ids which should be retrieved" +
+                                                            " using the provided boundary; List of layer ids which" +
+                                                            " should be retrieved ignoring the boundary")
+                                            LayerDetailsSearchDto inputDto) {
         LayerSearchParams searchParams = createLayerSearchParams(inputDto);
         return layerService.get(inputDto.getLayersToRetrieveWithGeometryFilter(),
-                inputDto.getLayersToRetrieveWithoutGeometryFilter(), searchParams)
-            .stream().map(LayerDetailsDto::fromLayer)
-            .collect(Collectors.toList());
+                        inputDto.getLayersToRetrieveWithoutGeometryFilter(), searchParams)
+                .stream().map(LayerDetailsDto::fromLayer)
+                .collect(Collectors.toList());
     }
 
     @Operation(tags = "Layers", summary = "Updates layer feature set")
@@ -119,19 +120,19 @@ public class LayerController {
 
     private LayerSearchParams createLayerSearchParams(LayerDetailsSearchDto dto) {
         return LayerSearchParams.builder()
-            .appId(dto.getAppId())
-            .eventId(dto.getEventId())
-            .eventFeed(dto.getEventFeed())
-            .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))
-            .build();
+                .appId(dto.getAppId())
+                .eventId(dto.getEventId())
+                .eventFeed(dto.getEventFeed())
+                .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))
+                .build();
     }
 
     private LayerSearchParams createLayerSearchParams(LayerSummarySearchDto dto) {
         return LayerSearchParams.builder()
-            .appId(dto.getAppId())
-            .eventId(dto.getEventId())
-            .eventFeed(dto.getEventFeed())
-            .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))
-            .build();
+                .appId(dto.getAppId())
+                .eventId(dto.getEventId())
+                .eventFeed(dto.getEventFeed())
+                .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))
+                .build();
     }
 }
