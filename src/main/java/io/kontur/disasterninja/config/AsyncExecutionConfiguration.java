@@ -1,5 +1,7 @@
 package io.kontur.disasterninja.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -15,13 +17,19 @@ import java.util.concurrent.ThreadPoolExecutor;
 @EnableAsync(proxyTargetClass = true)
 public class AsyncExecutionConfiguration extends AsyncConfigurerSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AsyncExecutionConfiguration.class);
+
     @Override
     @Primary
     @Bean
     public Executor getAsyncExecutor() {
+        int poolSize = Runtime.getRuntime().availableProcessors() <= 1 ? 1 :
+                Runtime.getRuntime().availableProcessors() - 1;
+        LOG.info(String.format("Using %s pool size for AsyncExecutor", poolSize));
+
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(Runtime.getRuntime().availableProcessors() - 1);
-        executor.setMaxPoolSize(Runtime.getRuntime().availableProcessors() - 1);
+        executor.setCorePoolSize(poolSize);
+        executor.setMaxPoolSize(poolSize);
         executor.setThreadNamePrefix("async-thread-");
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         executor.setTaskDecorator(DelegatingSecurityContextRunnable::new);
