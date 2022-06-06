@@ -35,13 +35,13 @@ class InsightsApiClientTest {
 
         //given
         server.expect(r -> assertThat(r.getURI().toString(),
-                        equalTo(String.format("/tiles/bivariate/v1/%s/%s/%s.mvt", z, x, y))))
+                        equalTo(String.format("/tiles/bivariate/v1/%s/%s/%s.mvt?indicatorsClass=all", z, x, y))))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(result,
                         MediaType.parseMediaType("application/vnd.mapbox-vector-tile")));
 
         //when
-        byte[] tile = client.getBivariateTileMvt(z, x, y);
+        byte[] tile = client.getBivariateTileMvt(z, x, y, "all");
 
         //then
         assertEquals(100, tile.length);

@@ -113,7 +113,7 @@ public class BivariateLayerProvider implements LayerProvider {
                 .description(overlay.description())
                 .source(LayerSource.builder()
                         .type(VECTOR)
-                        .urls(List.of("api/tiles/bivariate/v1/{z}/{x}/{y}.mvt"))
+                        .urls(List.of("api/tiles/bivariate/v1/{z}/{x}/{y}.mvt?indicatorsClass=general"))
                         .tileSize(512)
                         .build())
                 .legend(legend)

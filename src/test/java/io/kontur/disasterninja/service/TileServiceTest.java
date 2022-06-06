@@ -30,11 +30,11 @@ class TileServiceTest {
         Integer x = 8;
         Integer y = 6;
 
-        when(insightsApiClient.getBivariateTileMvt(z, x, y)).thenReturn(result);
+        when(insightsApiClient.getBivariateTileMvt(z, x, y, "all")).thenReturn(result);
 
-        byte[] tile = service.getBivariateTileMvt(z, x, y);
+        byte[] tile = service.getBivariateTileMvt(z, x, y, "all");
 
-        verify(insightsApiClient).getBivariateTileMvt(z, x, y);
+        verify(insightsApiClient).getBivariateTileMvt(z, x, y, "all");
         assertEquals(100, tile.length);
     }
 }
