@@ -9,7 +9,6 @@ import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -39,8 +38,6 @@ public class BivariateLayerProvider implements LayerProvider {
     private static final Pattern URL_SEARCH_PATTERN = Pattern.compile(
             "(http|ftp|https):\\/\\/([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-])");
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
-    @Value("${kontur.platform.insightsApi.url}")
-    private String insightsApiUrl;
     private volatile Map<String, Layer> bivariateLayers = new ConcurrentHashMap<>();
 
     @PostConstruct
@@ -116,7 +113,7 @@ public class BivariateLayerProvider implements LayerProvider {
                 .description(overlay.description())
                 .source(LayerSource.builder()
                         .type(VECTOR)
-                        .urls(List.of(insightsApiUrl + "/tiles/{z}/{x}/{y}.mvt"))
+                        .urls(List.of("api/tiles/bivariate/v1/{z}/{x}/{y}.mvt"))
                         .tileSize(512)
                         .build())
                 .legend(legend)
