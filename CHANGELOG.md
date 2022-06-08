@@ -11,6 +11,22 @@
 #### Installation sequence
 
 
+## Release 0.11.0 - 2022-06-08
+
+#### Added
+- #10022 For tiles add version, tile type, interface for insights api client for open source purposes, 
+- #10285 For tiles add parameter with the class of requested indicator
+
+#### Changed
+- #10022 Change tile url for bivariate presets
+- #10479 Updates configs for k8s deployment
+- #10329 Update LICENSE copyrights
+
+#### Removed
+
+#### Installation sequence
+
+
 
 ## Release 0.10.0 - 2022-06-01
 
