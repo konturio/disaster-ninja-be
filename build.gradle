@@ -32,9 +32,8 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.8'
     implementation 'com.apollographql.apollo:apollo-runtime:2.5.11'
 
-//    to be used with logback.xml.do-not-use
-//    implementation 'ch.qos.logback.contrib:logback-jackson:0.1.5'
-//    implementation 'ch.qos.logback.contrib:logback-json-classic:0.1.5'
+    implementation 'ch.qos.logback.contrib:logback-jackson:0.1.5'
+    implementation 'ch.qos.logback.contrib:logback-json-classic:0.1.5'
 
     //health
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
