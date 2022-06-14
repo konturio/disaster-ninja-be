@@ -1,0 +1,60 @@
+server:
+  servlet:
+    contextPath: /api
+  port: 8626
+
+kontur:
+  platform:
+    event-api:
+      url: 'https://test.test/event'
+      pageSize: 1000
+      connectionTimeout: 60
+      readTimeout: 60
+    keycloak:
+      url: 'https://test.test/auth'
+      realm: 'testRealm'
+      username: 'testUsername'
+      password: 'testPassword'
+      clientId: 'testClientId'
+    kcApi:
+      url: 'https://test.test/kcapi'
+      pageSize: 10
+      connectionTimeout: 60
+      readTimeout: 60
+    layersApi:
+      url: 'https://test.test/layers'
+      pageSize: 100
+      connectionTimeout: 60
+      readTimeout: 60
+    insightsApi:
+      url: 'https://test.test/insights'
+      connectionTimeout: 60
+      readTimeout: 60
+      layersReloadInterval: PT10M
+    tiles:
+      host: 'https://test.test/tiles'
+    userProfileApi:
+      url: 'https://test.test/user'
+      connectionTimeout: 20
+      readTimeout: 20
+      defaultAppId: '61d1be16-0230-4fb3-80e2-82010601025a'
+
+spring:
+  config:
+    import: classpath:/analytics/analyticstabconfig.yaml
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://127.0.0.1:8080/auth/realms/test
+          jwk-set-uri: http://127.0.0.1:8080/auth/realms/test/protocol/openid-connect/certs
+  jackson:
+    deserialization:
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+
+graphql:
+  apollo:
+    maxIdleConnections: 100
+    keepAliveDuration: 180
+    connectionTimeout: 60
+    readTimeout: 60
