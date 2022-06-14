@@ -1,0 +1,103 @@
+server:
+  servlet:
+    context-path: '/active/api'
+  port: 8627
+
+kontur:
+  platform:
+    event-api:
+      url: 'https://apps.kontur.io/events/'
+      connectionTimeout: 60
+      pageSize: 1000
+      readTimeout: 60
+    keycloak:
+      url: 'https://keycloak01.kontur.io/auth'
+      realm: 'kontur'
+      username: 'username' #Kontur's account name
+      password: 'password' #Kontur's account password
+      clientId: 'kontur_platform'
+    kcApi:
+      url: 'https://api.kontur.io/layers'
+      pageSize: 1000
+      connectionTimeout: 60
+      readTimeout: 60
+    layersApi:
+      url: 'https://api.kontur.io/layers/v2'
+      pageSize: 1000
+      connectionTimeout: 60
+      readTimeout: 60
+    insightsApi:
+      connectionTimeout: 60
+      readTimeout: 60
+      layersReloadInterval: PT10M
+    tiles:
+      host: 'https://disaster.ninja'
+    userProfileApi:
+      url: 'https://apps.kontur.io/userprofile/'
+      connectionTimeout: 20
+      readTimeout: 20
+      defaultAppId: '58851b50-9574-4aec-a3a6-425fa18dcb54'
+
+notifications:
+  enabled: false
+
+springdoc:
+  writer-with-default-pretty-printer: true
+  swagger-ui:
+    path: 'doc'
+    disable-swagger-default-url: true
+    tags-sorter: alpha
+    operations-sorter: alpha
+
+management:
+  metrics:
+    export:
+      simple:
+        enabled: false
+  health:
+    ping:
+      enabled: false
+    diskspace:
+      enabled: false
+    refresh:
+      enabled: false
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      status:
+        http-mapping:
+          down: 200
+      cache:
+        time-to-live: 10s
+      show-details: always
+      show-components: always
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+
+spring:
+  config:
+    import:
+      - classpath:/analytics/analyticstabconfig.yaml
+      - classpath:/analytics/notificationsanalyticsconfig.yaml
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://keycloak01.kontur.io/auth/realms/kontur
+          jwk-set-uri: https://keycloak01.kontur.io/auth/realms/kontur/protocol/openid-connect/certs
+  jackson:
+    deserialization:
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+    default-property-inclusion: non_null
+
+graphql:
+  apollo:
+    maxIdleConnections: 100
+    keepAliveDuration: 300
+    connectionTimeout: 300
+    readTimeout: 300
