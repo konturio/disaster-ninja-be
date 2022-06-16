@@ -7,7 +7,7 @@ Full details of the API endpoints is available at: https://disaster.ninja/active
 
 ## Usage
 
-To run DN BE you will need to have Java 17+ installed.
+To run Disaster Ninja BE you will need to have Java 17+ installed.
 
 Then you will need to build the service from source code
 - `gradlew check` - runs tests
