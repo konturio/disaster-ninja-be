@@ -11,6 +11,18 @@
 #### Installation sequence
 
 
+## Release 0.11.2 - 2022-06-21
+
+#### Added
+
+#### Changed
+- Migration to GitHub
+
+#### Removed
+
+#### Installation sequence
+
+
 ## Release 0.11.0 - 2022-06-08
 
 #### Added
