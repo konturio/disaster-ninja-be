@@ -32,8 +32,7 @@ import org.wololo.geojson.Geometry;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.LAYER_TYPE_FEATURE;
-import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.LAYER_TYPE_TILES;
+import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
@@ -303,9 +302,12 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             return null;
         }
         LayerSource source = null;
-        if (LAYER_TYPE_TILES.equals(collection.getItemType())) {
+        String itemType = collection.getItemType();
+        if (LAYER_TYPE_TILES.equals(itemType)) {
             source = createVectorSource(collection);
-        } else if (LAYER_TYPE_FEATURE.equals(collection.getItemType())) {
+        } else if (LAYER_TYPE_RASTER.equals(itemType)) {
+            source = createRasterSource(collection);
+        } else if (LAYER_TYPE_FEATURE.equals(itemType)) {
             source = createFeatureSource(geoJSON, collection.getId(), appId);
         }
         return Layer.builder()
@@ -328,6 +330,21 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         return LayerSource.builder()
                 .type(LayerSourceType.VECTOR)
                 .tileSize(512)
+                .urls(url != null ? singletonList(url) : null)
+                .build();
+    }
+
+    private LayerSource createRasterSource(Collection collection) {
+        String url = collection.getLinks().stream()
+                .filter(l -> LAYER_TYPE_TILES.equals(l.getRel()))
+                .map(Link::getHref)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+
+        return LayerSource.builder()
+                .type(LayerSourceType.RASTER)
+                .tileSize(256)
                 .urls(url != null ? singletonList(url) : null)
                 .build();
     }
