@@ -302,7 +302,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             return null;
         }
         LayerSource source = switch (collection.getItemType()) {
-            case (LAYER_TYPE_TILES) -> createVectorSource(collection);
+            case (LAYER_TYPE_VECTOR), (LAYER_TYPE_TILES) -> createVectorSource(collection);
             case (LAYER_TYPE_RASTER) -> createRasterSource(collection);
             case (LAYER_TYPE_FEATURE) -> createFeatureSource(geoJSON, collection.getId(), appId);
             default -> null;
