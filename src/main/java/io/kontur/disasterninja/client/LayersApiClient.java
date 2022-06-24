@@ -301,15 +301,12 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         if (collection == null) {
             return null;
         }
-        LayerSource source = null;
-        String itemType = collection.getItemType();
-        if (LAYER_TYPE_TILES.equals(itemType)) {
-            source = createVectorSource(collection);
-        } else if (LAYER_TYPE_RASTER.equals(itemType)) {
-            source = createRasterSource(collection);
-        } else if (LAYER_TYPE_FEATURE.equals(itemType)) {
-            source = createFeatureSource(geoJSON, collection.getId(), appId);
-        }
+        LayerSource source = switch (collection.getItemType()) {
+            case (LAYER_TYPE_TILES) -> createVectorSource(collection);
+            case (LAYER_TYPE_RASTER) -> createRasterSource(collection);
+            case (LAYER_TYPE_FEATURE) -> createFeatureSource(geoJSON, collection.getId(), appId);
+            default -> null;
+        };
         return Layer.builder()
                 .id(getIdWithPrefix(collection.getId()))
                 .legend(collection.getStyleRule() != null ?
