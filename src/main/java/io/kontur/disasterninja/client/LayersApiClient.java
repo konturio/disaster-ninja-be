@@ -32,8 +32,7 @@ import org.wololo.geojson.Geometry;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.LAYER_TYPE_FEATURE;
-import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.LAYER_TYPE_TILES;
+import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
@@ -302,12 +301,12 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         if (collection == null) {
             return null;
         }
-        LayerSource source = null;
-        if (LAYER_TYPE_TILES.equals(collection.getItemType())) {
-            source = createVectorSource(collection);
-        } else if (LAYER_TYPE_FEATURE.equals(collection.getItemType())) {
-            source = createFeatureSource(geoJSON, collection.getId(), appId);
-        }
+        LayerSource source = switch (collection.getItemType()) {
+            case (LAYER_TYPE_VECTOR), (LAYER_TYPE_TILES) -> createVectorSource(collection);
+            case (LAYER_TYPE_RASTER) -> createRasterSource(collection);
+            case (LAYER_TYPE_FEATURE) -> createFeatureSource(geoJSON, collection.getId(), appId);
+            default -> null;
+        };
         return Layer.builder()
                 .id(getIdWithPrefix(collection.getId()))
                 .legend(collection.getStyleRule() != null ?
@@ -328,6 +327,21 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         return LayerSource.builder()
                 .type(LayerSourceType.VECTOR)
                 .tileSize(512)
+                .urls(url != null ? singletonList(url) : null)
+                .build();
+    }
+
+    private LayerSource createRasterSource(Collection collection) {
+        String url = collection.getLinks().stream()
+                .filter(l -> LAYER_TYPE_TILES.equals(l.getRel()))
+                .map(Link::getHref)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+
+        return LayerSource.builder()
+                .type(LayerSourceType.RASTER)
+                .tileSize(256)
                 .urls(url != null ? singletonList(url) : null)
                 .build();
     }

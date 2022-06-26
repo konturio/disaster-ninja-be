@@ -14,7 +14,9 @@ import java.util.UUID;
 public class LayerUpdateDto {
 
     public static final String LAYER_TYPE_TILES = "tiles";
+    public static final String LAYER_TYPE_VECTOR = "vector";
     public static final String LAYER_TYPE_FEATURE = "feature";
+    public static final String LAYER_TYPE_RASTER = "raster";
 
     @Schema(defaultValue = "feature")
     @NotNull
