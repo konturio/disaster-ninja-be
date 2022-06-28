@@ -44,7 +44,11 @@ public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
     public InsightsApiGraphqlClientImpl(ApolloClient apolloClient, MeterRegistry meterRegistry) {
         this.apolloClient = apolloClient;
         Summary.Builder metricsBuilder = Summary.build()
+                .quantile(0.05, 0.01)
+                .quantile(0.25, 0.01)
                 .quantile(0.5, 0.01)
+                .quantile(0.75, 0.01)
+                .quantile(0.95, 0.01)
                 .quantile(1, 0.01) //max
                 .labelNames("outcome")
                 .name("http_client_insights_api_graphql_requests_seconds")
