@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.client;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
@@ -16,7 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-@RestClientTest(InsightsApiClient.class)
+@Disabled("just for local debugging")
+@RestClientTest(InsightsApiClientImpl.class)
 @AutoConfigureWebClient(registerRestTemplate = true)
 class InsightsApiClientTest {
 
