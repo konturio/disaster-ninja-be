@@ -29,7 +29,7 @@ public class InsightsApiClientImpl implements InsightsApiClient {
         this.insightsApiRestTemplate = insightsApiRestTemplate;
         Counter.Builder metricsBuilder = Counter.build()
                 .labelNames("authenticated", "zoom")
-                .name("http.server.tiles.requests")
+                .name("http_server_tiles_requests")
                 .help("Requests divided by auth token.");
 
         if (meterRegistry instanceof PrometheusMeterRegistry) {
