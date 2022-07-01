@@ -1,13 +1,17 @@
 package io.kontur.disasterninja.client;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Random;
 
@@ -17,15 +21,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-@Disabled("just for local debugging")
 @RestClientTest(InsightsApiClientImpl.class)
 @AutoConfigureWebClient(registerRestTemplate = true)
 class InsightsApiClientTest {
 
     @Autowired
-    private InsightsApiClient client;
-    @Autowired
     private MockRestServiceServer server;
+
+    @Autowired
+    private RestTemplate insightsApiRestTemplate;
+
+    @MockBean
+    private MeterRegistry meterRegistry;
+
+    private InsightsApiClient client;
+
+    @BeforeEach
+    public void before(){
+        client = new InsightsApiClientImpl(insightsApiRestTemplate, meterRegistry);
+    }
 
     @Test
     public void testGetBivariateTileMvt(){

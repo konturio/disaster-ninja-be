@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.controller;
 
 import io.kontur.disasterninja.service.TileService;
+import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,6 +18,7 @@ public class TileController {
 
     private final TileService tileService;
 
+    @Timed(percentiles = {0.05, 0.25, 0.5, 0.75, 0.95}, value = "http.server.percentiles.seconds", histogram = true)
     @Operation(summary = "Returns bivariate mvt tile using z, x, y, indicator class and Insights API service.",
             tags = {"Tiles"},
             description = "Returns bivariate mvt tile using z, x, y, indicator class and Insights API service.")
