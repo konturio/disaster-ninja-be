@@ -5,6 +5,7 @@ import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Input;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.exception.ApolloHttpException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
@@ -46,7 +47,7 @@ public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
         Summary.Builder metricsBuilder = Summary.build()
                 .quantile(0.5, 0.01)
                 .quantile(1, 0.01) //max
-                .labelNames("outcome")
+                .labelNames("outcome", "status")
                 .name("http_client_insights_api_graphql_requests_seconds")
                 .help("Requests with insights-api GraphQl.")
                 .maxAgeSeconds(120) //same as in micrometer (for spring restTemplates)
@@ -69,7 +70,7 @@ public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
                 .enqueue(new ApolloCall.Callback<>() {
                     @Override
                     public void onResponse(@NotNull Response<AnalyticsTabQuery.Data> response) {
-                        metrics.labels(SUCCESS).observe(timer.elapsedSeconds());
+                        metrics.labels(SUCCESS, "200").observe(timer.elapsedSeconds());
 
                         if (response.getData() != null && response.getData().polygonStatistic() != null &&
                                 response.getData().polygonStatistic().analytics() != null &&
@@ -95,7 +96,7 @@ public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
                 .enqueue(new ApolloCall.Callback<>() {
                     @Override
                     public void onResponse(@NotNull Response<HumanitarianImpactQuery.Data> response) {
-                        metrics.labels(SUCCESS).observe(timer.elapsedSeconds());
+                        metrics.labels(SUCCESS, "200").observe(timer.elapsedSeconds());
 
                         if (response.getData() != null && response.getData().polygonStatistic() != null &&
                                 response.getData().polygonStatistic().analytics() != null &&
@@ -128,7 +129,7 @@ public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
                 .enqueue(new ApolloCall.Callback<>() {
                     @Override
                     public void onResponse(@NotNull Response<AdvancedAnalyticalPanelQuery.Data> response) {
-                        metrics.labels(SUCCESS).observe(timer.elapsedSeconds());
+                        metrics.labels(SUCCESS, "200").observe(timer.elapsedSeconds());
 
                         if (response.getData() != null && response.getData().polygonStatistic() != null &&
                                 response.getData().polygonStatistic().analytics() != null &&
@@ -154,7 +155,7 @@ public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
                 .enqueue(new ApolloCall.Callback<>() {
                     @Override
                     public void onResponse(@NotNull Response<BivariateLayerLegendQuery.Data> response) {
-                        metrics.labels(SUCCESS).observe(timer.elapsedSeconds());
+                        metrics.labels(SUCCESS, "200").observe(timer.elapsedSeconds());
 
                         if (response.getData() != null &&
                                 response.getData().polygonStatistic() != null &&
@@ -181,7 +182,11 @@ public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
     private <T> void observeMetricsAndCompleteExceptionally(@NotNull ApolloException e,
                                                             @NotNull CompletableFuture<T> future,
                                                             @NotNull SimpleTimer timer) {
-        metrics.labels(FAILED).observe(timer.elapsedSeconds());
+        int status = 500;
+        if (e instanceof ApolloHttpException) {
+            status = ((ApolloHttpException) e).code();
+        }
+        metrics.labels(FAILED, String.valueOf(status)).observe(timer.elapsedSeconds());
         future.completeExceptionally(e);
     }
 }
