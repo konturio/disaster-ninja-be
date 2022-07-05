@@ -52,16 +52,6 @@ public class InsightsApiClientImpl implements InsightsApiClient {
     }
 
     private void incrementForCorrectLabels(Integer z, String auth) {
-        switch (z) {
-            case 1 -> metrics.labels(auth, "1").inc();
-            case 2 -> metrics.labels(auth, "2").inc();
-            case 3 -> metrics.labels(auth, "3").inc();
-            case 4 -> metrics.labels(auth, "4").inc();
-            case 5 -> metrics.labels(auth, "5").inc();
-            case 6 -> metrics.labels(auth, "6").inc();
-            case 7 -> metrics.labels(auth, "7").inc();
-            case 8 -> metrics.labels(auth, "8").inc();
-            default -> metrics.labels(auth, "other").inc();
-        }
+        metrics.labels(auth, Integer.toString(z)).inc();
     }
 }
