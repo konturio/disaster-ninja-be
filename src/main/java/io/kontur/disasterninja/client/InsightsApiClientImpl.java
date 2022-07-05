@@ -61,7 +61,7 @@ public class InsightsApiClientImpl implements InsightsApiClient {
             case 6 -> metrics.labels(auth, "6").inc();
             case 7 -> metrics.labels(auth, "7").inc();
             case 8 -> metrics.labels(auth, "8").inc();
-            default -> LOG.warn("Incorrect zoom value");
+            default -> metrics.labels(auth, "other").inc();
         }
     }
 }
