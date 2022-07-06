@@ -31,7 +31,7 @@ public class AppsController {
     private final LayersApiClient layersApiClient;
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Create a new embedded app")
+    @Operation(summary = "Create a new embedded app", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = AppDto.class)))
@@ -41,7 +41,7 @@ public class AppsController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Delete app")
+    @Operation(summary = "Delete app", tags = {"Applications"})
     @ApiResponse(responseCode = "204")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable @Parameter(name = "id") UUID id) {
@@ -50,7 +50,7 @@ public class AppsController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Update existing app")
+    @Operation(summary = "Update existing app", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = AppDto.class)))
@@ -60,7 +60,7 @@ public class AppsController {
         return userProfileClient.updateApp(id, appDto);
     }
 
-    @Operation(summary = "Get default app id")
+    @Operation(summary = "Get default app id", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE))
     @GetMapping(path = "/default_id")
@@ -68,7 +68,7 @@ public class AppsController {
         return userProfileClient.getDefaultAppId();
     }
 
-    @Operation(summary = "Get application information by id")
+    @Operation(summary = "Get application information by id", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = AppDto.class)))
@@ -78,7 +78,7 @@ public class AppsController {
     }
 
     @Operation(summary = "Get application list available to user (includes public apps"
-            + " and user-owned apps)")
+            + " and user-owned apps)", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     array = @ArraySchema(schema = @Schema(implementation = AppSummaryDto.class))))
@@ -87,7 +87,7 @@ public class AppsController {
         return userProfileClient.getAppsList();
     }
 
-    @Operation(summary = "Get list of default layers for the app")
+    @Operation(summary = "Get list of default layers for the app", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     array = @ArraySchema(schema = @Schema(implementation = Layer.class))))
@@ -97,7 +97,7 @@ public class AppsController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Updates list of layers for the app")
+    @Operation(summary = "Updates list of layers for the app", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     array = @ArraySchema(schema = @Schema(implementation = Layer.class))))

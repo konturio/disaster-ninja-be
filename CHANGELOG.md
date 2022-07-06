@@ -5,6 +5,7 @@
 #### Added
 
 #### Changed
+- #11041 Add endpoint for RUM metrics
 
 #### Removed
 
