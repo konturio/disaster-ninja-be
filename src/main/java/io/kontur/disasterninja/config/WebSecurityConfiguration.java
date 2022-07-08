@@ -77,6 +77,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .ignoringRequestMatchers(new AntPathRequestMatcher("/boundaries/**", "POST"))
                 .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/details/**", "POST"))
                 .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/search/**", "POST"))
+                .ignoringRequestMatchers(new AntPathRequestMatcher("/rum/**", "POST"))
 
                 .and()
                 .headers().cacheControl().disable()
