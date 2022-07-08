@@ -14,6 +14,6 @@ public class UserMetricDto {
     private final UUID userId;
 
     public enum UserMetricDtoType {
-        summary
+        SUMMARY
     }
 }

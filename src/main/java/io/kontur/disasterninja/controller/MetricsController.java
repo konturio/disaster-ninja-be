@@ -47,7 +47,7 @@ public class MetricsController {
             return ResponseEntity.ok().build();
         }
         metrics.forEach(metric -> {
-            if (metric.getType().equals(UserMetricDto.UserMetricDtoType.summary)) {
+            if (UserMetricDto.UserMetricDtoType.SUMMARY.equals(metric.getType())) {
                 summary.labels(metric.getName(), metric.getAppId().toString(), metric.getUserId().toString())
                         .observe(metric.getValue());
             }
