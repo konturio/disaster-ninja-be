@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -28,7 +27,9 @@ import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,19 +39,17 @@ import static org.mockito.Mockito.*;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class EventApiServiceTest {
 
-    @Mock
-    EventApiClient client;
-    @Mock
-    KeycloakAuthorizationService authorizationService;
-    @InjectMocks
-    EventApiService service;
-
     private final String userToken = "some-user-token";
     private final String defaultAppToken = "some-app-token";
     private final String defaultAppFeed = "kontur-public";
     private final String defaultAppFeedDesc = "some desc";
     private final String userAppFeed = "some-user-feed";
     private final String userAppFeedDesc = "some user desc";
+
+    @Mock
+    private KeycloakAuthorizationService authorizationService;
+    private EventApiClient client = mock(EventApiClient.class);
+    private EventApiService service = new EventApiService(client, 1000);
 
     @BeforeEach
     public void before() {
@@ -113,10 +112,14 @@ class EventApiServiceTest {
         moreRecentEvent.getEventDetails().put("population", 50);
         moreRecentEvent.setUpdatedAt(OffsetDateTime.now());
 
-        when(client.getEvents(any())).thenReturn(List.of(moreRecentEvent, oldEvent, mostPopulatedEvent));
+        EventApiClient.EventApiSearchEventResponse eventResponse = new EventApiClient.EventApiSearchEventResponse();
+        eventResponse.setData(List.of(moreRecentEvent, oldEvent, mostPopulatedEvent));
+        eventResponse.setPageMetadata(new EventApiClient.PageMetadata());
+        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(1000))).thenReturn(Optional.of(eventResponse));
+        when(client.getEvents(eq("feed"), isNull(), isNull(), eq(1000))).thenReturn(Optional.of(eventResponse));
 
         //when
-        List<EventListDto> events = service.getEvents(null);
+        List<EventListDto> events = service.getEvents("feed", null);
 
         //then
         assertEquals(mostPopulatedEvent.getEventId(), events.get(0).getEventId());
@@ -129,6 +132,157 @@ class EventApiServiceTest {
         assertEquals("Proper name", events.get(0).getEventName());
         assertEquals(1, events.get(0).getExternalUrls().size());
         assertEquals("http://google.com", events.get(0).getExternalUrls().get(0));
+    }
+
+    @Test
+    public void testGetEvents_EmptyResults() {
+        //given
+        EventApiClient.EventApiSearchEventResponse eventResponse = new EventApiClient.EventApiSearchEventResponse();
+        eventResponse.setData(Collections.emptyList());
+        eventResponse.setPageMetadata(new EventApiClient.PageMetadata());
+
+        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(1000))).thenReturn(Optional.of(eventResponse));
+
+        EventApiClient.EventApiSearchEventResponse eventResponse2 = new EventApiClient.EventApiSearchEventResponse();
+        eventResponse2.setPageMetadata(new EventApiClient.PageMetadata());
+        when(client.getEvents(eq("feed"), isNull(), isNull(), eq(1000))).thenReturn(Optional.of(eventResponse2));
+
+        //when
+        List<EventListDto> events = service.getEvents("feed", null);
+
+        //then
+        assertEquals(0, events.size());
+    }
+
+    @Test
+    public void testGetEvents_GetWithoutAfterFilter() {
+        //given
+        EventApiService localService = new EventApiService(client, 3);
+        PodamFactory factory = new PodamFactoryImpl();
+
+        EventApiClient.EventApiSearchEventResponse eventResponse = new EventApiClient.EventApiSearchEventResponse();
+        eventResponse.setData(List.of(factory.manufacturePojo(EventApiEventDto.class), factory.manufacturePojo(EventApiEventDto.class)));
+        EventApiClient.PageMetadata pageMetadata = new EventApiClient.PageMetadata();
+        OffsetDateTime now = OffsetDateTime.now();
+        pageMetadata.setNextAfterValue(now);
+        eventResponse.setPageMetadata(pageMetadata);
+
+        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(3))).thenReturn(Optional.of(eventResponse));
+
+        EventApiClient.EventApiSearchEventResponse eventResponse2 = new EventApiClient.EventApiSearchEventResponse();
+        eventResponse2.setData(List.of(factory.manufacturePojo(EventApiEventDto.class)));
+        EventApiClient.PageMetadata pageMetadata2 = new EventApiClient.PageMetadata();
+        eventResponse2.setPageMetadata(pageMetadata2);
+        when(client.getEvents(eq("feed"), isNull(), isNull(), eq(3))).thenReturn(Optional.of(eventResponse2));
+        when(client.getEvents(eq("feed"), eq(now), isNull(), eq(3))).thenThrow(new RuntimeException("wrong way"));
+
+        //when
+        List<EventListDto> events = localService.getEvents("feed", null);
+
+        //then
+        assertEquals(1, events.size());
+    }
+
+    @Test
+    public void testGetEvents_Get4DayEventsInOneCall() {
+        //given
+        EventApiService localService = new EventApiService(client, 3);
+        PodamFactory factory = new PodamFactoryImpl();
+        EventApiEventDto event1 = factory.manufacturePojo(EventApiEventDto.class);
+        EventApiEventDto event2 = factory.manufacturePojo(EventApiEventDto.class);
+        EventApiEventDto event3 = factory.manufacturePojo(EventApiEventDto.class);
+
+        EventApiClient.EventApiSearchEventResponse eventResponse = new EventApiClient.EventApiSearchEventResponse();
+        eventResponse.setData(List.of(event3, event2, event1));
+        EventApiClient.PageMetadata pageMetadata = new EventApiClient.PageMetadata();
+        OffsetDateTime now = OffsetDateTime.now();
+        pageMetadata.setNextAfterValue(now);
+        eventResponse.setPageMetadata(pageMetadata);
+
+        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(3))).thenReturn(Optional.of(eventResponse));
+        when(client.getEvents(eq("feed"), eq(now), isNull(), eq(3))).thenReturn(Optional.empty());
+        when(client.getEvents(eq("feed"), isNull(), isNull(), eq(3))).thenThrow(new RuntimeException("wrong way"));
+
+        //when
+        List<EventListDto> events = localService.getEvents("feed", null);
+
+        //then
+        assertEquals(3, events.size());
+    }
+
+    @Test
+    public void testGetEvents_Get4DayEventsInTwoCalls() {
+        //given
+        EventApiService localService = new EventApiService(client, 3);
+        PodamFactory factory = new PodamFactoryImpl();
+        EventApiEventDto event1 = factory.manufacturePojo(EventApiEventDto.class);
+        EventApiEventDto event2 = factory.manufacturePojo(EventApiEventDto.class);
+        EventApiEventDto event3 = factory.manufacturePojo(EventApiEventDto.class);
+
+        EventApiClient.EventApiSearchEventResponse eventResponse = new EventApiClient.EventApiSearchEventResponse();
+        eventResponse.setData(List.of(event3, event2, event1));
+        EventApiClient.PageMetadata pageMetadata = new EventApiClient.PageMetadata();
+        OffsetDateTime now = OffsetDateTime.now();
+        pageMetadata.setNextAfterValue(now);
+        eventResponse.setPageMetadata(pageMetadata);
+
+        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(3))).thenReturn(Optional.of(eventResponse));
+
+        EventApiClient.EventApiSearchEventResponse eventResponse2 = new EventApiClient.EventApiSearchEventResponse();
+        eventResponse2.setData(List.of(factory.manufacturePojo(EventApiEventDto.class)));
+        EventApiClient.PageMetadata pageMetadata2 = new EventApiClient.PageMetadata();
+        eventResponse2.setPageMetadata(pageMetadata2);
+        when(client.getEvents(eq("feed"), eq(now), isNull(), eq(3))).thenReturn(Optional.of(eventResponse2));
+        when(client.getEvents(eq("feed"), isNull(), isNull(), eq(3))).thenThrow(new RuntimeException("wrong way"));
+
+        //when
+        List<EventListDto> events = localService.getEvents("feed", null);
+
+        //then
+        assertEquals(4, events.size());
+    }
+
+    @Test
+    public void testGetEvents_Get4DayEventsInThreeCalls() {
+        //given
+        EventApiService localService = new EventApiService(client, 3);
+        PodamFactory factory = new PodamFactoryImpl();
+
+        EventApiClient.EventApiSearchEventResponse eventResponse = new EventApiClient.EventApiSearchEventResponse();
+        EventApiEventDto event1 = factory.manufacturePojo(EventApiEventDto.class);
+        EventApiEventDto event2 = factory.manufacturePojo(EventApiEventDto.class);
+        EventApiEventDto event3 = factory.manufacturePojo(EventApiEventDto.class);
+        eventResponse.setData(List.of(event3, event2, event1));
+        EventApiClient.PageMetadata pageMetadata = new EventApiClient.PageMetadata();
+        OffsetDateTime now = OffsetDateTime.now();
+        pageMetadata.setNextAfterValue(now);
+        eventResponse.setPageMetadata(pageMetadata);
+
+        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(3))).thenReturn(Optional.of(eventResponse));
+
+        EventApiClient.EventApiSearchEventResponse eventResponse2 = new EventApiClient.EventApiSearchEventResponse();
+        EventApiEventDto event4 = factory.manufacturePojo(EventApiEventDto.class);
+        EventApiEventDto event5 = factory.manufacturePojo(EventApiEventDto.class);
+        EventApiEventDto event6 = factory.manufacturePojo(EventApiEventDto.class);
+        eventResponse2.setData(List.of(event4, event5, event6));
+        EventApiClient.PageMetadata pageMetadata2 = new EventApiClient.PageMetadata();
+        OffsetDateTime now2 = OffsetDateTime.now();
+        pageMetadata2.setNextAfterValue(now2);
+        eventResponse2.setPageMetadata(pageMetadata2);
+        when(client.getEvents(eq("feed"), eq(now), isNull(), eq(3))).thenReturn(Optional.of(eventResponse2));
+
+        EventApiClient.EventApiSearchEventResponse eventResponse3 = new EventApiClient.EventApiSearchEventResponse();
+        eventResponse3.setData(List.of(factory.manufacturePojo(EventApiEventDto.class)));
+        EventApiClient.PageMetadata pageMetadata3 = new EventApiClient.PageMetadata();
+        eventResponse3.setPageMetadata(pageMetadata3);
+        when(client.getEvents(eq("feed"), eq(now2), isNull(), eq(3))).thenReturn(Optional.of(eventResponse3));
+        when(client.getEvents(eq("feed"), isNull(), isNull(), eq(3))).thenThrow(new RuntimeException("wrong way"));
+
+        //when
+        List<EventListDto> events = localService.getEvents("feed", null);
+
+        //then
+        assertEquals(7, events.size());
     }
 
     @Test

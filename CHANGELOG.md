@@ -6,6 +6,7 @@
 
 #### Changed
 - #11041 Add endpoint for RUM metrics
+- #11053 Add bbox filter to event search endpoint
 
 #### Removed
 

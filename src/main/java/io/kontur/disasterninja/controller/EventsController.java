@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.controller;
 
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
+import io.kontur.disasterninja.controller.validation.ValidBbox;
 import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.dto.EventFeedDto;
 import io.kontur.disasterninja.dto.EventListDto;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,17 +40,24 @@ public class EventsController {
             @Min(1)
             @Max(1000)
             int limit,
-
             @Parameter(description = "Offset. Default value is 0, minimum - 0", example = "0", schema = @Schema(minimum = "0"))
             @RequestParam(defaultValue = "0")
             @Min(0)
             int offset,
-
             @Parameter(description = "Event API Feed name", example = "kontur-public")
             @RequestParam(required = false)
-            String feed
+            String feed,
+            @Parameter(description = "Only events that have a geometry that intersects the bounding box are selected. The bounding box is provided as four numbers" +
+                    "<ul><li>Lower left corner, coordinate axis 1</li>" +
+                    "<li>Lower left corner, coordinate axis 2</li>" +
+                    "<li>Upper right corner, coordinate axis 1</li>" +
+                    "<li>Upper right corner, coordinate axis 2</li></ul>" +
+                    "The coordinate reference system of the values is WGS 84 longitude/latitude (http://www.opengis.net/def/crs/OGC/1.3/CRS84). For WGS 84 longitude/latitude the values are the sequence of minimum longitude, minimum latitude, maximum longitude and maximum latitude.")
+            @RequestParam(required = false)
+            @ValidBbox
+            List<BigDecimal> bbox
     ) {
-        List<EventListDto> events = service.getEvents(feed);
+        List<EventListDto> events = service.getEvents(feed, bbox);
         if (offset >= events.size()) {
             throw new WebApplicationException("Offset is larger than resultset size", HttpStatus.NO_CONTENT);
         }
