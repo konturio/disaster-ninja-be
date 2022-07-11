@@ -5,9 +5,9 @@ import io.kontur.disasterninja.dto.EventFeedDto;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -29,15 +30,11 @@ import java.util.UUID;
 public class EventApiClient extends RestClientWithBearerAuth {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventApiClient.class);
-    private static final String EVENT_API_EVENT_LIST_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&after=%s&episodeFilterType=LATEST&limit=%s&sortOrder=ASC";
-    private static final String EVENT_API_LATEST_EVENTS_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&episodeFilterType=LATEST&limit=%s&sortOrder=DESC";
+    private static final String EVENT_API_EVENT_LIST_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&episodeFilterType=LATEST&limit=%s";
     private static final String EVENT_API_EVENT_ID_URI = "/v1/event?feed=%s&eventId=%s";
     private static final String EVENT_API_USER_FEEDS_URI = "/v1/user_feeds";
 
     private final RestTemplate restTemplate;
-
-    @Value("${kontur.platform.event-api.pageSize}")
-    private int pageSize;
 
     public EventApiClient(RestTemplate eventApiRestTemplate, KeycloakAuthorizationService authorizationService) {
         super(authorizationService);
@@ -53,38 +50,34 @@ public class EventApiClient extends RestClientWithBearerAuth {
         return Optional.ofNullable(response.getBody()).orElseGet(List::of);
     }
 
-    public List<EventApiEventDto> getEvents(String eventApiFeed) {
-        OffsetDateTime after = OffsetDateTime.now()
-                .minusDays(4);
-
-        List<EventApiEventDto> result = new ArrayList<>();
-
-        while (true) {
-            String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed, after.atZoneSameInstant(ZoneOffset.UTC)
-                    .truncatedTo(ChronoUnit.MILLIS).format(DateTimeFormatter.ISO_ZONED_DATE_TIME), pageSize);
-            ResponseEntity<EventApiSearchEventResponse> response = restTemplate
-                    .exchange(uri, HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
-                            new ParameterizedTypeReference<>() {
-                            });
-            if (!response.getStatusCode().is2xxSuccessful()) {
-                LOG.info("Received {} response from eventapi. Request uri: {}", response.getStatusCode(), uri);
-            }
-            if (response.getStatusCode() == HttpStatus.NO_CONTENT ||
-                    response.getBody() == null || response.getBody().data == null ||
-                    response.getBody().data.isEmpty()) {
-                break;
-            }
-            result.addAll(response.getBody().data);
-            if (response.getBody().data.size() < pageSize) { //last page
-                break;
-            }
-            after = response.getBody().pageMetadata.nextAfterValue;
+    public Optional<EventApiSearchEventResponse> getEvents(String eventApiFeed, OffsetDateTime after, List<BigDecimal> bbox, int pageSize) {
+        String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed, pageSize);
+        uri += "&sortOrder=ASC";
+        if (after != null) {
+            uri += "&after=" + after.atZoneSameInstant(ZoneOffset.UTC)
+                    .truncatedTo(ChronoUnit.MILLIS).format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
         }
-        return result;
+        if (!CollectionUtils.isEmpty(bbox)) {
+            uri += "&bbox=" + StringUtils.join(bbox, ",");
+        }
+        ResponseEntity<EventApiSearchEventResponse> response = restTemplate
+                .exchange(uri, HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
+                        new ParameterizedTypeReference<>() {
+                        });
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            LOG.info("Received {} response from eventapi. Request uri: {}", response.getStatusCode(), uri);
+        }
+        if (response.getStatusCode() == HttpStatus.NO_CONTENT ||
+                response.getBody() == null || response.getBody().data == null ||
+                response.getBody().data.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(response.getBody());
     }
 
     public List<EventApiEventDto> getLatestEvents(List<String> acceptableTypes, String feedName, int limit) {
-        String uri = String.format(EVENT_API_LATEST_EVENTS_URI, feedName, limit);
+        String uri = String.format(EVENT_API_EVENT_LIST_URI, feedName, limit);
+        uri += "&sortOrder=DESC";
         if (!CollectionUtils.isEmpty(acceptableTypes)) {
             uri += "&types=" + String.join(",", acceptableTypes);
         }
@@ -120,15 +113,16 @@ public class EventApiClient extends RestClientWithBearerAuth {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class EventApiSearchEventResponse {
+    @Data
+    public static class EventApiSearchEventResponse {
 
-        public List<EventApiEventDto> data;
-        public PageMetadata pageMetadata;
+        private List<EventApiEventDto> data = new ArrayList<>();
+        private PageMetadata pageMetadata = new PageMetadata();
     }
 
     @Data
-    private static class PageMetadata {
+    public static class PageMetadata {
 
-        public OffsetDateTime nextAfterValue;
+        private OffsetDateTime nextAfterValue;
     }
 }
