@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.client.RestTemplate;
 import org.wololo.geojson.GeoJSON;
@@ -43,6 +44,7 @@ public class WebConfiguration {
                                              @Value("${kontur.platform.event-api.connectionTimeout}") Integer connectionTimeout,
                                              @Value("${kontur.platform.event-api.readTimeout}") Integer readTimeout) {
         return builder
+                .requestFactory(SimpleClientHttpRequestFactory::new)
                 .rootUri(eventApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
@@ -55,6 +57,7 @@ public class WebConfiguration {
                                           @Value("${kontur.platform.kcApi.connectionTimeout}") Integer connectionTimeout,
                                           @Value("${kontur.platform.kcApi.readTimeout}") Integer readTimeout) {
         return builder
+                .requestFactory(SimpleClientHttpRequestFactory::new)
                 .rootUri(eventApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
@@ -67,6 +70,7 @@ public class WebConfiguration {
                                               @Value("${kontur.platform.layersApi.connectionTimeout}") Integer connectionTimeout,
                                               @Value("${kontur.platform.layersApi.readTimeout}") Integer readTimeout) {
         return builder
+                .requestFactory(SimpleClientHttpRequestFactory::new)
                 .rootUri(apiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
@@ -80,6 +84,7 @@ public class WebConfiguration {
                                                 @Value("${kontur.platform.insightsApi.connectionTimeout}") Integer connectionTimeout,
                                                 @Value("${kontur.platform.insightsApi.readTimeout}") Integer readTimeout) {
         return builder
+                .requestFactory(SimpleClientHttpRequestFactory::new)
                 .rootUri(eventApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
@@ -90,6 +95,7 @@ public class WebConfiguration {
     public RestTemplate authorizationRestTemplate(RestTemplateBuilder builder,
                                                   @Value("${kontur.platform.keycloak.url}") String keycloakUrl) {
         return builder
+                .requestFactory(SimpleClientHttpRequestFactory::new)
                 .rootUri(keycloakUrl)
                 .build();
     }
@@ -100,6 +106,7 @@ public class WebConfiguration {
                                                 @Value("${kontur.platform.userProfileApi.connectionTimeout}") Integer connectionTimeout,
                                                 @Value("${kontur.platform.userProfileApi.readTimeout}") Integer readTimeout) {
         return builder
+                .requestFactory(SimpleClientHttpRequestFactory::new)
                 .rootUri(url)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
