@@ -76,14 +76,6 @@ public class EventsController {
         return service.getEvent(eventId, feed);
     }
 
-    @Operation(tags = "Events", summary = "Returns event by its Id")
-    @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = EventDto.class)))
-    @ApiResponse(responseCode = "404", description = "Event is not found", content = @Content(mediaType = "application/json"))
-    @GetMapping("/{eventId}")
-    public EventDto getEvent(@PathVariable UUID eventId) {
-        return getEvent(eventId, null);
-    }
-
     @Operation(tags = "Events", summary = "Returns list of feeds available to user by username resolved from JWT token"
             + ". The one which has isDefault=true is the one chosen by user to be displayed")
     @ApiResponse(responseCode = "200", description = "Successful operation",
