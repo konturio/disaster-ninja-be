@@ -3,6 +3,7 @@ package io.kontur.disasterninja.service.layers.providers;
 import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSearchParams;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
@@ -28,6 +29,7 @@ public class LayersApiProvider implements LayerProvider {
     private final LayersApiClient layersApiClient;
 
     @Override
+    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
     public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
         if (isUserAuthenticated()) {
             List<Layer> result = new ArrayList<>();

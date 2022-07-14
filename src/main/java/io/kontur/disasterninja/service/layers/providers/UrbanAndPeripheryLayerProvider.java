@@ -5,6 +5,7 @@ import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.domain.LayerSource;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
     private final InsightsApiGraphqlClient insightsApiClient;
 
     @Override
+    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
     public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
         if (searchParams.getBoundary() == null) {
             return CompletableFuture.completedFuture(Collections.emptyList());

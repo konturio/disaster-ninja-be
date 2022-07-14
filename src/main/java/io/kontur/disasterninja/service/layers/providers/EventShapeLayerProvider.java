@@ -6,6 +6,7 @@ import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.service.EventApiService;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.springframework.core.annotation.Order;
@@ -34,6 +35,7 @@ public class EventShapeLayerProvider implements LayerProvider {
     private final EventApiService eventApiService;
 
     @Override
+    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
     public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
         if (searchParams.getEventId() == null || searchParams.getEventFeed() == null) {
             return CompletableFuture.completedFuture(Collections.emptyList());
