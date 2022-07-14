@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.controller.exception;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -14,10 +15,13 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.BAD_GATEWAY;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
@@ -53,4 +57,15 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<>("Bad Gateway", BAD_GATEWAY); //no need to show any details to client
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex,
+                                                                     WebRequest request) {
+        Map<String, String> errors = new HashMap<>();
+
+        for (ConstraintViolation<?> v : ex.getConstraintViolations()) {
+            String prop = StringUtils.substringAfterLast(v.getPropertyPath().toString(), ".");
+            errors.put(prop, v.getMessage());
+        }
+        return new ResponseEntity<>(errors, BAD_REQUEST);
+    }
 }

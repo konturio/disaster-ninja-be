@@ -8,14 +8,17 @@ import io.prometheus.client.Summary;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/rum")
 public class MetricsController {
 
@@ -42,14 +45,15 @@ public class MetricsController {
 
     @Operation(summary = "RUM metrics push gateway", tags = {"Metrics"})
     @PostMapping("/metrics")
-    public ResponseEntity<?> writeMetrics(@RequestBody List<UserMetricDto> metrics) {
+    public ResponseEntity<?> writeMetrics(@RequestBody @Valid List<UserMetricDto> metrics) {
         if (CollectionUtils.isEmpty(metrics)) {
             return ResponseEntity.ok().build();
         }
         metrics.forEach(metric -> {
+            String appId = metric.getAppId() != null ? metric.getAppId().toString() : "null";
+            String userId = metric.getUserId() != null ? metric.getUserId().toString() : "null";
             if (UserMetricDto.UserMetricDtoType.SUMMARY.equals(metric.getType())) {
-                summary.labels(metric.getName(), metric.getAppId().toString(), metric.getUserId().toString())
-                        .observe(metric.getValue());
+                summary.labels(metric.getName(), appId, userId).observe(metric.getValue());
             }
         });
         return ResponseEntity.ok().build();
