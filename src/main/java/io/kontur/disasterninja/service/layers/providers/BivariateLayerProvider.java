@@ -6,6 +6,7 @@ import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.dto.BivariateStatisticDto;
 import io.kontur.disasterninja.dto.layer.ColorDto;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,7 @@ public class BivariateLayerProvider implements LayerProvider {
      * @return Bivariate layers from insights-api graphql api
      */
     @Override
+    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
     public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
         reloadLayersIfEmpty();
         return CompletableFuture.completedFuture(bivariateLayers.values().stream().toList());

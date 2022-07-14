@@ -7,6 +7,7 @@ import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.service.layers.LocalLayerConfigService;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,7 @@ public class OsmLayerProvider implements LayerProvider {
     }
 
     @Override
+    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
     public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
         if (searchParams.getBoundary() == null) {
             return CompletableFuture.completedFuture(Collections.emptyList());

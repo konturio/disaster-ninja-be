@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.kontur.disasterninja.dto.EventFeedDto;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
+import io.micrometer.core.annotation.Timed;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -96,6 +97,7 @@ public class EventApiClient extends RestClientWithBearerAuth {
         return response.getBody().data;
     }
 
+    @Timed(percentiles = {0.5, 0.75, 0.9, 0.99})
     public EventApiEventDto getEvent(UUID eventId, String eventApiFeed) {
         if (eventId == null) {
             return null;
