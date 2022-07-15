@@ -51,9 +51,14 @@ public class EventApiClient extends RestClientWithBearerAuth {
         return Optional.ofNullable(response.getBody()).orElseGet(List::of);
     }
 
-    public Optional<EventApiSearchEventResponse> getEvents(String eventApiFeed, OffsetDateTime after, List<BigDecimal> bbox, int pageSize) {
+    public Optional<EventApiSearchEventResponse> getEvents(String eventApiFeed, OffsetDateTime after, List<BigDecimal> bbox, int pageSize, SortOrder sortOrder) {
         String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed, pageSize);
-        uri += "&sortOrder=ASC";
+        if (sortOrder == null) {
+            uri += "&sortOrder=ASC";
+        } else {
+            uri += "&sortOrder=" + sortOrder;
+        }
+
         if (after != null) {
             uri += "&after=" + after.atZoneSameInstant(ZoneOffset.UTC)
                     .truncatedTo(ChronoUnit.MILLIS).format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
@@ -126,5 +131,10 @@ public class EventApiClient extends RestClientWithBearerAuth {
     public static class PageMetadata {
 
         private OffsetDateTime nextAfterValue;
+    }
+
+    public enum SortOrder {
+        ASC,
+        DESC
     }
 }

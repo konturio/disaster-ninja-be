@@ -35,12 +35,12 @@ public class EventApiService {
     public List<EventListDto> getEvents(String feed, List<BigDecimal> bbox) {
         OffsetDateTime after = OffsetDateTime.now().minusDays(4);
         Optional<EventApiClient.EventApiSearchEventResponse> eventsResponse = client.getEvents(feed, after, bbox,
-                pageSize);
+                pageSize, EventApiClient.SortOrder.ASC);
 
         List<EventApiEventDto> events = new ArrayList<>();
         if (eventsResponse.isEmpty() || eventsResponse.get().getData().size() < pageSize) {
             //in case of the amount of events in the last 4 days is less than pageSize than gather the latest 1000 events
-            events.addAll(client.getEvents(feed, null, bbox, pageSize)
+            events.addAll(client.getEvents(feed, null, bbox, pageSize, EventApiClient.SortOrder.DESC)
                     .orElse(new EventApiClient.EventApiSearchEventResponse())
                     .getData());
         } else {
@@ -48,7 +48,7 @@ public class EventApiService {
             after = eventsResponse.get().getPageMetadata().getNextAfterValue();
 
             while (true) {
-                eventsResponse = client.getEvents(feed, after, bbox, pageSize);
+                eventsResponse = client.getEvents(feed, after, bbox, pageSize, EventApiClient.SortOrder.ASC);
                 if (eventsResponse.isEmpty() || CollectionUtils.isEmpty(eventsResponse.get().getData())) {
                     break;
                 }

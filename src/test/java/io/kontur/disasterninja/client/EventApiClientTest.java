@@ -59,7 +59,7 @@ class EventApiClientTest extends TestDependingOnUserAuth {
                 });
 
         //when
-        Optional<EventApiClient.EventApiSearchEventResponse> events = client.getEvents("testFeedName", OffsetDateTime.now(), emptyList(), 1000);
+        Optional<EventApiClient.EventApiSearchEventResponse> events = client.getEvents("testFeedName", OffsetDateTime.now(), emptyList(), 1000, EventApiClient.SortOrder.ASC);
 
         //then
         verify(securityContext, times(1)).getAuthentication();
@@ -74,7 +74,7 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
                         matchesRegex(Pattern.compile(
                                 "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&episodeFilterType=LATEST" +
-                                        "&limit=1000&sortOrder=ASC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.?\\d{0,3}Z" +
+                                        "&limit=1000&sortOrder=DESC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.?\\d{0,3}Z" +
                                         "&bbox=1.1,2.2,3.3,4.4"))))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
@@ -88,7 +88,7 @@ class EventApiClientTest extends TestDependingOnUserAuth {
 
         //when
         Optional<EventApiClient.EventApiSearchEventResponse> events = client.getEvents("testFeedName", OffsetDateTime.now(),
-                Arrays.asList(new BigDecimal("1.1"), new BigDecimal("2.2"), new BigDecimal("3.3"), new BigDecimal("4.4")), 1000);
+                Arrays.asList(new BigDecimal("1.1"), new BigDecimal("2.2"), new BigDecimal("3.3"), new BigDecimal("4.4")), 1000, EventApiClient.SortOrder.DESC);
 
         //then
         verify(securityContext, times(1)).getAuthentication();
@@ -116,7 +116,7 @@ class EventApiClientTest extends TestDependingOnUserAuth {
 
         //when
         Optional<EventApiClient.EventApiSearchEventResponse> events = client.getEvents("testFeedName", null,
-                Arrays.asList(new BigDecimal("1.1"), new BigDecimal("2.2"), new BigDecimal("3.3"), new BigDecimal("4.4")), 1000);
+                Arrays.asList(new BigDecimal("1.1"), new BigDecimal("2.2"), new BigDecimal("3.3"), new BigDecimal("4.4")), 1000, null);
 
         //then
         verify(securityContext, times(1)).getAuthentication();
