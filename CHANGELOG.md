@@ -5,12 +5,24 @@
 #### Added
 
 #### Changed
+
+#### Removed
+
+#### Installation sequence
+
+
+## Release 0.12.0 - 2022-07-18
+
+#### Added
+
+#### Changed
 - #11041 Add endpoint for RUM metrics
 - #11053 Add bbox filter to event search endpoint
 
 #### Removed
 
 #### Installation sequence
+
 
 
 ## Release 0.11.0 - 2022-06-08
