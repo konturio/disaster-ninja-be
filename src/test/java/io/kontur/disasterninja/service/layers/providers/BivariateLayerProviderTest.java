@@ -36,10 +36,12 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
                         " 2021-11-06T20:59:29Z",
                 new BivariateLayerLegendQuery.X("Axis", "OSM objects (n/km²)", steps(0d, 1d, 2d, 1000d,
                         "label1", "label2", "label3", "label4"),
-                        List.of("count", "area_km2")),
+                        List.of(new BivariateLayerLegendQuery.Quotient("Quotient", "count", "OSM Objects", List.of()),
+                                new BivariateLayerLegendQuery.Quotient("Quotient", "area_km2", "Area", List.of()))),
                 new BivariateLayerLegendQuery.Y("Axis", "Population (ppl/km²)", steps1(0d, 10d, 20d, 10000d,
                         "label11", "label12", "label13", "label14"),
-                        List.of("population", "area_km2")),
+                        List.of(new BivariateLayerLegendQuery.Quotient1("Quotient", "population", "Population", List.of()),
+                                new BivariateLayerLegendQuery.Quotient1("Quotient", "area_km2", "Area", List.of()))),
                 List.of(new BivariateLayerLegendQuery.Color("OverlayColor", "A1", "rgb(111,232,157)"),
                         new BivariateLayerLegendQuery.Color("OverlayColor", "A2", "rgb(222,232,157)"),
                         new BivariateLayerLegendQuery.Color("OverlayColor", "A3", "rgb(333,232,157)"),
@@ -110,8 +112,8 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         //axisX
         BivariateLegendAxisDescription x = biv.getLegend().getAxes().getX();
         assertEquals("OSM objects (n/km²)", x.getLabel());
-        assertEquals(2, x.getQuotient().size());
-        assertEquals(2, x.getQuotient().stream().filter(q -> q.equals("count") || q.equals("area_km2")).count());
+        assertEquals(2, x.getQuotients().size());
+        assertEquals(2, x.getQuotients().stream().filter(q -> "count".equals(q.getName()) || "area_km2".equals(q.getName())).count());
         assertEquals(4, x.getSteps().stream().filter(q -> (q.getValue().equals(0d) && (q.getLabel().equals("label1")))
                 || (q.getValue().equals(1d) && q.getLabel().equals("label2")) || (q.getValue()
                 .equals(2d) && q.getLabel().equals("label3"))
@@ -121,8 +123,8 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         //axisY
         BivariateLegendAxisDescription y = biv.getLegend().getAxes().getY();
         assertEquals("Population (ppl/km²)", y.getLabel());
-        assertEquals(2, y.getQuotient().size());
-        assertEquals(2, y.getQuotient().stream().filter(q -> q.equals("population") || q.equals("area_km2")).count());
+        assertEquals(2, y.getQuotients().size());
+        assertEquals(2, y.getQuotients().stream().filter(q -> "population".equals(q.getName()) || "area_km2".equals(q.getName())).count());
         assertEquals(4, y.getSteps().stream().filter(q -> (q.getValue().equals(0d) && q.getLabel().equals("label11"))
                 || (q.getValue().equals(10d) && q.getLabel().equals("label12")) || (q.getValue()
                 .equals(20d) && q.getLabel().equals("label13"))
