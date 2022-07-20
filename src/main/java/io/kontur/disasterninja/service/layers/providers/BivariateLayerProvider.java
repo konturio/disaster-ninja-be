@@ -154,6 +154,7 @@ public class BivariateLayerProvider implements LayerProvider {
                 xAxis.setSteps(steps);
             }
             xAxis.setLabel(x.label());
+            xAxis.setQuotient(x.quotient());
 
             if (x.quotients() != null) {
                 List<BivariateLegendQuotient> quotients = requireNonNull(x.quotients()).stream()
@@ -180,6 +181,7 @@ public class BivariateLayerProvider implements LayerProvider {
             }
 
             yAxis.setLabel(y.label());
+            yAxis.setQuotient(y.quotient());
 
             if (y.quotients() != null) {
                 List<BivariateLegendQuotient> quotients = requireNonNull(y.quotients()).stream()

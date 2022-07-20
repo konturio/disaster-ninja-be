@@ -16,7 +16,8 @@ query BivariateLayerLegend($polygon: GeoJSON) {
                         name,
                         label,
                         direction
-                    }
+                    },
+                    quotient
                 },
                 y {
                     label,
@@ -28,7 +29,8 @@ query BivariateLayerLegend($polygon: GeoJSON) {
                         name,
                         label,
                         direction
-                    }
+                    },
+                    quotient
                 },
                 colors {
                     id,
