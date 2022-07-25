@@ -27,6 +27,7 @@ import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -226,7 +227,8 @@ class EventApiServiceTest {
         pageMetadata.setNextAfterValue(now);
         eventResponse.setPageMetadata(pageMetadata);
 
-        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(3), eq(EventApiClient.SortOrder.ASC))).thenReturn(Optional.of(eventResponse));
+        OffsetDateTime hourTrimmedDate = OffsetDateTime.now().minusDays(4).truncatedTo(ChronoUnit.HOURS);
+        when(client.getEvents(eq("feed"), argThat(date -> date.isEqual(hourTrimmedDate)), isNull(), eq(3), eq(EventApiClient.SortOrder.ASC))).thenReturn(Optional.of(eventResponse));
 
         EventApiClient.EventApiSearchEventResponse eventResponse2 = new EventApiClient.EventApiSearchEventResponse();
         eventResponse2.setData(List.of(factory.manufacturePojo(EventApiEventDto.class)));

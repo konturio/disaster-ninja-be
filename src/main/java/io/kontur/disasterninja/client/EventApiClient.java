@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -60,8 +59,7 @@ public class EventApiClient extends RestClientWithBearerAuth {
         }
 
         if (after != null) {
-            uri += "&after=" + after.atZoneSameInstant(ZoneOffset.UTC)
-                    .truncatedTo(ChronoUnit.MILLIS).format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
+            uri += "&after=" + after.atZoneSameInstant(ZoneOffset.UTC).format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
         }
         if (!CollectionUtils.isEmpty(bbox)) {
             uri += "&bbox=" + StringUtils.join(bbox, ",");
