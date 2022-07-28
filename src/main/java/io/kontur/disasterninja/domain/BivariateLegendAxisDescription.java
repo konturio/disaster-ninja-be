@@ -20,4 +20,8 @@ public class BivariateLegendAxisDescription {
     private List<BivariateLegendQuotient> quotients;
 
     private List<BivariateLegendAxisStep> steps;
+
+    private Double quality;
+
+    private List<String> parent;
 }

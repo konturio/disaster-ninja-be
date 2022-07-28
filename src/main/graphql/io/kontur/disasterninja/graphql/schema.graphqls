@@ -4,6 +4,7 @@ type Axis {
   quality: Float
   quotient: [String]
   quotients: [Quotient]
+  parent: [String]
 }
 
 type BivariateStatistic {
@@ -99,6 +100,8 @@ type PolygonCorrelationRate {
   rate: Float
   quality: Float
   correlation: Float
+  avgCorrelationX: Float
+  avgCorrelationY: Float
 }
 
 type Analytics {
@@ -141,6 +144,7 @@ input PolygonStatisticRequest {
   polygonV2: GeoJSON
   xNumeratorList: [String]
   yNumeratorList: [String]
+  importantLayers: [[String]]
 }
 
 type Population {

@@ -4,10 +4,12 @@ import com.apollographql.apollo.exception.ApolloException;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.domain.BivariateLegendAxisDescription;
 import io.kontur.disasterninja.domain.Layer;
-import io.kontur.disasterninja.dto.BivariateStatisticDto;
+import io.kontur.disasterninja.dto.bivariatestatistic.BivariateStatisticDto;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
+import io.kontur.disasterninja.mapper.BivariateStatisticMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -27,6 +29,8 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
 
     @MockBean
     InsightsApiGraphqlClient insightsApiGraphqlClient;
+
+    BivariateStatisticMapper mapper = Mappers.getMapper(BivariateStatisticMapper.class);
 
     @BeforeEach
     private void init() {
@@ -66,8 +70,8 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
                         List.of("copyrights1", "copyrights2")));
 
         BivariateStatisticDto dto = BivariateStatisticDto.builder()
-                .overlays(List.of(overlay))
-                .indicators(indicators)
+                .overlays(mapper.bivariateLayerLegendQueryOverlayListToOverlayDtoList(List.of(overlay)))
+                .indicators(mapper.bivariateLayerLegendQueryIndicatorListToIndicatorDtoList(indicators))
                 .build();
 
         Mockito.when(insightsApiGraphqlClient.getBivariateStatistic()).thenReturn(CompletableFuture
