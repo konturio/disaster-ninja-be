@@ -3,6 +3,7 @@ type Axis {
   steps: [Step]
   quality: Float
   quotient: [String]
+  quotients: [Quotient]
 }
 
 type BivariateStatistic {
@@ -179,6 +180,12 @@ type UrbanCore {
 type Query {
   allStatistic(defaultParam: Int): Statistic
   polygonStatistic(polygonStatisticRequest: PolygonStatisticRequest): PolygonStatistic
+}
+
+type Quotient {
+  name: String
+  label: String
+  direction: [[String]]
 }
 
 schema {

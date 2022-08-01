@@ -12,6 +12,11 @@ query BivariateLayerLegend($polygon: GeoJSON) {
                         label,
                         value
                     },
+                    quotients {
+                        name,
+                        label,
+                        direction
+                    },
                     quotient
                 },
                 y {
@@ -19,6 +24,11 @@ query BivariateLayerLegend($polygon: GeoJSON) {
                     steps {
                         label,
                         value
+                    },
+                    quotients {
+                        name,
+                        label,
+                        direction
                     },
                     quotient
                 },
