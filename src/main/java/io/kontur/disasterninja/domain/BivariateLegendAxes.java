@@ -13,7 +13,7 @@ import lombok.extern.jackson.Jacksonized;
 @NoArgsConstructor
 public class BivariateLegendAxes {
 
-    private BivariateLegendAxisDescription x;
+    private BivariateLegendAxisDescriptionForOverlay x;
 
-    private BivariateLegendAxisDescription y;
+    private BivariateLegendAxisDescriptionForOverlay y;
 }

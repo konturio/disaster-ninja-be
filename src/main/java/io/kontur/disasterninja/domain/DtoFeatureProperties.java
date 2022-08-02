@@ -21,6 +21,7 @@ public class DtoFeatureProperties {
     public static final String TEXT = "text";
     public static final String MIN_ZOOM = "min_zoom";
     public static final String MAX_ZOOM = "max_zoom";
+    public static final String COLOR_COMMENT = "color_comment";
 
     public static final String PRIVACY_POLICY_URL = "privacy_policy_url";
     public static final String START_DATE = "start_date";

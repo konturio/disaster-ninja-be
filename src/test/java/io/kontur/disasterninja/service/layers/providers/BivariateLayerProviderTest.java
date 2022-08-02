@@ -3,11 +3,14 @@ package io.kontur.disasterninja.service.layers.providers;
 import com.apollographql.apollo.exception.ApolloException;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.domain.BivariateLegendAxisDescription;
+import io.kontur.disasterninja.domain.BivariateLegendAxisDescriptionForOverlay;
 import io.kontur.disasterninja.domain.Layer;
-import io.kontur.disasterninja.dto.BivariateStatisticDto;
+import io.kontur.disasterninja.dto.bivariatematrix.BivariateStatisticDto;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
+import io.kontur.disasterninja.mapper.BivariateStatisticMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -27,6 +30,8 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
 
     @MockBean
     InsightsApiGraphqlClient insightsApiGraphqlClient;
+
+    BivariateStatisticMapper mapper = Mappers.getMapper(BivariateStatisticMapper.class);
 
     @BeforeEach
     private void init() {
@@ -66,8 +71,8 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
                         List.of("copyrights1", "copyrights2")));
 
         BivariateStatisticDto dto = BivariateStatisticDto.builder()
-                .overlays(List.of(overlay))
-                .indicators(indicators)
+                .overlays(mapper.bivariateLayerLegendQueryOverlayListToOverlayDtoList(List.of(overlay)))
+                .indicators(mapper.bivariateLayerLegendQueryIndicatorListToIndicatorDtoList(indicators))
                 .build();
 
         Mockito.when(insightsApiGraphqlClient.getBivariateStatistic()).thenReturn(CompletableFuture
@@ -112,10 +117,12 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         assertNotNull(biv.getLegend().getAxes());
 
         //axisX
-        BivariateLegendAxisDescription x = biv.getLegend().getAxes().getX();
+        BivariateLegendAxisDescriptionForOverlay x = biv.getLegend().getAxes().getX();
         assertEquals("OSM objects (n/km²)", x.getLabel());
         assertEquals(2, x.getQuotients().size());
         assertEquals(2, x.getQuotients().stream().filter(q -> "count".equals(q.getName()) || "area_km2".equals(q.getName())).count());
+        assertEquals(2, x.getQuotient().size());
+        assertEquals(2, x.getQuotient().stream().filter(q -> "count".equals(q) || "area_km2".equals(q)).count());
         assertEquals(4, x.getSteps().stream().filter(q -> (q.getValue().equals(0d) && (q.getLabel().equals("label1")))
                 || (q.getValue().equals(1d) && q.getLabel().equals("label2")) || (q.getValue()
                 .equals(2d) && q.getLabel().equals("label3"))
@@ -123,10 +130,12 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
 
 
         //axisY
-        BivariateLegendAxisDescription y = biv.getLegend().getAxes().getY();
+        BivariateLegendAxisDescriptionForOverlay y = biv.getLegend().getAxes().getY();
         assertEquals("Population (ppl/km²)", y.getLabel());
         assertEquals(2, y.getQuotients().size());
         assertEquals(2, y.getQuotients().stream().filter(q -> "population".equals(q.getName()) || "area_km2".equals(q.getName())).count());
+        assertEquals(2, y.getQuotient().size());
+        assertEquals(2, y.getQuotient().stream().filter(q -> "population".equals(q) || "area_km2".equals(q)).count());
         assertEquals(4, y.getSteps().stream().filter(q -> (q.getValue().equals(0d) && q.getLabel().equals("label11"))
                 || (q.getValue().equals(10d) && q.getLabel().equals("label12")) || (q.getValue()
                 .equals(20d) && q.getLabel().equals("label13"))

@@ -9,19 +9,18 @@ import com.apollographql.apollo.exception.ApolloHttpException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
-import io.kontur.disasterninja.dto.BivariateStatisticDto;
-import io.kontur.disasterninja.graphql.AdvancedAnalyticalPanelQuery;
-import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
-import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
-import io.kontur.disasterninja.graphql.HumanitarianImpactQuery;
+import io.kontur.disasterninja.dto.bivariatematrix.*;
+import io.kontur.disasterninja.graphql.*;
 import io.kontur.disasterninja.graphql.type.AdvancedAnalyticsRequest;
 import io.kontur.disasterninja.graphql.type.FunctionArgs;
+import io.kontur.disasterninja.mapper.BivariateStatisticMapper;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.SimpleTimer;
 import io.prometheus.client.Summary;
 import org.jetbrains.annotations.NotNull;
+import org.mapstruct.factory.Mappers;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -38,6 +37,7 @@ import java.util.concurrent.CompletableFuture;
 public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
 
     private final ApolloClient apolloClient;
+    private final BivariateStatisticMapper mapper = Mappers.getMapper(BivariateStatisticMapper.class);
     private final static String SUCCESS = "SUCCESS";
     private final static String FAILED = "FAILED";
     private final Summary metrics; //todo use histogram once we know which buckets to use
@@ -163,12 +163,55 @@ public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
                                 response.getData().polygonStatistic().bivariateStatistic().overlays() != null &&
                                 response.getData().polygonStatistic().bivariateStatistic().indicators() != null) {
                             BivariateStatisticDto bivariateStatisticDto = BivariateStatisticDto.builder()
-                                    .overlays(response.getData().polygonStatistic().bivariateStatistic().overlays())
-                                    .indicators(response.getData().polygonStatistic().bivariateStatistic().indicators())
+                                    .overlays(mapper.bivariateLayerLegendQueryOverlayListToOverlayDtoList(
+                                            response.getData().polygonStatistic().bivariateStatistic().overlays()))
+                                    .indicators(mapper.bivariateLayerLegendQueryIndicatorListToIndicatorDtoList(
+                                            response.getData().polygonStatistic().bivariateStatistic().indicators()))
                                     .build();
                             future.complete(bivariateStatisticDto);
                         }
                         future.complete(new BivariateStatisticDto());
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull ApolloException e) {
+                        observeMetricsAndCompleteExceptionally(e, future, timer);
+                    }
+                });
+        return future;
+    }
+
+    @Override
+    public CompletableFuture<BivariateMatrixDto> getBivariateMatrix(GeoJSON geoJSON, List<List<String>> importantLayers) {
+        CompletableFuture<BivariateMatrixDto> future = new CompletableFuture<>();
+        SimpleTimer timer = new SimpleTimer();
+        apolloClient
+                .query(new BivariateMatrixQuery(Input.optional(geoJSON), Input.optional(importantLayers)))
+                .enqueue(new ApolloCall.Callback<>() {
+                    @Override
+                    public void onResponse(@NotNull Response<BivariateMatrixQuery.Data> response) {
+                        metrics.labels(SUCCESS, "200").observe(timer.elapsedSeconds());
+
+                        if (response.getData() != null &&
+                                response.getData().polygonStatistic() != null &&
+                                response.getData().polygonStatistic().bivariateStatistic() != null) {
+                            BivariateMatrixDto bivariateMatrixDto = new BivariateMatrixDto(
+                                    new BivariateMatrixGraphqlResponseDataDto(
+                                            new PolygonStatisticDto(BivariateStatisticDto.builder()
+                                                    .axis(mapper.bivariateMatrixQueryAxisListToBivariateLegendAxisDescriptionList(
+                                                            response.getData().polygonStatistic().bivariateStatistic().axis()))
+                                                    .meta(mapper.bivariateMatrixQueryMetaToMetaDto(
+                                                            response.getData().polygonStatistic().bivariateStatistic().meta()))
+                                                    .indicators(mapper.bivariateMatrixQueryIndicatorListToIndicatorDtoList(
+                                                            response.getData().polygonStatistic().bivariateStatistic().indicators()))
+                                                    .correlationRates(mapper.bivariateMatrixQueryCorrelationRateListToCorrelationRateDtoList(
+                                                            response.getData().polygonStatistic().bivariateStatistic().correlationRates()))
+                                                    .colors(mapper.bivariateMatrixQueryColorsToColorsDto(
+                                                            response.getData().polygonStatistic().bivariateStatistic().colors()))
+                                                    .build())));
+                            future.complete(bivariateMatrixDto);
+                        }
+                        future.complete(new BivariateMatrixDto());
                     }
 
                     @Override

@@ -41,6 +41,10 @@ dependencies {
     implementation 'io.micrometer:micrometer-registry-prometheus:1.9.0'
 
     implementation 'junit:junit:4.13.2'
+    implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.2.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.2.Final'
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'commons-io:commons-io:2.11.0'
     testImplementation 'org.hamcrest:hamcrest:2.2'

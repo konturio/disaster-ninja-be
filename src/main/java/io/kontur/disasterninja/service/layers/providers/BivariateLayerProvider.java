@@ -3,9 +3,10 @@ package io.kontur.disasterninja.service.layers.providers;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.domain.*;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
-import io.kontur.disasterninja.dto.BivariateStatisticDto;
+import io.kontur.disasterninja.dto.bivariatematrix.BivariateStatisticDto;
+import io.kontur.disasterninja.dto.bivariatematrix.IndicatorDto;
+import io.kontur.disasterninja.dto.bivariatematrix.OverlayDto;
 import io.kontur.disasterninja.dto.layer.ColorDto;
-import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
 import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -100,8 +101,7 @@ public class BivariateLayerProvider implements LayerProvider {
         }
     }
 
-    protected Layer fromOverlay(BivariateLayerLegendQuery.Overlay overlay,
-                                List<BivariateLayerLegendQuery.Indicator> indicators) {
+    protected Layer fromOverlay(OverlayDto overlay, List<IndicatorDto> indicators) {
         if (overlay == null) {
             return null;
         }
@@ -110,9 +110,9 @@ public class BivariateLayerProvider implements LayerProvider {
         List<String> copyrights = copyrightsFromIndicators(legend, indicators);
 
         return Layer.builder()
-                .id(getIdWithPrefix(overlay.name()))
-                .name(overlay.name())
-                .description(overlay.description())
+                .id(getIdWithPrefix(overlay.getName()))
+                .name(overlay.getName())
+                .description(overlay.getDescription())
                 .source(LayerSource.builder()
                         .type(VECTOR)
                         .urls(List.of("api/tiles/bivariate/v1/{z}/{x}/{y}.mvt?indicatorsClass=general"))
@@ -127,7 +127,7 @@ public class BivariateLayerProvider implements LayerProvider {
                 .displayLegendIfNoFeaturesExist(true)
                 .category(LayerCategory.OVERLAY)
                 .group("bivariate")
-                .orderIndex(overlay.order())
+                .orderIndex(overlay.getOrder())
                 .build();
     }
 
@@ -135,68 +135,68 @@ public class BivariateLayerProvider implements LayerProvider {
         return LAYER_PREFIX + id;
     }
 
-    private Legend bivariateLegendFromOverlay(BivariateLayerLegendQuery.Overlay overlay) {
+    private Legend bivariateLegendFromOverlay(OverlayDto overlay) {
         if (overlay == null) {
             return null;
         }
 
         //AXIS 1
-        BivariateLegendAxisDescription xAxis = new BivariateLegendAxisDescription();
-        BivariateLayerLegendQuery.X x = overlay.x();
+        BivariateLegendAxisDescriptionForOverlay xAxis = new BivariateLegendAxisDescriptionForOverlay();
+        BivariateLegendAxisDescriptionForOverlay x = overlay.getX();
         if (x != null) {
-            if (x.steps() != null) {
-                List<BivariateLegendAxisStep> steps = requireNonNull(x.steps()).stream()
+            if (x.getSteps() != null) {
+                List<BivariateLegendAxisStep> steps = requireNonNull(x.getSteps()).stream()
                         .map(step -> BivariateLegendAxisStep.builder()
-                                .value(step.value())
-                                .label(step.label())
+                                .value(step.getValue())
+                                .label(step.getLabel())
                                 .build())
                         .toList();
                 xAxis.setSteps(steps);
             }
-            xAxis.setLabel(x.label());
-            xAxis.setQuotient(x.quotient());
+            xAxis.setLabel(x.getLabel());
+            xAxis.setQuotient(x.getQuotient());
 
-            if (x.quotients() != null) {
-                List<BivariateLegendQuotient> quotients = requireNonNull(x.quotients()).stream()
+            if (x.getQuotients() != null) {
+                List<BivariateLegendQuotient> quotients = requireNonNull(x.getQuotients()).stream()
                         .map(quotient -> BivariateLegendQuotient.builder()
-                                .name(quotient.name())
-                                .label(quotient.label())
-                                .direction(quotient.direction())
+                                .name(quotient.getName())
+                                .label(quotient.getLabel())
+                                .direction(quotient.getDirection())
                                 .build())
                         .toList();
                 xAxis.setQuotients(quotients);
             }
         }
         //AXIS 2
-        BivariateLegendAxisDescription yAxis = new BivariateLegendAxisDescription();
-        BivariateLayerLegendQuery.Y y = overlay.y();
+        BivariateLegendAxisDescriptionForOverlay yAxis = new BivariateLegendAxisDescriptionForOverlay();
+        BivariateLegendAxisDescriptionForOverlay y = overlay.getY();
         if (y != null) {
-            if (y.steps() != null) {
-                List<BivariateLegendAxisStep> steps = requireNonNull(y.steps()).stream()
+            if (y.getSteps() != null) {
+                List<BivariateLegendAxisStep> steps = requireNonNull(y.getSteps()).stream()
                         .map(step1 -> BivariateLegendAxisStep.builder()
-                                .value(step1.value())
-                                .label(step1.label())
+                                .value(step1.getValue())
+                                .label(step1.getLabel())
                                 .build()).toList();
                 yAxis.setSteps(steps);
             }
 
-            yAxis.setLabel(y.label());
-            yAxis.setQuotient(y.quotient());
+            yAxis.setLabel(y.getLabel());
+            yAxis.setQuotient(y.getQuotient());
 
-            if (y.quotients() != null) {
-                List<BivariateLegendQuotient> quotients = requireNonNull(y.quotients()).stream()
+            if (y.getQuotients() != null) {
+                List<BivariateLegendQuotient> quotients = requireNonNull(y.getQuotients()).stream()
                         .map(quotient -> BivariateLegendQuotient.builder()
-                                .name(quotient.name())
-                                .label(quotient.label())
-                                .direction(quotient.direction())
+                                .name(quotient.getName())
+                                .label(quotient.getLabel())
+                                .direction(quotient.getDirection())
                                 .build())
                         .toList();
                 yAxis.setQuotients(quotients);
             }
         }
         //colors matrix
-        List<ColorDto> colors = requireNonNull(overlay.colors()).stream()
-                .map(c -> new ColorDto(c.id(), c.color()))
+        List<ColorDto> colors = requireNonNull(overlay.getColors()).stream()
+                .map(c -> new ColorDto(c.getId(), c.getColor()))
                 .collect(Collectors.toList());
 
         return Legend.builder()
@@ -209,7 +209,7 @@ public class BivariateLayerProvider implements LayerProvider {
                 .build();
     }
 
-    private List<String> copyrightsFromIndicators(Legend legend, List<BivariateLayerLegendQuery.Indicator> indicators) {
+    private List<String> copyrightsFromIndicators(Legend legend, List<IndicatorDto> indicators) {
         Set<BivariateLegendQuotient> quotients = new HashSet<>();
         quotients.addAll(legend.getAxes().getX().getQuotients());
         quotients.addAll(legend.getAxes().getY().getQuotients());
@@ -217,9 +217,9 @@ public class BivariateLayerProvider implements LayerProvider {
         Set<String> copyrights = new HashSet<>();
         quotients.forEach(q ->
                 indicators.stream()
-                        .filter(indicator -> Objects.equals(indicator.name(), q.getName()))
+                        .filter(indicator -> Objects.equals(indicator.getName(), q.getName()))
                         .findFirst()
-                        .map(BivariateLayerLegendQuery.Indicator::copyrights)
+                        .map(IndicatorDto::getCopyrights)
                         .orElseGet(ArrayList::new)
                         .stream()
                         .map(str -> URL_SEARCH_PATTERN.matcher(str)
