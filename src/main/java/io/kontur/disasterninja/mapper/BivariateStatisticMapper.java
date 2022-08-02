@@ -184,6 +184,6 @@ public interface BivariateStatisticMapper {
 
     @Mapping(target = "color", expression = "java(bivariateMatrixQueryCombination.color())")
     @Mapping(target = "corner", expression = "java(bivariateMatrixQueryCombination.corner())")
-    @Mapping(target = "color_comment", expression = "java(bivariateMatrixQueryCombination.color_comment())")
+    @Mapping(target = "colorComment", expression = "java(bivariateMatrixQueryCombination.color_comment())")
     CombinationDto bivariateMatrixQueryCombinationToCombinationDto(BivariateMatrixQuery.Combination bivariateMatrixQueryCombination);
 }
