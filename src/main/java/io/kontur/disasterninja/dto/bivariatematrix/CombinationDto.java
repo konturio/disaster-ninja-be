@@ -6,12 +6,14 @@ import lombok.Data;
 
 import java.util.List;
 
+import static io.kontur.disasterninja.domain.DtoFeatureProperties.COLOR_COMMENT;
+
 @Data
 @JsonInclude
 public class CombinationDto {
 
     private String color;
     private List<String> corner;
-    @JsonProperty("color_comment")
+    @JsonProperty(COLOR_COMMENT)
     private String colorComment;
 }

@@ -127,8 +127,8 @@ public interface BivariateStatisticMapper {
     @Mapping(target = "label", expression = "java(step.label())")
     BivariateLegendAxisStep bivariateMatrixQueryStepToBivariateLegendAxisStep(BivariateMatrixQuery.Step step);
 
-    @Mapping(target = "min_zoom", expression = "java(bivariateMatrixQueryMeta.min_zoom())")
-    @Mapping(target = "max_zoom", expression = "java(bivariateMatrixQueryMeta.max_zoom())")
+    @Mapping(target = "minZoom", expression = "java(bivariateMatrixQueryMeta.min_zoom())")
+    @Mapping(target = "maxZoom", expression = "java(bivariateMatrixQueryMeta.max_zoom())")
     MetaDto bivariateMatrixQueryMetaToMetaDto(BivariateMatrixQuery.Meta bivariateMatrixQueryMeta);
 
     List<CorrelationRateDto> bivariateMatrixQueryCorrelationRateListToCorrelationRateDtoList(
