@@ -14,6 +14,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
@@ -47,7 +48,7 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
                         matchesRegex(Pattern.compile(
                                 "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&episodeFilterType=LATEST" +
-                                        "&limit=1000&sortOrder=ASC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.?\\d{0,3}Z"))))
+                                        "&limit=1000&sortOrder=ASC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.\\d+Z"))))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
                 .andRespond(r -> {
@@ -68,13 +69,41 @@ class EventApiClientTest extends TestDependingOnUserAuth {
     }
 
     @Test
+    public void testGetEventsTruncateAfterToHours() {
+        //given
+        givenJwtTokenIs(getUserToken());
+        server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
+                        matchesRegex(Pattern.compile(
+                                "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&episodeFilterType=LATEST" +
+                                        "&limit=1000&sortOrder=ASC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:00:00Z"))))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andRespond(r -> {
+                    if (r.getURI().toString().contains("2021-09-28T14:46")) { //last page
+                        return withNoContent().createResponse(r);
+                    }
+                    return withSuccess(readFile(this, "EventApiClientTest.testGetEvents.response.json"),
+                            MediaType.APPLICATION_JSON).createResponse(r);
+                });
+
+        //when
+        Optional<EventApiClient.EventApiSearchEventResponse> events = client.getEvents("testFeedName", OffsetDateTime.now().truncatedTo(
+                ChronoUnit.HOURS), emptyList(), 1000, EventApiClient.SortOrder.ASC);
+
+        //then
+        verify(securityContext, times(1)).getAuthentication();
+        assertTrue(events.isPresent());
+        assertEquals(2, events.get().getData().size());
+    }
+
+    @Test
     public void testGetEventsWithBbox() {
         //given
         givenJwtTokenIs(getUserToken());
         server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
                         matchesRegex(Pattern.compile(
                                 "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&episodeFilterType=LATEST" +
-                                        "&limit=1000&sortOrder=DESC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.?\\d{0,3}Z" +
+                                        "&limit=1000&sortOrder=DESC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.\\d+Z" +
                                         "&bbox=1.1,2.2,3.3,4.4"))))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))

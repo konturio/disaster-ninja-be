@@ -15,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static java.util.Comparator.naturalOrder;
@@ -33,7 +34,7 @@ public class EventApiService {
     }
 
     public List<EventListDto> getEvents(String feed, List<BigDecimal> bbox) {
-        OffsetDateTime after = OffsetDateTime.now().minusDays(4);
+        OffsetDateTime after = OffsetDateTime.now().minusDays(4).truncatedTo(ChronoUnit.HOURS);
         Optional<EventApiClient.EventApiSearchEventResponse> eventsResponse = client.getEvents(feed, after, bbox,
                 pageSize, EventApiClient.SortOrder.ASC);
 
