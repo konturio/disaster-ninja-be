@@ -18,7 +18,7 @@ import org.wololo.geojson.GeoJSON;
 
 import java.util.List;
 
-@Tag(name = "Advanced Analytics tab", description = "Advanced Analytics panel API")
+@Tag(name = "Advanced Analytics Tab", description = "Advanced Analytics Panel API")
 @RestController
 @RequestMapping("/advanced_polygon_details")
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class AdvancedAnalyticsPanelController {
     private final AdvancedAnalyticsPanelService advancedAnalyticsPanelService;
 
     @Operation(summary = "Calculate data for advanced analytics panel using insights-api service",
-            tags = {"Analytics tab"},
+            tags = {"Advanced Analytics Tab"},
             description = "Calculate advanced analytics to test the concept of getting analytical data automatically so analytical data makes sense.")
     @ApiResponse(responseCode = "200", description = "Successful operation",
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AdvancedAnalyticsDto.class))))
@@ -38,7 +38,7 @@ public class AdvancedAnalyticsPanelController {
     }
 
     @Operation(summary = "Calculate data for advanced analytics panel using insights-api service",
-            tags = {"Analytics tab"},
+            tags = {"Advanced Analytics Tab"},
             description = "Calculate advanced analytics to test the concept of getting analytical data automatically so analytical data makes sense.")
     @ApiResponse(responseCode = "200", description = "Successful operation",
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AdvancedAnalyticsDto.class))))
