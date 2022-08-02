@@ -3,9 +3,9 @@ package io.kontur.disasterninja.service.layers.providers;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.domain.*;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
-import io.kontur.disasterninja.dto.bivariatestatistic.BivariateStatisticDto;
-import io.kontur.disasterninja.dto.bivariatestatistic.IndicatorDto;
-import io.kontur.disasterninja.dto.bivariatestatistic.OverlayDto;
+import io.kontur.disasterninja.dto.bivariatematrix.BivariateStatisticDto;
+import io.kontur.disasterninja.dto.bivariatematrix.IndicatorDto;
+import io.kontur.disasterninja.dto.bivariatematrix.OverlayDto;
 import io.kontur.disasterninja.dto.layer.ColorDto;
 import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
@@ -141,8 +141,8 @@ public class BivariateLayerProvider implements LayerProvider {
         }
 
         //AXIS 1
-        BivariateLegendAxisDescription xAxis = new BivariateLegendAxisDescription();
-        BivariateLegendAxisDescription x = overlay.getX();
+        BivariateLegendAxisDescriptionForOverlay xAxis = new BivariateLegendAxisDescriptionForOverlay();
+        BivariateLegendAxisDescriptionForOverlay x = overlay.getX();
         if (x != null) {
             if (x.getSteps() != null) {
                 List<BivariateLegendAxisStep> steps = requireNonNull(x.getSteps()).stream()
@@ -168,8 +168,8 @@ public class BivariateLayerProvider implements LayerProvider {
             }
         }
         //AXIS 2
-        BivariateLegendAxisDescription yAxis = new BivariateLegendAxisDescription();
-        BivariateLegendAxisDescription y = overlay.getY();
+        BivariateLegendAxisDescriptionForOverlay yAxis = new BivariateLegendAxisDescriptionForOverlay();
+        BivariateLegendAxisDescriptionForOverlay y = overlay.getY();
         if (y != null) {
             if (y.getSteps() != null) {
                 List<BivariateLegendAxisStep> steps = requireNonNull(y.getSteps()).stream()

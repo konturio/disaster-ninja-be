@@ -1,7 +1,7 @@
 package io.kontur.disasterninja.service;
 
 import io.kontur.disasterninja.client.InsightsApiGraphqlClientImpl;
-import io.kontur.disasterninja.dto.bivariatestatistic.*;
+import io.kontur.disasterninja.dto.bivariatematrix.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class BivariateMatrixServiceTest {
@@ -49,18 +50,23 @@ public class BivariateMatrixServiceTest {
 
         List<OverlayDto> overlays = List.of(overlayDto);
 
-        BivariateStatisticDto bivariateStatisticDto = new BivariateStatisticDto(
-                overlays, List.of(), List.of(), new MetaDto(), List.of(), new ColorsDto());
+        BivariateMatrixDto bivariateMatrixDto = new BivariateMatrixDto(
+                new BivariateMatrixGraphqlResponseDataDto(
+                        new PolygonStatisticDto(
+                                new BivariateStatisticDto(List.of(), new MetaDto(), List.of(),
+                                        overlays, List.of(), new ColorsDto()))
+                        )
+                );
 
 
         when(insightsApiGraphqlClient.getBivariateMatrix(geoJSON, importantLayers))
-                .thenReturn(CompletableFuture.completedFuture(bivariateStatisticDto));
+                .thenReturn(CompletableFuture.completedFuture(bivariateMatrixDto));
 
         BivariateMatrixRequestDto requestDto = new BivariateMatrixRequestDto(geoJSON, importantLayers);
 
-        BivariateStatisticDto result = bivariateMatrixService.getDataForBivariateMatrix(requestDto);
+        BivariateMatrixDto result = bivariateMatrixService.getDataForBivariateMatrix(requestDto);
 
         verify(insightsApiGraphqlClient).getBivariateMatrix(geoJSON, importantLayers);
-        assertEquals(overlayDto, result.getOverlays().get(0));
+        assertEquals(overlayDto, result.getData().getPolygonStatistic().getBivariateStatistic().getOverlays().get(0));
     }
 }

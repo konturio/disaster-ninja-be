@@ -2,8 +2,8 @@ package io.kontur.disasterninja.service;
 
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
-import io.kontur.disasterninja.dto.bivariatestatistic.BivariateMatrixRequestDto;
-import io.kontur.disasterninja.dto.bivariatestatistic.BivariateStatisticDto;
+import io.kontur.disasterninja.dto.bivariatematrix.BivariateMatrixDto;
+import io.kontur.disasterninja.dto.bivariatematrix.BivariateMatrixRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,7 @@ public class BivariateMatrixService {
 
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
 
-    public BivariateStatisticDto getDataForBivariateMatrix(BivariateMatrixRequestDto bivariateMatrixRequestDto) {
+        public BivariateMatrixDto getDataForBivariateMatrix(BivariateMatrixRequestDto bivariateMatrixRequestDto) {
         try {
             return insightsApiGraphqlClient.getBivariateMatrix(bivariateMatrixRequestDto.getGeoJSON(),
                     bivariateMatrixRequestDto.getImportantLayers()).get();

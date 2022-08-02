@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.client;
 
-import io.kontur.disasterninja.dto.bivariatestatistic.BivariateStatisticDto;
+import io.kontur.disasterninja.dto.bivariatematrix.BivariateMatrixDto;
+import io.kontur.disasterninja.dto.bivariatematrix.BivariateStatisticDto;
 import io.kontur.disasterninja.graphql.AdvancedAnalyticalPanelQuery;
 import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
 import io.kontur.disasterninja.graphql.type.AdvancedAnalyticsRequest;
@@ -35,7 +36,7 @@ public class InsightsApiGraphqlClientDummy implements InsightsApiGraphqlClient {
     }
 
     @Override
-    public CompletableFuture<BivariateStatisticDto> getBivariateMatrix(GeoJSON geoJSON, List<List<String>> importantLayers) {
-        return CompletableFuture.completedFuture(new BivariateStatisticDto());
+    public CompletableFuture<BivariateMatrixDto> getBivariateMatrix(GeoJSON geoJSON, List<List<String>> importantLayers) {
+        return CompletableFuture.completedFuture(new BivariateMatrixDto());
     }
 }

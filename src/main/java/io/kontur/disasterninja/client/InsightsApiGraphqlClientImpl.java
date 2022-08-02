@@ -9,7 +9,7 @@ import com.apollographql.apollo.exception.ApolloHttpException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
-import io.kontur.disasterninja.dto.bivariatestatistic.BivariateStatisticDto;
+import io.kontur.disasterninja.dto.bivariatematrix.*;
 import io.kontur.disasterninja.graphql.*;
 import io.kontur.disasterninja.graphql.type.AdvancedAnalyticsRequest;
 import io.kontur.disasterninja.graphql.type.FunctionArgs;
@@ -182,8 +182,8 @@ public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
     }
 
     @Override
-    public CompletableFuture<BivariateStatisticDto> getBivariateMatrix(GeoJSON geoJSON, List<List<String>> importantLayers) {
-        CompletableFuture<BivariateStatisticDto> future = new CompletableFuture<>();
+    public CompletableFuture<BivariateMatrixDto> getBivariateMatrix(GeoJSON geoJSON, List<List<String>> importantLayers) {
+        CompletableFuture<BivariateMatrixDto> future = new CompletableFuture<>();
         SimpleTimer timer = new SimpleTimer();
         apolloClient
                 .query(new BivariateMatrixQuery(Input.optional(geoJSON), Input.optional(importantLayers)))
@@ -194,27 +194,24 @@ public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
 
                         if (response.getData() != null &&
                                 response.getData().polygonStatistic() != null &&
-                                response.getData().polygonStatistic().bivariateStatistic() != null &&
-                                response.getData().polygonStatistic().bivariateStatistic().axis() != null &&
-                                response.getData().polygonStatistic().bivariateStatistic().colors() != null &&
-                                response.getData().polygonStatistic().bivariateStatistic().meta() != null &&
-                                response.getData().polygonStatistic().bivariateStatistic().correlationRates() != null &&
-                                response.getData().polygonStatistic().bivariateStatistic().indicators() != null) {
-                            BivariateStatisticDto bivariateStatisticDto = BivariateStatisticDto.builder()
-                                    .axis(mapper.bivariateMatrixQueryAxisListToBivariateLegendAxisDescriptionList(
-                                            response.getData().polygonStatistic().bivariateStatistic().axis()))
-                                    .meta(mapper.bivariateMatrixQueryMetaToMetaDto(
-                                            response.getData().polygonStatistic().bivariateStatistic().meta()))
-                                    .indicators(mapper.bivariateMatrixQueryIndicatorListToIndicatorDtoList(
-                                            response.getData().polygonStatistic().bivariateStatistic().indicators()))
-                                    .correlationRates(mapper.bivariateMatrixQueryCorrelationRateListToCorrelationRateDtoList(
-                                            response.getData().polygonStatistic().bivariateStatistic().correlationRates()))
-                                    .colors(mapper.bivariateMatrixQueryColorsToColorsDto(
-                                            response.getData().polygonStatistic().bivariateStatistic().colors()))
-                                    .build();
-                            future.complete(bivariateStatisticDto);
+                                response.getData().polygonStatistic().bivariateStatistic() != null) {
+                            BivariateMatrixDto bivariateMatrixDto = new BivariateMatrixDto(
+                                    new BivariateMatrixGraphqlResponseDataDto(
+                                            new PolygonStatisticDto(BivariateStatisticDto.builder()
+                                                    .axis(mapper.bivariateMatrixQueryAxisListToBivariateLegendAxisDescriptionList(
+                                                            response.getData().polygonStatistic().bivariateStatistic().axis()))
+                                                    .meta(mapper.bivariateMatrixQueryMetaToMetaDto(
+                                                            response.getData().polygonStatistic().bivariateStatistic().meta()))
+                                                    .indicators(mapper.bivariateMatrixQueryIndicatorListToIndicatorDtoList(
+                                                            response.getData().polygonStatistic().bivariateStatistic().indicators()))
+                                                    .correlationRates(mapper.bivariateMatrixQueryCorrelationRateListToCorrelationRateDtoList(
+                                                            response.getData().polygonStatistic().bivariateStatistic().correlationRates()))
+                                                    .colors(mapper.bivariateMatrixQueryColorsToColorsDto(
+                                                            response.getData().polygonStatistic().bivariateStatistic().colors()))
+                                                    .build())));
+                            future.complete(bivariateMatrixDto);
                         }
-                        future.complete(new BivariateStatisticDto());
+                        future.complete(new BivariateMatrixDto());
                     }
 
                     @Override

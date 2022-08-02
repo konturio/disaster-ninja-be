@@ -1,4 +1,4 @@
-package io.kontur.disasterninja.dto.bivariatestatistic;
+package io.kontur.disasterninja.dto.bivariatematrix;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

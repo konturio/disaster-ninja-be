@@ -1,19 +1,14 @@
-package io.kontur.disasterninja.domain;
+package io.kontur.disasterninja.dto.bivariatematrix;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude
-public class BivariateLegendAxisStep {
-
-    private String label;
-
-    private Double value;
+public class BivariateMatrixGraphqlResponseDataDto {
+    private PolygonStatisticDto polygonStatistic;
 }

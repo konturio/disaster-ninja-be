@@ -1,9 +1,11 @@
-package io.kontur.disasterninja.dto.bivariatestatistic;
+package io.kontur.disasterninja.dto.bivariatematrix;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.kontur.disasterninja.domain.BivariateLegendAxisDescription;
 import lombok.Data;
 
 @Data
+@JsonInclude
 public class CorrelationRateDto {
 
     private BivariateLegendAxisDescription x;

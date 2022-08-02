@@ -1,5 +1,6 @@
-package io.kontur.disasterninja.dto.bivariatestatistic;
+package io.kontur.disasterninja.dto.bivariatematrix;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.kontur.disasterninja.domain.BivariateLegendAxisDescription;
 import lombok.*;
 
@@ -10,12 +11,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude
 public class BivariateStatisticDto {
 
-    private List<OverlayDto> overlays;
-    private List<IndicatorDto> indicators;
     private List<BivariateLegendAxisDescription> axis;
     private MetaDto meta;
+    private List<IndicatorDto> indicators;
+    private List<OverlayDto> overlays;
     private List<CorrelationRateDto> correlationRates;
     private ColorsDto colors;
 }
