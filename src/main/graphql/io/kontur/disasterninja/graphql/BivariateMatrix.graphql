@@ -1,0 +1,64 @@
+query BivariateMatrix($polygon: GeoJSON, $importantLayers: [[String]]) {
+    polygonStatistic(polygonStatisticRequest:{
+        polygonV2: $polygon
+        importantLayers: $importantLayers
+    }) {
+        bivariateStatistic {
+            axis {
+                label
+                steps {
+                    label
+                    value
+                }
+                quality
+                quotient
+                parent
+            }
+            meta {
+                max_zoom
+                min_zoom
+            }
+            indicators {
+                name
+                label
+                copyrights
+                direction
+            }
+            correlationRates {
+                x {
+                    label
+                    steps {
+                        label
+                        value
+                    }
+                    quality
+                    quotient
+                    parent
+                }
+                y {
+                    label
+                    steps {
+                        label
+                        value
+                    }
+                    quality
+                    quotient
+                    parent
+                }
+                rate
+                quality
+                correlation
+                avgCorrelationX
+                avgCorrelationY
+            }
+            colors {
+                fallback
+                combinations {
+                    color
+                    corner
+                    color_comment
+                }
+            }
+        }
+    }
+}
