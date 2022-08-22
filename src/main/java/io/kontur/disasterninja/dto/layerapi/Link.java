@@ -13,4 +13,6 @@ public class Link {
     private String hreflang;
     private String title;
     private Integer length;
+    private String apiKey;
+    private String apiTag;
 }
