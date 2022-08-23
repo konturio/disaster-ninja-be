@@ -318,28 +318,24 @@ public class LayersApiClient extends RestClientWithBearerAuth {
 
     private LayerSource createVectorSource(Collection collection) {
         String url = getSourceUrl(collection);
-        String apiTag = getSourceApiTag(collection);
         String apiKey = getSourceApiKey(collection);
 
         return LayerSource.builder()
                 .type(LayerSourceType.VECTOR)
                 .tileSize(512)
                 .urls(url != null ? singletonList(url) : null)
-                .apiTag(apiTag)
                 .apiKey(apiKey)
                 .build();
     }
 
     private LayerSource createRasterSource(Collection collection) {
         String url = getSourceUrl(collection);
-        String apiTag = getSourceApiTag(collection);
         String apiKey = getSourceApiKey(collection);
 
         return LayerSource.builder()
                 .type(LayerSourceType.RASTER)
                 .tileSize(256)
                 .urls(url != null ? singletonList(url) : null)
-                .apiTag(apiTag)
                 .apiKey(apiKey)
                 .build();
     }
@@ -348,15 +344,6 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         return collection.getLinks().stream()
                 .filter(l -> LAYER_TYPE_TILES.equals(l.getRel()))
                 .map(Link::getHref)
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
-    }
-
-    private String getSourceApiTag(Collection collection) {
-        return collection.getLinks().stream()
-                .filter(l -> LAYER_TYPE_TILES.equals(l.getRel()))
-                .map(Link::getApiTag)
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);

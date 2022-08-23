@@ -14,5 +14,4 @@ public class Link {
     private String title;
     private Integer length;
     private String apiKey;
-    private String apiTag;
 }
