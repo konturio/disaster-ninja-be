@@ -317,33 +317,45 @@ public class LayersApiClient extends RestClientWithBearerAuth {
     }
 
     private LayerSource createVectorSource(Collection collection) {
-        String url = collection.getLinks().stream()
-                .filter(l -> LAYER_TYPE_TILES.equals(l.getRel()))
-                .map(Link::getHref)
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
+        String url = getSourceUrl(collection);
+        String apiKey = getSourceApiKey(collection);
 
         return LayerSource.builder()
                 .type(LayerSourceType.VECTOR)
                 .tileSize(512)
                 .urls(url != null ? singletonList(url) : null)
+                .apiKey(apiKey)
                 .build();
     }
 
     private LayerSource createRasterSource(Collection collection) {
-        String url = collection.getLinks().stream()
-                .filter(l -> LAYER_TYPE_TILES.equals(l.getRel()))
-                .map(Link::getHref)
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
+        String url = getSourceUrl(collection);
+        String apiKey = getSourceApiKey(collection);
 
         return LayerSource.builder()
                 .type(LayerSourceType.RASTER)
                 .tileSize(256)
                 .urls(url != null ? singletonList(url) : null)
+                .apiKey(apiKey)
                 .build();
+    }
+
+    private String getSourceUrl(Collection collection) {
+        return collection.getLinks().stream()
+                .filter(l -> LAYER_TYPE_TILES.equals(l.getRel()))
+                .map(Link::getHref)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private String getSourceApiKey(Collection collection) {
+        return collection.getLinks().stream()
+                .filter(l -> LAYER_TYPE_TILES.equals(l.getRel()))
+                .map(Link::getApiKey)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
     }
 
     private LayerSource createFeatureSource(Geometry geoJSON, String layerId, UUID appId) {

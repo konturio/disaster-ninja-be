@@ -14,6 +14,7 @@ public class LayerSourceDto {
     private final List<String> urls;//for 'vector' and 'raster' only
     private final Integer tileSize;//for 'vector' and 'raster' only
     private final GeoJSON data; //for geoJson only
+    private final String apiKey;
 
     public static LayerSourceDto fromLayerSource(LayerSource layerSource) {
         if (layerSource == null) {
@@ -21,6 +22,6 @@ public class LayerSourceDto {
         }
         List<String> urls = layerSource.getUrls();
         return new LayerSourceDto(layerSource.getType(), urls != null ? List.copyOf(urls) : null,
-                layerSource.getTileSize(), layerSource.getData());
+                layerSource.getTileSize(), layerSource.getData(), layerSource.getApiKey());
     }
 }

@@ -90,6 +90,7 @@ public class Layer {
         if (otherSource != null) {
             this.source = new LayerSource(otherSource.getType(), otherSource.getTileSize(),
                     otherSource.getUrls(),
+                    otherSource.getApiKey(),
                     this.source != null ? this.source.getData() : null); //sic! source.data is not replaced
         }
 
