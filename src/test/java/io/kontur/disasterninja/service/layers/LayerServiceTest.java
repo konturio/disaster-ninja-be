@@ -141,10 +141,9 @@ public class LayerServiceTest {
         //all providers return nothing (= no features matched by geometry), so only global overlays should be returned
         List<Layer> layers = layerService.getList(paramsWithSomeBoundary());
         //check all layers with 'globalOverlay: true' are present
-        assertEquals(2, layers.size());
+        assertEquals(1, layers.size());
 
         assertEquals("activeContributors", layers.get(0).getId());
-        assertEquals("hotProjectsTileLayer", layers.get(1).getId());
 
         System.out.println(layers);
     }
