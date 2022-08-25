@@ -19,7 +19,7 @@ import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.RASTER;
 import static io.kontur.disasterninja.util.TestUtil.emptyParams;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 
 public class OsmLayerProviderTest extends LayerProvidersTest {
 
@@ -35,6 +35,13 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
                                 FeatureCollection.class)
                         .getFeatures())
         );
+        //global layers
+        Mockito.when(kcApiClient.getCollectionItemsByGeometry(isNull(), any())).thenReturn(
+                List.of(objectMapper.readValue(
+                                getClass().getResource("/io/kontur/disasterninja/client/layers/osmlayer_global.json"),
+                                FeatureCollection.class)
+                        .getFeatures())
+        );
         //single
         Mockito.when(kcApiClient.getFeatureFromCollection(any(), any(), any())).thenReturn(
                 objectMapper.readValue(
@@ -45,8 +52,10 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
 
     @Test
     public void list_emptyGeoJson() throws ExecutionException, InterruptedException {
-        //no geojson => no result
-        assertTrue(osmLayerProvider.obtainLayers(emptyParams()).get().isEmpty());
+        //no geojson => global layers
+        List<Layer> layers = osmLayerProvider.obtainLayers(emptyParams()).get();
+        assertEquals(1, layers.size());
+        assertEquals("Bing", layers.get(0).getId());
     }
 
     @Test
