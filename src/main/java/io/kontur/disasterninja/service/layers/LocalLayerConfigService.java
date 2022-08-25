@@ -37,23 +37,21 @@ public class LocalLayerConfigService {
             localLayersConfig.getConfigs().forEach(this::setLegendStepsOrderIfRequired);
 
             localLayersConfig.getConfigs().forEach((config) -> {
-                if (!config.isTestOnly() || !"prod".equalsIgnoreCase(profile)) {
-                    LayerSource source = config.getSource();
-                    if (source != null && source.getUrls() != null) {
-                        source.setUrls(source.getUrls().stream()
-                                .map(it -> {
-                                    if (it.contains("{tilesHost}")) {
-                                        return it.replaceAll("\\{tilesHost}", tilesHost);
-                                    } else {
-                                        return it;
-                                    }
-                                }).collect(Collectors.toList()));
-                    }
-                    if (config.isGlobalOverlay()) {
-                        globalOverlays.put(config.getId(), config);
-                    } else {
-                        regularLayers.put(config.getId(), config);
-                    }
+                LayerSource source = config.getSource();
+                if (source != null && source.getUrls() != null) {
+                    source.setUrls(source.getUrls().stream()
+                            .map(it -> {
+                                if (it.contains("{tilesHost}")) {
+                                    return it.replaceAll("\\{tilesHost}", tilesHost);
+                                } else {
+                                    return it;
+                                }
+                            }).collect(Collectors.toList()));
+                }
+                if (config.isGlobalOverlay()) {
+                    globalOverlays.put(config.getId(), config);
+                } else {
+                    regularLayers.put(config.getId(), config);
                 }
             });
 
