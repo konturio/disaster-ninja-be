@@ -64,9 +64,6 @@ public class OsmLayerProvider implements LayerProvider {
     @Override
     @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
     public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
-        if (searchParams.getBoundary() == null) {
-            return CompletableFuture.completedFuture(Collections.emptyList());
-        }
         List<Feature> osmLayers = kcApiClient.getCollectionItemsByGeometry(searchParams.getBoundary(), OSM_LAYERS);
         return CompletableFuture.completedFuture(fromOsmLayers(osmLayers));
     }

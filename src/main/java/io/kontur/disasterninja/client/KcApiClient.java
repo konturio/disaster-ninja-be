@@ -143,7 +143,7 @@ public class KcApiClient {
     }
 
     protected List<Feature> getCollectionItems(String collectionId,
-                                               @NotNull Geometry geometry) {
+                                               Geometry geometry) {
         String uri = "/collections/" + collectionId + "/itemsByGeometry";
 
         int i = 0;
@@ -152,7 +152,11 @@ public class KcApiClient {
 
         Map<String, Object> body = new HashMap<>();
         body.put("limit", pageSize);
-        body.put("geom", geometry);
+        if (geometry != null) {
+            body.put("geom", geometry);
+        } else {
+            body.put("omitLocalFeatures", true);
+        }
 
         while (true) {
             int offset = i++ * pageSize;

@@ -1,0 +1,61 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "id": "Bing",
+        "url": "https://www.bing.com/maps",
+        "i18n": true,
+        "icon": "https://osmlab.github.io/editor-layer-index/sources/world/Bing.png",
+        "name": "Bing aerial imagery",
+        "type": "bing",
+        "default": true,
+        "max_zoom": 22,
+        "min_zoom": 1,
+        "description": "Satellite and aerial imagery.",
+        "license_url": "https://wiki.openstreetmap.org/wiki/Bing_Maps",
+        "no_tile_header": {
+          "X-VE-Tile-Info": [
+            "no-tile"
+          ]
+        },
+        "permission_osm": "explicit",
+        "privacy_policy_url": "https://privacy.microsoft.com/en-gb/privacystatement"
+      },
+      "id": "Bing",
+      "links": [
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer/items/Bing",
+          "rel": "self",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": null,
+          "length": null
+        },
+        {
+          "href": "http://localhost:9000/layers/collections/osmlayer",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "hreflang": null,
+          "title": "OSM Layers",
+          "length": null
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "href": "http://localhost:9000/layers/collections/osmlayer/items?limit=10&offset=0&bbox=1.83975&bbox=6.2578&bbox=2.5494&bbox=7.11427",
+      "rel": "self",
+      "type": "application/geo+json",
+      "hreflang": null,
+      "title": "OSM Layers",
+      "length": null
+    }
+  ],
+  "timeStamp": "2021-10-19T16:17:13Z",
+  "numberMatched": 1,
+  "numberReturned": 1
+}
