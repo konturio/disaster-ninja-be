@@ -60,8 +60,8 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         this.layersApiRestTemplate = layersApiRestTemplate;
     }
 
-    public List<Layer> findLayers(Geometry geoJSON, CollectionOwner collectionOwner, UUID appId) {
-        return getCollections(geoJSON, collectionOwner, appId)
+    public List<Layer> findLayers(Geometry geoJSON, boolean omitLocalLayers, CollectionOwner collectionOwner, UUID appId) {
+        return getCollections(geoJSON, omitLocalLayers, collectionOwner, appId)
                 .stream()
                 .map(this::convertToLayer)
                 .collect(Collectors.toList());
@@ -171,7 +171,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                         });
     }
 
-    protected List<Collection> getCollections(Geometry geoJson, CollectionOwner collectionOwner, UUID appId) {
+    protected List<Collection> getCollections(Geometry geoJson, boolean omitLocalLayers, CollectionOwner collectionOwner, UUID appId) {
         List<Collection> result = new ArrayList<>();
 
         Map<String, Object> body = new HashMap<>();
@@ -179,6 +179,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             body.put("collectionOwner", collectionOwner);
         }
         body.put("geometry", geoJson);
+        body.put("omitLocalCollections", omitLocalLayers);
         body.put("limit", pageSize);
         if (appId == null) {
             //TODO remove default value after DN2 FE is updated with application functionality
