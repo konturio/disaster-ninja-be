@@ -473,8 +473,6 @@ configs:
     boundaryRequiredForRetrieval: false
     eventIdRequiredForRetrieval: false
     name: 'Active contributors'
-    category: 'overlay'
-    group: 'other'
     description: 'Contributors are labeled as active based on their mapping activity in the area for the past 2 years. We consider OpenStreetMap users to be local and mark them green if most of their edits were made close to that area.'
     copyrights:
       - '© OpenStreetMap Contributors, © Kontur'
