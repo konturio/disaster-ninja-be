@@ -178,7 +178,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
                 });
 
         //when
-        List<Collection> collections = client.getCollections(objectMapper.readValue(json, Geometry.class), null, null);
+        List<Collection> collections = client.getCollections(objectMapper.readValue(json, Geometry.class), false, null, null);
 
         //then
         assertEquals(12, collections.size());
@@ -209,11 +209,12 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
                 .andExpect(request -> {
                     String s = request.getBody().toString();
                     assertThat(s, hasJsonPath("$.appId", is(appId.toString())));
+                    assertThat(s, hasJsonPath("$.omitLocalCollections", is(true)));
                 })
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(r -> withSuccess().createResponse(r));
         //when
-        List<Collection> collections = client.getCollections(objectMapper.readValue(json, Geometry.class),
+        List<Collection> collections = client.getCollections(objectMapper.readValue(json, Geometry.class), true,
                 null, appId);
 
         //then

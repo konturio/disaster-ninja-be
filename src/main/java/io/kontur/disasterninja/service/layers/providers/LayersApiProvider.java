@@ -56,15 +56,17 @@ public class LayersApiProvider implements LayerProvider {
     }
 
     private List<Layer> obtainLayersByGeometry(Geometry geoJSON, UUID appId) {
-        return layersApiClient.findLayers(geoJSON, ANY, appId);
+        boolean omitLocalLayers = geoJSON == null;
+        return layersApiClient.findLayers(geoJSON, omitLocalLayers, ANY, appId);
     }
 
     private List<Layer> obtainNonUserOwnedLayersByGeometry(Geometry geoJSON, UUID appId) {
-        return layersApiClient.findLayers(geoJSON, NOT_ME, appId);
+        boolean omitLocalLayers = geoJSON == null;
+        return layersApiClient.findLayers(geoJSON, omitLocalLayers, NOT_ME, appId);
     }
 
     private List<Layer> obtainAllUserOwnedLayers(UUID appId) {
-        return layersApiClient.findLayers(null, ME, appId);
+        return layersApiClient.findLayers(null, false, ME, appId);
     }
 
     private boolean isUserAuthenticated() {
