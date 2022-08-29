@@ -198,8 +198,6 @@ public class LayerConfigServiceTest {
         assertTrue(activeContributors.isDisplayLegendIfNoFeaturesExist());
         assertFalse(activeContributors.isBoundaryRequiredForRetrieval());
         Assertions.assertEquals("Active contributors", activeContributors.getName());
-        Assertions.assertEquals("other", activeContributors.getGroup());
-        Assertions.assertEquals(OVERLAY, activeContributors.getCategory());
         //legend
         Assertions.assertNotNull(activeContributors.getLegend());
         Assertions.assertEquals(SIMPLE, activeContributors.getLegend().getType());
