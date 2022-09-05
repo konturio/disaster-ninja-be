@@ -294,6 +294,7 @@ class EventApiServiceTest {
 
         PodamFactory factory = new PodamFactoryImpl();
         EventApiEventDto event = factory.manufacturePojo(EventApiEventDto.class);
+        event.setGeometries(new FeatureCollection(new Feature[0]));
         event.getEpisodes().forEach(e -> e.setGeometries(new FeatureCollection(new Feature[0])));
         event.getEventDetails().put("populatedAreaKm2", "123234");
 

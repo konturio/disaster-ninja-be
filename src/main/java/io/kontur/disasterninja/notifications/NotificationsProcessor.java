@@ -84,8 +84,7 @@ public class NotificationsProcessor {
                 }
 
                 if (isEventInPopulatedArea(event) && isEventTypeAppropriate(event)) {
-                    FeedEpisode latestEpisode = event.getEpisodes().get(0);
-                    Geometry geometry = convertGeometry(latestEpisode.getGeometries());
+                    Geometry geometry = convertGeometry(event.getGeometries());
                     latestUpdatedDate = event.getUpdatedAt();
                     process(event, geometry);
                 }
@@ -124,11 +123,11 @@ public class NotificationsProcessor {
      * Hotfix for Industrial heats being wildfires #7985
      */
     private boolean isEventTypeAppropriate(EventApiEventDto eventApiEventDto) {
-        return acceptableTypes.contains(eventApiEventDto.getEpisodes().get(0).getType());
+        return acceptableTypes.contains(eventApiEventDto.getType());
     }
 
     private boolean isEventInPopulatedArea(EventApiEventDto event) {
-        if (event.getEpisodes().get(0).getEpisodeDetails() == null) {
+        if (event.getEpisodes().get(0).getEpisodeDetails() == null) { //TODO can it be changed to eventDetails?
             return false;
         }
         String population = String.valueOf(event.getEpisodes().get(0).getEpisodeDetails().get("population"));

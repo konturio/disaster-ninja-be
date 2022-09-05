@@ -30,8 +30,8 @@ import java.util.UUID;
 public class EventApiClient extends RestClientWithBearerAuth {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventApiClient.class);
-    private static final String EVENT_API_EVENT_LIST_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&episodeFilterType=LATEST&limit=%s";
-    private static final String EVENT_API_EVENT_ID_URI = "/v1/event?feed=%s&eventId=%s";
+    private static final String EVENT_API_EVENT_LIST_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&limit=%s";
+    private static final String EVENT_API_EVENT_ID_URI = "/v1/event?feed=%s&eventId=%s&episodeFilterType=NONE";
     private static final String EVENT_API_USER_FEEDS_URI = "/v1/user_feeds";
 
     private final RestTemplate restTemplate;
@@ -52,6 +52,7 @@ public class EventApiClient extends RestClientWithBearerAuth {
 
     public Optional<EventApiSearchEventResponse> getEvents(String eventApiFeed, OffsetDateTime after, List<BigDecimal> bbox, int pageSize, SortOrder sortOrder) {
         String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed, pageSize);
+        uri += "&episodeFilterType=NONE";
         if (sortOrder == null) {
             uri += "&sortOrder=ASC";
         } else {
@@ -81,7 +82,7 @@ public class EventApiClient extends RestClientWithBearerAuth {
 
     public List<EventApiEventDto> getLatestEvents(List<String> acceptableTypes, String feedName, int limit) {
         String uri = String.format(EVENT_API_EVENT_LIST_URI, feedName, limit);
-        uri += "&sortOrder=DESC";
+        uri += "&sortOrder=DESC&episodeFilterType=LATEST";
         if (!CollectionUtils.isEmpty(acceptableTypes)) {
             uri += "&types=" + String.join(",", acceptableTypes);
         }

@@ -3,6 +3,7 @@ package io.kontur.disasterninja.domain;
 import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.dto.EventListDto;
 import io.kontur.disasterninja.dto.EventType;
+import io.kontur.disasterninja.dto.Severity;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
 import io.kontur.disasterninja.service.converter.EventDtoConverter;
@@ -13,8 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static io.kontur.disasterninja.dto.EventType.CYCLONE;
-import static io.kontur.disasterninja.dto.EventType.OTHER;
+import static io.kontur.disasterninja.dto.EventType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EventApiConvertersTest {
@@ -25,6 +25,8 @@ public class EventApiConvertersTest {
         event.setLocation("location 1");
         event.setUrls(null);
         event.setEventDetails(null);
+        event.setType(EventType.FLOOD.toString());
+        event.setSeverity(Severity.MODERATE);
 
         FeedEpisode episode = new FeedEpisode();
         episode.setType(EventType.OTHER.toString());
@@ -39,6 +41,7 @@ public class EventApiConvertersTest {
     @Test
     public void eventDtoTestNulls() {
         EventApiEventDto event = testEvent();
+        event.setType(OTHER.toString());
         EventDto dto = EventDtoConverter.convert(event);
 
         assertEquals(event.getProperName(), dto.getEventName());
@@ -54,7 +57,6 @@ public class EventApiConvertersTest {
         event.setUrls(new ArrayList<>());
         EventDto dto = EventDtoConverter.convert(event);
 
-        assertEquals(event.getProperName(), dto.getEventName());
         assertEquals(event.getLocation(), dto.getLocation());
         assertEquals(0L, dto.getSettledArea());
         assertTrue(dto.getExternalUrls().isEmpty());
@@ -63,6 +65,7 @@ public class EventApiConvertersTest {
     @Test
     public void eventDtoTest() {
         EventApiEventDto event = testEvent();
+        event.setType(OTHER.toString());
         event.setEventDetails(new HashMap<>());
         event.getEventDetails().put("populatedAreaKm2", 100.12);
         event.setUrls(new ArrayList<>());
@@ -79,7 +82,7 @@ public class EventApiConvertersTest {
     @Test
     public void eventDtoTestNames() {
         EventApiEventDto event = testEvent();
-
+        event.setType(OTHER.toString());
         //1. type = other & properName != null
         event.setProperName("some name");
         event.getEpisodes().get(0).setType(OTHER.toString());
@@ -88,14 +91,15 @@ public class EventApiConvertersTest {
 
         //2. type != other & propername != null
         event.setProperName("some name");
+        event.setType(DROUGHT.toString());
         event.getEpisodes().get(0).setType(CYCLONE.toString());
         dto = EventDtoConverter.convert(event);
-        assertEquals(CYCLONE.getName() + " some name", dto.getEventName());
+        assertEquals(DROUGHT.getName() + " some name", dto.getEventName());
 
         //3. propername == null
         event.setProperName(null);
         dto = EventDtoConverter.convert(event);
-        assertEquals(CYCLONE.getName(), dto.getEventName());
+        assertEquals(DROUGHT.getName(), dto.getEventName());
     }
 
     @Test
@@ -103,7 +107,6 @@ public class EventApiConvertersTest {
         EventApiEventDto event = testEvent();
         EventListDto dto = EventListEventDtoConverter.convert(event);
 
-        assertEquals(event.getProperName(), dto.getEventName());
         assertEquals(event.getLocation(), dto.getLocation());
         assertNull(dto.getAffectedPopulation());
         assertNull(dto.getOsmGaps());
@@ -118,7 +121,6 @@ public class EventApiConvertersTest {
         event.setUrls(new ArrayList<>());
         EventListDto dto = EventListEventDtoConverter.convert(event);
 
-        assertEquals(event.getProperName(), dto.getEventName());
         assertEquals(event.getLocation(), dto.getLocation());
         assertNull(dto.getAffectedPopulation());
         assertNull(dto.getOsmGaps());
@@ -138,7 +140,6 @@ public class EventApiConvertersTest {
         event.getUrls().add("http://google.com");
         EventListDto dto = EventListEventDtoConverter.convert(event);
 
-        assertEquals(event.getProperName(), dto.getEventName());
         assertEquals(event.getLocation(), dto.getLocation());
         assertEquals(100.12, dto.getSettledArea());
         assertEquals(30, dto.getOsmGaps());
@@ -151,7 +152,7 @@ public class EventApiConvertersTest {
     @Test
     public void eventListDtoTestNames() {
         EventApiEventDto event = testEvent();
-
+        event.setType(OTHER.toString());
         //1. type = other & properName != null
         event.setProperName("some name");
         event.getEpisodes().get(0).setType(OTHER.toString());
@@ -160,13 +161,14 @@ public class EventApiConvertersTest {
 
         //2. type != other & propername != null
         event.setProperName("some name");
+        event.setType(DROUGHT.toString());
         event.getEpisodes().get(0).setType(CYCLONE.toString());
         dto = EventListEventDtoConverter.convert(event);
-        assertEquals(CYCLONE.getName() + " some name", dto.getEventName());
+        assertEquals(DROUGHT.getName() + " some name", dto.getEventName());
 
         //3. propername == null
         event.setProperName(null);
         dto = EventListEventDtoConverter.convert(event);
-        assertEquals(CYCLONE.getName(), dto.getEventName());
+        assertEquals(DROUGHT.getName(), dto.getEventName());
     }
 }

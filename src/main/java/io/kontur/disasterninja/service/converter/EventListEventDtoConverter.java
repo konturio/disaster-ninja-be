@@ -18,7 +18,7 @@ public class EventListEventDtoConverter {
         List<String> eventUrls = event.getUrls();
         dto.setExternalUrls(eventUrls != null ? List.copyOf(eventUrls) : List.of());
 
-        dto.setSeverity(event.getEpisodes().get(0).getSeverity());
+        dto.setSeverity(event.getSeverity());
         Map<String, Object> eventDetails = event.getEventDetails();
         if (eventDetails != null) {
             if (eventDetails.containsKey("population")) {
@@ -58,7 +58,7 @@ public class EventListEventDtoConverter {
     protected static String eventName(EventApiEventDto event) {
         EventType eventType;
         try {
-            eventType = EventType.valueOf(event.getEpisodes().get(0).getType());
+            eventType = EventType.valueOf(event.getType());
         } catch (IllegalArgumentException ex) {
             eventType = EventType.OTHER;
         }
