@@ -1,8 +1,10 @@
 package io.kontur.disasterninja.service.converter;
 
 import io.kontur.disasterninja.dto.EventDto;
+import io.kontur.disasterninja.dto.EventEpisodeListDto;
 import io.kontur.disasterninja.dto.EventType;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
+import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.wololo.geojson.Feature;
@@ -51,6 +53,20 @@ public class EventDtoConverter {
         dto.setLatestEpisodeGeojson(event.getGeometries());
 
         return dto;
+    }
+
+    public static EventEpisodeListDto convertEventEpisode(FeedEpisode episode) {
+        EventEpisodeListDto result = EventEpisodeListDto.builder()
+                .name(episode.getName())
+                .externalUrls(episode.getUrls())
+                .severity(episode.getSeverity())
+                .location(episode.getLocation())
+                .startedAt(episode.getStartedAt())
+                .endedAt(episode.getEndedAt())
+                .updatedAt(episode.getUpdatedAt())
+                .geojson(episode.getGeometries())
+                .build();
+        return result;
     }
 
     private static FeatureCollection uniteGeometry(EventApiEventDto event) {

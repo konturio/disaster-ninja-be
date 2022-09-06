@@ -158,6 +158,26 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         //given
         givenJwtTokenIs("JwtTestToken");
         server.expect(ExpectedCount.once(),
+                        requestTo("/v1/event?feed=testFeedName&eventId=1ec05e2b-7d18-490c-ac9f-c33609fdc7a7&episodeFilterType=ANY"))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(header("Authorization", "Bearer " + getUserToken()))
+                .andRespond(withSuccess(readFile(this, "EventApiClientTest.testGetEvent.response.json"),
+                        MediaType.APPLICATION_JSON));
+        //when
+        EventApiEventDto event = client.getEvent(UUID.fromString("1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"),
+                "testFeedName", true);
+
+        //then
+        verify(securityContext, times(1)).getAuthentication();
+        assertNotNull(event);
+        assertEquals(UUID.fromString("1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"), event.getEventId());
+    }
+
+    @Test
+    public void testGetEventWithoutEpisodes() throws IOException {
+        //given
+        givenJwtTokenIs("JwtTestToken");
+        server.expect(ExpectedCount.once(),
                         requestTo("/v1/event?feed=testFeedName&eventId=1ec05e2b-7d18-490c-ac9f-c33609fdc7a7&episodeFilterType=NONE"))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header("Authorization", "Bearer " + getUserToken()))
@@ -165,7 +185,7 @@ class EventApiClientTest extends TestDependingOnUserAuth {
                         MediaType.APPLICATION_JSON));
         //when
         EventApiEventDto event = client.getEvent(UUID.fromString("1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"),
-                "testFeedName");
+                "testFeedName", false);
 
         //then
         verify(securityContext, times(1)).getAuthentication();

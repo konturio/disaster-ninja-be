@@ -31,7 +31,7 @@ public class EventApiClient extends RestClientWithBearerAuth {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventApiClient.class);
     private static final String EVENT_API_EVENT_LIST_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&limit=%s";
-    private static final String EVENT_API_EVENT_ID_URI = "/v1/event?feed=%s&eventId=%s&episodeFilterType=NONE";
+    private static final String EVENT_API_EVENT_ID_URI = "/v1/event?feed=%s&eventId=%s";
     private static final String EVENT_API_USER_FEEDS_URI = "/v1/user_feeds";
 
     private final RestTemplate restTemplate;
@@ -102,11 +102,16 @@ public class EventApiClient extends RestClientWithBearerAuth {
     }
 
     @Timed(percentiles = {0.5, 0.75, 0.9, 0.99})
-    public EventApiEventDto getEvent(UUID eventId, String eventApiFeed) {
+    public EventApiEventDto getEvent(UUID eventId, String eventApiFeed, boolean includeEpisodes) {
         if (eventId == null) {
             return null;
         }
         String uri = String.format(EVENT_API_EVENT_ID_URI, eventApiFeed, eventId);
+        if (includeEpisodes) {
+            uri += "&episodeFilterType=ANY";
+        } else {
+            uri += "&episodeFilterType=NONE";
+        }
         ResponseEntity<EventApiEventDto> response = restTemplate
                 .exchange(uri, HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
                         new ParameterizedTypeReference<>() {
