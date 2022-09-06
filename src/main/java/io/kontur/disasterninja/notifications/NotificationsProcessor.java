@@ -127,7 +127,7 @@ public class NotificationsProcessor {
     }
 
     private boolean isEventInPopulatedArea(EventApiEventDto event) {
-        if (event.getEpisodes().get(0).getEpisodeDetails() == null) { //TODO can it be changed to eventDetails?
+        if (event.getEpisodes().get(0).getEpisodeDetails() == null) {
             return false;
         }
         String population = String.valueOf(event.getEpisodes().get(0).getEpisodeDetails().get("population"));

@@ -81,6 +81,9 @@ public class EventApiService {
         if (event == null) {
             throw new WebApplicationException("Event " + eventId + " is not found", HttpStatus.NOT_FOUND);
         }
+        if (CollectionUtils.isEmpty(event.getEpisodes())) {
+            return Collections.emptyList();
+        }
         return event.getEpisodes().stream()
                 .map(EventDtoConverter::convertEventEpisode)
                 .sorted(Comparator.comparing(EventEpisodeListDto::getUpdatedAt))
