@@ -6,7 +6,6 @@ import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import io.micrometer.core.annotation.Timed;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -14,8 +13,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -30,8 +29,8 @@ import java.util.UUID;
 public class EventApiClient extends RestClientWithBearerAuth {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventApiClient.class);
-    private static final String EVENT_API_EVENT_LIST_URI = "/v1/?feed=%s&severities=EXTREME,SEVERE,MODERATE&episodeFilterType=LATEST&limit=%s";
-    private static final String EVENT_API_EVENT_ID_URI = "/v1/event?feed=%s&eventId=%s";
+    private static final String EVENT_API_EVENT_LIST_URI = "/v1/?feed={feed}&severities=EXTREME,SEVERE,MODERATE&limit={limit}";
+    private static final String EVENT_API_EVENT_ID_URI = "/v1/event?feed={feed}&eventId={event}";
     private static final String EVENT_API_USER_FEEDS_URI = "/v1/user_feeds";
 
     private final RestTemplate restTemplate;
@@ -51,25 +50,24 @@ public class EventApiClient extends RestClientWithBearerAuth {
     }
 
     public Optional<EventApiSearchEventResponse> getEvents(String eventApiFeed, OffsetDateTime after, List<BigDecimal> bbox, int pageSize, SortOrder sortOrder) {
-        String uri = String.format(EVENT_API_EVENT_LIST_URI, eventApiFeed, pageSize);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(EVENT_API_EVENT_LIST_URI);
+        uriBuilder.queryParam("episodeFilterType", "NONE");
         if (sortOrder == null) {
-            uri += "&sortOrder=ASC";
+            uriBuilder.queryParam("sortOrder", "ASC");
         } else {
-            uri += "&sortOrder=" + sortOrder;
+            uriBuilder.queryParam("sortOrder", sortOrder);
         }
 
         if (after != null) {
-            uri += "&after=" + after.atZoneSameInstant(ZoneOffset.UTC).format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
+            uriBuilder.queryParam("after", after.atZoneSameInstant(ZoneOffset.UTC).format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
         }
-        if (!CollectionUtils.isEmpty(bbox)) {
-            uri += "&bbox=" + StringUtils.join(bbox, ",");
-        }
+        uriBuilder.queryParam("bbox", bbox);
         ResponseEntity<EventApiSearchEventResponse> response = restTemplate
-                .exchange(uri, HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
+                .exchange(uriBuilder.build(eventApiFeed, pageSize), HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
                         new ParameterizedTypeReference<>() {
                         });
         if (!response.getStatusCode().is2xxSuccessful()) {
-            LOG.info("Received {} response from eventapi. Request uri: {}", response.getStatusCode(), uri);
+            LOG.info("Received {} response from eventapi. Request uri: {}", response.getStatusCode(), uriBuilder.build(eventApiFeed, pageSize));
         }
         if (response.getStatusCode() == HttpStatus.NO_CONTENT ||
                 response.getBody() == null || response.getBody().data == null ||
@@ -80,17 +78,17 @@ public class EventApiClient extends RestClientWithBearerAuth {
     }
 
     public List<EventApiEventDto> getLatestEvents(List<String> acceptableTypes, String feedName, int limit) {
-        String uri = String.format(EVENT_API_EVENT_LIST_URI, feedName, limit);
-        uri += "&sortOrder=DESC";
-        if (!CollectionUtils.isEmpty(acceptableTypes)) {
-            uri += "&types=" + String.join(",", acceptableTypes);
-        }
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(EVENT_API_EVENT_LIST_URI);
+
+        uriBuilder.queryParam("sortOrder", "DESC");
+        uriBuilder.queryParam("episodeFilterType", "LATEST");
+        uriBuilder.queryParam("types", acceptableTypes);
         ResponseEntity<EventApiSearchEventResponse> response = restTemplate
-                .exchange(uri, HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
+                .exchange(uriBuilder.build(feedName, limit), HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
                         new ParameterizedTypeReference<>() {
                         });
         if (!response.getStatusCode().is2xxSuccessful()) {
-            LOG.info("Received {} response from eventapi. Request uri: {}", response.getStatusCode(), uri);
+            LOG.info("Received {} response from eventapi. Request uri: {}", response.getStatusCode(), uriBuilder.build(feedName, limit));
         }
         if (response.getStatusCode() == HttpStatus.NO_CONTENT ||
                 response.getBody() == null || response.getBody().data == null ||
@@ -101,17 +99,22 @@ public class EventApiClient extends RestClientWithBearerAuth {
     }
 
     @Timed(percentiles = {0.5, 0.75, 0.9, 0.99})
-    public EventApiEventDto getEvent(UUID eventId, String eventApiFeed) {
+    public EventApiEventDto getEvent(UUID eventId, String eventApiFeed, boolean includeEpisodes) {
         if (eventId == null) {
             return null;
         }
-        String uri = String.format(EVENT_API_EVENT_ID_URI, eventApiFeed, eventId);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(EVENT_API_EVENT_ID_URI);
+        if (includeEpisodes) {
+            uriBuilder.queryParam("episodeFilterType", "ANY");
+        } else {
+            uriBuilder.queryParam("episodeFilterType", "NONE");
+        }
         ResponseEntity<EventApiEventDto> response = restTemplate
-                .exchange(uri, HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
+                .exchange(uriBuilder.build(eventApiFeed, eventId), HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
                         new ParameterizedTypeReference<>() {
                         });
         if (!response.getStatusCode().is2xxSuccessful()) {
-            LOG.info("Received {} response from eventapi. Request uri: {}", response.getStatusCode(), uri);
+            LOG.info("Received {} response from eventapi. Request uri: {}", response.getStatusCode(), uriBuilder);
         }
 
         return response.getBody();

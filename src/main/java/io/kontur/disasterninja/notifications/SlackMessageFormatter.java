@@ -20,7 +20,7 @@ import java.util.Map;
 @ConditionalOnProperty(value = "notifications.enabled")
 public class SlackMessageFormatter {
 
-    private static final String BODY = "{\"text\":\"><%s|%s>%s\"}";
+    private static final String BODY = "{\"text\":\"><%s|%s>%s\", \"unfurl_links\":true, \"unfurl_media\": true}";
     private static final String gdacsReportLinkPattern = "https://www.gdacs.org/report.aspx?eventtype=%s&eventid=%s";
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,###.##",
             new DecimalFormatSymbols(Locale.US));
@@ -43,7 +43,7 @@ public class SlackMessageFormatter {
         description.append(convertPopulationStatistic(episodeDetails));
         description.append(convertIndustrialStatistic(episodeDetails, eventDetails));
         description.append(convertForestStatistic(episodeDetails, eventDetails));
-        description.append(convertFireStatistic(episodeDetails, eventDetails, latestEpisode));
+        description.append(convertFireStatistic(episodeDetails, eventDetails, event));
         description.append(convertOsmQuality(analytics));
 
         String colorCode = getMessageColorCode(event, latestEpisode);
@@ -101,8 +101,8 @@ public class SlackMessageFormatter {
     }
 
     private String convertFireStatistic(Map<String, Object> episodeDetails, Map<String, Object> eventDetails,
-                                        FeedEpisode latestEpisode) {
-        if (!"WILDFIRE".equals(latestEpisode.getType())) {
+                                        EventApiEventDto event) {
+        if (!"WILDFIRE".equals(event.getType())) {
             return "";
         }
         String patternEpisode = "\\n>:sparkles: Wildfire days in last year: %s";

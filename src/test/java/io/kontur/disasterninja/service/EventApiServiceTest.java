@@ -2,10 +2,9 @@ package io.kontur.disasterninja.service;
 
 import io.kontur.disasterninja.client.EventApiClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
-import io.kontur.disasterninja.dto.EventDto;
-import io.kontur.disasterninja.dto.EventFeedDto;
-import io.kontur.disasterninja.dto.EventListDto;
+import io.kontur.disasterninja.dto.*;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
+import io.kontur.disasterninja.util.JsonUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +25,7 @@ import org.wololo.geojson.FeatureCollection;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
@@ -33,7 +33,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static io.kontur.disasterninja.util.TestUtil.readFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -294,20 +296,50 @@ class EventApiServiceTest {
 
         PodamFactory factory = new PodamFactoryImpl();
         EventApiEventDto event = factory.manufacturePojo(EventApiEventDto.class);
+        event.setGeometries(new FeatureCollection(new Feature[0]));
         event.getEpisodes().forEach(e -> e.setGeometries(new FeatureCollection(new Feature[0])));
         event.getEventDetails().put("populatedAreaKm2", "123234");
 
         UUID eventId = UUID.randomUUID();
-        when(client.getEvent(eventId, null)).thenReturn(event);
+        when(client.getEvent(eventId, null, false)).thenReturn(event);
         //when
         EventDto result = service.getEvent(eventId, null);
         //then
-        verify(client, times(1)).getEvent(eventId, null);
+        verify(client, times(1)).getEvent(eventId, null, false);
         //some EventDto fields
         assertEquals(event.getProperName(), result.getEventName());
         assertEquals(event.getLocation(), result.getLocation());
         assertEquals(123234L, result.getSettledArea());
         assertEquals(event.getUrls(), result.getExternalUrls());
+    }
+
+    @Test
+    public void testGetEventEpisodes() throws IOException {
+        //given
+        when(authorizationService.getAccessToken()).thenReturn("testToken");
+
+        EventApiEventDto event = JsonUtil.readJson(
+                readFile(this, "EventApiServiceTest.testGetEventEpisodes.json"), EventApiEventDto.class);
+
+
+        UUID eventId = UUID.fromString("f4919979-3668-48f1-91af-94b3c5bffe2a");
+        when(client.getEvent(eventId, null, true)).thenReturn(event);
+        //when
+        List<EventEpisodeListDto> result = service.getEventEpisodes(eventId, null);
+        //then
+        verify(client, times(1)).getEvent(eventId, null, true);
+        //some EventDto fields
+        assertEquals(5, result.size());
+        assertEquals("Thermal anomaly in United States, California, San Diego County. Burnt area 2.518 km²",
+                result.get(0).getName());
+        assertEquals(Severity.MINOR, result.get(0).getSeverity());
+        assertEquals("United States, California, San Diego County", result.get(0).getLocation());
+        assertEquals("test.test", result.get(0).getExternalUrls().get(0));
+        assertEquals(1661981220, result.get(0).getStartedAt().toEpochSecond());
+        assertEquals(1662008460, result.get(0).getEndedAt().toEpochSecond());
+        assertEquals(1661993950, result.get(0).getUpdatedAt().toEpochSecond());
+        assertEquals("Polygon", result.get(0).getGeojson().getFeatures()[0].getGeometry().getType());
+        assertTrue(result.get(0).getUpdatedAt().isBefore(result.get(1).getUpdatedAt()));
     }
 
     @Test

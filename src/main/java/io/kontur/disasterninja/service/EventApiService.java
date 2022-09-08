@@ -3,6 +3,7 @@ package io.kontur.disasterninja.service;
 import io.kontur.disasterninja.client.EventApiClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.dto.EventDto;
+import io.kontur.disasterninja.dto.EventEpisodeListDto;
 import io.kontur.disasterninja.dto.EventFeedDto;
 import io.kontur.disasterninja.dto.EventListDto;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsFirst;
@@ -67,11 +69,25 @@ public class EventApiService {
     }
 
     public EventDto getEvent(UUID eventId, String feed) {
-        EventApiEventDto event = client.getEvent(eventId, feed);
+        EventApiEventDto event = client.getEvent(eventId, feed, false);
         if (event == null) {
             throw new WebApplicationException("Event " + eventId + " is not found", HttpStatus.NOT_FOUND);
         }
         return EventDtoConverter.convert(event);
+    }
+
+    public List<EventEpisodeListDto> getEventEpisodes(UUID eventId, String feed) {
+        EventApiEventDto event = client.getEvent(eventId, feed, true);
+        if (event == null) {
+            throw new WebApplicationException("Event " + eventId + " is not found", HttpStatus.NOT_FOUND);
+        }
+        if (CollectionUtils.isEmpty(event.getEpisodes())) {
+            return Collections.emptyList();
+        }
+        return event.getEpisodes().stream()
+                .map(EventDtoConverter::convertEventEpisode)
+                .sorted(Comparator.comparing(EventEpisodeListDto::getUpdatedAt))
+                .collect(Collectors.toList());
     }
 
     public List<EventFeedDto> getUserFeeds() {

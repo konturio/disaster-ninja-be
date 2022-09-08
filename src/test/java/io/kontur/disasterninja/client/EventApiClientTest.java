@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -47,15 +48,15 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         givenJwtTokenIs(getUserToken());
         server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
                         matchesRegex(Pattern.compile(
-                                "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&episodeFilterType=LATEST" +
-                                        "&limit=1000&sortOrder=ASC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.\\d+Z"))))
+                                "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&limit=1000" +
+                                        "&episodeFilterType=NONE&sortOrder=ASC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.\\d+Z&bbox"))))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
                 .andRespond(r -> {
                     if (r.getURI().toString().contains("2021-09-28T14:46")) { //last page
                         return withNoContent().createResponse(r);
                     }
-                    return withSuccess(readFile(this, "EventApiClientTest.testGetEvents.response.json"),
+                    return withSuccess(readFile(this, "EventApiClientTest.testGetEvents.withoutEpisodes.response.json"),
                             MediaType.APPLICATION_JSON).createResponse(r);
                 });
 
@@ -74,15 +75,15 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         givenJwtTokenIs(getUserToken());
         server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
                         matchesRegex(Pattern.compile(
-                                "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&episodeFilterType=LATEST" +
-                                        "&limit=1000&sortOrder=ASC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:00:00Z"))))
+                                "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&limit=1000" +
+                                        "&episodeFilterType=NONE&sortOrder=ASC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:00:00Z&bbox"))))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
                 .andRespond(r -> {
                     if (r.getURI().toString().contains("2021-09-28T14:46")) { //last page
                         return withNoContent().createResponse(r);
                     }
-                    return withSuccess(readFile(this, "EventApiClientTest.testGetEvents.response.json"),
+                    return withSuccess(readFile(this, "EventApiClientTest.testGetEvents.withoutEpisodes.response.json"),
                             MediaType.APPLICATION_JSON).createResponse(r);
                 });
 
@@ -102,16 +103,16 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         givenJwtTokenIs(getUserToken());
         server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
                         matchesRegex(Pattern.compile(
-                                "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&episodeFilterType=LATEST" +
-                                        "&limit=1000&sortOrder=DESC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.\\d+Z" +
-                                        "&bbox=1.1,2.2,3.3,4.4"))))
+                                "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&limit=1000" +
+                                        "&episodeFilterType=NONE&sortOrder=DESC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.\\d+Z" +
+                                        "&bbox=1.1&bbox=2.2&bbox=3.3&bbox=4.4"))))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
                 .andRespond(r -> {
                     if (r.getURI().toString().contains("2021-09-28T14:46")) { //last page
                         return withNoContent().createResponse(r);
                     }
-                    return withSuccess(readFile(this, "EventApiClientTest.testGetEvents.response.json"),
+                    return withSuccess(readFile(this, "EventApiClientTest.testGetEvents.withoutEpisodes.response.json"),
                             MediaType.APPLICATION_JSON).createResponse(r);
                 });
 
@@ -131,15 +132,15 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         givenJwtTokenIs(getUserToken());
         server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
                         matchesRegex(Pattern.compile(
-                                "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&episodeFilterType=LATEST" +
-                                        "&limit=1000&sortOrder=ASC&bbox=1.1,2.2,3.3,4.4"))))
+                                "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&limit=1000" +
+                                        "&episodeFilterType=NONE&sortOrder=ASC&bbox=1.1&bbox=2.2&bbox=3.3&bbox=4.4"))))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
                 .andRespond(r -> {
                     if (r.getURI().toString().contains("2021-09-28T14:46")) { //last page
                         return withNoContent().createResponse(r);
                     }
-                    return withSuccess(readFile(this, "EventApiClientTest.testGetEvents.response.json"),
+                    return withSuccess(readFile(this, "EventApiClientTest.testGetEvents.withoutEpisodes.response.json"),
                             MediaType.APPLICATION_JSON).createResponse(r);
                 });
 
@@ -154,18 +155,63 @@ class EventApiClientTest extends TestDependingOnUserAuth {
     }
 
     @Test
+    public void testGetLatestEvents() {
+        //given
+        givenJwtTokenIs(getUserToken());
+        server.expect(ExpectedCount.times(1), r -> assertThat(r.getURI().toString(),
+                        matchesRegex(Pattern.compile(
+                                "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&limit=1000" +
+                                        "&sortOrder=DESC&episodeFilterType=LATEST&types=type1&types=type2"))))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andRespond(r -> {
+                    if (r.getURI().toString().contains("2021-09-28T14:46")) { //last page
+                        return withNoContent().createResponse(r);
+                    }
+                    return withSuccess(readFile(this, "EventApiClientTest.testGetEvents.withoutEpisodes.response.json"),
+                            MediaType.APPLICATION_JSON).createResponse(r);
+                });
+
+        //when
+        client.getLatestEvents(List.of("type1", "type2"), "testFeedName",1000);
+
+        //then
+        verify(securityContext, times(1)).getAuthentication();
+    }
+
+    @Test
     public void testGetEvent() throws IOException {
         //given
         givenJwtTokenIs("JwtTestToken");
         server.expect(ExpectedCount.once(),
-                        requestTo("/v1/event?feed=testFeedName&eventId=1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"))
+                        requestTo("/v1/event?feed=testFeedName&eventId=1ec05e2b-7d18-490c-ac9f-c33609fdc7a7&episodeFilterType=ANY"))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header("Authorization", "Bearer " + getUserToken()))
                 .andRespond(withSuccess(readFile(this, "EventApiClientTest.testGetEvent.response.json"),
                         MediaType.APPLICATION_JSON));
         //when
         EventApiEventDto event = client.getEvent(UUID.fromString("1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"),
-                "testFeedName");
+                "testFeedName", true);
+
+        //then
+        verify(securityContext, times(1)).getAuthentication();
+        assertNotNull(event);
+        assertEquals(UUID.fromString("1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"), event.getEventId());
+    }
+
+    @Test
+    public void testGetEventWithoutEpisodes() throws IOException {
+        //given
+        givenJwtTokenIs("JwtTestToken");
+        server.expect(ExpectedCount.once(),
+                        requestTo("/v1/event?feed=testFeedName&eventId=1ec05e2b-7d18-490c-ac9f-c33609fdc7a7&episodeFilterType=NONE"))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(header("Authorization", "Bearer " + getUserToken()))
+                .andRespond(withSuccess(readFile(this, "EventApiClientTest.testGetEvent.response.json"),
+                        MediaType.APPLICATION_JSON));
+        //when
+        EventApiEventDto event = client.getEvent(UUID.fromString("1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"),
+                "testFeedName", false);
 
         //then
         verify(securityContext, times(1)).getAuthentication();

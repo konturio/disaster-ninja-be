@@ -6,10 +6,7 @@ import lombok.Setter;
 import org.wololo.geojson.FeatureCollection;
 
 import java.time.OffsetDateTime;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -18,6 +15,7 @@ public class FeedEpisode {
     private String name;
     private String description;
     private String type;
+    private String location;
     private Boolean active;
     private Severity severity;
     private OffsetDateTime startedAt;
@@ -27,4 +25,5 @@ public class FeedEpisode {
     private Set<UUID> observations = new HashSet<>();
     private Map<String, Object> episodeDetails;
     private FeatureCollection geometries;
+    private List<String> urls;
 }

@@ -3,6 +3,7 @@ package io.kontur.disasterninja.controller;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.controller.validation.ValidBbox;
 import io.kontur.disasterninja.dto.EventDto;
+import io.kontur.disasterninja.dto.EventEpisodeListDto;
 import io.kontur.disasterninja.dto.EventFeedDto;
 import io.kontur.disasterninja.dto.EventListDto;
 import io.kontur.disasterninja.service.EventApiService;
@@ -74,6 +75,14 @@ public class EventsController {
     @GetMapping("/{feed}/{eventId}")
     public EventDto getEvent(@PathVariable UUID eventId, @PathVariable String feed) {
         return service.getEvent(eventId, feed);
+    }
+
+    @Operation(tags = "Events", summary = "Returns event episodes")
+    @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = EventEpisodeListDto.class))))
+    @ApiResponse(responseCode = "404", description = "Event is not found", content = @Content(mediaType = "application/json"))
+    @GetMapping("/{feed}/{eventId}/episodes")
+    public List<EventEpisodeListDto> getEventEpisodes(@PathVariable UUID eventId, @PathVariable String feed) {
+        return service.getEventEpisodes(eventId, feed);
     }
 
     @Operation(tags = "Events", summary = "Returns list of feeds available to user by username resolved from JWT token"

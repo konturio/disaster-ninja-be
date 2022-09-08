@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.service.converter;
 
 import io.kontur.disasterninja.dto.EventDto;
+import io.kontur.disasterninja.dto.EventEpisodeListDto;
 import io.kontur.disasterninja.dto.EventType;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
@@ -12,7 +13,6 @@ import org.wololo.jts2geojson.GeoJSONReader;
 import org.wololo.jts2geojson.GeoJSONWriter;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -29,10 +29,6 @@ public class EventDtoConverter {
         EventDto dto = new EventDto();
         dto.setEventId(event.getEventId());
 
-        List<FeedEpisode> episodes = event.getEpisodes();
-        episodes.sort(Comparator.comparing(FeedEpisode::getUpdatedAt).reversed());
-        FeedEpisode latestEpisode = episodes.get(0);
-
         dto.setEventName(eventName(event));
         dto.setLocation(event.getLocation());
         List<String> eventUrls = event.getUrls();
@@ -40,12 +36,12 @@ public class EventDtoConverter {
 
         EventType eventType;
         try {
-            eventType = EventType.valueOf(latestEpisode.getType());
+            eventType = EventType.valueOf(event.getType());
         } catch (IllegalArgumentException ex) {
             eventType = EventType.OTHER;
         }
         dto.setEventType(eventType);
-        dto.setSeverity(latestEpisode.getSeverity());
+        dto.setSeverity(event.getSeverity());
 
         if (event.getEventDetails() != null) {
             dto.setSettledArea(convertDouble(event.getEventDetails().get("populatedAreaKm2")));
@@ -53,14 +49,28 @@ public class EventDtoConverter {
             dto.setSettledArea(0d);
         }
 
-        dto.setGeojson(uniteGeometry(latestEpisode)); //todo isn't this event's geometries? -- check in eventApi!
-        dto.setLatestEpisodeGeojson(latestEpisode.getGeometries());
+        dto.setGeojson(uniteGeometry(event)); //todo isn't this event's geometries? -- check in eventApi!
+        dto.setLatestEpisodeGeojson(event.getGeometries());
 
         return dto;
     }
 
-    private static FeatureCollection uniteGeometry(FeedEpisode latestEpisode) {
-        FeatureCollection geom = latestEpisode.getGeometries();
+    public static EventEpisodeListDto convertEventEpisode(FeedEpisode episode) {
+        EventEpisodeListDto result = EventEpisodeListDto.builder()
+                .name(episode.getName())
+                .externalUrls(episode.getUrls())
+                .severity(episode.getSeverity())
+                .location(episode.getLocation())
+                .startedAt(episode.getStartedAt())
+                .endedAt(episode.getEndedAt())
+                .updatedAt(episode.getUpdatedAt())
+                .geojson(episode.getGeometries())
+                .build();
+        return result;
+    }
+
+    private static FeatureCollection uniteGeometry(EventApiEventDto event) {
+        FeatureCollection geom = event.getGeometries();
         if (geom == null || geom.getFeatures() == null || geom.getFeatures().length == 0) {
             return new FeatureCollection(new Feature[0]);
         }
