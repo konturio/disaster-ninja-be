@@ -13,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -61,9 +62,11 @@ public class EventApiClient extends RestClientWithBearerAuth {
         if (after != null) {
             uriBuilder.queryParam("after", after.atZoneSameInstant(ZoneOffset.UTC).format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
         }
-        uriBuilder.queryParam("bbox", bbox);
+        if (!CollectionUtils.isEmpty(bbox)) {
+            uriBuilder.queryParam("bbox", bbox);
+        }
         ResponseEntity<EventApiSearchEventResponse> response = restTemplate
-                .exchange(uriBuilder.build(eventApiFeed, pageSize), HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
+                .exchange(uriBuilder.build(eventApiFeed, pageSize).toString(), HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
                         new ParameterizedTypeReference<>() {
                         });
         if (!response.getStatusCode().is2xxSuccessful()) {
@@ -82,9 +85,11 @@ public class EventApiClient extends RestClientWithBearerAuth {
 
         uriBuilder.queryParam("sortOrder", "DESC");
         uriBuilder.queryParam("episodeFilterType", "LATEST");
-        uriBuilder.queryParam("types", acceptableTypes);
+        if (!CollectionUtils.isEmpty(acceptableTypes)) {
+            uriBuilder.queryParam("types", acceptableTypes);
+        }
         ResponseEntity<EventApiSearchEventResponse> response = restTemplate
-                .exchange(uriBuilder.build(feedName, limit), HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
+                .exchange(uriBuilder.build(feedName, limit).toString(), HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
                         new ParameterizedTypeReference<>() {
                         });
         if (!response.getStatusCode().is2xxSuccessful()) {
@@ -110,7 +115,7 @@ public class EventApiClient extends RestClientWithBearerAuth {
             uriBuilder.queryParam("episodeFilterType", "NONE");
         }
         ResponseEntity<EventApiEventDto> response = restTemplate
-                .exchange(uriBuilder.build(eventApiFeed, eventId), HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
+                .exchange(uriBuilder.build(eventApiFeed, eventId).toString(), HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
                         new ParameterizedTypeReference<>() {
                         });
         if (!response.getStatusCode().is2xxSuccessful()) {

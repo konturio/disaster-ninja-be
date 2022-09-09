@@ -49,7 +49,7 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
                         matchesRegex(Pattern.compile(
                                 "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&limit=1000" +
-                                        "&episodeFilterType=NONE&sortOrder=ASC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.\\d+Z&bbox"))))
+                                        "&episodeFilterType=NONE&sortOrder=ASC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.\\d+Z"))))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
                 .andRespond(r -> {
@@ -76,7 +76,7 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
                         matchesRegex(Pattern.compile(
                                 "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&limit=1000" +
-                                        "&episodeFilterType=NONE&sortOrder=ASC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:00:00Z&bbox"))))
+                                        "&episodeFilterType=NONE&sortOrder=ASC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:00:00Z"))))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
                 .andRespond(r -> {
