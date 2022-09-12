@@ -27,7 +27,7 @@ public class LogHttpTraceRepository implements HttpTraceRepository {
                 response.getStatus(), trace.getTimeTaken(), request.getMethod(), request.getUri(),
                 request.getHeaders(), request.getRemoteAddress());
 
-        if ((response.getStatus() >= 200 && response.getStatus() < 300) || response.getStatus() == 404) {
+        if (response.getStatus() >= 200 && response.getStatus() < 300) {
             LOG.info(message);
         } else {
             LOG.warn(message);
