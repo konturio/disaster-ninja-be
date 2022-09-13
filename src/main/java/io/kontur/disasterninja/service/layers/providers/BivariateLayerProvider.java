@@ -69,9 +69,27 @@ public class BivariateLayerProvider implements LayerProvider {
      */
     @Override
     @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
+    // TODO: retained for backward compatibility, remove later
     public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
         reloadLayersIfEmpty();
         return CompletableFuture.completedFuture(bivariateLayers.values().stream().toList());
+    }
+
+    @Override
+    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
+    public CompletableFuture<List<Layer>> obtainGlobalLayers(LayerSearchParams searchParams) {
+        reloadLayersIfEmpty();
+        return CompletableFuture.completedFuture(bivariateLayers.values().stream().toList());
+    }
+
+    @Override
+    public CompletableFuture<List<Layer>> obtainUserLayers(LayerSearchParams searchParams) {
+        return CompletableFuture.completedFuture(Collections.emptyList());
+    }
+
+    @Override
+    public CompletableFuture<List<Layer>> obtainSelectedAreaLayers(LayerSearchParams searchParams) {
+        return CompletableFuture.completedFuture(Collections.emptyList());
     }
 
     @Override

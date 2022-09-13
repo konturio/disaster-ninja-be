@@ -15,7 +15,17 @@ public interface LayerProvider {
      * @return list of layers available from this LayerProvider.
      */
     @Async
+    // TODO: retained for backward compatibility, remove later
     CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams);
+
+    @Async
+    CompletableFuture<List<Layer>> obtainGlobalLayers(LayerSearchParams searchParams);
+
+    @Async
+    CompletableFuture<List<Layer>> obtainUserLayers(LayerSearchParams searchParams);
+
+    @Async
+    CompletableFuture<List<Layer>> obtainSelectedAreaLayers(LayerSearchParams searchParams);
 
     Layer obtainLayer(String layerId, LayerSearchParams searchParams);
 

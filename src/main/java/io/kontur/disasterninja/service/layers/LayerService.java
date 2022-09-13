@@ -16,6 +16,7 @@ import org.wololo.geojson.FeatureCollection;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -41,23 +42,64 @@ public class LayerService {
         layersApiClient.deleteLayer(id);
     }
 
+    // TODO: retained for backward compatibility, remove later
     public List<Layer> getList(LayerSearchParams layerSearchParams) {
         //load layers from providers
-        Map<String, Layer> layers = providers.stream()
-                .map(it -> {
+        Map<String, Layer> layers = loadLayersFromProviders(LayerProvider::obtainLayers, layerSearchParams);
+
+        //apply layer configs
+        applyLayerConfig(layers);
+
+        //add global overlays
+        layerConfigService.getGlobalOverlays().forEach((id, config) -> {
+            if (!layers.containsKey(id)) { //can be already loaded by a provider
+                layers.put(id, config);
+            }
+        });
+        return layersMapToList(layers);
+    }
+
+    public List<Layer> getGlobalLayers(LayerSearchParams layerSearchParams) {
+        Map<String, Layer> layers = loadLayersFromProviders(LayerProvider::obtainGlobalLayers, layerSearchParams);
+        applyLayerConfig(layers);
+        //add global overlays
+        layerConfigService.getGlobalOverlays().forEach((id, config) -> {
+            if (!layers.containsKey(id)) { //can be already loaded by a provider
+                layers.put(id, config);
+            }
+        });
+        return layersMapToList(layers);
+    }
+
+    public List<Layer> getUserLayers(LayerSearchParams layerSearchParams) {
+        Map<String, Layer> layers = loadLayersFromProviders(LayerProvider::obtainUserLayers, layerSearchParams);
+        applyLayerConfig(layers);
+        return layersMapToList(layers);
+    }
+
+    public List<Layer> getSelectedAreaLayers(LayerSearchParams layerSearchParams) {
+        Map<String, Layer> layers = loadLayersFromProviders(LayerProvider::obtainSelectedAreaLayers, layerSearchParams);
+        applyLayerConfig(layers);
+        return layersMapToList(layers);
+    }
+
+    private Map<String, Layer> loadLayersFromProviders(BiFunction<LayerProvider, LayerSearchParams,
+            CompletableFuture<List<Layer>>> obtainLayers, LayerSearchParams layerSearchParams) {
+        return providers.stream()
+                .map(provider -> {
                     try {
-                        return it.obtainLayers(layerSearchParams)
+                        return obtainLayers.apply(provider, layerSearchParams)
                                 .handle((l, ex) -> {
                                     if (ex != null) {
                                         LOG.error("Caught exception while obtaining layers from {}: {}",
-                                                it.getClass().getSimpleName(),
+                                                provider.getClass().getSimpleName(),
                                                 ex.getMessage(), ex);
                                         return Collections.<Layer>emptyList();
                                     }
                                     return l;
                                 });
                     } catch (Exception e) {
-                        LOG.error("Caught exception while obtaining layers from {}: {}", it.getClass().getSimpleName(),
+                        LOG.error("Caught exception while obtaining layers from {}: {}", provider.getClass().getSimpleName(),
                                 e.getMessage(), e);
                         return CompletableFuture.completedFuture(Collections.<Layer>emptyList());
                     }
@@ -70,17 +112,13 @@ public class LayerService {
                 .flatMap(List::stream)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(Layer::getId, layer -> layer, (layer, layer2) -> layer2));
+    }
 
-        //apply layer configs
+    private void applyLayerConfig(Map<String, Layer> layers) {
         layers.values().forEach(layerConfigService::applyConfig);
+    }
 
-        //add global overlays
-        layerConfigService.getGlobalOverlays().forEach((id, config) -> {
-            if (!layers.containsKey(id)) { //can be already loaded by a provider
-                layers.put(id, config);
-            }
-        });
-
+    private List<Layer> layersMapToList(Map<String, Layer> layers) {
         return layers.values().stream()
                 .sorted(Comparator.comparing(layer -> Optional.ofNullable(layer.getOrderIndex())
                         .orElse(Integer.MAX_VALUE)))
