@@ -74,9 +74,9 @@ public class LayerController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @Operation(tags = "Layers", summary = "Get List of available layers")
-    @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = APPLICATION_JSON_VALUE,
-            array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
+    @Operation(tags = "Layers", summary = "Get List of available layers", deprecated = true)
+    @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType =
+            APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
     @PostMapping(path = PATH_SEARCH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<LayerSummaryDto> getSummaries(@RequestBody
                                               @io.swagger.v3.oas.annotations.parameters.RequestBody(

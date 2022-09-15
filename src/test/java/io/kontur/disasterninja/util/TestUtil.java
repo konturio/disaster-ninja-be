@@ -8,6 +8,7 @@ import org.wololo.geojson.Geometry;
 import org.wololo.geojson.Point;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static io.kontur.disasterninja.domain.enums.LayerStepShape.HEX;
@@ -15,7 +16,8 @@ import static io.kontur.disasterninja.domain.enums.LayerStepShape.HEX;
 public final class TestUtil {
 
     public static String readFile(Object context, String file) throws IOException {
-        return IOUtils.toString(context.getClass().getResourceAsStream(file), "UTF-8");
+        return IOUtils.toString(Objects.requireNonNull(context.getClass().getResourceAsStream(file)),
+                StandardCharsets.UTF_8);
     }
 
     public static Legend createLegend() {
@@ -24,8 +26,10 @@ public final class TestUtil {
         final String OTHER_PARAM_VALUE = "asd";
 
         BivariateLegendAxes axes = new BivariateLegendAxes();
-        axes.setX(new BivariateLegendAxisDescriptionForOverlay("xLabel", null, null, null, null, null));
-        axes.setY(new BivariateLegendAxisDescriptionForOverlay("yLabel", null, null, null, null, null));
+        axes.setX(new BivariateLegendAxisDescriptionForOverlay("xLabel", null, null, null,
+                null, null));
+        axes.setY(new BivariateLegendAxisDescriptionForOverlay("yLabel", null, null, null,
+                null, null));
 
         Legend legend = new Legend("legendName", LegendType.SIMPLE, null, new ArrayList<>(),
                 Collections.singletonList(new ColorDto("A1", "rgb(232,232,157)")), axes,
@@ -49,6 +53,10 @@ public final class TestUtil {
 
     public static LayerSearchParams emptyParams() {
         return LayerSearchParams.builder().build();
+    }
+
+    public static LayerSearchParams paramsWithSomeAppId() {
+        return LayerSearchParams.builder().appId(UUID.randomUUID()).build();
     }
 
     public static LayerSearchParams paramsWithSomeBoundary() {
