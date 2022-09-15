@@ -21,8 +21,7 @@ import java.util.concurrent.ExecutionException;
 
 import static io.kontur.disasterninja.dto.EventType.EARTHQUAKE;
 import static io.kontur.disasterninja.service.layers.providers.EventShapeLayerProvider.EVENT_SHAPE_LAYER_ID;
-import static io.kontur.disasterninja.util.TestUtil.emptyParams;
-import static io.kontur.disasterninja.util.TestUtil.someEventIdEventFeedParams;
+import static io.kontur.disasterninja.util.TestUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -44,6 +43,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
     @Test
     public void list_emptyEventId() throws ExecutionException, InterruptedException {
         assertTrue(eventShapeLayerProvider.obtainLayers(emptyParams()).get().isEmpty());
+        assertTrue(eventShapeLayerProvider.obtainGlobalLayers(emptyParams()).get().isEmpty());
     }
 
     @Test
@@ -88,6 +88,32 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
     }
 
     @Test
+    public void obtainGlobalLayersTest() throws ExecutionException, InterruptedException {
+        List<Layer> layers = eventShapeLayerProvider.obtainGlobalLayers(emptyParams()).get();
+        assertTrue(layers.isEmpty());
+    }
+
+    @Test
+    public void obtainUserLayersTest() throws ExecutionException, InterruptedException {
+        List<Layer> layers = eventShapeLayerProvider.obtainUserLayers(paramsWithSomeAppId()).get();
+        assertTrue(layers.isEmpty());
+    }
+
+    @Test
+    public void obtainSelectedAreaLayersTest() throws ExecutionException, InterruptedException {
+        List<Layer> layers = eventShapeLayerProvider.obtainSelectedAreaLayers(someEventIdEventFeedParams()).get();
+        assertEquals(1, layers.size());
+
+        Layer layer = layers.get(0);
+        Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, layer.getId());
+        Assertions.assertEquals(EARTHQUAKE, layer.getEventType());
+        //check source data was loaded
+        Assertions.assertEquals(2, layer.getSource().getData().getFeatures().length);
+        Assertions.assertEquals("Point", layer.getSource().getData().getFeatures()[0].getGeometry().getType());
+        Assertions.assertEquals("Polygon", layer.getSource().getData().getFeatures()[1].getGeometry().getType());
+    }
+
+    @Test
     public void get_Earthquake() {
         Layer result = eventShapeLayerProvider.obtainLayer(EVENT_SHAPE_LAYER_ID, someEventIdEventFeedParams());
 
@@ -124,7 +150,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
     }
 
     @Test
-    public void list_Default() throws IOException, ExecutionException, InterruptedException {
+    public void obtainSelectedAreaLayersDefault() throws IOException, ExecutionException, InterruptedException {
         EventDto eventDto = objectMapper.readValue(getClass()
                         .getResource("/io/kontur/disasterninja/client/layers/eventdto.json"),
                 EventDto.class);
@@ -138,7 +164,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
         });
         Mockito.when(eventApiService.getEvent(any(), any())).thenReturn(eventDto);
 
-        List<Layer> result = eventShapeLayerProvider.obtainLayers(someEventIdEventFeedParams()).get();
+        List<Layer> result = eventShapeLayerProvider.obtainSelectedAreaLayers(someEventIdEventFeedParams()).get();
         assertEquals(1, result.size());
 
         Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.get(0).getId());
@@ -149,6 +175,13 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
     @Test
     public void list_NoIntersection() throws ExecutionException, InterruptedException {
         assertTrue(eventShapeLayerProvider.obtainLayers(LayerSearchParams.builder()
+                .boundary(new Point(new double[]{0d, 0d}))
+                .eventId(UUID.randomUUID()).eventFeed("some-feed").build()).get().isEmpty());
+    }
+
+    @Test
+    public void obtainSelectedAreaLayersNoIntersection() throws ExecutionException, InterruptedException {
+        assertTrue(eventShapeLayerProvider.obtainSelectedAreaLayers(LayerSearchParams.builder()
                 .boundary(new Point(new double[]{0d, 0d}))
                 .eventId(UUID.randomUUID()).eventFeed("some-feed").build()).get().isEmpty());
     }

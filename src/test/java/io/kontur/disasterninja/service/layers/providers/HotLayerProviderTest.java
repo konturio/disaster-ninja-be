@@ -16,8 +16,7 @@ import java.util.concurrent.ExecutionException;
 
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.*;
 import static io.kontur.disasterninja.service.layers.providers.HotLayerProvider.HOT_LAYER_ID;
-import static io.kontur.disasterninja.util.TestUtil.emptyParams;
-import static io.kontur.disasterninja.util.TestUtil.paramsWithSomeBoundary;
+import static io.kontur.disasterninja.util.TestUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -38,6 +37,7 @@ public class HotLayerProviderTest extends LayerProvidersTest {
     @Test
     public void list_emptyGeojson() throws ExecutionException, InterruptedException {
         assertTrue(hotLayerProvider.obtainLayers(emptyParams()).get().isEmpty());
+        assertTrue(hotLayerProvider.obtainSelectedAreaLayers(emptyParams()).get().isEmpty());
     }
 
     @Test
@@ -57,6 +57,27 @@ public class HotLayerProviderTest extends LayerProvidersTest {
     }
 
     @Test
+    public void obtainGlobalLayersTest() throws ExecutionException, InterruptedException {
+        List<Layer> layers = hotLayerProvider.obtainGlobalLayers(emptyParams()).get();
+        assertTrue(layers.isEmpty());
+    }
+
+    @Test
+    public void obtainUserLayersTest() throws ExecutionException, InterruptedException {
+        List<Layer> layers = hotLayerProvider.obtainUserLayers(paramsWithSomeAppId()).get();
+        assertTrue(layers.isEmpty());
+    }
+
+    @Test
+    public void obtainSelectedAreaLayersTest() throws ExecutionException, InterruptedException {
+        List<Layer> results = hotLayerProvider.obtainSelectedAreaLayers(paramsWithSomeBoundary())
+                .get(); //filtering is done in kcApiClient so not testing it here
+        assertEquals(1, results.size());
+        Layer result = results.get(0);
+        assertLayer(result);
+    }
+
+    @Test
     public void get() {
         Layer result = hotLayerProvider.obtainLayer(HOT_LAYER_ID, paramsWithSomeBoundary());
         assertLayer(result);
@@ -66,6 +87,12 @@ public class HotLayerProviderTest extends LayerProvidersTest {
     public void listNoIntersection() throws ExecutionException, InterruptedException {
         Mockito.when(kcApiClient.getCollectionItemsByCentroidGeometry(any(), any())).thenReturn(List.of());
         assertTrue(hotLayerProvider.obtainLayers(paramsWithSomeBoundary()).get().isEmpty());
+    }
+
+    @Test
+    public void obtainSelectedAreaLayersNoIntersection() throws ExecutionException, InterruptedException {
+        Mockito.when(kcApiClient.getCollectionItemsByCentroidGeometry(any(), any())).thenReturn(List.of());
+        assertTrue(hotLayerProvider.obtainSelectedAreaLayers(paramsWithSomeBoundary()).get().isEmpty());
     }
 
     @Test
@@ -85,7 +112,7 @@ public class HotLayerProviderTest extends LayerProvidersTest {
         Assertions.assertNull(result.getDescription()); //defaults are set later by LayerConfigService
         Assertions.assertEquals(100, result.getSource().getData().getFeatures()[0].getProperties()
                 .get(PROJECT_ID));
-        Assertions.assertEquals(HOT_PROJECTS_URL + 100, result.getSource().getData().getFeatures()[0].getProperties()
-                .get(PROJECT_LINK));
+        Assertions.assertEquals(HOT_PROJECTS_URL + 100, result.getSource().getData().getFeatures()[0]
+                .getProperties().get(PROJECT_LINK));
     }
 }

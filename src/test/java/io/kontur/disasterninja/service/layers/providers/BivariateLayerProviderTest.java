@@ -2,7 +2,6 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import com.apollographql.apollo.exception.ApolloException;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
-import io.kontur.disasterninja.domain.BivariateLegendAxisDescription;
 import io.kontur.disasterninja.domain.BivariateLegendAxisDescriptionForOverlay;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.dto.bivariatematrix.BivariateStatisticDto;
@@ -20,7 +19,7 @@ import java.util.concurrent.ExecutionException;
 
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
 import static io.kontur.disasterninja.service.layers.providers.BivariateLayerProvider.LAYER_PREFIX;
-import static io.kontur.disasterninja.util.TestUtil.emptyParams;
+import static io.kontur.disasterninja.util.TestUtil.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.*;
@@ -85,6 +84,7 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         when(insightsApiGraphqlClient.getBivariateStatistic()).thenThrow(new ApolloException("hello world"));
 
         assertTrue(bivariateLayerProvider.obtainLayers(emptyParams()).get().isEmpty());
+        assertTrue(bivariateLayerProvider.obtainGlobalLayers(emptyParams()).get().isEmpty());
     }
 
     @Test
@@ -98,6 +98,24 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
     public void listTest() throws ExecutionException, InterruptedException {
         List<Layer> layers = bivariateLayerProvider.obtainLayers(emptyParams()).get();
         assertEquals(1, layers.size());
+    }
+
+    @Test
+    public void obtainGlobalLayersTest() throws ExecutionException, InterruptedException {
+        List<Layer> layers = bivariateLayerProvider.obtainGlobalLayers(emptyParams()).get();
+        assertEquals(1, layers.size());
+    }
+
+    @Test
+    public void obtainUserLayersTest() throws ExecutionException, InterruptedException {
+        List<Layer> layers = bivariateLayerProvider.obtainUserLayers(paramsWithSomeAppId()).get();
+        assertTrue(layers.isEmpty());
+    }
+
+    @Test
+    public void obtainSelectedAreaLayersTest() throws ExecutionException, InterruptedException {
+        List<Layer> layers = bivariateLayerProvider.obtainSelectedAreaLayers(paramsWithSomeBoundary()).get();
+        assertTrue(layers.isEmpty());
     }
 
     @Test
@@ -158,6 +176,10 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
     @Test
     public void copyrightLinkMarkdown_8657() throws ExecutionException, InterruptedException {
         List<Layer> layers = bivariateLayerProvider.obtainLayers(emptyParams()).get();
+        assertThat(layers.get(0).getCopyrights(),
+                hasItems("copyrights [https://kontur.io/](https://kontur.io/)", "copyrights1", "copyrights2"));
+
+        layers = bivariateLayerProvider.obtainGlobalLayers(emptyParams()).get();
         assertThat(layers.get(0).getCopyrights(),
                 hasItems("copyrights [https://kontur.io/](https://kontur.io/)", "copyrights1", "copyrights2"));
     }

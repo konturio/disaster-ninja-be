@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.RASTER;
-import static io.kontur.disasterninja.util.TestUtil.emptyParams;
+import static io.kontur.disasterninja.util.TestUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 
@@ -38,7 +38,8 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
         //global layers
         Mockito.when(kcApiClient.getCollectionItemsByGeometry(isNull(), any())).thenReturn(
                 List.of(objectMapper.readValue(
-                                getClass().getResource("/io/kontur/disasterninja/client/layers/osmlayer_global.json"),
+                                getClass().getResource(
+                                        "/io/kontur/disasterninja/client/layers/osmlayer_global.json"),
                                 FeatureCollection.class)
                         .getFeatures())
         );
@@ -59,6 +60,13 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
     }
 
     @Test
+    public void obtainGlobalLayersTest() throws ExecutionException, InterruptedException {
+        List<Layer> layers = osmLayerProvider.obtainGlobalLayers(emptyParams()).get();
+        assertEquals(1, layers.size());
+        assertEquals("Bing", layers.get(0).getId());
+    }
+
+    @Test
     public void get_emptyGeoJson() {
         //no geoJson => no filtering is applied
         Layer layer = osmLayerProvider.obtainLayer("Benin_cotonou_pleiade_2016", emptyParams());
@@ -68,14 +76,52 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
         assertEquals(RASTER, layer.getSource().getType());
         assertEquals(
                 List.of("https://geoxxx.agrocampus-ouest.fr/owsifl/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetTile&" +
-                        "VERSION=1.0.0&LAYER=Benin:cotonou_pleiade_2016&STYLE=&FORMAT=image/jpeg&tileMatrixSet=EPSG:3857&tileMatrix=" +
-                        "EPSG:3857:{zoom}&tileRow={y}&tileCol={x}"), layer.getSource().getUrls());
+                        "VERSION=1.0.0&LAYER=Benin:cotonou_pleiade_2016&STYLE=&FORMAT=image/jpeg&tileMatrixSet=" +
+                        "EPSG:3857&tileMatrix=EPSG:3857:{zoom}&tileRow={y}&tileCol={x}"), layer.getSource().getUrls());
     }
 
     @Test
     public void list() throws ExecutionException, InterruptedException {
         Geometry point = new Point(new double[]{1.722946974, 6.266307793});
         List<Layer> result = osmLayerProvider.obtainLayers(LayerSearchParams.builder().boundary(point).build()).get();
+
+        assertEquals(10, result.size()); //9 layers without geometry, 1 matching
+
+        Layer bygeom = result.stream().filter(it -> "Benin_cotonou_pleiade_2016".equals(it.getId()))
+                .findAny().get();
+        assertNotNull(bygeom);
+
+        //feature without geometry is included
+        Layer layer1 = result.stream().filter(it -> "Bing".equals(it.getId())).findAny().get();
+        assertEquals("Bing aerial imagery", layer1.getName());
+        assertEquals("Satellite and aerial imagery.", layer1.getDescription());
+        assertEquals(BASE, layer1.getCategory());
+        Assertions.assertNull(layer1.getGroup()); // test in layer2
+        Assertions.assertNull(layer1.getLegend());
+        Assertions.assertNull(layer1.getCopyrights()); // test in layer2
+        assertEquals(22, layer1.getMaxZoom());
+        assertEquals(1, layer1.getMinZoom());
+
+        Layer layer2 = result.stream().filter(it -> "EOXAT2018CLOUDLESS".equals(it.getId())).findAny().get();
+        assertEquals("Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH" +
+                " (Contains modified Copernicus Sentinel data 2017 & 2018)", layer2.getCopyrights().get(0));
+        assertEquals("photo", layer2.getGroup());
+
+        Layer layer3 = result.stream().filter(it -> "OSM_Inspector-Addresses".equals(it.getId())).findAny().get();
+        assertEquals(OVERLAY, layer3.getCategory());
+    }
+
+    @Test
+    public void obtainUserLayersTest() throws ExecutionException, InterruptedException {
+        List<Layer> layers = osmLayerProvider.obtainUserLayers(paramsWithSomeAppId()).get();
+        assertTrue(layers.isEmpty());
+    }
+
+    @Test
+    public void obtainSelectedAreaLayersTest() throws ExecutionException, InterruptedException {
+        Geometry point = new Point(new double[]{1.722946974, 6.266307793});
+        List<Layer> result = osmLayerProvider.obtainSelectedAreaLayers(LayerSearchParams.builder()
+                .boundary(point).build()).get();
 
         assertEquals(10, result.size()); //9 layers without geometry, 1 matching
 
@@ -119,8 +165,8 @@ public class OsmLayerProviderTest extends LayerProvidersTest {
         assertEquals(RASTER, layer1.getSource().getType());
         assertEquals(
                 List.of("https://geoxxx.agrocampus-ouest.fr/owsifl/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetTile&" +
-                        "VERSION=1.0.0&LAYER=Benin:cotonou_pleiade_2016&STYLE=&FORMAT=image/jpeg&tileMatrixSet=EPSG:3857&tileMatrix=" +
-                        "EPSG:3857:{zoom}&tileRow={y}&tileCol={x}"), layer1.getSource().getUrls());
+                        "VERSION=1.0.0&LAYER=Benin:cotonou_pleiade_2016&STYLE=&FORMAT=image/jpeg&tileMatrixSet=" +
+                        "EPSG:3857&tileMatrix=EPSG:3857:{zoom}&tileRow={y}&tileCol={x}"), layer1.getSource().getUrls());
 
         assertNotNull(layer1.getSource().getData().getFeatures());
         assertTrue(layer1.getSource().getData().getFeatures()[0].getGeometry() instanceof MultiPolygon);
