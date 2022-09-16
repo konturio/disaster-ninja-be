@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.wololo.geojson.FeatureCollection;
 
 import java.util.*;
@@ -91,16 +92,25 @@ public class LayerService {
                         return obtainLayers.apply(provider, layerSearchParams)
                                 .handle((l, ex) -> {
                                     if (ex != null) {
-                                        LOG.error("Caught exception while obtaining layers from {}: {}",
-                                                provider.getClass().getSimpleName(),
-                                                ex.getMessage(), ex);
+                                        if (ex.getCause() instanceof HttpClientErrorException) {
+                                            LOG.info("Client error occurred while obtaining layers from {}: {}",
+                                                    provider.getClass().getSimpleName(), ex.getMessage(), ex);
+                                        } else {
+                                            LOG.error("Caught exception while obtaining layers from {}: {}",
+                                                    provider.getClass().getSimpleName(), ex.getMessage(), ex);
+                                        }
                                         return Collections.<Layer>emptyList();
                                     }
                                     return l;
                                 });
                     } catch (Exception e) {
-                        LOG.error("Caught exception while obtaining layers from {}: {}", provider.getClass().getSimpleName(),
-                                e.getMessage(), e);
+                        if (e.getCause() instanceof HttpClientErrorException) {
+                            LOG.info("Client error occurred while obtaining layers from {}: {}",
+                                    provider.getClass().getSimpleName(), e.getMessage(), e);
+                        } else {
+                            LOG.error("Caught exception while obtaining layers from {}: {}",
+                                    provider.getClass().getSimpleName(), e.getMessage(), e);
+                        }
                         return CompletableFuture.completedFuture(Collections.<Layer>emptyList());
                     }
                 })
