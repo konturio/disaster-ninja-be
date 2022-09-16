@@ -60,8 +60,8 @@ public class LayerService {
         return layersMapToList(layers);
     }
 
-    public List<Layer> getGlobalLayers(LayerSearchParams layerSearchParams) {
-        Map<String, Layer> layers = loadLayersFromProviders(LayerProvider::obtainGlobalLayers, layerSearchParams);
+    public List<Layer> getGlobalLayers() {
+        Map<String, Layer> layers = loadLayersFromProviders(LayerProvider::obtainGlobalLayers, null);
         applyLayerConfig(layers);
         //add global overlays
         layerConfigService.getGlobalOverlays().forEach((id, config) -> {

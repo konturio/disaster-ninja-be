@@ -165,7 +165,7 @@ public class LayerServiceTest {
     @Test
     public void globalOverlaysTest() {
         //all providers return nothing, so only global overlays should be returned
-        List<Layer> layers = layerService.getGlobalLayers(null);
+        List<Layer> layers = layerService.getGlobalLayers();
         //check all layers with 'globalOverlay: true' are present
         assertEquals(1, layers.size());
         assertEquals("activeContributors", layers.get(0).getId());
@@ -190,7 +190,7 @@ public class LayerServiceTest {
         when(layersApiProvider.obtainGlobalLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(List.of(layer)));
 
-        List<Layer> result = layerService.getGlobalLayers(null);
+        List<Layer> result = layerService.getGlobalLayers();
         assertFalse(result.isEmpty());
         assertTrue(result.contains(layer));
     }

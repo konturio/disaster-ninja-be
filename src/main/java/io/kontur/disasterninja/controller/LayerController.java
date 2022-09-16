@@ -95,7 +95,7 @@ public class LayerController {
             APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
     @PostMapping(path = PATH_SEARCH_GLOBAL, produces = APPLICATION_JSON_VALUE)
     public List<LayerSummaryDto> getGlobalLayers() {
-        return layerService.getGlobalLayers(null)
+        return layerService.getGlobalLayers()
                 .stream().map(LayerSummaryDto::fromLayer)
                 .collect(Collectors.toList());
     }
