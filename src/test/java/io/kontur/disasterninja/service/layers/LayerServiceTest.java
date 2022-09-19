@@ -23,8 +23,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
 import static io.kontur.disasterninja.service.layers.providers.HotLayerProvider.HOT_LAYER_ID;
-import static io.kontur.disasterninja.util.TestUtil.createLegend;
-import static io.kontur.disasterninja.util.TestUtil.paramsWithSomeBoundary;
+import static io.kontur.disasterninja.util.TestUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.matches;
@@ -65,18 +64,45 @@ public class LayerServiceTest {
 
     @BeforeEach
     public void beforeEach() {
-        when(hotLayerProvider.obtainLayers(any())).thenReturn(
-                CompletableFuture.completedFuture(new ArrayList<Layer>()));
-        when(osmLayerProvider.obtainLayers(any())).thenReturn(
-                CompletableFuture.completedFuture(new ArrayList<Layer>()));
-        when(urbanAndPeripheryLayerProvider.obtainLayers(any())).thenReturn(
-                CompletableFuture.completedFuture(new ArrayList<Layer>()));
-        when(eventApiProvider.obtainLayers(any())).thenReturn(
-                CompletableFuture.completedFuture(new ArrayList<Layer>()));
-        when(bivariateLayerProvider.obtainLayers(any())).thenReturn(
-                CompletableFuture.completedFuture(new ArrayList<Layer>()));
-        when(layersApiProvider.obtainLayers(any())).thenReturn(
-                CompletableFuture.completedFuture(new ArrayList<Layer>()));
+        when(hotLayerProvider.obtainGlobalLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+        when(osmLayerProvider.obtainGlobalLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+        when(urbanAndPeripheryLayerProvider.obtainGlobalLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+        when(eventApiProvider.obtainGlobalLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+        when(bivariateLayerProvider.obtainGlobalLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+        when(layersApiProvider.obtainGlobalLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+
+        when(hotLayerProvider.obtainUserLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+        when(osmLayerProvider.obtainUserLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+        when(urbanAndPeripheryLayerProvider.obtainUserLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+        when(eventApiProvider.obtainUserLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+        when(bivariateLayerProvider.obtainUserLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+        when(layersApiProvider.obtainUserLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+
+        when(hotLayerProvider.obtainSelectedAreaLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+        when(osmLayerProvider.obtainSelectedAreaLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+        when(urbanAndPeripheryLayerProvider.obtainSelectedAreaLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+        when(eventApiProvider.obtainSelectedAreaLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+        when(bivariateLayerProvider.obtainSelectedAreaLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+        when(layersApiProvider.obtainSelectedAreaLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(new ArrayList<>()));
+
         //add other providers
     }
 
@@ -137,21 +163,19 @@ public class LayerServiceTest {
     }
 
     @Test
-    public void globalOverlaysListTest() {
-        //all providers return nothing (= no features matched by geometry), so only global overlays should be returned
-        List<Layer> layers = layerService.getList(paramsWithSomeBoundary());
+    public void globalOverlaysTest() {
+        //all providers return nothing, so only global overlays should be returned
+        List<Layer> layers = layerService.getGlobalLayers();
         //check all layers with 'globalOverlay: true' are present
         assertEquals(1, layers.size());
-
         assertEquals("activeContributors", layers.get(0).getId());
-
         System.out.println(layers);
     }
 
     @Test
     public void getListShouldWorkEvenIfSomeProvidersThrowTest() {
         when(hotLayerProvider.obtainLayers(any())).thenThrow(HttpClientErrorException.create(HttpStatus.BAD_REQUEST,
-                "fail", null, null, Charset.defaultCharset()));
+                "fail", HttpHeaders.EMPTY, null, Charset.defaultCharset()));
         when(layersApiProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(List.of(layer)));
 
         List<Layer> result = layerService.getList(paramsWithSomeBoundary());
@@ -160,16 +184,52 @@ public class LayerServiceTest {
     }
 
     @Test
+    public void getGlobalLayersShouldWorkEvenIfSomeProvidersThrowTest() {
+        when(osmLayerProvider.obtainGlobalLayers(any())).thenThrow(HttpClientErrorException.create(
+                HttpStatus.BAD_REQUEST, "fail", HttpHeaders.EMPTY, null, Charset.defaultCharset()));
+        when(layersApiProvider.obtainGlobalLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(List.of(layer)));
+
+        List<Layer> result = layerService.getGlobalLayers();
+        assertFalse(result.isEmpty());
+        assertTrue(result.contains(layer));
+    }
+
+    @Test
+    public void getUserLayersShouldWorkEvenIfSomeProvidersThrowTest() {
+        when(eventApiProvider.obtainUserLayers(any())).thenThrow(HttpClientErrorException.create(
+                HttpStatus.BAD_REQUEST, "fail", HttpHeaders.EMPTY, null, Charset.defaultCharset()));
+        when(layersApiProvider.obtainUserLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(List.of(layer)));
+
+        List<Layer> result = layerService.getUserLayers(paramsWithSomeAppId());
+        assertFalse(result.isEmpty());
+        assertTrue(result.contains(layer));
+    }
+
+    @Test
+    public void getSelectedAreaLayersShouldWorkEvenIfSomeProvidersThrowTest() {
+        when(hotLayerProvider.obtainSelectedAreaLayers(any())).thenThrow(HttpClientErrorException.create(
+                HttpStatus.BAD_REQUEST, "fail", HttpHeaders.EMPTY, null, Charset.defaultCharset()));
+        when(layersApiProvider.obtainSelectedAreaLayers(any())).thenReturn(
+                CompletableFuture.completedFuture(List.of(layer)));
+
+        List<Layer> result = layerService.getSelectedAreaLayers(paramsWithSomeBoundary());
+        assertFalse(result.isEmpty());
+        assertTrue(result.contains(layer));
+    }
+
+    @Test
     public void getShouldThrowIfAnyProviderThrowsTest() {
         when(hotLayerProvider.isApplicable(any())).thenReturn(true);
         when(hotLayerProvider.obtainLayer(any(), any())).thenThrow(HttpClientErrorException.create(HttpStatus.NOT_FOUND,
-                "not found", null, null, Charset.defaultCharset()));
+                "not found", HttpHeaders.EMPTY, null, Charset.defaultCharset()));
         when(layersApiProvider.isApplicable(any())).thenReturn(true);
         when(layersApiProvider.obtainLayer(any(), any())).thenReturn(userLayer);
 
         try {
             layerService.get(List.of(HOT_LAYER_ID), List.of(userLayer.getId()), paramsWithSomeBoundary());
-            throw new RuntimeException("expected exception was not thrown!");
+            throw new RuntimeException("Expected exception was not thrown!");
         } catch (HttpClientErrorException.NotFound e) {
             assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
         }
@@ -178,8 +238,7 @@ public class LayerServiceTest {
     @Test
     public void globalOverlaysGetTest() {
         //all providers return nothing (= no features matched by geometry), so global overlay should be returned
-        List<Layer> layers = layerService.get(List.of("activeContributors"),
-                List.of(), paramsWithSomeBoundary());
+        List<Layer> layers = layerService.get(List.of("activeContributors"), List.of(), paramsWithSomeBoundary());
         assertEquals(1, layers.size());
         System.out.println(layers);
     }

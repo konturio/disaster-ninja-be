@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.wololo.geojson.FeatureCollection;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -32,6 +33,9 @@ public class LayerController {
 
     public static final String PATH = "/layers";
     public static final String PATH_SEARCH = "/search";
+    public static final String PATH_SEARCH_GLOBAL = "/search/global";
+    public static final String PATH_SEARCH_USER = "/search/user";
+    public static final String PATH_SEARCH_SELECTED_AREA = "/search/selected_area";
     public static final String PATH_DETAILS = "/details";
     private final LayerService layerService;
     private final GeometryTransformer geometryTransformer;
@@ -70,9 +74,9 @@ public class LayerController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @Operation(tags = "Layers", summary = "Get List of available layers")
-    @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = APPLICATION_JSON_VALUE,
-            array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
+    @Operation(tags = "Layers", summary = "Get List of available layers", deprecated = true)
+    @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType =
+            APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
     @PostMapping(path = PATH_SEARCH, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<LayerSummaryDto> getSummaries(@RequestBody
                                               @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -82,6 +86,39 @@ public class LayerController {
                                               LayerSummarySearchDto inputDto) {
         LayerSearchParams searchParams = createLayerSearchParams(inputDto);
         return layerService.getList(searchParams)
+                .stream().map(LayerSummaryDto::fromLayer)
+                .collect(Collectors.toList());
+    }
+
+    @Operation(tags = "Layers", summary = "Get list of global layers")
+    @ApiResponse(responseCode = "200", description = "Retrieved list of global layers", content = @Content(mediaType =
+            APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
+    @PostMapping(path = PATH_SEARCH_GLOBAL, produces = APPLICATION_JSON_VALUE)
+    public List<LayerSummaryDto> getGlobalLayers() {
+        return layerService.getGlobalLayers()
+                .stream().map(LayerSummaryDto::fromLayer)
+                .collect(Collectors.toList());
+    }
+
+    @Operation(tags = "Layers", summary = "Get list of user layers")
+    @ApiResponse(responseCode = "200", description = "Retrieved list of user layers", content = @Content(mediaType =
+            APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
+    @PostMapping(path = PATH_SEARCH_USER, produces = APPLICATION_JSON_VALUE)
+    public List<LayerSummaryDto> getUserLayers(@RequestParam UUID appId) {
+        return layerService.getUserLayers(LayerSearchParams.builder().appId(appId).build())
+                .stream().map(LayerSummaryDto::fromLayer)
+                .collect(Collectors.toList());
+    }
+
+    @Operation(tags = "Layers", summary = "Get list of selected area layers")
+    @ApiResponse(responseCode = "200", description = "Retrieved list of selected area layers", content = @Content(
+            mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation =
+            LayerSummaryDto.class))))
+    @PostMapping(path = PATH_SEARCH_SELECTED_AREA, consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE)
+    public List<LayerSummaryDto> getSelectedAreaLayers(@RequestBody LayerSummarySearchDto inputDto) {
+        LayerSearchParams searchParams = createLayerSearchParams(inputDto);
+        return layerService.getSelectedAreaLayers(searchParams)
                 .stream().map(LayerSummaryDto::fromLayer)
                 .collect(Collectors.toList());
     }

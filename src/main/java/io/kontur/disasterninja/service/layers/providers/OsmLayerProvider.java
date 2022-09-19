@@ -63,7 +63,27 @@ public class OsmLayerProvider implements LayerProvider {
 
     @Override
     @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
+    // TODO: retained for backward compatibility, remove later
     public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
+        List<Feature> osmLayers = kcApiClient.getCollectionItemsByGeometry(searchParams.getBoundary(), OSM_LAYERS);
+        return CompletableFuture.completedFuture(fromOsmLayers(osmLayers));
+    }
+
+    @Override
+    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
+    public CompletableFuture<List<Layer>> obtainGlobalLayers(LayerSearchParams searchParams) {
+        List<Feature> osmLayers = kcApiClient.getCollectionItemsByGeometry(null, OSM_LAYERS);
+        return CompletableFuture.completedFuture(fromOsmLayers(osmLayers));
+    }
+
+    @Override
+    public CompletableFuture<List<Layer>> obtainUserLayers(LayerSearchParams searchParams) {
+        return CompletableFuture.completedFuture(Collections.emptyList());
+    }
+
+    @Override
+    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
+    public CompletableFuture<List<Layer>> obtainSelectedAreaLayers(LayerSearchParams searchParams) {
         List<Feature> osmLayers = kcApiClient.getCollectionItemsByGeometry(searchParams.getBoundary(), OSM_LAYERS);
         return CompletableFuture.completedFuture(fromOsmLayers(osmLayers));
     }

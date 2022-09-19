@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.wololo.geojson.Geometry;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -30,12 +31,41 @@ public class LayersApiProvider implements LayerProvider {
 
     @Override
     @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
+    // TODO: retained for backward compatibility, remove later
     public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
         if (isUserAuthenticated()) {
             List<Layer> result = new ArrayList<>();
             result.addAll(obtainNonUserOwnedLayersByGeometry(searchParams.getBoundary(), searchParams.getAppId()));
             result.addAll(obtainAllUserOwnedLayers(searchParams.getAppId()));
             return CompletableFuture.completedFuture(result);
+        } else {
+            return CompletableFuture.completedFuture(
+                    obtainLayersByGeometry(searchParams.getBoundary(), searchParams.getAppId()));
+        }
+    }
+
+    @Override
+    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
+    public CompletableFuture<List<Layer>> obtainGlobalLayers(LayerSearchParams searchParams) {
+        return CompletableFuture.completedFuture(obtainLayersByGeometry(null, null));
+    }
+
+    @Override
+    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
+    public CompletableFuture<List<Layer>> obtainUserLayers(LayerSearchParams searchParams) {
+        if (isUserAuthenticated()) {
+            return CompletableFuture.completedFuture(obtainAllUserOwnedLayers(searchParams.getAppId()));
+        } else {
+            return CompletableFuture.completedFuture(Collections.emptyList());
+        }
+    }
+
+    @Override
+    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
+    public CompletableFuture<List<Layer>> obtainSelectedAreaLayers(LayerSearchParams searchParams) {
+        if (isUserAuthenticated()) {
+            return CompletableFuture.completedFuture(
+                    obtainNonUserOwnedLayersByGeometry(searchParams.getBoundary(), searchParams.getAppId()));
         } else {
             return CompletableFuture.completedFuture(
                     obtainLayersByGeometry(searchParams.getBoundary(), searchParams.getAppId()));

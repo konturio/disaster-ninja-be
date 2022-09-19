@@ -12,6 +12,7 @@ import org.wololo.geojson.Geometry;
 
 import java.util.UUID;
 
+import static io.kontur.disasterninja.util.TestUtil.*;
 import static org.mockito.Mockito.*;
 
 public class LayersApiProviderTest extends TestDependingOnUserAuth {
@@ -32,17 +33,19 @@ public class LayersApiProviderTest extends TestDependingOnUserAuth {
         UUID appId = UUID.randomUUID();
         provider.obtainLayers(LayerSearchParams.builder().boundary(geometry).appId(appId).build());
 
-        verify(client, times(1)).findLayers(geometry, false, CollectionOwner.ANY, appId);
+        verify(client, times(1)).findLayers(geometry, false,
+                CollectionOwner.ANY, appId);
     }
 
     @Test
-    public void getLayersUserIsNotAuthenticatedWithoutGeometryTest() throws JsonProcessingException {
+    public void getLayersUserIsNotAuthenticatedWithoutGeometryTest() {
         givenUserIsNotAuthenticated();
 
         UUID appId = UUID.randomUUID();
         provider.obtainLayers(LayerSearchParams.builder().boundary(null).appId(appId).build());
 
-        verify(client, times(1)).findLayers(null, true, CollectionOwner.ANY, appId);
+        verify(client, times(1)).findLayers(null, true,
+                CollectionOwner.ANY, appId);
     }
 
     @Test
@@ -53,18 +56,77 @@ public class LayersApiProviderTest extends TestDependingOnUserAuth {
         UUID appId = UUID.randomUUID();
         provider.obtainLayers(LayerSearchParams.builder().boundary(geometry).appId(appId).build());
 
-        verify(client, times(1)).findLayers(null, false, CollectionOwner.ME, appId);
-        verify(client, times(1)).findLayers(geometry, false, CollectionOwner.NOT_ME, appId);
+        verify(client, times(1)).findLayers(null, false,
+                CollectionOwner.ME, appId);
+        verify(client, times(1)).findLayers(geometry, false,
+                CollectionOwner.NOT_ME, appId);
     }
 
     @Test
-    public void getLayersUserIsAuthenticatedWithoutGeometryTest() throws JsonProcessingException {
+    public void getLayersUserIsAuthenticatedWithoutGeometryTest() {
         givenUserIsLoggedIn();
 
         UUID appId = UUID.randomUUID();
         provider.obtainLayers(LayerSearchParams.builder().boundary(null).appId(appId).build());
 
-        verify(client, times(1)).findLayers(null, false, CollectionOwner.ME, appId);
-        verify(client, times(1)).findLayers(null, true, CollectionOwner.NOT_ME, appId);
+        verify(client, times(1)).findLayers(null, false,
+                CollectionOwner.ME, appId);
+        verify(client, times(1)).findLayers(null, true,
+                CollectionOwner.NOT_ME, appId);
+    }
+
+    @Test
+    public void obtainGlobalLayersTest() {
+        givenUserIsNotAuthenticated();
+
+        provider.obtainGlobalLayers(emptyParams());
+
+        verify(client, times(1)).findLayers(null, true,
+                CollectionOwner.ANY, null);
+    }
+
+    @Test
+    public void obtainUserLayersUserIsNotAuthenticatedTest() {
+        givenUserIsNotAuthenticated();
+
+        UUID appId = UUID.randomUUID();
+        provider.obtainUserLayers(LayerSearchParams.builder().boundary(null).appId(appId).build());
+
+        verify(client, never()).findLayers(null, false, CollectionOwner.ME, appId);
+    }
+
+    @Test
+    public void obtainUserLayersUserIsAuthenticatedTest() {
+        givenUserIsLoggedIn();
+
+        UUID appId = UUID.randomUUID();
+        provider.obtainUserLayers(LayerSearchParams.builder().boundary(null).appId(appId).build());
+
+        verify(client, times(1)).findLayers(null, false,
+                CollectionOwner.ME, appId);
+    }
+
+    @Test
+    public void obtainSelectedAreaLayersUserIsNotAuthenticatedTest() throws JsonProcessingException {
+        givenUserIsNotAuthenticated();
+
+        Geometry geometry = objectMapper.readValue(json, Geometry.class);
+        UUID appId = UUID.randomUUID();
+        provider.obtainSelectedAreaLayers(LayerSearchParams.builder().boundary(geometry).appId(appId).build());
+
+        verify(client, times(1)).findLayers(geometry, false,
+                CollectionOwner.ANY, appId);
+    }
+
+    @Test
+    public void obtainSelectedAreaLayersUserIsAuthenticatedTest() throws JsonProcessingException {
+        givenUserIsLoggedIn();
+
+        Geometry geometry = objectMapper.readValue(json, Geometry.class);
+        UUID appId = UUID.randomUUID();
+        provider.obtainSelectedAreaLayers(LayerSearchParams.builder().boundary(geometry).appId(appId).build());
+
+        verify(client, times(1)).findLayers(geometry, false,
+                CollectionOwner.NOT_ME, appId);
     }
 }
