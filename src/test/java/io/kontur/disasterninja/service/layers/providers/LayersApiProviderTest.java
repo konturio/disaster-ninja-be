@@ -86,7 +86,17 @@ public class LayersApiProviderTest extends TestDependingOnUserAuth {
     }
 
     @Test
-    public void obtainUserLayersTest() {
+    public void obtainUserLayersUserIsNotAuthenticatedTest() {
+        givenUserIsNotAuthenticated();
+
+        UUID appId = UUID.randomUUID();
+        provider.obtainUserLayers(LayerSearchParams.builder().boundary(null).appId(appId).build());
+
+        verify(client, never()).findLayers(null, false, CollectionOwner.ME, appId);
+    }
+
+    @Test
+    public void obtainUserLayersUserIsAuthenticatedTest() {
         givenUserIsLoggedIn();
 
         UUID appId = UUID.randomUUID();

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.wololo.geojson.Geometry;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -52,7 +53,11 @@ public class LayersApiProvider implements LayerProvider {
     @Override
     @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
     public CompletableFuture<List<Layer>> obtainUserLayers(LayerSearchParams searchParams) {
-        return CompletableFuture.completedFuture(obtainAllUserOwnedLayers(searchParams.getAppId()));
+        if (isUserAuthenticated()) {
+            return CompletableFuture.completedFuture(obtainAllUserOwnedLayers(searchParams.getAppId()));
+        } else {
+            return CompletableFuture.completedFuture(Collections.emptyList());
+        }
     }
 
     @Override
