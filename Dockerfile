@@ -14,4 +14,4 @@ COPY --from=builder /application/spring-boot-loader ./
 COPY --from=builder /application/snapshot-dependencies ./
 COPY --from=builder /application/application ./
 COPY build/opentelemetry/opentelemetry-javaagent.jar /opentelemetry/opentelemetry-javaagent.jar
-ENTRYPOINT ["java", "-Dlogging.config=classpath:logback.docker.xml", "org.springframework.boot.loader.JarLauncher", "-javaagent:/opentelemetry/opentelemetry-javaagent.jar"]
+ENTRYPOINT ["java", "-Dlogging.config=classpath:logback.docker.xml", "org.springframework.boot.loader.JarLauncher"]
