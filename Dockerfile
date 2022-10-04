@@ -11,6 +11,7 @@ WORKDIR application
 EXPOSE 8627
 COPY --from=builder /application/dependencies ./
 COPY --from=builder /application/spring-boot-loader ./
+COPY build/opentelemetry/opentelemetry-javaagent.jar /opentelemetry/opentelemetry-javaagent.jar
 COPY --from=builder /application/snapshot-dependencies ./
 COPY --from=builder /application/application ./
 ENTRYPOINT ["java", "-Dlogging.config=classpath:logback.docker.xml", "org.springframework.boot.loader.JarLauncher"]
