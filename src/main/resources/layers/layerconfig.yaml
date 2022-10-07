@@ -530,51 +530,6 @@ configs:
             width: 1
             opacity: 0.2
 
-  - id: 'hotProjects'
-    globalOverlay: false
-    displayLegendIfNoFeaturesExist: false
-    boundaryRequiredForRetrieval: true
-    name: 'HOT Projects'
-    description: 'Projects on HOT Tasking Manager, ongoing and historical'
-    group: 'layersInSelectedArea'
-    copyrights:
-      - '© Humanitarian OpenStreetMap Team, © Kontur'
-    legend:
-      name: 'HOT Projects'
-      type: 'simple'
-      linkProperty: 'projectLink'
-      steps:
-        - paramName: status
-          paramValue: PUBLISHED
-          stepName: Published
-          stepShape: circle
-          style:
-            icon-image: hot-red
-            text: "{projectId} - {projectPriority}"
-            font-family: Noto Sans Regular
-            text-offset:
-              - 0
-              - 0.6
-            text-anchor: top
-            symbol-z-order: viewport-y
-            icon-allow-overlap: true
-            fill-color: red
-        - paramName: status
-          paramValue: ARCHIVED
-          stepName: Archived
-          stepShape: circle
-          style:
-            icon-image: hot-gray
-            text: "{projectId} - {projectPriority}"
-            font-family: Noto Sans Regular
-            text-offset:
-              - 0
-              - 0.6
-            text-anchor: top
-            symbol-z-order: viewport-y
-            icon-allow-overlap: true
-            fill-color: gray
-
 ##### Category: BASELINE
 
   - id: 'Bing'

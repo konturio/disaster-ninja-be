@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static io.kontur.disasterninja.client.KcApiClient.HOT_PROJECTS;
 import static io.kontur.disasterninja.client.KcApiClient.OSM_LAYERS;
 import static io.kontur.disasterninja.util.TestUtil.readFile;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -46,7 +45,7 @@ class KcApiClientTest {
 
         //given
         server.expect(ExpectedCount.times(1), r -> assertThat(r.getURI().toString(), containsString(
-                        "/collections/hotProjects/itemsByGeometry")))
+                        "/collections/osmLayers/itemsByGeometry")))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(request -> {
                     String body = request.getBody().toString();
@@ -64,7 +63,7 @@ class KcApiClientTest {
 
         //when
         List<Feature> features = client.getCollectionItemsByCentroidGeometry(objectMapper.readValue(json,
-                Geometry.class), HOT_PROJECTS);
+                Geometry.class), OSM_LAYERS);
 
         //then
         assertEquals(1, features.size());

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
-import static io.kontur.disasterninja.service.layers.providers.HotLayerProvider.HOT_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.UrbanAndPeripheryLayerProvider.SETTLED_PERIPHERY_LAYER_ID;
 import static io.kontur.disasterninja.util.TestUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -45,8 +45,6 @@ public class LayerServiceTest {
     final Layer commonLayer = Layer.builder().id(LAYER_PREFIX + "commonLayer").build();
 
     @MockBean
-    HotLayerProvider hotLayerProvider;
-    @MockBean
     OsmLayerProvider osmLayerProvider;
     @MockBean
     UrbanAndPeripheryLayerProvider urbanAndPeripheryLayerProvider;
@@ -64,8 +62,6 @@ public class LayerServiceTest {
 
     @BeforeEach
     public void beforeEach() {
-        when(hotLayerProvider.obtainGlobalLayers(any())).thenReturn(
-                CompletableFuture.completedFuture(new ArrayList<>()));
         when(osmLayerProvider.obtainGlobalLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
         when(urbanAndPeripheryLayerProvider.obtainGlobalLayers(any())).thenReturn(
@@ -77,8 +73,6 @@ public class LayerServiceTest {
         when(layersApiProvider.obtainGlobalLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
 
-        when(hotLayerProvider.obtainUserLayers(any())).thenReturn(
-                CompletableFuture.completedFuture(new ArrayList<>()));
         when(osmLayerProvider.obtainUserLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
         when(urbanAndPeripheryLayerProvider.obtainUserLayers(any())).thenReturn(
@@ -90,8 +84,6 @@ public class LayerServiceTest {
         when(layersApiProvider.obtainUserLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
 
-        when(hotLayerProvider.obtainSelectedAreaLayers(any())).thenReturn(
-                CompletableFuture.completedFuture(new ArrayList<>()));
         when(osmLayerProvider.obtainSelectedAreaLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
         when(urbanAndPeripheryLayerProvider.obtainSelectedAreaLayers(any())).thenReturn(
@@ -174,7 +166,7 @@ public class LayerServiceTest {
 
     @Test
     public void getListShouldWorkEvenIfSomeProvidersThrowTest() {
-        when(hotLayerProvider.obtainLayers(any())).thenThrow(HttpClientErrorException.create(HttpStatus.BAD_REQUEST,
+        when(osmLayerProvider.obtainLayers(any())).thenThrow(HttpClientErrorException.create(HttpStatus.BAD_REQUEST,
                 "fail", HttpHeaders.EMPTY, null, Charset.defaultCharset()));
         when(layersApiProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(List.of(layer)));
 
@@ -209,7 +201,7 @@ public class LayerServiceTest {
 
     @Test
     public void getSelectedAreaLayersShouldWorkEvenIfSomeProvidersThrowTest() {
-        when(hotLayerProvider.obtainSelectedAreaLayers(any())).thenThrow(HttpClientErrorException.create(
+        when(osmLayerProvider.obtainSelectedAreaLayers(any())).thenThrow(HttpClientErrorException.create(
                 HttpStatus.BAD_REQUEST, "fail", HttpHeaders.EMPTY, null, Charset.defaultCharset()));
         when(layersApiProvider.obtainSelectedAreaLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(List.of(layer)));
@@ -221,14 +213,14 @@ public class LayerServiceTest {
 
     @Test
     public void getShouldThrowIfAnyProviderThrowsTest() {
-        when(hotLayerProvider.isApplicable(any())).thenReturn(true);
-        when(hotLayerProvider.obtainLayer(any(), any())).thenThrow(HttpClientErrorException.create(HttpStatus.NOT_FOUND,
+        when(urbanAndPeripheryLayerProvider.isApplicable(any())).thenReturn(true);
+        when(urbanAndPeripheryLayerProvider.obtainLayer(any(), any())).thenThrow(HttpClientErrorException.create(HttpStatus.NOT_FOUND,
                 "not found", HttpHeaders.EMPTY, null, Charset.defaultCharset()));
         when(layersApiProvider.isApplicable(any())).thenReturn(true);
         when(layersApiProvider.obtainLayer(any(), any())).thenReturn(userLayer);
 
         try {
-            layerService.get(List.of(HOT_LAYER_ID), List.of(userLayer.getId()), paramsWithSomeBoundary());
+            layerService.get(List.of(SETTLED_PERIPHERY_LAYER_ID), List.of(userLayer.getId()), paramsWithSomeBoundary());
             throw new RuntimeException("Expected exception was not thrown!");
         } catch (HttpClientErrorException.NotFound e) {
             assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());

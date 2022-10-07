@@ -21,7 +21,6 @@ import org.wololo.geojson.Geometry;
 import org.wololo.geojson.Point;
 import org.wololo.jts2geojson.GeoJSONWriter;
 
-import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,7 +30,6 @@ import static io.kontur.disasterninja.service.converter.GeometryConverter.*;
 public class KcApiClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(KcApiClient.class);
-    public static final String HOT_PROJECTS = "hotProjects";
     public static final String OSM_LAYERS = "osmlayer";
     private final RestTemplate kcApiRestTemplate;
     private final GeoJSONWriter writer = new GeoJSONWriter();
