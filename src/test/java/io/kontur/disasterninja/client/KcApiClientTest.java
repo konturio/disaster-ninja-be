@@ -45,7 +45,7 @@ class KcApiClientTest {
 
         //given
         server.expect(ExpectedCount.times(1), r -> assertThat(r.getURI().toString(), containsString(
-                        "/collections/osmLayers/itemsByGeometry")))
+                        "/collections/osmlayer/itemsByGeometry")))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(request -> {
                     String body = request.getBody().toString();
