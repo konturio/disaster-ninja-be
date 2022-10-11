@@ -11,16 +11,12 @@ import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Point;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
-import static io.kontur.disasterninja.domain.enums.LayerCategory.OVERLAY;
-import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
 import static io.kontur.disasterninja.domain.enums.LegendType.SIMPLE;
 import static io.kontur.disasterninja.dto.EventType.*;
 import static io.kontur.disasterninja.service.layers.providers.EventShapeLayerProvider.EVENT_SHAPE_LAYER_ID;
-import static io.kontur.disasterninja.service.layers.providers.HotLayerProvider.HOT_LAYER_ID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,115 +35,6 @@ public class LayerConfigServiceTest {
     @Test
     public void globalOverlaysTest() {
         assertFalse(service.getGlobalOverlays().isEmpty());
-    }
-
-    @Test
-    public void hotWithFeaturesForAllStepsTest() {
-        Layer hot = Layer.builder()
-                .id(HOT_LAYER_ID)
-                .source(LayerSource.builder()
-                        .type(GEOJSON)
-                        .data(new FeatureCollection(
-                                new Feature[]{
-                                        feature("status", "Active"),
-                                        feature("status", "Archived"),
-                                        feature("status", "Published")}
-                        )).build()).build();
-        service.applyConfig(hot);
-
-        assertFalse(hot.isGlobalOverlay());
-        assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
-        assertTrue(hot.isBoundaryRequiredForRetrieval());
-        Assertions.assertEquals("HOT Projects", hot.getName());
-        Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
-        Assertions.assertNull(hot.getCategory());
-        Assertions.assertEquals("layersInSelectedArea", hot.getGroup());
-        Assertions.assertNotNull(hot.getLegend());
-        Assertions.assertEquals("HOT Projects", hot.getLegend().getName());
-        Assertions.assertNotNull(hot.getLegend().getSteps());
-        assertFalse(hot.isEventIdRequiredForRetrieval());
-        //colors are only used for bivariate legends
-        Assertions.assertNull(hot.getLegend().getColors());
-        Assertions.assertEquals("projectLink", hot.getLegend().getLinkProperty());
-        // all 3 steps are present since there is at least one feature for each step
-        Assertions.assertEquals(2, hot.getLegend().getSteps().size());
-
-        //steps
-        Assertions.assertEquals("Published", hot.getLegend().getSteps().get(0).getStepName());
-        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(1).getStepName());
-        //step 1
-        Assertions.assertEquals("status", hot.getLegend().getSteps().get(0).getParamName());
-        Assertions.assertEquals("PUBLISHED", hot.getLegend().getSteps().get(0).getParamValue());
-        //step 2
-        Assertions.assertEquals("status", hot.getLegend().getSteps().get(1).getParamName());
-        Assertions.assertEquals("ARCHIVED", hot.getLegend().getSteps().get(1).getParamValue());
-
-        Assertions.assertEquals("hot-red", hot.getLegend().getSteps().get(0).getStyle().get("icon-image"));
-        Assertions.assertEquals("hot-gray", hot.getLegend().getSteps().get(1).getStyle().get("icon-image"));
-
-        //#8748 text-offset is a List of Numbers, not Map or String
-        Assertions.assertTrue(hot.getLegend().getSteps().get(0).getStyle().get("text-offset") instanceof List);
-        Assertions.assertEquals(0, ((List<?>) hot.getLegend().getSteps().get(0).getStyle().get("text-offset")).get(0));
-        Assertions.assertEquals(0.6,
-                ((List<?>) hot.getLegend().getSteps().get(0).getStyle().get("text-offset")).get(1));
-    }
-
-    @Test
-    public void hotWithFeaturesForSomeStepsTest() {
-        Layer hot = Layer.builder()
-                .id(HOT_LAYER_ID)
-                .source(LayerSource.builder()
-                        .type(GEOJSON)
-                        .data(new FeatureCollection(
-                                new Feature[]{
-                                        feature("status", "Archived"),
-                                        feature("status", "Archived")}
-                        )).build()).build();
-        service.applyConfig(hot);
-
-        assertFalse(hot.isGlobalOverlay());
-        assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
-        assertTrue(hot.isBoundaryRequiredForRetrieval());
-        Assertions.assertEquals("HOT Projects", hot.getName());
-        Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
-        Assertions.assertNull(hot.getCategory());
-        Assertions.assertEquals("layersInSelectedArea", hot.getGroup());
-        Assertions.assertNotNull(hot.getLegend());
-        Assertions.assertEquals("projectLink", hot.getLegend().getLinkProperty());
-        Assertions.assertNotNull(hot.getLegend().getSteps());
-        //colors are only used for bivariate legends
-        Assertions.assertNull(hot.getLegend().getColors());
-        // just one step is present since there are no features for step 2 (Published)
-        Assertions.assertEquals(1, hot.getLegend().getSteps().size());
-
-        //steps
-        Assertions.assertEquals("Archived", hot.getLegend().getSteps().get(0).getStepName());
-        //step 1
-        Assertions.assertEquals("status", hot.getLegend().getSteps().get(0).getParamName());
-        Assertions.assertEquals("ARCHIVED", hot.getLegend().getSteps().get(0).getParamValue());
-
-        Assertions.assertEquals("hot-gray", hot.getLegend().getSteps().get(0).getStyle().get("icon-image"));
-    }
-
-    @Test
-    public void hotWithoutFeaturesTest() {
-        Layer hot = Layer.builder()
-                .id(HOT_LAYER_ID)
-                .build();
-        service.applyConfig(hot);
-
-        assertFalse(hot.isGlobalOverlay());
-        assertFalse(hot.isDisplayLegendIfNoFeaturesExist());
-        assertTrue(hot.isBoundaryRequiredForRetrieval());
-        Assertions.assertEquals("HOT Projects", hot.getName());
-        Assertions.assertEquals("Projects on HOT Tasking Manager, ongoing and historical", hot.getDescription());
-        Assertions.assertNull(hot.getCategory());
-        Assertions.assertEquals("layersInSelectedArea", hot.getGroup());
-        Assertions.assertNotNull(hot.getLegend());
-        Assertions.assertEquals("projectLink", hot.getLegend().getLinkProperty());
-        Assertions.assertNotNull(hot.getLegend().getSteps());
-        //empty Legend since no features exist for defined steps
-        Assertions.assertEquals(0, hot.getLegend().getSteps().size());
     }
 
     @Test

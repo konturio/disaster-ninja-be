@@ -14,9 +14,6 @@ public class LayerProvidersTest {
     OsmLayerProvider osmLayerProvider;
 
     @Autowired
-    HotLayerProvider hotLayerProvider;
-
-    @Autowired
     UrbanAndPeripheryLayerProvider urbanAndPeripheryLayerProvider;
 
     @Autowired
