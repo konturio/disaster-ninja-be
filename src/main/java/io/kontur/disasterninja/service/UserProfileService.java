@@ -2,6 +2,7 @@ package io.kontur.disasterninja.service;
 
 import io.kontur.disasterninja.client.UserProfileClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
+import io.kontur.disasterninja.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,24 @@ public class UserProfileService {
         } catch (Exception e) {
             LOG.error("Can't get default user event feed: {}", e.getMessage(), e);
             throw new WebApplicationException("Can't get default user event feed", HttpStatus.BAD_GATEWAY);
+        }
+    }
+
+    public UserDto getCurrentUser() {
+        try {
+            return client.getCurrentUser();
+        } catch (Exception e) {
+            LOG.error("Can't get current user: {}", e.getMessage(), e);
+            throw new WebApplicationException("Can't get current user", HttpStatus.BAD_GATEWAY);
+        }
+    }
+
+    public UserDto updateUser(UserDto userDto) {
+        try {
+            return client.updateUser(userDto);
+        } catch (Exception e) {
+            LOG.error("Can't update current user: {}", e.getMessage(), e);
+            throw new WebApplicationException("Can't update current user", HttpStatus.BAD_GATEWAY);
         }
     }
 }
