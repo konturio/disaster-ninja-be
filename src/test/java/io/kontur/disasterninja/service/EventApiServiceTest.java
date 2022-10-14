@@ -45,8 +45,10 @@ class EventApiServiceTest {
     private final String userToken = "some-user-token";
     private final String defaultAppToken = "some-app-token";
     private final String defaultAppFeed = "kontur-public";
+    private final String defaultAppFeedName = "Kontur Public";
     private final String defaultAppFeedDesc = "some desc";
     private final String userAppFeed = "some-user-feed";
+    private final String userAppFeedName = "Some User Feed";
     private final String userAppFeedDesc = "some user desc";
 
     @Mock
@@ -83,6 +85,7 @@ class EventApiServiceTest {
 
         assertEquals(1, result.size());
         assertEquals(defaultAppFeed, result.get(0).getFeed());
+        assertEquals(defaultAppFeedName, result.get(0).getName());
         assertEquals(defaultAppFeedDesc, result.get(0).getDescription());
     }
 
@@ -93,6 +96,7 @@ class EventApiServiceTest {
 
         assertEquals(1, result.size());
         assertEquals(userAppFeed, result.get(0).getFeed());
+        assertEquals(userAppFeedName, result.get(0).getName());
         assertEquals(userAppFeedDesc, result.get(0).getDescription());
     }
 
@@ -351,12 +355,12 @@ class EventApiServiceTest {
     }
 
     private List<EventFeedDto> publicFeeds() {
-        EventFeedDto eventFeedDto = new EventFeedDto(defaultAppFeed, defaultAppFeedDesc);
+        EventFeedDto eventFeedDto = new EventFeedDto(defaultAppFeed, defaultAppFeedName, defaultAppFeedDesc);
         return List.of(eventFeedDto);
     }
 
     private List<EventFeedDto> userFeeds() {
-        EventFeedDto eventFeedDto = new EventFeedDto(userAppFeed, userAppFeedDesc);
+        EventFeedDto eventFeedDto = new EventFeedDto(userAppFeed, userAppFeedName, userAppFeedDesc);
         return List.of(eventFeedDto);
     }
 

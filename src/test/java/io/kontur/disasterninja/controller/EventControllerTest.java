@@ -115,7 +115,7 @@ public class EventControllerTest {
     }
 
     private EventFeedDto feed(int param) {
-        return new EventFeedDto("feed-" + param, "I am a feed" + param);
+        return new EventFeedDto("feed-" + param, "Feed " + param, "I am a feed " + param);
     }
 
 }
