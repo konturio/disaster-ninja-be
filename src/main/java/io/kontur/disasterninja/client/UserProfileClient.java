@@ -3,6 +3,7 @@ package io.kontur.disasterninja.client;
 import io.kontur.disasterninja.dto.AppDto;
 import io.kontur.disasterninja.dto.AppSummaryDto;
 import io.kontur.disasterninja.dto.FeatureDto;
+import io.kontur.disasterninja.dto.UserDto;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ public class UserProfileClient extends RestClientWithBearerAuth {
     private static final String APP_URL = "/apps";
     private static final String APP_URL_WITH_ID = "/apps/{id}";
     private static final String DEFAULT_APP_ID_URL = "/apps/default_id";
+    private static final String CURRENT_USER_URL = "/users/current_user";
     private final RestTemplate userProfileRestTemplate;
 
     @Value("${kontur.platform.userProfileApi.defaultAppId:}")
@@ -39,6 +41,26 @@ public class UserProfileClient extends RestClientWithBearerAuth {
                              KeycloakAuthorizationService authorizationService) {
         super(authorizationService);
         this.userProfileRestTemplate = userProfileRestTemplate;
+    }
+
+    public UserDto getCurrentUser() {
+        ResponseEntity<UserDto> response = userProfileRestTemplate
+                .exchange(CURRENT_USER_URL, GET,
+                        httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
+                        new ParameterizedTypeReference<>() {
+                        });
+
+        return response.getBody();
+    }
+
+    public UserDto updateUser(UserDto userDto) {
+        ResponseEntity<UserDto> response = userProfileRestTemplate
+                .exchange(CURRENT_USER_URL, PUT,
+                        httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(userDto),
+                        new ParameterizedTypeReference<>() {
+                        });
+
+        return response.getBody();
     }
 
     public String getUserDefaultFeed() {
