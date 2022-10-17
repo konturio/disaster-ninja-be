@@ -66,5 +66,3 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-      run: |-
-        echo "<h3>Docker image tag</h3> ${{ steps.meta.outputs.tags }} <br><br>" >> $GITHUB_STEP_SUMMARY
