@@ -51,4 +51,7 @@ public class Collection {
 
     @JsonProperty("featureProperties")
     private ObjectNode featureProperties;
+
+    @JsonProperty("tileSize")
+    private Integer tileSize;
 }
