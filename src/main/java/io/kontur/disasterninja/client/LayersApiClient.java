@@ -323,7 +323,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
 
         return LayerSource.builder()
                 .type(LayerSourceType.VECTOR)
-                .tileSize(512)
+                .tileSize(collection.getTileSize() != null ? collection.getTileSize() : 512)
                 .urls(url != null ? singletonList(url) : null)
                 .apiKey(apiKey)
                 .build();
@@ -335,7 +335,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
 
         return LayerSource.builder()
                 .type(LayerSourceType.RASTER)
-                .tileSize(256)
+                .tileSize(collection.getTileSize() != null ? collection.getTileSize() : 256)
                 .urls(url != null ? singletonList(url) : null)
                 .apiKey(apiKey)
                 .build();
