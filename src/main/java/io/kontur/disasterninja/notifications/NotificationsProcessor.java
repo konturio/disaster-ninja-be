@@ -16,6 +16,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
@@ -89,6 +90,8 @@ public class NotificationsProcessor {
                     process(event, geometry);
                 }
             }
+        } catch (RestClientException e) {
+            LOG.warn("Received en error while obtaining events for notification: {}", e.getMessage());
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
