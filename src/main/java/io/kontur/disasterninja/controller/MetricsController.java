@@ -31,7 +31,7 @@ public class MetricsController {
                 .quantile(0.95, 0.005)
                 .quantile(0.99, 0.005)
                 .quantile(1, 0)
-                .labelNames("name", "appId", "userId")
+                .labelNames("name", "appId", "userId", "buildVersion")
                 .maxAgeSeconds(120)
                 .ageBuckets(1);
 
@@ -53,10 +53,9 @@ public class MetricsController {
             String appId = metric.getAppId() != null ? metric.getAppId().toString() : "null";
             String userId = metric.getUserId() != null ? metric.getUserId().toString() : "null";
             if (UserMetricDto.UserMetricDtoType.SUMMARY.equals(metric.getType())) {
-                summary.labels(metric.getName(), appId, userId).observe(metric.getValue());
+                summary.labels(metric.getName(), appId, userId, metric.getBuildVersion()).observe(metric.getValue());
             }
         });
         return ResponseEntity.ok().build();
     }
-
 }
