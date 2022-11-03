@@ -15,6 +15,7 @@ public class UserMetricDto {
     private final UserMetricDtoType type;
     private final UUID appId;
     private final UUID userId;
+    private final String buildVersion;
 
     public enum UserMetricDtoType {
         SUMMARY

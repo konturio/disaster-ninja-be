@@ -1,5 +1,5 @@
 plugins {
-    id 'com.apollographql.apollo' version '2.5.11'
+    id 'com.apollographql.apollo' version '2.5.13'
     id 'org.springframework.boot' version '2.7.4'
     id 'io.spring.dependency-management' version '1.0.14.RELEASE'
     id 'de.undercouch.download' version '5.1.2'
@@ -30,20 +30,20 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
-    implementation 'org.wololo:jts2geojson:0.17.0'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.8'
-    implementation 'com.apollographql.apollo:apollo-runtime:2.5.11'
+    implementation 'org.wololo:jts2geojson:0.18.1'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.12'
+    implementation 'com.apollographql.apollo:apollo-runtime:2.5.13'
 
     implementation 'ch.qos.logback.contrib:logback-jackson:0.1.5'
     implementation 'ch.qos.logback.contrib:logback-json-classic:0.1.5'
 
     //health
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'io.micrometer:micrometer-registry-prometheus:1.9.0'
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.9.5'
 
     implementation 'junit:junit:4.13.2'
     implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.2.Final'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.2.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
     annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
