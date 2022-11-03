@@ -6,6 +6,8 @@ import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Summary;
 import io.swagger.v3.oas.annotations.Operation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +24,7 @@ import java.util.List;
 @RequestMapping("/rum")
 public class MetricsController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MetricsController.class);
     private final Summary summary;
 
     public MetricsController(MeterRegistry meterRegistry) {
@@ -38,8 +41,10 @@ public class MetricsController {
         if (meterRegistry instanceof PrometheusMeterRegistry) {
             CollectorRegistry collectorRegistry = ((PrometheusMeterRegistry) meterRegistry).getPrometheusRegistry();
             summary = metricsBuilder.register(collectorRegistry);
+            LOG.info("PrometheusMeterRegistry is used");
         } else {
             summary = metricsBuilder.create();
+            LOG.info("Other MeterRegistry is used");
         }
     }
 
