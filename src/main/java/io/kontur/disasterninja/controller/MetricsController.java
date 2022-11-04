@@ -2,6 +2,7 @@ package io.kontur.disasterninja.controller;
 
 import io.kontur.disasterninja.dto.UserMetricDto;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Summary;
@@ -25,7 +26,7 @@ import java.util.List;
 public class MetricsController {
 
     private static final Logger LOG = LoggerFactory.getLogger(MetricsController.class);
-    private final Summary summary;
+    private Summary summary;
 
     public MetricsController(MeterRegistry meterRegistry) {
         Summary.Builder metricsBuilder = Summary.build("real_user_monitoring", "RUM metrics")
@@ -39,12 +40,28 @@ public class MetricsController {
                 .ageBuckets(1);
 
         if (meterRegistry instanceof PrometheusMeterRegistry) {
+            LOG.info("PrometheusMeterRegistry is used: " + meterRegistry.getClass());
+
             CollectorRegistry collectorRegistry = ((PrometheusMeterRegistry) meterRegistry).getPrometheusRegistry();
             summary = metricsBuilder.register(collectorRegistry);
-            LOG.info("PrometheusMeterRegistry is used: " + meterRegistry.getClass());
+        } else if (meterRegistry instanceof CompositeMeterRegistry compositeMeterRegistry) {
+            LOG.info("CompositeMeterRegistry is used: " + meterRegistry.getClass());
+            compositeMeterRegistry.getRegistries()
+                    .forEach(registry -> LOG.info("Found MeterRegistry: " + registry.getClass()));
+            LOG.info("Total MeterRegistries found: " + compositeMeterRegistry.getRegistries().size());
+
+            compositeMeterRegistry.getRegistries().stream()
+                    .filter(registry -> registry.getClass().equals(PrometheusMeterRegistry.class))
+                    .findFirst()
+                    .ifPresent(prometheusMeterRegistry -> {
+                        CollectorRegistry collectorRegistry = ((PrometheusMeterRegistry) prometheusMeterRegistry)
+                                .getPrometheusRegistry();
+                        summary = metricsBuilder.register(collectorRegistry);
+                    });
         } else {
-            summary = metricsBuilder.create();
             LOG.info("Other MeterRegistry is used: " + meterRegistry.getClass());
+
+            summary = metricsBuilder.create();
         }
     }
 
