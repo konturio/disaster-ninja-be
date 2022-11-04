@@ -2,6 +2,7 @@ package io.kontur.disasterninja.controller;
 
 import io.kontur.disasterninja.dto.UserMetricDto;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Summary;
@@ -22,7 +23,7 @@ import java.util.List;
 @RequestMapping("/rum")
 public class MetricsController {
 
-    private final Summary summary;
+    private Summary summary;
 
     public MetricsController(MeterRegistry meterRegistry) {
         Summary.Builder metricsBuilder = Summary.build("real_user_monitoring", "RUM metrics")
@@ -38,6 +39,15 @@ public class MetricsController {
         if (meterRegistry instanceof PrometheusMeterRegistry) {
             CollectorRegistry collectorRegistry = ((PrometheusMeterRegistry) meterRegistry).getPrometheusRegistry();
             summary = metricsBuilder.register(collectorRegistry);
+        } else if (meterRegistry instanceof CompositeMeterRegistry compositeMeterRegistry) {
+            compositeMeterRegistry.getRegistries().stream()
+                    .filter(registry -> registry.getClass().equals(PrometheusMeterRegistry.class))
+                    .findFirst()
+                    .ifPresent(prometheusMeterRegistry -> {
+                        CollectorRegistry collectorRegistry = ((PrometheusMeterRegistry) prometheusMeterRegistry)
+                                .getPrometheusRegistry();
+                        summary = metricsBuilder.register(collectorRegistry);
+                    });
         } else {
             summary = metricsBuilder.create();
         }
