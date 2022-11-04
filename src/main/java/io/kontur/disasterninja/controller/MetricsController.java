@@ -41,10 +41,10 @@ public class MetricsController {
         if (meterRegistry instanceof PrometheusMeterRegistry) {
             CollectorRegistry collectorRegistry = ((PrometheusMeterRegistry) meterRegistry).getPrometheusRegistry();
             summary = metricsBuilder.register(collectorRegistry);
-            LOG.info("PrometheusMeterRegistry is used");
+            LOG.info("PrometheusMeterRegistry is used: " + meterRegistry.getClass());
         } else {
-            summary = metricsBuilder.create();
-            LOG.info("Other MeterRegistry is used");
+            summary = metricsBuilder.register();
+            LOG.info("Other MeterRegistry is used: " + meterRegistry.getClass());
         }
     }
 
