@@ -7,8 +7,6 @@ import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Summary;
 import io.swagger.v3.oas.annotations.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
@@ -25,7 +23,6 @@ import java.util.List;
 @RequestMapping("/rum")
 public class MetricsController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MetricsController.class);
     private Summary summary;
 
     public MetricsController(MeterRegistry meterRegistry) {
@@ -40,16 +37,9 @@ public class MetricsController {
                 .ageBuckets(1);
 
         if (meterRegistry instanceof PrometheusMeterRegistry) {
-            LOG.info("PrometheusMeterRegistry is used: " + meterRegistry.getClass());
-
             CollectorRegistry collectorRegistry = ((PrometheusMeterRegistry) meterRegistry).getPrometheusRegistry();
             summary = metricsBuilder.register(collectorRegistry);
         } else if (meterRegistry instanceof CompositeMeterRegistry compositeMeterRegistry) {
-            LOG.info("CompositeMeterRegistry is used: " + meterRegistry.getClass());
-            compositeMeterRegistry.getRegistries()
-                    .forEach(registry -> LOG.info("Found MeterRegistry: " + registry.getClass()));
-            LOG.info("Total MeterRegistries found: " + compositeMeterRegistry.getRegistries().size());
-
             compositeMeterRegistry.getRegistries().stream()
                     .filter(registry -> registry.getClass().equals(PrometheusMeterRegistry.class))
                     .findFirst()
@@ -59,8 +49,6 @@ public class MetricsController {
                         summary = metricsBuilder.register(collectorRegistry);
                     });
         } else {
-            LOG.info("Other MeterRegistry is used: " + meterRegistry.getClass());
-
             summary = metricsBuilder.create();
         }
     }
