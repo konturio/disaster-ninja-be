@@ -43,7 +43,7 @@ public class MetricsController {
             summary = metricsBuilder.register(collectorRegistry);
             LOG.info("PrometheusMeterRegistry is used: " + meterRegistry.getClass());
         } else {
-            summary = metricsBuilder.register();
+            summary = metricsBuilder.create();
             LOG.info("Other MeterRegistry is used: " + meterRegistry.getClass());
         }
     }
