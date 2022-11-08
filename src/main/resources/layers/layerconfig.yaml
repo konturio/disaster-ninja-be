@@ -529,20 +529,3 @@ configs:
             color: 'black'
             width: 1
             opacity: 0.2
-
-##### Category: BASELINE
-
-  - id: 'Bing'
-    category: 'base'
-    group: 'photo'
-    source:
-      type: 'raster'
-      urls:
-        - 'http://ecn.t0.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
-        - 'http://ecn.t1.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
-        - 'http://ecn.t2.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
-        - 'http://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
-        - 'http://ecn.t4.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
-        - 'http://ecn.t5.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
-        - 'http://ecn.t6.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'
-        - 'http://ecn.t7.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=6937'

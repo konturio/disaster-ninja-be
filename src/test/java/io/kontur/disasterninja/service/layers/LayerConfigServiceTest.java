@@ -97,16 +97,6 @@ public class LayerConfigServiceTest {
         assertFalse(activeContributors.isEventIdRequiredForRetrieval());
     }
 
-    @Test
-    public void bingTest() {
-        Layer bing = Layer.builder().id("Bing").build();
-        service.applyConfig(bing);
-        Assertions.assertEquals(8, bing.getSource().getUrls().size());
-        Assertions.assertEquals(BASE, bing.getCategory());
-        Assertions.assertEquals("photo", bing.getGroup());
-        assertFalse(bing.isEventIdRequiredForRetrieval());
-    }
-
     //even shape tests
 
     @Test
