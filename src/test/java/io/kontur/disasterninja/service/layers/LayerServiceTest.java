@@ -45,8 +45,6 @@ public class LayerServiceTest {
     final Layer commonLayer = Layer.builder().id(LAYER_PREFIX + "commonLayer").build();
 
     @MockBean
-    OsmLayerProvider osmLayerProvider;
-    @MockBean
     UrbanAndPeripheryLayerProvider urbanAndPeripheryLayerProvider;
     @MockBean
     EventShapeLayerProvider eventApiProvider;
@@ -62,8 +60,6 @@ public class LayerServiceTest {
 
     @BeforeEach
     public void beforeEach() {
-        when(osmLayerProvider.obtainGlobalLayers(any())).thenReturn(
-                CompletableFuture.completedFuture(new ArrayList<>()));
         when(urbanAndPeripheryLayerProvider.obtainGlobalLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
         when(eventApiProvider.obtainGlobalLayers(any())).thenReturn(
@@ -73,8 +69,6 @@ public class LayerServiceTest {
         when(layersApiProvider.obtainGlobalLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
 
-        when(osmLayerProvider.obtainUserLayers(any())).thenReturn(
-                CompletableFuture.completedFuture(new ArrayList<>()));
         when(urbanAndPeripheryLayerProvider.obtainUserLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
         when(eventApiProvider.obtainUserLayers(any())).thenReturn(
@@ -84,8 +78,6 @@ public class LayerServiceTest {
         when(layersApiProvider.obtainUserLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
 
-        when(osmLayerProvider.obtainSelectedAreaLayers(any())).thenReturn(
-                CompletableFuture.completedFuture(new ArrayList<>()));
         when(urbanAndPeripheryLayerProvider.obtainSelectedAreaLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
         when(eventApiProvider.obtainSelectedAreaLayers(any())).thenReturn(
@@ -166,8 +158,8 @@ public class LayerServiceTest {
 
     @Test
     public void getListShouldWorkEvenIfSomeProvidersThrowTest() {
-        when(osmLayerProvider.obtainLayers(any())).thenThrow(HttpClientErrorException.create(HttpStatus.BAD_REQUEST,
-                "fail", HttpHeaders.EMPTY, null, Charset.defaultCharset()));
+        when(bivariateLayerProvider.obtainLayers(any())).thenThrow(HttpClientErrorException.create(
+                HttpStatus.BAD_REQUEST, "fail", HttpHeaders.EMPTY, null, Charset.defaultCharset()));
         when(layersApiProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(List.of(layer)));
 
         List<Layer> result = layerService.getList(paramsWithSomeBoundary());
@@ -177,7 +169,7 @@ public class LayerServiceTest {
 
     @Test
     public void getGlobalLayersShouldWorkEvenIfSomeProvidersThrowTest() {
-        when(osmLayerProvider.obtainGlobalLayers(any())).thenThrow(HttpClientErrorException.create(
+        when(bivariateLayerProvider.obtainGlobalLayers(any())).thenThrow(HttpClientErrorException.create(
                 HttpStatus.BAD_REQUEST, "fail", HttpHeaders.EMPTY, null, Charset.defaultCharset()));
         when(layersApiProvider.obtainGlobalLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(List.of(layer)));
@@ -201,7 +193,7 @@ public class LayerServiceTest {
 
     @Test
     public void getSelectedAreaLayersShouldWorkEvenIfSomeProvidersThrowTest() {
-        when(osmLayerProvider.obtainSelectedAreaLayers(any())).thenThrow(HttpClientErrorException.create(
+        when(urbanAndPeripheryLayerProvider.obtainSelectedAreaLayers(any())).thenThrow(HttpClientErrorException.create(
                 HttpStatus.BAD_REQUEST, "fail", HttpHeaders.EMPTY, null, Charset.defaultCharset()));
         when(layersApiProvider.obtainSelectedAreaLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(List.of(layer)));
