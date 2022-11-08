@@ -54,4 +54,10 @@ public class Collection {
 
     @JsonProperty("tileSize")
     private Integer tileSize;
+
+    @JsonProperty("minZoom")
+    private Integer minZoom;
+
+    @JsonProperty("maxZoom")
+    private Integer maxZoom;
 }
