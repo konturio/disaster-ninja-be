@@ -312,6 +312,8 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                 .id(getIdWithPrefix(collection.getId()))
                 .legend(collection.getStyleRule() != null ?
                         JsonUtil.readObjectNode(collection.getStyleRule(), Legend.class) : null)
+                .minZoom(collection.getMinZoom())
+                .maxZoom(collection.getMaxZoom())
                 .source(source)
                 .ownedByUser(collection.isOwnedByUser())
                 .build();

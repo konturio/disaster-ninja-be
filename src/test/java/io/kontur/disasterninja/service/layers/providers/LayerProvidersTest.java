@@ -11,9 +11,6 @@ public class LayerProvidersTest {
     ObjectMapper objectMapper;
 
     @Autowired
-    OsmLayerProvider osmLayerProvider;
-
-    @Autowired
     UrbanAndPeripheryLayerProvider urbanAndPeripheryLayerProvider;
 
     @Autowired

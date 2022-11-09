@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.NAME;
 import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
-import static io.kontur.disasterninja.service.layers.providers.OsmLayerProvider.getFeatureProperty;
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Service
@@ -154,5 +153,16 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
         return "Kontur Settled Periphery is complimentary to Kontur Urban Core and shows a spread-out" +
                 " part of the population in the region. For this event it adds " + population + " people on " + areaKm2 +
                 "km² on top of Kontur Urban Core.";
+    }
+
+    protected static <T> T getFeatureProperty(Feature f, String propertyName, Class<T> clazz) {
+        Object value = f.getProperties() == null ? null : (f.getProperties()).get(propertyName);
+        if (value == null) {
+            return null;
+        }
+        if (clazz == Integer.class && !(value instanceof Integer)) {
+            value = ((Number) value).intValue();
+        }
+        return clazz.cast(value);
     }
 }
