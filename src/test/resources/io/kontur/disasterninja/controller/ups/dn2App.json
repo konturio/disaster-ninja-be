@@ -34,5 +34,7 @@
     "kontur-public"
   ],
   "centerGeometry": null,
+  "sidebarIconUrl": "https://disaster.ninja/active/static/favicon/favicon.svg",
+  "faviconUrl": "https://disaster.ninja/active/static/favicon/favicon.svg",
   "public": true
 }

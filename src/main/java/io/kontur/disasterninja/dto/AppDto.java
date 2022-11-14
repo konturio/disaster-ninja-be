@@ -24,6 +24,8 @@ public class AppDto {
     private List<String> features;
     private Geometry centerGeometry;
     private BigDecimal zoom;
+    private String sidebarIconUrl;
+    private String faviconUrl;
 
     @Override
     public boolean equals(Object o) {
@@ -36,11 +38,14 @@ public class AppDto {
                 && Objects.equals(ownedByUser, appDto.ownedByUser)
                 && Objects.equals(features, appDto.features)
                 && geometriesAreEqual(centerGeometry, appDto.centerGeometry)
-                && Objects.equals(zoom, appDto.zoom);
+                && Objects.equals(zoom, appDto.zoom)
+                && Objects.equals(sidebarIconUrl, appDto.sidebarIconUrl)
+                && Objects.equals(faviconUrl, appDto.faviconUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, isPublic, ownedByUser, features, centerGeometry, zoom);
+        return Objects.hash(id, name, description, isPublic, ownedByUser, features, centerGeometry, zoom,
+                sidebarIconUrl, faviconUrl);
     }
 }
