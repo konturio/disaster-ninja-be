@@ -13,5 +13,7 @@
     "coordinates": [125.6, 10.1]
   },
   "zoom": "123.456",
+  "sidebarIconUrl": "sidebar/icon/url",
+  "faviconUrl": "favicon/url",
   "public": false
 }

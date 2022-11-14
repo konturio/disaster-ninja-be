@@ -121,6 +121,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         assertNull(result.getCenterGeometry());
         assertNull(result.getZoom());
         assertTrue(result.isPublic());
+        assertNotNull(result.getSidebarIconUrl());
+        assertNotNull(result.getFaviconUrl());
     }
 
     @Test
@@ -145,6 +147,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         assertTrue(geometriesAreEqual(new Point(new double[]{125.6, 10.1}), result.getCenterGeometry()));
         assertFalse(result.isPublic());
         assertEquals(BigDecimal.valueOf(123.456), result.getZoom());
+        assertEquals("sidebar/icon/url", result.getSidebarIconUrl());
+        assertEquals("favicon/url", result.getFaviconUrl());
     }
 
     @Test
@@ -206,6 +210,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         assertEquals(request.isPublic(), result.isPublic());
         assertTrue(geometriesAreEqual(request.getCenterGeometry(), result.getCenterGeometry()));
         assertEquals(request.getZoom(), result.getZoom());
+        assertEquals(request.getSidebarIconUrl(), result.getSidebarIconUrl());
+        assertEquals(request.getFaviconUrl(), result.getFaviconUrl());
 
         assertEquals(appId, result.getId());
         assertEquals(true, result.getOwnedByUser());
@@ -318,6 +324,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         dto.setFeatures(List.of("map_layers_panel"));
         dto.setCenterGeometry(new Point(new double[]{1d, 2d}));
         dto.setZoom(BigDecimal.valueOf(1.2345));
+        dto.setSidebarIconUrl("sidebar/icon/url");
+        dto.setFaviconUrl("favicon/url");
         return dto;
     }
 
