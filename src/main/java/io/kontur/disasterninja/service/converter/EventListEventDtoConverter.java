@@ -39,7 +39,7 @@ public class EventListEventDtoConverter {
         return dto;
     }
 
-    private static Long convertLong(Object value) {
+    protected static Long convertLong(Object value) {
         if (value == null || "null".equals(String.valueOf(value))) {
             return 0L;
         } else {

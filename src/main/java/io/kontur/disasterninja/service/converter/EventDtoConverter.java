@@ -14,10 +14,10 @@ import org.wololo.jts2geojson.GeoJSONWriter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
-import static io.kontur.disasterninja.service.converter.EventListEventDtoConverter.convertDouble;
-import static io.kontur.disasterninja.service.converter.EventListEventDtoConverter.eventName;
+import static io.kontur.disasterninja.service.converter.EventListEventDtoConverter.*;
 import static java.util.Collections.emptyMap;
 
 public class EventDtoConverter {
@@ -44,13 +44,24 @@ public class EventDtoConverter {
         dto.setSeverity(event.getSeverity());
 
         if (event.getEventDetails() != null) {
-            dto.setSettledArea(convertDouble(event.getEventDetails().get("populatedAreaKm2")));
-        } else {
-            dto.setSettledArea(0d);
+            Map<String, Object> eventDetails = event.getEventDetails();
+            if (eventDetails.containsKey("populatedAreaKm2")) {
+                dto.setSettledArea(convertDouble(eventDetails.get("populatedAreaKm2")));
+            }
+            if (eventDetails.containsKey("loss")) {
+                dto.setLoss(convertLong(eventDetails.get("loss")));
+            }
+            if (eventDetails.containsKey("population")) {
+                dto.setAffectedPopulation(convertLong(eventDetails.get("population")));
+            }
+            if (eventDetails.containsKey("osmGapsPercentage")) {
+                dto.setOsmGaps(convertLong(eventDetails.get("osmGapsPercentage")));
+            }
         }
 
         dto.setGeojson(uniteGeometry(event)); //todo isn't this event's geometries? -- check in eventApi!
         dto.setLatestEpisodeGeojson(event.getGeometries());
+        dto.setUpdatedAt(event.getUpdatedAt());
 
         return dto;
     }
