@@ -10,11 +10,13 @@ import io.kontur.disasterninja.service.converter.EventDtoConverter;
 import io.kontur.disasterninja.service.converter.EventListEventDtoConverter;
 import org.junit.jupiter.api.Test;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import static io.kontur.disasterninja.dto.EventType.*;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EventApiConvertersTest {
@@ -27,6 +29,7 @@ public class EventApiConvertersTest {
         event.setEventDetails(null);
         event.setType(EventType.FLOOD.toString());
         event.setSeverity(Severity.MODERATE);
+        event.setUpdatedAt(OffsetDateTime.parse("2007-12-03T10:15:30+01:00", ISO_OFFSET_DATE_TIME));
 
         FeedEpisode episode = new FeedEpisode();
         episode.setType(EventType.OTHER.toString());
@@ -46,8 +49,12 @@ public class EventApiConvertersTest {
 
         assertEquals(event.getProperName(), dto.getEventName());
         assertEquals(event.getLocation(), dto.getLocation());
-        assertEquals(0L, dto.getSettledArea());
         assertTrue(dto.getExternalUrls().isEmpty());
+
+        assertNull(dto.getSettledArea());
+        assertNull(dto.getOsmGaps());
+        assertNull(dto.getAffectedPopulation());
+        assertNull(dto.getLoss());
     }
 
     @Test
@@ -58,7 +65,7 @@ public class EventApiConvertersTest {
         EventDto dto = EventDtoConverter.convert(event);
 
         assertEquals(event.getLocation(), dto.getLocation());
-        assertEquals(0L, dto.getSettledArea());
+        assertNull(dto.getSettledArea());
         assertTrue(dto.getExternalUrls().isEmpty());
     }
 
@@ -68,13 +75,20 @@ public class EventApiConvertersTest {
         event.setType(OTHER.toString());
         event.setEventDetails(new HashMap<>());
         event.getEventDetails().put("populatedAreaKm2", 100.12);
+        event.getEventDetails().put("osmGapsPercentage", 30);
+        event.getEventDetails().put("population", 50);
+        event.getEventDetails().put("loss", 531.14);
         event.setUrls(new ArrayList<>());
         event.getUrls().add("http://google.com");
         EventDto dto = EventDtoConverter.convert(event);
 
         assertEquals(event.getProperName(), dto.getEventName());
         assertEquals(event.getLocation(), dto.getLocation());
+        assertEquals(OffsetDateTime.parse("2007-12-03T10:15:30+01:00", ISO_OFFSET_DATE_TIME), dto.getUpdatedAt());
         assertEquals(100.12, dto.getSettledArea());
+        assertEquals(30, dto.getOsmGaps());
+        assertEquals(50, dto.getAffectedPopulation());
+        assertEquals(531, dto.getLoss());
         assertEquals(1, dto.getExternalUrls().size());
         assertEquals("http://google.com", dto.getExternalUrls().get(0));
     }

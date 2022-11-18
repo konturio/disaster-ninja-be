@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.wololo.geojson.FeatureCollection;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,5 +21,9 @@ public class EventDto {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private FeatureCollection latestEpisodeGeojson;
     private String location;
-    private double settledArea;
+    private Double settledArea;
+    private Long affectedPopulation;
+    private Long osmGaps;
+    private Long loss;
+    private OffsetDateTime updatedAt;
 }
