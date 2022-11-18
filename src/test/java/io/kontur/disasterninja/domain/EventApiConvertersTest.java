@@ -52,7 +52,6 @@ public class EventApiConvertersTest {
         assertTrue(dto.getExternalUrls().isEmpty());
 
         assertNull(dto.getSettledArea());
-        assertNull(dto.getSettledArea());
         assertNull(dto.getOsmGaps());
         assertNull(dto.getAffectedPopulation());
         assertNull(dto.getLoss());
