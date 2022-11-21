@@ -43,6 +43,23 @@ public class LayerService {
         layersApiClient.deleteLayer(id);
     }
 
+    // TODO: retained for backward compatibility, remove later
+    public List<Layer> getList(LayerSearchParams layerSearchParams) {
+        //load layers from providers
+        Map<String, Layer> layers = loadLayersFromProviders(LayerProvider::obtainLayers, layerSearchParams);
+
+        //apply layer configs
+        applyLayerConfig(layers);
+
+        //add global overlays
+        layerConfigService.getGlobalOverlays().forEach((id, config) -> {
+            if (!layers.containsKey(id)) { //can be already loaded by a provider
+                layers.put(id, config);
+            }
+        });
+        return layersMapToList(layers);
+    }
+
     public List<Layer> getGlobalLayers(LayerSearchParams layerSearchParams) {
         Map<String, Layer> layers = loadLayersFromProviders(LayerProvider::obtainGlobalLayers, layerSearchParams);
         applyLayerConfig(layers);
