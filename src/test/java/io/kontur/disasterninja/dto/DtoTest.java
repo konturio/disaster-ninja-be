@@ -27,7 +27,7 @@ import org.wololo.geojson.Point;
 import java.util.*;
 
 import static io.kontur.disasterninja.controller.LayerController.PATH_DETAILS;
-import static io.kontur.disasterninja.controller.LayerController.PATH_SEARCH;
+import static io.kontur.disasterninja.controller.LayerController.PATH_SEARCH_GLOBAL;
 import static io.kontur.disasterninja.domain.enums.LayerStepShape.HEX;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,7 +43,7 @@ public class DtoTest {
     private int port;
     @Autowired
     private TestRestTemplate restTemplate;
-    private final String SEARCH_URL = LayerController.PATH + PATH_SEARCH;
+    private final String SEARCH_URL = LayerController.PATH + PATH_SEARCH_GLOBAL;
     private final String DETAILS_URL = LayerController.PATH + PATH_DETAILS;
 
     @BeforeEach
@@ -68,7 +68,7 @@ public class DtoTest {
     public void serializeDeserializeSummaryFromGeometryTest() {
         String id = "123";
         Layer layer = testLayer(id, new FeatureCollection(null));
-        Mockito.when(layerService.getList(any())).thenReturn(List.of(layer));
+        Mockito.when(layerService.getGlobalLayers(any())).thenReturn(List.of(layer));
 
         LayerSummarySearchDto
                 input = new LayerSummarySearchDto(UUID.randomUUID(), UUID.randomUUID(), "some-feed",
@@ -120,7 +120,7 @@ public class DtoTest {
     public void serializeDeserializeFromFeatureTest() {
         String id = "123";
         Layer layer = testLayer(id, new FeatureCollection(null));
-        Mockito.when(layerService.getList(any())).thenReturn(List.of(layer));
+        Mockito.when(layerService.getGlobalLayers(any())).thenReturn(List.of(layer));
 
         LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), UUID.randomUUID(), "some-feed",
                 new Feature(new Point(
@@ -145,12 +145,9 @@ public class DtoTest {
     public void serializeDeserializeFromFeatureCollectionTest() {
         String id = "123";
         Layer layer = testLayer(id, new FeatureCollection(null));
-        Mockito.when(layerService.getList(any())).thenReturn(List.of(layer));
+        Mockito.when(layerService.getGlobalLayers(any())).thenReturn(List.of(layer));
 
-        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), UUID.randomUUID(), "some-feed",
-                new FeatureCollection(new Feature[]{
-                        new Feature(new Point(new double[]{1, 0}), new HashMap<>()),
-                        new Feature(new Point(new double[]{1, 0}), new HashMap<>())}));
+        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), null, null, null);
 
         List<LayerSummaryDto> response = Arrays.asList(
                 restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
@@ -223,7 +220,7 @@ public class DtoTest {
                 .source(source)
                 .build();
 
-        Mockito.when(layerService.getList(any())).thenReturn(List.of(layerWithPattern));
+        Mockito.when(layerService.getGlobalLayers(any())).thenReturn(List.of(layerWithPattern));
         LayerSummarySearchDto
                 input = new LayerSummarySearchDto(UUID.randomUUID(), UUID.randomUUID(), "some-feed",
                 new Point(new double[]{1, 0}));

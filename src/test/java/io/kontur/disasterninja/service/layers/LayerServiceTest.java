@@ -149,22 +149,10 @@ public class LayerServiceTest {
     @Test
     public void globalOverlaysTest() {
         //all providers return nothing, so only global overlays should be returned
-        List<Layer> layers = layerService.getGlobalLayers();
+        List<Layer> layers = layerService.getGlobalLayers(paramsWithSomeAppId());
         //check all layers with 'globalOverlay: true' are present
         assertEquals(1, layers.size());
         assertEquals("activeContributors", layers.get(0).getId());
-        System.out.println(layers);
-    }
-
-    @Test
-    public void getListShouldWorkEvenIfSomeProvidersThrowTest() {
-        when(bivariateLayerProvider.obtainLayers(any())).thenThrow(HttpClientErrorException.create(
-                HttpStatus.BAD_REQUEST, "fail", HttpHeaders.EMPTY, null, Charset.defaultCharset()));
-        when(layersApiProvider.obtainLayers(any())).thenReturn(CompletableFuture.completedFuture(List.of(layer)));
-
-        List<Layer> result = layerService.getList(paramsWithSomeBoundary());
-        assertFalse(result.isEmpty());
-        assertTrue(result.contains(layer));
     }
 
     @Test
@@ -174,7 +162,7 @@ public class LayerServiceTest {
         when(layersApiProvider.obtainGlobalLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(List.of(layer)));
 
-        List<Layer> result = layerService.getGlobalLayers();
+        List<Layer> result = layerService.getGlobalLayers(paramsWithSomeAppId());
         assertFalse(result.isEmpty());
         assertTrue(result.contains(layer));
     }
