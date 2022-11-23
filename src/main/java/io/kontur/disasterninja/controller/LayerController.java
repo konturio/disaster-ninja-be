@@ -94,8 +94,9 @@ public class LayerController {
     @ApiResponse(responseCode = "200", description = "Retrieved list of global layers", content = @Content(mediaType =
             APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
     @PostMapping(path = PATH_SEARCH_GLOBAL, produces = APPLICATION_JSON_VALUE)
-    public List<LayerSummaryDto> getGlobalLayers() {
-        return layerService.getGlobalLayers()
+    public List<LayerSummaryDto> getGlobalLayers(@RequestBody(required = false) LayersAppRequestBody body) { //TODO make it required after FE start sending this parameter.
+        UUID id = body == null ? null : body.appId;
+        return layerService.getGlobalLayers(LayerSearchParams.builder().appId(id).build())
                 .stream().map(LayerSummaryDto::fromLayer)
                 .collect(Collectors.toList());
     }
@@ -104,8 +105,8 @@ public class LayerController {
     @ApiResponse(responseCode = "200", description = "Retrieved list of user layers", content = @Content(mediaType =
             APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
     @PostMapping(path = PATH_SEARCH_USER, produces = APPLICATION_JSON_VALUE)
-    public List<LayerSummaryDto> getUserLayers(@RequestParam UUID appId) {
-        return layerService.getUserLayers(LayerSearchParams.builder().appId(appId).build())
+    public List<LayerSummaryDto> getUserLayers(@RequestBody LayersAppRequestBody body) {
+        return layerService.getUserLayers(LayerSearchParams.builder().appId(body.appId).build())
                 .stream().map(LayerSummaryDto::fromLayer)
                 .collect(Collectors.toList());
     }
@@ -172,4 +173,6 @@ public class LayerController {
                 .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))
                 .build();
     }
+
+    private record LayersAppRequestBody(UUID appId) {}
 }

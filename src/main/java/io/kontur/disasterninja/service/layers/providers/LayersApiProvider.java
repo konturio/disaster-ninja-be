@@ -47,7 +47,7 @@ public class LayersApiProvider implements LayerProvider {
     @Override
     @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
     public CompletableFuture<List<Layer>> obtainGlobalLayers(LayerSearchParams searchParams) {
-        return CompletableFuture.completedFuture(obtainLayersByGeometry(null, null));
+        return CompletableFuture.completedFuture(obtainLayersByGeometry(null, searchParams.getAppId()));
     }
 
     @Override
