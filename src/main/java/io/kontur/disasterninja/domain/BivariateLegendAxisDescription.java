@@ -23,5 +23,7 @@ public class BivariateLegendAxisDescription {
 
     private List<String> quotient;
 
+    private List<BivariateLegendQuotient> quotients;
+
     private List<String> parent;
 }

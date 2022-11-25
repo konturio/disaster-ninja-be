@@ -159,8 +159,8 @@ public class BivariateLayerProvider implements LayerProvider {
         }
 
         //AXIS 1
-        BivariateLegendAxisDescriptionForOverlay xAxis = new BivariateLegendAxisDescriptionForOverlay();
-        BivariateLegendAxisDescriptionForOverlay x = overlay.getX();
+        BivariateLegendAxisDescription xAxis = new BivariateLegendAxisDescription();
+        BivariateLegendAxisDescription x = overlay.getX();
         if (x != null) {
             if (x.getSteps() != null) {
                 List<BivariateLegendAxisStep> steps = requireNonNull(x.getSteps()).stream()
@@ -180,14 +180,15 @@ public class BivariateLayerProvider implements LayerProvider {
                                 .name(quotient.getName())
                                 .label(quotient.getLabel())
                                 .direction(quotient.getDirection())
+                                .unit(quotient.getUnit())
                                 .build())
                         .toList();
                 xAxis.setQuotients(quotients);
             }
         }
         //AXIS 2
-        BivariateLegendAxisDescriptionForOverlay yAxis = new BivariateLegendAxisDescriptionForOverlay();
-        BivariateLegendAxisDescriptionForOverlay y = overlay.getY();
+        BivariateLegendAxisDescription yAxis = new BivariateLegendAxisDescription();
+        BivariateLegendAxisDescription y = overlay.getY();
         if (y != null) {
             if (y.getSteps() != null) {
                 List<BivariateLegendAxisStep> steps = requireNonNull(y.getSteps()).stream()
@@ -207,6 +208,7 @@ public class BivariateLayerProvider implements LayerProvider {
                                 .name(quotient.getName())
                                 .label(quotient.getLabel())
                                 .direction(quotient.getDirection())
+                                .unit(quotient.getUnit())
                                 .build())
                         .toList();
                 yAxis.setQuotients(quotients);

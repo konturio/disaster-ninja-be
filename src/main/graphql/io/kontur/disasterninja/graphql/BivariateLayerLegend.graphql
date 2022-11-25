@@ -15,7 +15,12 @@ query BivariateLayerLegend($polygon: GeoJSON) {
                     quotients {
                         name,
                         label,
-                        direction
+                        direction,
+                        unit {
+                            id,
+                            shortName,
+                            longName
+                        }
                     },
                     quotient
                 },
@@ -28,7 +33,12 @@ query BivariateLayerLegend($polygon: GeoJSON) {
                     quotients {
                         name,
                         label,
-                        direction
+                        direction,
+                        unit {
+                            id,
+                            shortName,
+                            longName
+                        }
                     },
                     quotient
                 },
@@ -50,7 +60,12 @@ query BivariateLayerLegend($polygon: GeoJSON) {
                 name,
                 label,
                 direction,
-                copyrights
+                copyrights,
+                unit {
+                    id,
+                    shortName,
+                    longName
+                }
             }
         }
     }
