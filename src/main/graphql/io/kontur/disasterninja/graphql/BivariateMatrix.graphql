@@ -12,6 +12,16 @@ query BivariateMatrix($polygon: GeoJSON, $importantLayers: [[String]]) {
                 }
                 quality
                 quotient
+                quotients {
+                    name
+                    label
+                    direction
+                    unit {
+                        id
+                        shortName
+                        longName
+                    }
+                }
                 parent
             }
             meta {
@@ -23,6 +33,11 @@ query BivariateMatrix($polygon: GeoJSON, $importantLayers: [[String]]) {
                 label
                 copyrights
                 direction
+                unit {
+                    id
+                    shortName
+                    longName
+                }
             }
             correlationRates {
                 x {

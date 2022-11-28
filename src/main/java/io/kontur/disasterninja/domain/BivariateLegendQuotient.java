@@ -18,4 +18,5 @@ public class BivariateLegendQuotient {
     private String name;
     private String label;
     private List<List<String>> direction;
+    private Unit unit;
 }

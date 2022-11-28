@@ -2,7 +2,7 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import com.apollographql.apollo.exception.ApolloException;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
-import io.kontur.disasterninja.domain.BivariateLegendAxisDescriptionForOverlay;
+import io.kontur.disasterninja.domain.BivariateLegendAxisDescription;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.dto.bivariatematrix.BivariateStatisticDto;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
@@ -40,13 +40,17 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
                         " 2021-11-06T20:59:29Z",
                 new BivariateLayerLegendQuery.X("Axis", "OSM objects (n/km²)", steps(0d, 1d, 2d, 1000d,
                         "label1", "label2", "label3", "label4"),
-                        List.of(new BivariateLayerLegendQuery.Quotient("Quotient", "count", "OSM Objects", List.of()),
-                                new BivariateLayerLegendQuery.Quotient("Quotient", "area_km2", "Area", List.of())),
+                        List.of(new BivariateLayerLegendQuery.Quotient("Quotient", "count", "OSM Objects", List.of(),
+                                        new BivariateLayerLegendQuery.Unit("", "n", "n", "number")),
+                                new BivariateLayerLegendQuery.Quotient("Quotient", "area_km2", "Area", List.of(),
+                                        new BivariateLayerLegendQuery.Unit("", "km2", "km²", "square kilometers"))),
                         List.of("count", "area_km2")),
                 new BivariateLayerLegendQuery.Y("Axis", "Population (ppl/km²)", steps1(0d, 10d, 20d, 10000d,
                         "label11", "label12", "label13", "label14"),
-                        List.of(new BivariateLayerLegendQuery.Quotient1("Quotient", "population", "Population", List.of()),
-                                new BivariateLayerLegendQuery.Quotient1("Quotient", "area_km2", "Area", List.of())),
+                        List.of(new BivariateLayerLegendQuery.Quotient1("Quotient", "population", "Population", List.of(),
+                                        new BivariateLayerLegendQuery.Unit1("", "ppl", "ppl", "people")),
+                                new BivariateLayerLegendQuery.Quotient1("Quotient", "area_km2", "Area", List.of(),
+                                        new BivariateLayerLegendQuery.Unit1("", "km2", "km²", "square kilometers"))),
                         List.of("population", "area_km2")),
                 List.of(new BivariateLayerLegendQuery.Color("OverlayColor", "A1", "rgb(111,232,157)"),
                         new BivariateLayerLegendQuery.Color("OverlayColor", "A2", "rgb(222,232,157)"),
@@ -62,12 +66,15 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         List<BivariateLayerLegendQuery.Indicator> indicators = List.of(
                 new BivariateLayerLegendQuery.Indicator("Indicator",
                         "area_km2", "Area", List.of(List.of("neutral"), List.of("neutral")),
-                        List.of("copyrights https://kontur.io/")),
+                        List.of("copyrights https://kontur.io/"),
+                        new BivariateLayerLegendQuery.Unit2("", "km2", "km²", "square kilometers")),
                 new BivariateLayerLegendQuery.Indicator("Indicator",
-                        "count", "OSM Objects", List.of(List.of("bad"), List.of("good")), List.of("copyrights1")),
+                        "count", "OSM Objects", List.of(List.of("bad"), List.of("good")), List.of("copyrights1"),
+                        new BivariateLayerLegendQuery.Unit2("", "n", "n", "number")),
                 new BivariateLayerLegendQuery.Indicator("Indicator",
                         "population", "Population", List.of(List.of("unimportant"), List.of("important")),
-                        List.of("copyrights1", "copyrights2")));
+                        List.of("copyrights1", "copyrights2"),
+                        new BivariateLayerLegendQuery.Unit2("", "ppl", "ppl", "people")));
 
         BivariateStatisticDto dto = BivariateStatisticDto.builder()
                 .overlays(mapper.bivariateLayerLegendQueryOverlayListToOverlayDtoList(List.of(overlay)))
@@ -135,7 +142,7 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         assertNotNull(biv.getLegend().getAxes());
 
         //axisX
-        BivariateLegendAxisDescriptionForOverlay x = biv.getLegend().getAxes().getX();
+        BivariateLegendAxisDescription x = biv.getLegend().getAxes().getX();
         assertEquals("OSM objects (n/km²)", x.getLabel());
         assertEquals(2, x.getQuotients().size());
         assertEquals(2, x.getQuotients().stream().filter(q -> "count".equals(q.getName()) || "area_km2".equals(q.getName())).count());
@@ -148,7 +155,7 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
 
 
         //axisY
-        BivariateLegendAxisDescriptionForOverlay y = biv.getLegend().getAxes().getY();
+        BivariateLegendAxisDescription y = biv.getLegend().getAxes().getY();
         assertEquals("Population (ppl/km²)", y.getLabel());
         assertEquals(2, y.getQuotients().size());
         assertEquals(2, y.getQuotients().stream().filter(q -> "population".equals(q.getName()) || "area_km2".equals(q.getName())).count());
