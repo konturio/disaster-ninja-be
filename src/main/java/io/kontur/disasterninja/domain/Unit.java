@@ -1,11 +1,11 @@
-package io.kontur.disasterninja.dto;
+package io.kontur.disasterninja.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 @Data
 @JsonInclude
-public class UnitDto {
+public class Unit {
 
     private String id;
     private String shortName;
