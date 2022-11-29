@@ -61,7 +61,7 @@ public class MetricsController {
         }
         metrics.forEach(metric -> {
             String appId = metric.getAppId() != null ? metric.getAppId().toString() : "null";
-            String userId = metric.getUserId() != null ? metric.getUserId().toString() : "null";
+            String userId = metric.getUserId() != null ? metric.getUserId() : "null";
             if (UserMetricDto.UserMetricDtoType.SUMMARY.equals(metric.getType())) {
                 summary.labels(metric.getName(), appId, userId, metric.getBuildVersion()).observe(metric.getValue());
             }
