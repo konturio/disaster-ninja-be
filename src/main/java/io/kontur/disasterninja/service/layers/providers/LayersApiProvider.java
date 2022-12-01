@@ -3,12 +3,10 @@ package io.kontur.disasterninja.service.layers.providers;
 import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSearchParams;
+import io.kontur.disasterninja.util.AuthenticationUtil;
 import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Geometry;
 
@@ -33,7 +31,7 @@ public class LayersApiProvider implements LayerProvider {
     @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
     // TODO: retained for backward compatibility, remove later
     public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
-        if (isUserAuthenticated()) {
+        if (AuthenticationUtil.isUserAuthenticated()) {
             List<Layer> result = new ArrayList<>();
             result.addAll(obtainNonUserOwnedLayersByGeometry(searchParams.getBoundary(), searchParams.getAppId()));
             result.addAll(obtainAllUserOwnedLayers(searchParams.getAppId()));
@@ -53,7 +51,7 @@ public class LayersApiProvider implements LayerProvider {
     @Override
     @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
     public CompletableFuture<List<Layer>> obtainUserLayers(LayerSearchParams searchParams) {
-        if (isUserAuthenticated()) {
+        if (AuthenticationUtil.isUserAuthenticated()) {
             return CompletableFuture.completedFuture(obtainAllUserOwnedLayers(searchParams.getAppId()));
         } else {
             return CompletableFuture.completedFuture(Collections.emptyList());
@@ -63,7 +61,7 @@ public class LayersApiProvider implements LayerProvider {
     @Override
     @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
     public CompletableFuture<List<Layer>> obtainSelectedAreaLayers(LayerSearchParams searchParams) {
-        if (isUserAuthenticated()) {
+        if (AuthenticationUtil.isUserAuthenticated()) {
             return CompletableFuture.completedFuture(
                     obtainNonUserOwnedLayersByGeometry(searchParams.getBoundary(), searchParams.getAppId()));
         } else {
@@ -98,10 +96,4 @@ public class LayersApiProvider implements LayerProvider {
     private List<Layer> obtainAllUserOwnedLayers(UUID appId) {
         return layersApiClient.findLayers(null, false, ME, appId);
     }
-
-    private boolean isUserAuthenticated() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication instanceof JwtAuthenticationToken;
-    }
-
 }
