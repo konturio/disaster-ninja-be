@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.controller;
 
 import io.kontur.disasterninja.dto.UserMetricDto;
+import io.kontur.disasterninja.util.AuthenticationUtil;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
@@ -32,7 +33,7 @@ public class MetricsController {
                 .quantile(0.95, 0.005)
                 .quantile(0.99, 0.005)
                 .quantile(1, 0)
-                .labelNames("name", "appId", "userId", "buildVersion")
+                .labelNames("name", "appId", "isUserLoggedIn", "buildVersion")
                 .maxAgeSeconds(120)
                 .ageBuckets(1);
 
@@ -61,9 +62,10 @@ public class MetricsController {
         }
         metrics.forEach(metric -> {
             String appId = metric.getAppId() != null ? metric.getAppId().toString() : "null";
-            String userId = metric.getUserId() != null ? metric.getUserId() : "null";
+            metric.setUserLoggedIn(AuthenticationUtil.isUserAuthenticated());
             if (UserMetricDto.UserMetricDtoType.SUMMARY.equals(metric.getType())) {
-                summary.labels(metric.getName(), appId, userId, metric.getBuildVersion()).observe(metric.getValue());
+                summary.labels(metric.getName(), appId, String.valueOf(metric.isUserLoggedIn()),
+                        metric.getBuildVersion()).observe(metric.getValue());
             }
         });
         return ResponseEntity.ok().build();
