@@ -1,11 +1,13 @@
 package io.kontur.disasterninja.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.wololo.geojson.Geometry;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -21,7 +23,7 @@ public class AppDto {
     private boolean isPublic;
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Boolean ownedByUser;
-    private List<String> features;
+    private Map<String, JsonNode> featuresConfig;
     private Geometry centerGeometry;
     private BigDecimal zoom;
     private String sidebarIconUrl;
@@ -36,7 +38,7 @@ public class AppDto {
                 && Objects.equals(name, appDto.name)
                 && Objects.equals(description, appDto.description)
                 && Objects.equals(ownedByUser, appDto.ownedByUser)
-                && Objects.equals(features, appDto.features)
+                && Objects.equals(featuresConfig, appDto.featuresConfig)
                 && geometriesAreEqual(centerGeometry, appDto.centerGeometry)
                 && Objects.equals(zoom, appDto.zoom)
                 && Objects.equals(sidebarIconUrl, appDto.sidebarIconUrl)
@@ -45,7 +47,7 @@ public class AppDto {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, isPublic, ownedByUser, features, centerGeometry, zoom,
+        return Objects.hash(id, name, description, isPublic, ownedByUser, featuresConfig, centerGeometry, zoom,
                 sidebarIconUrl, faviconUrl);
     }
 }
