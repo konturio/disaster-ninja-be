@@ -1,5 +1,7 @@
 package io.kontur.disasterninja.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.disasterninja.client.LayersApiClient;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
@@ -54,6 +57,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     @Autowired
     private LayersApiClient layersApiClient;
     private AppsController appsController;
+
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     public void before() {
@@ -117,7 +122,9 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         assertEquals("DN2", result.getName());
         assertEquals("Disaster Ninja 2.0", result.getDescription());
         assertFalse(result.getOwnedByUser());
-        assertEquals(28, result.getFeatures().size());
+        assertEquals(28, result.getFeaturesConfig().size());
+        assertTrue(result.getFeaturesConfig().containsKey("analytics_panel"));
+        assertEquals("{\"statistics\":[{\"x\":\"population\",\"formula\":\"sumX\"},{\"x\":\"populated_area_km2\",\"formula\":\"sumX\"}]}", result.getFeaturesConfig().get("analytics_panel").toString());
         assertNull(result.getCenterGeometry());
         assertNull(result.getZoom());
         assertTrue(result.isPublic());
@@ -140,10 +147,10 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         assertEquals("my-private-app", result.getName());
         assertEquals("Disaster Ninja 666.6", result.getDescription());
         assertTrue(result.getOwnedByUser());
-        assertEquals(3, result.getFeatures().size());
-        assertTrue(result.getFeatures().contains("interactive_map"));
-        assertTrue(result.getFeatures().contains("reports"));
-        assertTrue(result.getFeatures().contains("url_store"));
+        assertEquals(3, result.getFeaturesConfig().size());
+        assertTrue(result.getFeaturesConfig().containsKey("interactive_map"));
+        assertTrue(result.getFeaturesConfig().containsKey("reports"));
+        assertTrue(result.getFeaturesConfig().containsKey("url_store"));
         assertTrue(geometriesAreEqual(new Point(new double[]{125.6, 10.1}), result.getCenterGeometry()));
         assertFalse(result.isPublic());
         assertEquals(BigDecimal.valueOf(123.456), result.getZoom());
@@ -206,7 +213,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         AppDto result = appsController.create(request);
         assertEquals(request.getDescription(), result.getDescription());
         assertEquals(request.getName(), result.getName());
-        assertEquals(request.getFeatures(), result.getFeatures());
+        assertEquals(request.getFeaturesConfig(), result.getFeaturesConfig());
         assertEquals(request.isPublic(), result.isPublic());
         assertTrue(geometriesAreEqual(request.getCenterGeometry(), result.getCenterGeometry()));
         assertEquals(request.getZoom(), result.getZoom());
@@ -321,12 +328,26 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         dto.setName("name");
         dto.setDescription("desc");
         dto.setPublic(true);
-        dto.setFeatures(List.of("map_layers_panel"));
+        dto.setFeaturesConfig(featureConfigToAppDto());
         dto.setCenterGeometry(new Point(new double[]{1d, 2d}));
         dto.setZoom(BigDecimal.valueOf(1.2345));
         dto.setSidebarIconUrl("sidebar/icon/url");
         dto.setFaviconUrl("favicon/url");
         return dto;
+    }
+
+    private Map<String, JsonNode> featureConfigToAppDto() {
+        try {
+            return Map.of("map_layers_panel", mapper.readTree("{\"statistics\": [{\n" +
+                    "              \"formula\": \"sumX\",\n" +
+                    "              \"x\": \"population\"\n" +
+                    "            }, {\n" +
+                    "              \"formula\": \"sumX\",\n" +
+                    "              \"x\": \"populated_area_km2\"\n" +
+                    "            }]}"));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Could not parse needed string");
+        }
     }
 
 }

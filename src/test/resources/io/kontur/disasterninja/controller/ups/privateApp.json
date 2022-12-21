@@ -3,14 +3,17 @@
   "name": "my-private-app",
   "description": "Disaster Ninja 666.6",
   "ownedByUser": true,
-  "features": [
-    "reports",
-    "url_store",
-    "interactive_map"
-  ],
+  "featuresConfig": {
+    "reports": null,
+    "url_store": null,
+    "interactive_map": null
+  },
   "centerGeometry": {
     "type": "Point",
-    "coordinates": [125.6, 10.1]
+    "coordinates": [
+      125.6,
+      10.1
+    ]
   },
   "zoom": "123.456",
   "sidebarIconUrl": "sidebar/icon/url",
