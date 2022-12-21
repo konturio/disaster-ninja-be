@@ -14,6 +14,7 @@ public class EventListEventDtoConverter {
         dto.setEventId(event.getEventId());
 
         dto.setEventName(eventName(event));
+        dto.setDescription(event.getDescription());
         dto.setLocation(event.getLocation());
         List<String> eventUrls = event.getUrls();
         dto.setExternalUrls(eventUrls != null ? List.copyOf(eventUrls) : List.of());
