@@ -24,6 +24,7 @@ public class EventApiConvertersTest {
     private static EventApiEventDto testEvent() {
         EventApiEventDto event = new EventApiEventDto();
         event.setProperName("proper name");
+        event.setDescription("event description");
         event.setLocation("location 1");
         event.setUrls(null);
         event.setEventDetails(null);
@@ -83,6 +84,7 @@ public class EventApiConvertersTest {
         EventDto dto = EventDtoConverter.convert(event);
 
         assertEquals(event.getProperName(), dto.getEventName());
+        assertEquals(event.getDescription(), dto.getDescription());
         assertEquals(event.getLocation(), dto.getLocation());
         assertEquals(OffsetDateTime.parse("2007-12-03T10:15:30+01:00", ISO_OFFSET_DATE_TIME), dto.getUpdatedAt());
         assertEquals(100.12, dto.getSettledArea());
@@ -155,6 +157,7 @@ public class EventApiConvertersTest {
         EventListDto dto = EventListEventDtoConverter.convert(event);
 
         assertEquals(event.getLocation(), dto.getLocation());
+        assertEquals(event.getDescription(), dto.getDescription());
         assertEquals(100.12, dto.getSettledArea());
         assertEquals(30, dto.getOsmGaps());
         assertEquals(50, dto.getAffectedPopulation());

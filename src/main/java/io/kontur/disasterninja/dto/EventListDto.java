@@ -11,6 +11,7 @@ public class EventListDto {
 
     private UUID eventId;
     private String eventName;
+    private String description;
     private String location;
     private Severity severity;
     private Long affectedPopulation;

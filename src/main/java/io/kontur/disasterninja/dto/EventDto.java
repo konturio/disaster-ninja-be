@@ -13,6 +13,7 @@ public class EventDto {
 
     private UUID eventId;
     private String eventName;
+    private String description;
     private List<String> externalUrls;
     private Severity severity;
     private FeatureCollection geojson;
