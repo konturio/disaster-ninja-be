@@ -295,6 +295,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                 .eventIdRequiredForRetrieval(eventIdRequiredForRetrieval)
                 .ownedByUser(collection.isOwnedByUser())
                 .featureProperties(collection.getFeatureProperties())
+                .mapboxStyles(collection.getMapboxStyles())
                 .build();
     }
 

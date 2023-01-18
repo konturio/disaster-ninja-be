@@ -52,6 +52,9 @@ public class Collection {
     @JsonProperty("featureProperties")
     private ObjectNode featureProperties;
 
+    @JsonProperty("mapboxStyles")
+    private ObjectNode mapboxStyles;
+
     @JsonProperty("tileSize")
     private Integer tileSize;
 
