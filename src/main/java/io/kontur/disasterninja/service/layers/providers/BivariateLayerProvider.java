@@ -64,17 +64,6 @@ public class BivariateLayerProvider implements LayerProvider {
         }
     }
 
-    /**
-     * @return Bivariate layers from insights-api graphql api
-     */
-    @Override
-    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
-    // TODO: retained for backward compatibility, remove later
-    public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
-        reloadLayersIfEmpty();
-        return CompletableFuture.completedFuture(bivariateLayers.values().stream().toList());
-    }
-
     @Override
     @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
     public CompletableFuture<List<Layer>> obtainGlobalLayers(LayerSearchParams searchParams) {

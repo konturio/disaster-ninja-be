@@ -14,7 +14,6 @@ public class UserMetricDto {
     @NotNull
     private final UserMetricDtoType type;
     private final UUID appId;
-    private final String userId; // TODO remove as soon as frontend stops using it
     private boolean isUserLoggedIn;
     private final String buildVersion;
 

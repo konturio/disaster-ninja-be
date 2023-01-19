@@ -9,15 +9,6 @@ import java.util.concurrent.CompletableFuture;
 
 public interface LayerProvider {
 
-    /**
-     * Layer.Source is not populated for layers returned!
-     *
-     * @return list of layers available from this LayerProvider.
-     */
-    @Async
-    // TODO: retained for backward compatibility, remove later
-    CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams);
-
     @Async
     CompletableFuture<List<Layer>> obtainGlobalLayers(LayerSearchParams searchParams);
 
