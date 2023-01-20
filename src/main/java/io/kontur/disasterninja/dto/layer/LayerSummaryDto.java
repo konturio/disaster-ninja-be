@@ -62,14 +62,6 @@ public class LayerSummaryDto {
             return url.replace("{lang}", userLanguage);
         }
 
-        Enumeration<Locale> acceptLanguage = request.getLocales();
-        while (acceptLanguage.hasMoreElements()) {
-            String language = acceptLanguage.nextElement().getLanguage();
-            if (supportedLanguages.contains(language)) {
-                return url.replace("{lang}", language);
-            }
-        }
-
         if (supportedLanguages.contains("en")) {
             return url.replace("{lang}", "en");
         }
