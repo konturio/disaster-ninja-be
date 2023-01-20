@@ -42,7 +42,6 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
 
     @Test
     public void list_emptyEventId() throws ExecutionException, InterruptedException {
-        assertTrue(eventShapeLayerProvider.obtainLayers(emptyParams()).get().isEmpty());
         assertTrue(eventShapeLayerProvider.obtainGlobalLayers(emptyParams()).get().isEmpty());
     }
 
@@ -71,20 +70,6 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
                     .build())
             );
         });
-    }
-
-    @Test
-    public void list_Earthquake() throws ExecutionException, InterruptedException {
-        List<Layer> results = eventShapeLayerProvider.obtainLayers(someEventIdEventFeedParams()).get();
-        assertEquals(1, results.size());
-        Layer result = results.get(0);
-
-        Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.getId());
-        Assertions.assertEquals(EARTHQUAKE, result.getEventType());
-        //check source data was loaded
-        Assertions.assertEquals(2, result.getSource().getData().getFeatures().length);
-        Assertions.assertEquals("Point", result.getSource().getData().getFeatures()[0].getGeometry().getType());
-        Assertions.assertEquals("Polygon", result.getSource().getData().getFeatures()[1].getGeometry().getType());
     }
 
     @Test
@@ -170,13 +155,6 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
         Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.get(0).getId());
         Assertions.assertNull(result.get(0).getEventType());
         Assertions.assertTrue(result.get(0).isEventIdRequiredForRetrieval());
-    }
-
-    @Test
-    public void list_NoIntersection() throws ExecutionException, InterruptedException {
-        assertTrue(eventShapeLayerProvider.obtainLayers(LayerSearchParams.builder()
-                .boundary(new Point(new double[]{0d, 0d}))
-                .eventId(UUID.randomUUID()).eventFeed("some-feed").build()).get().isEmpty());
     }
 
     @Test

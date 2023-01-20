@@ -90,7 +90,6 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
     public void bivariateListExceptionTest() throws ExecutionException, InterruptedException {
         when(insightsApiGraphqlClient.getBivariateStatistic()).thenThrow(new ApolloException("hello world"));
 
-        assertTrue(bivariateLayerProvider.obtainLayers(emptyParams()).get().isEmpty());
         assertTrue(bivariateLayerProvider.obtainGlobalLayers(emptyParams()).get().isEmpty());
     }
 
@@ -99,12 +98,6 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         when(insightsApiGraphqlClient.getBivariateStatistic()).thenThrow(new ApolloException("hello world"));
 
         assertNull(bivariateLayerProvider.obtainLayer("some layer", emptyParams()));
-    }
-
-    @Test
-    public void listTest() throws ExecutionException, InterruptedException {
-        List<Layer> layers = bivariateLayerProvider.obtainLayers(emptyParams()).get();
-        assertEquals(1, layers.size());
     }
 
     @Test
@@ -182,11 +175,7 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
 
     @Test
     public void copyrightLinkMarkdown_8657() throws ExecutionException, InterruptedException {
-        List<Layer> layers = bivariateLayerProvider.obtainLayers(emptyParams()).get();
-        assertThat(layers.get(0).getCopyrights(),
-                hasItems("copyrights [https://kontur.io/](https://kontur.io/)", "copyrights1", "copyrights2"));
-
-        layers = bivariateLayerProvider.obtainGlobalLayers(emptyParams()).get();
+        List<Layer> layers = bivariateLayerProvider.obtainGlobalLayers(emptyParams()).get();
         assertThat(layers.get(0).getCopyrights(),
                 hasItems("copyrights [https://kontur.io/](https://kontur.io/)", "copyrights1", "copyrights2"));
     }

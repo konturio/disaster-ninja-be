@@ -1,68 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration packagingData="true"
-    xmlns="http://ch.qos.logback/xml/ns/logback"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://ch.qos.logback/xml/ns/logback https://raw.githubusercontent.com/enricopulatzo/logback-XSD/master/src/main/xsd/logback.xsd"
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               packagingData="true"
+               xmlns="http://ch.qos.logback/xml/ns/logback"
+               xsi:schemaLocation="http://ch.qos.logback/xml/ns/logback https://raw.githubusercontent.com/enricopulatzo/logback-XSD/master/src/main/xsd/logback.xsd"
 >
-    <property name="defaultPattern"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
-
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>${defaultPattern}</pattern>
-        </encoder>
-    </appender>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+                <timestampFormat>yyyy-MM-dd'T'HH:mm:ss.SSSX</timestampFormat>
+                <timestampFormatTimezoneId>Etc/UTC</timestampFormatTimezoneId>
 
-    <appender name="FILE-AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>log/disaster-ninja.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>log/archived/disaster-ninja.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <maxFileSize>10MB</maxFileSize>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>INFO</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-        <encoder>
-            <pattern>${defaultPattern}</pattern>
-        </encoder>
-    </appender>
-
-    <appender name="FILE-HTTP-TRACE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>log/disaster-ninja-http-trace.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>log/archived/disaster-ninja-http-trace.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <maxFileSize>10MB</maxFileSize>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>${defaultPattern}</pattern>
-        </encoder>
-    </appender>
-
-    <appender name="FILE-ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>log/disaster-ninja-error.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>log/archived/disaster-ninja-error.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <maxFileSize>10MB</maxFileSize>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>WARN</level>
-        </filter>
-        <encoder>
-            <pattern>${defaultPattern}</pattern>
+                <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+                    <prettyPrint>false</prettyPrint><!--avoid unnecessary line breaks-->
+                </jsonFormatter>
+                <appendLineSeparator>true</appendLineSeparator><!--add line breaks after each log message-->
+            </layout>
         </encoder>
     </appender>
 
     <logger name="httptrace" additivity="false">
-        <appender-ref ref="FILE-HTTP-TRACE"/>
+        <appender-ref ref="STDOUT"/>
     </logger>
-
     <root level="info">
-        <appender-ref ref="FILE-AUDIT"/>
-        <appender-ref ref="FILE-ERROR"/>
+        <appender-ref ref="STDOUT"/>
     </root>
+
 </configuration>

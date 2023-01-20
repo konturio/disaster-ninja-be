@@ -35,17 +35,6 @@ public class EventShapeLayerProvider implements LayerProvider {
     private final EventApiService eventApiService;
 
     @Override
-    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
-    // TODO: retained for backward compatibility, remove later
-    public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
-        if (searchParams.getEventId() == null || searchParams.getEventFeed() == null) {
-            return CompletableFuture.completedFuture(Collections.emptyList());
-        }
-        Layer layer = obtainLayer(EVENT_SHAPE_LAYER_ID, searchParams);
-        return CompletableFuture.completedFuture(layer == null ? Collections.emptyList() : List.of(layer));
-    }
-
-    @Override
     public CompletableFuture<List<Layer>> obtainGlobalLayers(LayerSearchParams searchParams) {
         return CompletableFuture.completedFuture(Collections.emptyList());
     }

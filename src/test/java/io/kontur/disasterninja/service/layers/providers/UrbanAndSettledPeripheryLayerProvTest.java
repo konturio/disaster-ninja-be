@@ -36,21 +36,6 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
     }
 
     @Test
-    public void listOneLayerNotPresentTest() throws IOException, ExecutionException, InterruptedException {
-        //#8516
-        FeatureCollection fc = objectMapper.readValue(
-                getClass().getResource("/io/kontur/disasterninja/client/layers/population.json"),
-                FeatureCollection.class);
-        fc.getFeatures()[1] = null; //remove one of layers
-
-        Mockito.when(insightsApiClient.humanitarianImpactQuery(any()))
-                .thenReturn(CompletableFuture.completedFuture(fc));
-        List<Layer> layers = urbanAndPeripheryLayerProvider.obtainLayers(LayerSearchParams
-                .builder().boundary(new Point(new double[]{1d, 2d})).build()).get();
-        assertEquals(1, layers.size());
-    }
-
-    @Test
     public void obtainSelectedAreaLayersOneLayerNotPresentTest() throws IOException, ExecutionException,
             InterruptedException {
         //#8516
@@ -63,11 +48,6 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
                 .thenReturn(CompletableFuture.completedFuture(fc));
         List<Layer> layers = urbanAndPeripheryLayerProvider.obtainSelectedAreaLayers(paramsWithSomeBoundary()).get();
         assertEquals(1, layers.size());
-    }
-
-    @Test
-    public void listEmptyGeojsonTest() throws ExecutionException, InterruptedException {
-        assertTrue(urbanAndPeripheryLayerProvider.obtainLayers(emptyParams()).get().isEmpty());
     }
 
     @Test
@@ -86,29 +66,6 @@ public class UrbanAndSettledPeripheryLayerProvTest extends LayerProvidersTest {
                 urbanAndPeripheryLayerProvider.obtainLayer(URBAN_CORE_LAYER_ID, emptyParams()));
         assertThrows(WebApplicationException.class, () ->
                 urbanAndPeripheryLayerProvider.obtainLayer(SETTLED_PERIPHERY_LAYER_ID, emptyParams()));
-    }
-
-    @Test
-    public void listTest() throws ExecutionException, InterruptedException {
-        List<Layer> results = urbanAndPeripheryLayerProvider.obtainLayers(LayerSearchParams
-                .builder().boundary(new Point(new double[]{1d, 2d})).build()).get();
-        Layer urbanCore = results.stream().filter(it -> URBAN_CORE_LAYER_ID.equals(it.getId())).findAny()
-                .orElseGet(() -> Layer.builder().build());
-        Layer periphery = results.stream().filter(it -> SETTLED_PERIPHERY_LAYER_ID.equals(it.getId())).findAny()
-                .orElseGet(() -> Layer.builder().build());
-
-        assertEquals("Kontur Urban Core", urbanCore.getName());
-        assertEquals("Kontur Urban Core highlights most populated region affected. For this" +
-                " event 102411536 people reside on 139417.01km² (out of total 150665683 people on 1631751.6km²). This" +
-                " area should have higher priority in humanitarian activities.", urbanCore.getDescription());
-        assertNull(urbanCore.getGroup()); //defaults are set later by LayerConfigService
-
-        assertNotNull(periphery);
-        assertEquals("Kontur Settled Periphery", periphery.getName());
-        assertEquals("Kontur Settled Periphery is complimentary to Kontur Urban Core and shows" +
-                " a spread-out part of the population in the region. For this event it adds 48254147 people on" +
-                " 1492334.59km² on top of Kontur Urban Core.", periphery.getDescription());
-        assertNull(periphery.getGroup()); //defaults are set later by LayerConfigService
     }
 
     @Test
