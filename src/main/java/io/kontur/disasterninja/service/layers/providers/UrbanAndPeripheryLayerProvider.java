@@ -35,21 +35,6 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
     private final InsightsApiGraphqlClient insightsApiClient;
 
     @Override
-    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
-    // TODO: retained for backward compatibility, remove later
-    public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
-        if (searchParams.getBoundary() == null) {
-            return CompletableFuture.completedFuture(Collections.emptyList());
-        }
-        return insightsApiClient
-                .humanitarianImpactQuery(searchParams.getBoundary())
-                .thenApply(fc -> providedLayers.stream()
-                        .map(layerId -> urbanOrPeripheryLayer(fc, layerId, false))
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList()));
-    }
-
-    @Override
     public CompletableFuture<List<Layer>> obtainGlobalLayers(LayerSearchParams searchParams) {
         return CompletableFuture.completedFuture(Collections.emptyList());
     }

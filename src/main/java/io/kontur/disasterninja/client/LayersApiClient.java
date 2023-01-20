@@ -51,8 +51,6 @@ public class LayersApiClient extends RestClientWithBearerAuth {
     private final RestTemplate layersApiRestTemplate;
     @Value("${kontur.platform.layersApi.pageSize}")
     private int pageSize;
-    @Value("${kontur.platform.userProfileApi.defaultAppId:}")
-    private String defaultAppId;
 
     public LayersApiClient(RestTemplate layersApiRestTemplate,
                            KeycloakAuthorizationService authorizationService) {
@@ -181,10 +179,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         body.put("geometry", geoJson);
         body.put("omitLocalCollections", omitLocalLayers);
         body.put("limit", pageSize);
-        if (appId == null) {
-            //TODO remove default value after DN2 FE is updated with application functionality
-            body.put("appId", UUID.fromString(defaultAppId));
-        } else {
+        if (appId != null) {
             body.put("appId", appId);
         }
 
@@ -249,10 +244,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
     protected Collection getCollection(String collectionId, UUID appId) {
         Map<String, Object> body = new HashMap<>();
         body.put("collectionIds", singletonList(collectionId));
-        if (appId == null) {
-            //TODO remove default value after DN2 FE is updated with application functionality
-            body.put("appId", UUID.fromString(defaultAppId));
-        } else {
+        if (appId != null) {
             body.put("appId", appId);
         }
 

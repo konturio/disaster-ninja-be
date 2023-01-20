@@ -26,56 +26,6 @@ public class LayersApiProviderTest extends TestDependingOnUserAuth {
             "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
 
     @Test
-    public void getLayersUserIsNotAuthenticatedTest() throws JsonProcessingException {
-        givenUserIsNotAuthenticated();
-
-        Geometry geometry = objectMapper.readValue(json, Geometry.class);
-        UUID appId = UUID.randomUUID();
-        provider.obtainLayers(LayerSearchParams.builder().boundary(geometry).appId(appId).build());
-
-        verify(client, times(1)).findLayers(geometry, false,
-                CollectionOwner.ANY, appId);
-    }
-
-    @Test
-    public void getLayersUserIsNotAuthenticatedWithoutGeometryTest() {
-        givenUserIsNotAuthenticated();
-
-        UUID appId = UUID.randomUUID();
-        provider.obtainLayers(LayerSearchParams.builder().boundary(null).appId(appId).build());
-
-        verify(client, times(1)).findLayers(null, true,
-                CollectionOwner.ANY, appId);
-    }
-
-    @Test
-    public void getLayersUserIsAuthenticatedTest() throws JsonProcessingException {
-        givenUserIsLoggedIn();
-
-        Geometry geometry = objectMapper.readValue(json, Geometry.class);
-        UUID appId = UUID.randomUUID();
-        provider.obtainLayers(LayerSearchParams.builder().boundary(geometry).appId(appId).build());
-
-        verify(client, times(1)).findLayers(null, false,
-                CollectionOwner.ME, appId);
-        verify(client, times(1)).findLayers(geometry, false,
-                CollectionOwner.NOT_ME, appId);
-    }
-
-    @Test
-    public void getLayersUserIsAuthenticatedWithoutGeometryTest() {
-        givenUserIsLoggedIn();
-
-        UUID appId = UUID.randomUUID();
-        provider.obtainLayers(LayerSearchParams.builder().boundary(null).appId(appId).build());
-
-        verify(client, times(1)).findLayers(null, false,
-                CollectionOwner.ME, appId);
-        verify(client, times(1)).findLayers(null, true,
-                CollectionOwner.NOT_ME, appId);
-    }
-
-    @Test
     public void obtainGlobalLayersTest() {
         givenUserIsNotAuthenticated();
 

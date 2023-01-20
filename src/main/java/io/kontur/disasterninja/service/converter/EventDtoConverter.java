@@ -60,7 +60,7 @@ public class EventDtoConverter {
             }
         }
 
-        dto.setGeojson(uniteGeometry(event)); //todo isn't this event's geometries? -- check in eventApi!
+        dto.setGeojson(uniteGeometry(event));
         dto.setLatestEpisodeGeojson(event.getGeometries());
         dto.setUpdatedAt(event.getUpdatedAt());
 

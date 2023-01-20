@@ -29,21 +29,6 @@ public class LayersApiProvider implements LayerProvider {
 
     @Override
     @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
-    // TODO: retained for backward compatibility, remove later
-    public CompletableFuture<List<Layer>> obtainLayers(LayerSearchParams searchParams) {
-        if (AuthenticationUtil.isUserAuthenticated()) {
-            List<Layer> result = new ArrayList<>();
-            result.addAll(obtainNonUserOwnedLayersByGeometry(searchParams.getBoundary(), searchParams.getAppId()));
-            result.addAll(obtainAllUserOwnedLayers(searchParams.getAppId()));
-            return CompletableFuture.completedFuture(result);
-        } else {
-            return CompletableFuture.completedFuture(
-                    obtainLayersByGeometry(searchParams.getBoundary(), searchParams.getAppId()));
-        }
-    }
-
-    @Override
-    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
     public CompletableFuture<List<Layer>> obtainGlobalLayers(LayerSearchParams searchParams) {
         return CompletableFuture.completedFuture(obtainLayersByGeometry(null, searchParams.getAppId()));
     }

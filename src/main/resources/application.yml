@@ -36,7 +36,6 @@ kontur:
       url: 'https://apps.kontur.io/userprofile/'
       connectionTimeout: 20
       readTimeout: 20
-      defaultAppId: '58851b50-9574-4aec-a3a6-425fa18dcb54'
 
 notifications:
   enabled: false

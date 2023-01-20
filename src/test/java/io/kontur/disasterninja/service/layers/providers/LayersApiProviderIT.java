@@ -81,10 +81,10 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
 
         //when
         Geometry geometry = objectMapper.readValue(json, Geometry.class);
-        List<Layer> layers = provider.obtainLayers(LayerSearchParams.builder().boundary(geometry).build()).get();
+        List<Layer> layers = provider.obtainSelectedAreaLayers(LayerSearchParams.builder().boundary(geometry).build()).get();
 
         //then
-        assertEquals(13, layers.size());
+        assertEquals(12, layers.size());
 
         Layer layer = layers.get(0);
         assertEquals("KLA__hotProjects", layer.getId());
@@ -99,17 +99,9 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         assertEquals("#bbd1e6", layer.getLegend().getSteps().get(0).getStepIconStroke());
         assertFalse(layer.isBoundaryRequiredForRetrieval());
 
-        Layer userLayer = layers.get(12);
-        assertEquals("KLA__userLayer1", userLayer.getId());
-        assertEquals("user layer title", userLayer.getName());
-        assertNull(userLayer.getDescription());
-        assertNull(userLayer.getCategory());
-        assertNull(userLayer.getGroup());
-        assertNull(userLayer.getCopyrights());
-        assertEquals(LegendType.SIMPLE, userLayer.getLegend().getType());
-        assertEquals("sl1", userLayer.getLegend().getSteps().get(0).getSourceLayer());
-        assertFalse(userLayer.isBoundaryRequiredForRetrieval());
-        assertTrue(userLayer.isOwnedByUser());
+        Layer layer11 = layers.get(11);
+        assertEquals("KLA__test12", layer11.getId());
+        assertEquals("test12 title", layer11.getName());
     }
 
     @Test
