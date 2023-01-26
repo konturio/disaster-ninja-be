@@ -41,6 +41,7 @@ public class Layer {
     private Integer orderIndex; //for sorting bivariate presets
     private boolean ownedByUser;
     private ObjectNode featureProperties;
+    private ObjectNode mapboxStyles;
 
     /**
      * Overrides all non-final fields with values from <b>other</b>, except for <b>this.source.data</b> as it's the
