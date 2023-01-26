@@ -18,8 +18,8 @@ public class LayersApiAppDto {
 
     @JsonCreator
     public LayersApiAppDto(@JsonProperty("id") UUID id,
-                           @JsonProperty("showAllPublicLayers") Boolean showAllPublicLayers,
-                           @JsonProperty("isPublic") Boolean isPublic,
+                           @JsonProperty("showAllPublicLayers") boolean showAllPublicLayers,
+                           @JsonProperty("isPublic") boolean isPublic,
                            @JsonProperty("defaultCollections") List<Collection> defaultCollections) {
         this.id = id;
         this.showAllPublicLayers = showAllPublicLayers;

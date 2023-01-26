@@ -4,13 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.kontur.disasterninja.client.EventApiClient;
 import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.client.TestDependingOnUserAuth;
 import io.kontur.disasterninja.client.UserProfileClient;
 import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.dto.application.AppContextDto;
 import io.kontur.disasterninja.dto.application.UpsAppDto;
 import io.kontur.disasterninja.dto.application.AppLayerUpdateDto;
 import io.kontur.disasterninja.dto.application.AppSummaryDto;
+import io.kontur.disasterninja.service.ApplicationService;
+import io.kontur.disasterninja.service.converter.AppContextDtoConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +49,8 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-@RestClientTest(components = {UserProfileClient.class, LayersApiClient.class})
+@RestClientTest(components = {UserProfileClient.class, LayersApiClient.class, ApplicationService.class,
+        EventApiClient.class, AppContextDtoConverter.class})
 @AutoConfigureWebClient(registerRestTemplate = true)
 public class AppControllerTest extends TestDependingOnUserAuth {
 
@@ -56,13 +61,15 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     private UserProfileClient userProfileClient;
     @Autowired
     private LayersApiClient layersApiClient;
+    @Autowired
+    private ApplicationService applicationService;
     private AppsController appsController;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     public void before() {
-        appsController = new AppsController(userProfileClient, layersApiClient);
+        appsController = new AppsController(userProfileClient, layersApiClient, applicationService);
     }
 
     @Test
@@ -321,6 +328,75 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         //THEN
         assertEquals(1, result.size());
         assertNotNull(result.get(0).getLegend());
+    }
+
+    @Test
+    public void getAppContextUnauthenticated() throws IOException {
+        //GIVEN
+        givenUserIsNotAuthenticated();
+        UUID appID = UUID.randomUUID();
+
+        mockServer.expect(requestTo(String.format("/apps/%s", appID)))
+                .andExpect(method(GET))
+                .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
+                .andRespond(withSuccess(readFile(this, "ups/dn2App.json"),
+                        MediaType.APPLICATION_JSON));
+        mockServer.expect(requestTo(String.format("/apps/%s?includeDefaultCollections=true", appID)))
+                .andExpect(method(GET))
+                .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
+                .andRespond(withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"),
+                        MediaType.APPLICATION_JSON));
+        mockServer.expect(requestTo("/v1/user_feeds"))
+                .andExpect(method(GET))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer null"))
+                .andRespond(withSuccess(readFile(this, "event-api/userFeeds.json"),
+                        MediaType.APPLICATION_JSON));
+
+        //WHEN
+        AppContextDto result = appsController.getAppContext(appID);
+
+        //THEN
+        assertNotNull(result.getDescription());
+        assertNotNull(result.getDefaultLayers());
+        assertNotNull(result.getUserFeeds());
+        assertNull(result.getUser());
+    }
+
+    @Test
+    public void getAppContextAuthenticated() throws IOException {
+        //GIVEN
+        givenUserIsLoggedIn();
+        UUID appID = UUID.randomUUID();
+
+        mockServer.expect(requestTo(String.format("/apps/%s", appID)))
+                .andExpect(method(GET))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andRespond(withSuccess(readFile(this, "ups/dn2App.json"),
+                        MediaType.APPLICATION_JSON));
+        mockServer.expect(requestTo(String.format("/apps/%s?includeDefaultCollections=true", appID)))
+                .andExpect(method(GET))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andRespond(withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"),
+                        MediaType.APPLICATION_JSON));
+        mockServer.expect(requestTo("/users/current_user"))
+                .andExpect(method(GET))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andRespond(withSuccess(readFile(this, "ups/currentUser.json"),
+                        MediaType.APPLICATION_JSON));
+        mockServer.expect(requestTo("/v1/user_feeds"))
+                .andExpect(method(GET))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
+                .andRespond(withSuccess(readFile(this, "event-api/userFeeds.json"),
+                        MediaType.APPLICATION_JSON));
+
+        //WHEN
+        AppContextDto result = appsController.getAppContext(appID);
+
+        //THEN
+        assertNotNull(result.getDescription());
+        assertNotNull(result.getDefaultLayers());
+        assertNotNull(result.getUserFeeds());
+        assertNotNull(result.getUser());
     }
 
     private UpsAppDto createAppDto() {

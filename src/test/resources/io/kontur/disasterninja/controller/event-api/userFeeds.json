@@ -1,0 +1,8 @@
+[
+  {
+    "feed": "kontur-public",
+    "name": "Kontur Public",
+    "description": "The feed contains real-time data about Cyclones, Droughts, Earthquakes, Floods, Volcanoes, Wildfires.",
+    "default": false
+  }
+]
