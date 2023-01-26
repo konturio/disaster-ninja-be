@@ -1,4 +1,4 @@
-package io.kontur.disasterninja.dto;
+package io.kontur.disasterninja.dto.application;
 
 import lombok.Data;
 

@@ -1,7 +1,7 @@
 package io.kontur.disasterninja.client;
 
-import io.kontur.disasterninja.dto.AppDto;
-import io.kontur.disasterninja.dto.AppSummaryDto;
+import io.kontur.disasterninja.dto.application.UpsAppDto;
+import io.kontur.disasterninja.dto.application.AppSummaryDto;
 import io.kontur.disasterninja.dto.FeatureDto;
 import io.kontur.disasterninja.dto.UserDto;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
@@ -113,15 +113,15 @@ public class UserProfileClient extends RestClientWithBearerAuth {
         }
     }
 
-    public AppDto getApp(UUID id) {
+    public UpsAppDto getApp(UUID id) {
         return sendAppRequest(APP_URL_WITH_ID, id, GET, null).getBody();
     }
 
-    public AppDto createApp(AppDto input) {
+    public UpsAppDto createApp(UpsAppDto input) {
         return sendAppRequest(APP_URL, null, POST, input).getBody();
     }
 
-    public AppDto updateApp(UUID id, AppDto update) {
+    public UpsAppDto updateApp(UUID id, UpsAppDto update) {
         return sendAppRequest(APP_URL_WITH_ID, id, PUT, update).getBody();
     }
 
@@ -129,7 +129,7 @@ public class UserProfileClient extends RestClientWithBearerAuth {
         return sendAppRequest(APP_URL_WITH_ID, id, DELETE, null);
     }
 
-    private ResponseEntity<AppDto> sendAppRequest(String url, Object queryParam, HttpMethod method, AppDto body) {
+    private ResponseEntity<UpsAppDto> sendAppRequest(String url, Object queryParam, HttpMethod method, UpsAppDto body) {
         return userProfileRestTemplate
                 .exchange(url, method, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(body),
                         new ParameterizedTypeReference<>() {

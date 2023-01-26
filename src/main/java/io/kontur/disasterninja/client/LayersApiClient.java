@@ -7,7 +7,9 @@ import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.Legend;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LayerSourceType;
-import io.kontur.disasterninja.dto.AppLayerUpdateDto;
+import io.kontur.disasterninja.dto.application.AppLayerUpdateDto;
+import io.kontur.disasterninja.dto.application.LayersApiAppDto;
+import io.kontur.disasterninja.dto.application.LayersApiAppUpdateDto;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
 import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
 import io.kontur.disasterninja.dto.layerapi.Collection;
@@ -67,7 +69,8 @@ public class LayersApiClient extends RestClientWithBearerAuth {
 
     public Layer getLayer(Geometry geoJSON, String layerId, UUID appId) {
         String id = getIdWithoutPrefix(layerId);
-        return convertToLayerDetails(geoJSON, getCollection(id, appId), appId);
+        Collection collection = getCollection(id, appId);
+        return convertToLayerDetails(geoJSON, collection, appId);
     }
 
     public Layer createLayer(LayerCreateDto dto) {
@@ -97,17 +100,21 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         return response.getBody();
     }
 
-    public List<Layer> getApplicationLayers(UUID appId) {
+    public LayersApiAppDto getApp(UUID appId) {
         String urlTemplate = UriComponentsBuilder.fromUriString(String.format(APPS_URI, appId.toString()))
                 .queryParam("includeDefaultCollections", "true")
                 .encode()
                 .toUriString();
-        ResponseEntity<ApplicationDto> response = layersApiRestTemplate
+        ResponseEntity<LayersApiAppDto> response = layersApiRestTemplate
                 .exchange(urlTemplate, HttpMethod.GET,
                         httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
                         new ParameterizedTypeReference<>() {
                         });
-        ApplicationDto body = response.getBody();
+        return response.getBody();
+    }
+
+    public List<Layer> getApplicationLayers(UUID appId) {
+        LayersApiAppDto body = getApp(appId);
         if (body == null || CollectionUtils.isEmpty(body.getDefaultCollections())) {
             return emptyList();
         }
@@ -122,12 +129,12 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                 .map(l -> new AppLayerUpdateDto(getIdWithoutPrefix(l.getLayerId()), l.getIsDefault(), l.getStyleRule()))
                 .toList();
 
-        ResponseEntity<ApplicationDto> response = layersApiRestTemplate
+        ResponseEntity<LayersApiAppDto> response = layersApiRestTemplate
                 .exchange(String.format(APPS_URI, appId.toString()), HttpMethod.PUT,
-                        httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(new ApplicationUpdateDto(false,
+                        httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(new LayersApiAppUpdateDto(false,
                                 true, layersToUpdate)), new ParameterizedTypeReference<>() {
                         });
-        ApplicationDto body = response.getBody();
+        LayersApiAppDto body = response.getBody();
         if (body == null || CollectionUtils.isEmpty(body.getDefaultCollections())) {
             return emptyList();
         }
@@ -259,7 +266,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         return null;
     }
 
-    private Layer convertToLayer(Collection collection) {
+    public Layer convertToLayer(Collection collection) {
         boolean boundaryRequiredForRetrieval = !LAYER_TYPE_TILES.equals(
                 collection.getItemType()) && !collection.isOwnedByUser();
         if (collection.getDisplayRule() != null &&
@@ -290,7 +297,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                 .build();
     }
 
-    private Layer convertToLayerDetails(Geometry geoJSON, Collection collection, UUID appId) {
+    public Layer convertToLayerDetails(Geometry geoJSON, Collection collection, UUID appId) {
         if (collection == null) {
             return null;
         }
@@ -392,42 +399,6 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             this.features = layers;
             this.numberMatched = numberMatched;
             this.numberReturned = numberReturned;
-        }
-    }
-
-    @Getter
-    private static class ApplicationDto {
-
-        private final UUID id;
-        private final boolean showAllPublicLayers;
-        private final boolean isPublic;
-        private final List<Collection> defaultCollections;
-
-        @JsonCreator
-        public ApplicationDto(@JsonProperty("id") UUID id,
-                              @JsonProperty("showAllPublicLayers") boolean showAllPublicLayers,
-                              @JsonProperty("isPublic") boolean isPublic,
-                              @JsonProperty("defaultCollections") List<Collection> defaultCollections) {
-            this.id = id;
-            this.showAllPublicLayers = showAllPublicLayers;
-            this.isPublic = isPublic;
-            this.defaultCollections = defaultCollections;
-        }
-    }
-
-    @Getter
-    private static class ApplicationUpdateDto {
-
-        private final boolean showAllPublicLayers;
-        @JsonProperty("isPublic")
-        private final boolean isPublic;
-        private final List<AppLayerUpdateDto> layers;
-
-        public ApplicationUpdateDto(boolean showAllPublicLayers, boolean isPublic,
-                                    List<AppLayerUpdateDto> layers) {
-            this.showAllPublicLayers = showAllPublicLayers;
-            this.isPublic = isPublic;
-            this.layers = layers;
         }
     }
 }

@@ -3,9 +3,11 @@ package io.kontur.disasterninja.controller;
 import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.client.UserProfileClient;
 import io.kontur.disasterninja.domain.Layer;
-import io.kontur.disasterninja.dto.AppDto;
-import io.kontur.disasterninja.dto.AppLayerUpdateDto;
-import io.kontur.disasterninja.dto.AppSummaryDto;
+import io.kontur.disasterninja.dto.application.UpsAppDto;
+import io.kontur.disasterninja.dto.application.AppLayerUpdateDto;
+import io.kontur.disasterninja.dto.application.AppSummaryDto;
+import io.kontur.disasterninja.dto.application.AppContextDto;
+import io.kontur.disasterninja.service.ApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -29,15 +31,16 @@ public class AppsController {
     public static final String PATH = "/apps";
     private final UserProfileClient userProfileClient;
     private final LayersApiClient layersApiClient;
+    private final ApplicationService applicationService;
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Create a new embedded app", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = AppDto.class)))
+                    schema = @Schema(implementation = UpsAppDto.class)))
     @PostMapping
-    public AppDto create(@Parameter(name = "app") @RequestBody AppDto appDto) {
-        return userProfileClient.createApp(appDto);
+    public UpsAppDto create(@Parameter(name = "app") @RequestBody UpsAppDto upsAppDto) {
+        return userProfileClient.createApp(upsAppDto);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -53,14 +56,14 @@ public class AppsController {
     @Operation(summary = "Update existing app", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = AppDto.class)))
+                    schema = @Schema(implementation = UpsAppDto.class)))
     @PutMapping(path = "/{id}")
-    public AppDto update(@PathVariable @Parameter(name = "id") UUID id,
-                         @RequestBody @Parameter(name = "app") AppDto appDto) {
-        return userProfileClient.updateApp(id, appDto);
+    public UpsAppDto update(@PathVariable @Parameter(name = "id") UUID id,
+                            @RequestBody @Parameter(name = "app") UpsAppDto upsAppDto) {
+        return userProfileClient.updateApp(id, upsAppDto);
     }
 
-    @Operation(summary = "Get default app id", tags = {"Applications"})
+    @Operation(summary = "Get default app id", tags = {"Applications"}, deprecated = true)
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE))
     @GetMapping(path = "/default_id")
@@ -71,9 +74,9 @@ public class AppsController {
     @Operation(summary = "Get application information by id", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = AppDto.class)))
+                    schema = @Schema(implementation = UpsAppDto.class)))
     @GetMapping(path = "/{id}")
-    public AppDto get(@PathVariable @Parameter(name = "id") UUID id) {
+    public UpsAppDto get(@PathVariable @Parameter(name = "id") UUID id) {
         return userProfileClient.getApp(id);
     }
 
@@ -105,5 +108,14 @@ public class AppsController {
     public List<Layer> updateListOfLayers(@PathVariable("id") UUID appId,
                                           @RequestBody List<AppLayerUpdateDto> layers) {
         return layersApiClient.updateApplicationLayers(appId, layers);
+    }
+
+    @Operation(summary = "Get application context by id", tags = {"Applications"})
+    @ApiResponse(responseCode = "200",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = AppContextDto.class)))
+    @GetMapping("/context")
+    public AppContextDto getAppContext(@RequestParam(value = "appId", required = false) UUID appId) {
+        return applicationService.getAppContext(appId);
     }
 }

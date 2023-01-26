@@ -1,4 +1,4 @@
-package io.kontur.disasterninja.dto;
+package io.kontur.disasterninja.dto.application;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.AllArgsConstructor;

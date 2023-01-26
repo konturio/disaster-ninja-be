@@ -8,9 +8,9 @@ import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.client.TestDependingOnUserAuth;
 import io.kontur.disasterninja.client.UserProfileClient;
 import io.kontur.disasterninja.domain.Layer;
-import io.kontur.disasterninja.dto.AppDto;
-import io.kontur.disasterninja.dto.AppLayerUpdateDto;
-import io.kontur.disasterninja.dto.AppSummaryDto;
+import io.kontur.disasterninja.dto.application.UpsAppDto;
+import io.kontur.disasterninja.dto.application.AppLayerUpdateDto;
+import io.kontur.disasterninja.dto.application.AppSummaryDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,7 +116,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
                 .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
                 .andRespond(withSuccess(readFile(this, "ups/dn2App.json"), MediaType.APPLICATION_JSON));
 
-        AppDto result = appsController.get(DN2_ID);
+        UpsAppDto result = appsController.get(DN2_ID);
 
         assertEquals(DN2_ID, result.getId());
         assertEquals("DN2", result.getName());
@@ -141,7 +141,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
                 .andRespond(withSuccess(readFile(this, "ups/privateApp.json"), MediaType.APPLICATION_JSON));
 
-        AppDto result = appsController.get(appId);
+        UpsAppDto result = appsController.get(appId);
 
         assertEquals(appId, result.getId());
         assertEquals("my-private-app", result.getName());
@@ -174,7 +174,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         givenUserIsLoggedIn();
         UUID appId = UUID.fromString("58851b50-9574-4aec-a3a6-425fa18dcb11");
 
-        AppDto update = createAppDto();
+        UpsAppDto update = createAppDto();
         update.setOwnedByUser(true);
         update.setId(appId);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -186,7 +186,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
                 .andExpect(content().json(dto, true))
                 .andRespond(withSuccess(dto, MediaType.APPLICATION_JSON));
 
-        AppDto result = appsController.update(appId, update);
+        UpsAppDto result = appsController.update(appId, update);
         assertEquals(update, result);
     }
 
@@ -195,10 +195,10 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         givenUserIsLoggedIn();
         ObjectMapper objectMapper = new ObjectMapper();
 
-        AppDto request = createAppDto();
+        UpsAppDto request = createAppDto();
         String requestJson = objectMapper.writeValueAsString(request);
 
-        AppDto response = createAppDto();
+        UpsAppDto response = createAppDto();
         UUID appId = UUID.fromString("58851b50-9574-4aec-a3a6-425fa18dcb11");
         response.setId(appId);
         response.setOwnedByUser(true);
@@ -210,7 +210,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
                 .andExpect(content().json(requestJson, true))
                 .andRespond(withSuccess(responseJson, MediaType.APPLICATION_JSON));
 
-        AppDto result = appsController.create(request);
+        UpsAppDto result = appsController.create(request);
         assertEquals(request.getDescription(), result.getDescription());
         assertEquals(request.getName(), result.getName());
         assertEquals(request.getFeaturesConfig(), result.getFeaturesConfig());
@@ -323,8 +323,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         assertNotNull(result.get(0).getLegend());
     }
 
-    private AppDto createAppDto() {
-        AppDto dto = new AppDto();
+    private UpsAppDto createAppDto() {
+        UpsAppDto dto = new UpsAppDto();
         dto.setName("name");
         dto.setDescription("desc");
         dto.setPublic(true);
