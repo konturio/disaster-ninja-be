@@ -1,0 +1,12 @@
+{
+  "username": "user@mail.com",
+  "email": "user@mail.com",
+  "fullName": "First Last",
+  "language": "en",
+  "useMetricUnits": true,
+  "subscribedToKonturUpdates": true,
+  "bio": "",
+  "osmEditor": "JSOM",
+  "defaultFeed": "Kontur public",
+  "theme": "kontur"
+}

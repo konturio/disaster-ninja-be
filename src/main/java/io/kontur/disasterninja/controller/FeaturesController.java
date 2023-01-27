@@ -29,7 +29,7 @@ public class FeaturesController {
 
     @Operation(tags = "Features", summary =
             "Get features for app id allowed for user by username retrieved from token "
-                    + "(including public ones)")
+                    + "(including public ones)", deprecated = true)
     @ApiResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON_VALUE,
             array = @ArraySchema(schema = @Schema(implementation = FeatureDto.class))))
     @GetMapping
