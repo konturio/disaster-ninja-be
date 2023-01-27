@@ -327,7 +327,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     }
 
     @Test
-    public void getAppConfig() throws IOException {
+    public void getAppConfigUnauthenticated() throws IOException {
         //GIVEN
         givenUserIsNotAuthenticated();
         UUID appID = UUID.randomUUID();
@@ -353,7 +353,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     }
 
     @Test
-    public void getAppContextAuthenticated() throws IOException {
+    public void getAppConfigAuthenticated() throws IOException {
         //GIVEN
         givenUserIsLoggedIn();
         UUID appID = UUID.randomUUID();
