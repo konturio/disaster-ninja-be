@@ -109,11 +109,11 @@ public class AppsController {
         return layersApiClient.updateApplicationLayers(appId, layers);
     }
 
-    @Operation(summary = "Get application config with features and user settings by id", tags = {"Applications"})
+    @Operation(summary = "Get application config with features and user settings by id. Returns default app if no appId is provided", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = AppDto.class)))
-    @GetMapping(path = "/app")
+    @GetMapping(path = "/configuration")
     public AppDto getAppConfig(@RequestParam(name = "appId", required = false) UUID appId) {
         return applicationService.getAppConfig(appId);
     }
