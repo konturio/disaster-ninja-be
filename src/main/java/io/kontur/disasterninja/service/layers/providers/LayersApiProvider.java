@@ -10,18 +10,16 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.Geometry;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
 import static io.kontur.disasterninja.dto.layerapi.CollectionOwner.*;
-import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
+import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 @Service
-@Order(HIGHEST_PRECEDENCE)
+@Order(LOWEST_PRECEDENCE)
 @RequiredArgsConstructor
 public class LayersApiProvider implements LayerProvider {
 
@@ -57,15 +55,12 @@ public class LayersApiProvider implements LayerProvider {
 
     @Override
     public Layer obtainLayer(String layerId, LayerSearchParams searchParams) {
-        if (!isApplicable(layerId)) {
-            return null;
-        }
         return layersApiClient.getLayer(searchParams.getBoundary(), layerId, searchParams.getAppId());
     }
 
     @Override
     public boolean isApplicable(String layerId) {
-        return layerId.startsWith(LAYER_PREFIX);
+        return true;
     }
 
     private List<Layer> obtainLayersByGeometry(Geometry geoJSON, UUID appId) {
