@@ -23,12 +23,21 @@ public class AppDto {
     private boolean isPublic;
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Boolean ownedByUser;
+    // TODO: remove this field when feature configs from UPS are received within List<FeatureDto> features parameter
     private Map<String, JsonNode> featuresConfig;
     private Geometry centerGeometry;
     private BigDecimal zoom;
     private String sidebarIconUrl;
     private String faviconUrl;
 
+    private UserDto user;
+    private List<FeatureDto> features;
+
+    /*
+     * TODO: can this method be removed? We are not comparing DTOs anywhere.
+     *  equals() might be needed because of hashcode(),
+     *  but this DTO isn't used in any hash based collection either
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

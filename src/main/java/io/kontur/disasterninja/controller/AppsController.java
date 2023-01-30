@@ -6,6 +6,7 @@ import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.dto.AppDto;
 import io.kontur.disasterninja.dto.AppLayerUpdateDto;
 import io.kontur.disasterninja.dto.AppSummaryDto;
+import io.kontur.disasterninja.service.ApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -29,6 +30,7 @@ public class AppsController {
     public static final String PATH = "/apps";
     private final UserProfileClient userProfileClient;
     private final LayersApiClient layersApiClient;
+    private final ApplicationService applicationService;
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Create a new embedded app", tags = {"Applications"})
@@ -60,7 +62,7 @@ public class AppsController {
         return userProfileClient.updateApp(id, appDto);
     }
 
-    @Operation(summary = "Get default app id", tags = {"Applications"})
+    @Operation(summary = "Get default app id", tags = {"Applications"}, deprecated = true)
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE))
     @GetMapping(path = "/default_id")
@@ -105,5 +107,14 @@ public class AppsController {
     public List<Layer> updateListOfLayers(@PathVariable("id") UUID appId,
                                           @RequestBody List<AppLayerUpdateDto> layers) {
         return layersApiClient.updateApplicationLayers(appId, layers);
+    }
+
+    @Operation(summary = "Get application config with features and user settings by id. Returns default app if no appId is provided", tags = {"Applications"})
+    @ApiResponse(responseCode = "200",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = AppDto.class)))
+    @GetMapping(path = "/configuration")
+    public AppDto getAppConfig(@RequestParam(name = "appId", required = false) UUID appId) {
+        return applicationService.getAppConfig(appId);
     }
 }
