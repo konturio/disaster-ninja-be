@@ -309,7 +309,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         assertEquals("HOT Tasking Manager Projects", collection.getTitle());
         assertEquals("Projects on HOT Tasking manager, ongoing and historical", collection.getDescription());
         assertEquals("(c) Kontur", collection.getCopyrights());
-        assertEquals("test_HotProjectsCategory", collection.getCategory().getName());
+        assertEquals("overlay", collection.getCategory().getName());
         assertEquals("tiles", collection.getItemType());
         assertEquals("tiles", collection.getItemType());
         assertEquals(1, collection.getLinks().size());

@@ -7,6 +7,7 @@ import io.kontur.disasterninja.dto.AppDto;
 import io.kontur.disasterninja.dto.AppLayerUpdateDto;
 import io.kontur.disasterninja.dto.AppSummaryDto;
 import io.kontur.disasterninja.service.ApplicationService;
+import io.kontur.disasterninja.service.layers.providers.BivariateLayerProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -20,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.ListIterator;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -30,6 +32,7 @@ public class AppsController {
     public static final String PATH = "/apps";
     private final UserProfileClient userProfileClient;
     private final LayersApiClient layersApiClient;
+    private final BivariateLayerProvider bivariateLayerProvider;
     private final ApplicationService applicationService;
 
     @PreAuthorize("isAuthenticated()")
@@ -95,7 +98,18 @@ public class AppsController {
                     array = @ArraySchema(schema = @Schema(implementation = Layer.class))))
     @GetMapping("/{id}/layers")
     public List<Layer> getListOfLayers(@PathVariable("id") UUID appId) {
-        return layersApiClient.getApplicationLayers(appId);
+        List<Layer> layers = layersApiClient.getApplicationLayers(appId);
+
+        //TODO This is bad. To be removed during US1544 Serve bivariate layers via Layers API
+        ListIterator<Layer> iterator = layers.listIterator();
+        while (iterator.hasNext()) {
+            Layer next = iterator.next();
+            if (bivariateLayerProvider.isApplicable(next.getId())) {
+                iterator.set(bivariateLayerProvider.obtainLayer(next.getId(), null));
+            }
+        }
+
+        return layers;
     }
 
     @PreAuthorize("isAuthenticated()")
