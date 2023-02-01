@@ -6,7 +6,7 @@
       "description": "Projects on HOT Tasking manager, ongoing and historical",
       "copyrights": "(c) Kontur",
       "category": {
-        "name": "test_HotProjectsCategory",
+        "name": "overlay",
         "isOpened": false,
         "mutuallyExclusive": true,
         "order": 1

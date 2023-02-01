@@ -59,22 +59,22 @@ public class LayersApiClient extends RestClientWithBearerAuth {
     public List<Layer> findLayers(Geometry geoJSON, boolean omitLocalLayers, CollectionOwner collectionOwner, UUID appId) {
         return getCollections(geoJSON, omitLocalLayers, collectionOwner, appId)
                 .stream()
-                .map(this::convertToLayer)
+                .map((Collection collection) -> convertToLayer(collection, false, appId, null))
                 .collect(Collectors.toList());
     }
 
     public Layer getLayer(Geometry geoJSON, String layerId, UUID appId) {
-        return convertToLayerDetails(geoJSON, getCollection(layerId, appId), appId);
+        return convertToLayer(getCollection(layerId, appId),true, appId, geoJSON);
     }
 
     public Layer createLayer(LayerCreateDto dto) {
         Collection collection = createCollection(dto);
-        return convertToLayer(collection);
+        return convertToLayer(collection, false, dto.getAppId(), null);
     }
 
     public Layer updateLayer(String layerId, LayerUpdateDto dto) {
         Collection collection = updateCollection(layerId, dto);
-        return convertToLayer(collection);
+        return convertToLayer(collection, false, dto.getAppId(), null);
     }
 
     public void deleteLayer(String layerId) {
@@ -107,7 +107,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         }
         return body.getDefaultCollections()
                 .stream()
-                .map(this::convertToLayer)
+                .map((Collection collection) -> convertToLayer(collection,true, appId, null))
                 .collect(Collectors.toList());
     }
 
@@ -127,7 +127,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         }
         return body.getDefaultCollections()
                 .stream()
-                .map(this::convertToLayer)
+                .map((Collection collection) -> convertToLayer(collection,true, appId, null))
                 .collect(Collectors.toList());
     }
 
@@ -198,8 +198,10 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         List<Feature> result = new ArrayList<>();
 
         Map<String, Object> body = new HashMap<>();
-        body.put("geometry", geoJson);
         body.put("limit", pageSize);
+        if (geoJson != null) {
+            body.put("geometry", geoJson);
+        }
         if (appId != null) {
             body.put("appId", appId);
         }
@@ -245,7 +247,10 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         return null;
     }
 
-    private Layer convertToLayer(Collection collection) {
+    private Layer convertToLayer(Collection collection, boolean includeSource, UUID appId, Geometry geoJSON) {
+        if (collection == null) {
+            return null;
+        }
         boolean boundaryRequiredForRetrieval = !LAYER_TYPE_TILES.equals(
                 collection.getItemType()) && !collection.isOwnedByUser();
         if (collection.getDisplayRule() != null &&
@@ -259,7 +264,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             eventIdRequiredForRetrieval = collection.getDisplayRule().get("eventIdRequiredForRetrieval").asBoolean();
         }
 
-        return Layer.builder()
+        Layer.LayerBuilder builder = Layer.builder()
                 .id(collection.getId())
                 .name(collection.getTitle())
                 .description(collection.getDescription())
@@ -273,28 +278,23 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                 .eventIdRequiredForRetrieval(eventIdRequiredForRetrieval)
                 .ownedByUser(collection.isOwnedByUser())
                 .featureProperties(collection.getFeatureProperties())
-                .mapboxStyles(collection.getMapboxStyles())
-                .build();
-    }
+                .mapboxStyles(collection.getMapboxStyles());
 
-    private Layer convertToLayerDetails(Geometry geoJSON, Collection collection, UUID appId) {
-        if (collection == null) {
-            return null;
+        if (includeSource) {
+            LayerSource source = null;
+            if (collection.getItemType() != null) {
+                source = switch (collection.getItemType()) {
+                    case (LAYER_TYPE_VECTOR), (LAYER_TYPE_TILES) -> createVectorSource(collection);
+                    case (LAYER_TYPE_RASTER) -> createRasterSource(collection);
+                    case (LAYER_TYPE_FEATURE) -> createFeatureSource(geoJSON, collection.getId(), appId);
+                    default -> null;
+                };
+            }
+            builder.minZoom(collection.getMinZoom())
+                    .maxZoom(collection.getMaxZoom())
+                    .source(source);
         }
-        LayerSource source = switch (collection.getItemType()) {
-            case (LAYER_TYPE_VECTOR), (LAYER_TYPE_TILES) -> createVectorSource(collection);
-            case (LAYER_TYPE_RASTER) -> createRasterSource(collection);
-            case (LAYER_TYPE_FEATURE) -> createFeatureSource(geoJSON, collection.getId(), appId);
-            default -> null;
-        };
-        return Layer.builder()
-                .id(collection.getId())
-                .legend(collection.getStyleRule() != null ?
-                        JsonUtil.readObjectNode(collection.getStyleRule(), Legend.class) : null)
-                .minZoom(collection.getMinZoom())
-                .maxZoom(collection.getMaxZoom())
-                .source(source)
-                .ownedByUser(collection.isOwnedByUser())
+        return builder
                 .build();
     }
 

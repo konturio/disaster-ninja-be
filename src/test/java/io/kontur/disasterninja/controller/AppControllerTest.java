@@ -12,11 +12,13 @@ import io.kontur.disasterninja.dto.AppDto;
 import io.kontur.disasterninja.dto.AppLayerUpdateDto;
 import io.kontur.disasterninja.dto.AppSummaryDto;
 import io.kontur.disasterninja.service.ApplicationService;
+import io.kontur.disasterninja.service.layers.providers.BivariateLayerProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -58,13 +60,15 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     private LayersApiClient layersApiClient;
     @Autowired
     private ApplicationService applicationService;
+    @MockBean
+    private BivariateLayerProvider bivariateLayerProvider;
     private AppsController appsController;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     public void before() {
-        appsController = new AppsController(userProfileClient, layersApiClient, applicationService);
+        appsController = new AppsController(userProfileClient, layersApiClient, bivariateLayerProvider, applicationService);
     }
 
     @Test
