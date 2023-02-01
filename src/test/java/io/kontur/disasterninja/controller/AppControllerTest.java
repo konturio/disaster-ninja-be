@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
 import static io.kontur.disasterninja.controller.AppsController.PATH;
 import static io.kontur.disasterninja.service.GeometryTransformer.geometriesAreEqual;
 import static io.kontur.disasterninja.util.TestUtil.readFile;
@@ -317,7 +316,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
 
         //WHEN
         List<Layer> result = appsController.updateListOfLayers(appID, Collections.singletonList(
-                new AppLayerUpdateDto(LAYER_PREFIX + "testLayerId", true,
+                new AppLayerUpdateDto("testLayerId", true,
                         (ObjectNode) new ObjectMapper().readTree(randomJsonString))
         ));
 

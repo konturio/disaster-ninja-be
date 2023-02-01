@@ -39,8 +39,6 @@ import static java.util.Collections.singletonList;
 @Component
 public class LayersApiClient extends RestClientWithBearerAuth {
 
-    public static final String LAYER_PREFIX = "KLA__";
-
     private static final String APPS_URI = "/apps/%s";
     private static final String COLLECTIONS_URI = "/collections";
     private static final String LAYERS_SEARCH_URI = COLLECTIONS_URI + "/search";
@@ -66,8 +64,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
     }
 
     public Layer getLayer(Geometry geoJSON, String layerId, UUID appId) {
-        String id = getIdWithoutPrefix(layerId);
-        return convertToLayerDetails(geoJSON, getCollection(id, appId), appId);
+        return convertToLayerDetails(geoJSON, getCollection(layerId, appId), appId);
     }
 
     public Layer createLayer(LayerCreateDto dto) {
@@ -76,21 +73,18 @@ public class LayersApiClient extends RestClientWithBearerAuth {
     }
 
     public Layer updateLayer(String layerId, LayerUpdateDto dto) {
-        String id = getIdWithoutPrefix(layerId);
-        Collection collection = updateCollection(id, dto);
+        Collection collection = updateCollection(layerId, dto);
         return convertToLayer(collection);
     }
 
     public void deleteLayer(String layerId) {
-        String id = getIdWithoutPrefix(layerId);
-        deleteCollection(id);
+        deleteCollection(layerId);
     }
 
     public FeatureCollection updateLayerFeatures(String layerId, FeatureCollection body) {
-        String id = getIdWithoutPrefix(layerId);
 
         ResponseEntity<FeatureCollection> response = layersApiRestTemplate
-                .exchange(String.format(UPDATE_FEATURES_URL, id), HttpMethod.PUT,
+                .exchange(String.format(UPDATE_FEATURES_URL, layerId), HttpMethod.PUT,
                         httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(body),
                         new ParameterizedTypeReference<>() {
                         });
@@ -119,7 +113,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
 
     public List<Layer> updateApplicationLayers(UUID appId, List<AppLayerUpdateDto> layers) {
         List<AppLayerUpdateDto> layersToUpdate = layers.stream()
-                .map(l -> new AppLayerUpdateDto(getIdWithoutPrefix(l.getLayerId()), l.getIsDefault(), l.getStyleRule()))
+                .map(l -> new AppLayerUpdateDto(l.getLayerId(), l.getIsDefault(), l.getStyleRule()))
                 .toList();
 
         ResponseEntity<ApplicationDto> response = layersApiRestTemplate
@@ -135,14 +129,6 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                 .stream()
                 .map(this::convertToLayer)
                 .collect(Collectors.toList());
-    }
-
-    private String getIdWithoutPrefix(String layerId) {
-        return layerId.replaceFirst(LAYER_PREFIX, "");
-    }
-
-    private String getIdWithPrefix(String id) {
-        return LAYER_PREFIX + id;
     }
 
     protected Collection createCollection(LayerCreateDto dto) {
@@ -274,7 +260,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         }
 
         return Layer.builder()
-                .id(getIdWithPrefix(collection.getId()))
+                .id(collection.getId())
                 .name(collection.getTitle())
                 .description(collection.getDescription())
                 .category(collection.getCategory() != null ? LayerCategory.fromString(
@@ -302,7 +288,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
             default -> null;
         };
         return Layer.builder()
-                .id(getIdWithPrefix(collection.getId()))
+                .id(collection.getId())
                 .legend(collection.getStyleRule() != null ?
                         JsonUtil.readObjectNode(collection.getStyleRule(), Legend.class) : null)
                 .minZoom(collection.getMinZoom())

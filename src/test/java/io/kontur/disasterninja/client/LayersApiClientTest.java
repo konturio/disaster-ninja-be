@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
 import static io.kontur.disasterninja.dto.layer.LayerUpdateDto.LAYER_TYPE_FEATURE;
 import static io.kontur.disasterninja.util.TestUtil.createLegend;
 import static io.kontur.disasterninja.util.TestUtil.readFile;
@@ -73,7 +72,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         dto.setLegend(legend);
 
         Layer layer = client.createLayer(dto);
-        assertEquals(LAYER_PREFIX + id, layer.getId());
+        assertEquals(id, layer.getId());
         assertEquals(title, layer.getName());
         assertEquals(legend, layer.getLegend());
         assertTrue(layer.isOwnedByUser());
@@ -107,8 +106,8 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         dto.setTitle(title);
         dto.setLegend(legend);
 
-        Layer layer = client.updateLayer(LAYER_PREFIX + id, dto);
-        assertEquals(LAYER_PREFIX + id, layer.getId());
+        Layer layer = client.updateLayer(id, dto);
+        assertEquals(id, layer.getId());
         assertEquals(title, layer.getName());
         assertEquals(legend, layer.getLegend());
         assertTrue(layer.isOwnedByUser());
@@ -131,7 +130,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
                 .andExpect(method(HttpMethod.DELETE))
                 .andRespond(withSuccess());
 
-        client.deleteLayer(LAYER_PREFIX + id);
+        client.deleteLayer(id);
     }
 
     @Test
@@ -152,7 +151,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
                 .andExpect(header(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue()))
                 .andRespond(withSuccess());
 
-        client.deleteLayer(LAYER_PREFIX + id);
+        client.deleteLayer(id);
     }
 
     @Test

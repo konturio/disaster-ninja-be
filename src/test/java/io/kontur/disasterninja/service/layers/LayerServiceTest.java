@@ -18,11 +18,12 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static io.kontur.disasterninja.client.LayersApiClient.LAYER_PREFIX;
 import static io.kontur.disasterninja.service.layers.providers.UrbanAndPeripheryLayerProvider.SETTLED_PERIPHERY_LAYER_ID;
+import static io.kontur.disasterninja.service.layers.providers.UrbanAndPeripheryLayerProvider.URBAN_CORE_LAYER_ID;
 import static io.kontur.disasterninja.util.TestUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,8 +42,8 @@ public class LayerServiceTest {
             .legend(legend)
             .build();
 
-    final Layer userLayer = Layer.builder().id(LAYER_PREFIX + "userLayer").build();
-    final Layer commonLayer = Layer.builder().id(LAYER_PREFIX + "commonLayer").build();
+    final Layer userLayer = Layer.builder().id("userLayer").build();
+    final Layer commonLayer = Layer.builder().id("commonLayer").build();
 
     @MockBean
     UrbanAndPeripheryLayerProvider urbanAndPeripheryLayerProvider;
@@ -127,6 +128,63 @@ public class LayerServiceTest {
                 argThat(p -> p.getBoundary() != null));
         verify(layersApiProvider, times(1)).obtainLayer(eq(userLayer.getId()),
                 argThat(p -> p.getBoundary() == null));
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void eventShapeLayersAreProcessedByEventShapeProviderTest() {
+        when(layersApiProvider.isApplicable(any())).thenCallRealMethod();
+        when(eventApiProvider.isApplicable(any())).thenCallRealMethod();
+        when(urbanAndPeripheryLayerProvider.isApplicable(any())).thenCallRealMethod();
+        when(bivariateLayerProvider.isApplicable(any())).thenCallRealMethod();
+
+        Layer layer = Layer.builder().id(EventShapeLayerProvider.EVENT_SHAPE_LAYER_ID).build();
+
+        when(eventApiProvider.obtainLayer(any(), any())).thenReturn(layer);
+
+        List<Layer> result = layerService.get(Collections.emptyList(), List.of(layer.getId()),
+                paramsWithSomeBoundary());
+        verify(eventApiProvider, times(1)).obtainLayer(eq(layer.getId()),
+                any());
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void urbanLayersAreProcessedByUrbanProviderTest() {
+        when(layersApiProvider.isApplicable(any())).thenCallRealMethod();
+        when(eventApiProvider.isApplicable(any())).thenCallRealMethod();
+        when(urbanAndPeripheryLayerProvider.isApplicable(any())).thenCallRealMethod();
+        when(bivariateLayerProvider.isApplicable(any())).thenCallRealMethod();
+
+        Layer layer = Layer.builder().id(URBAN_CORE_LAYER_ID).build();
+
+        when(urbanAndPeripheryLayerProvider.obtainLayer(any(), any())).thenReturn(layer);
+
+        List<Layer> result = layerService.get(Collections.emptyList(), List.of(layer.getId()),
+                paramsWithSomeBoundary());
+        verify(urbanAndPeripheryLayerProvider, times(1)).obtainLayer(eq(layer.getId()),
+                any());
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void bivariateLayersAreProcessedByBivariateProviderTest() {
+        when(layersApiProvider.isApplicable(any())).thenCallRealMethod();
+        when(eventApiProvider.isApplicable(any())).thenCallRealMethod();
+        when(urbanAndPeripheryLayerProvider.isApplicable(any())).thenCallRealMethod();
+        when(bivariateLayerProvider.isApplicable(any())).thenCallRealMethod();
+
+        Layer layer = Layer.builder().id(BivariateLayerProvider.LAYER_PREFIX + "layerId").build();
+
+        when(bivariateLayerProvider.obtainLayer(any(), any())).thenReturn(layer);
+
+        List<Layer> result = layerService.get(Collections.emptyList(), List.of(layer.getId()),
+                paramsWithSomeBoundary());
+        verify(bivariateLayerProvider, times(1)).obtainLayer(eq(layer.getId()),
+                any());
+
         assertEquals(1, result.size());
     }
 

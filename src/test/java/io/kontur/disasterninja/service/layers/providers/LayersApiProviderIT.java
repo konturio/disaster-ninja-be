@@ -87,7 +87,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         assertEquals(12, layers.size());
 
         Layer layer = layers.get(0);
-        assertEquals("KLA__hotProjects", layer.getId());
+        assertEquals("hotProjects", layer.getId());
         assertEquals("HOT Tasking Manager Projects", layer.getName());
         assertEquals("Projects on HOT Tasking manager, ongoing and historical", layer.getDescription());
         assertEquals(LayerCategory.OVERLAY, layer.getCategory());
@@ -100,7 +100,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         assertFalse(layer.isBoundaryRequiredForRetrieval());
 
         Layer layer11 = layers.get(11);
-        assertEquals("KLA__test12", layer11.getId());
+        assertEquals("test12", layer11.getId());
         assertEquals("test12 title", layer11.getName());
     }
 
@@ -128,11 +128,11 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
 
         //when
         Geometry geometry = objectMapper.readValue(json, Geometry.class);
-        Layer layer = provider.obtainLayer("KLA__hotProjects", LayerSearchParams.builder()
+        Layer layer = provider.obtainLayer("hotProjects", LayerSearchParams.builder()
                 .boundary(geometry).appId(appId).build());
 
         //then
-        assertEquals("KLA__hotProjects", layer.getId());
+        assertEquals("hotProjects", layer.getId());
         assertNotNull(layer.getSource());
         LayerSource source = layer.getSource();
         assertEquals(LayerSourceType.VECTOR, source.getType());
@@ -185,11 +185,11 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
 
         //when
         Geometry geometry = objectMapper.readValue(json, Geometry.class);
-        Layer layer = provider.obtainLayer("KLA__hotProjects_feature_type", LayerSearchParams.builder()
+        Layer layer = provider.obtainLayer("hotProjects_feature_type", LayerSearchParams.builder()
                 .boundary(geometry).appId(appId).build());
 
         //then
-        assertEquals("KLA__hotProjects_feature_type", layer.getId());
+        assertEquals("hotProjects_feature_type", layer.getId());
         assertNotNull(layer.getSource());
         LayerSource source = layer.getSource();
         assertEquals(LayerSourceType.GEOJSON, source.getType());
