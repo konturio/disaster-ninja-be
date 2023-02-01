@@ -25,18 +25,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.response.MockRestResponseCreators;
 import org.springframework.web.client.HttpClientErrorException;
-import org.wololo.geojson.Point;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static io.kontur.disasterninja.controller.AppsController.PATH;
-import static io.kontur.disasterninja.service.GeometryTransformer.geometriesAreEqual;
 import static io.kontur.disasterninja.util.TestUtil.readFile;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -131,8 +126,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         assertEquals(28, result.getFeaturesConfig().size());
         assertTrue(result.getFeaturesConfig().containsKey("analytics_panel"));
         assertEquals("{\"statistics\":[{\"x\":\"population\",\"formula\":\"sumX\"},{\"x\":\"populated_area_km2\",\"formula\":\"sumX\"}]}", result.getFeaturesConfig().get("analytics_panel").toString());
-        assertNull(result.getCenterGeometry());
-        assertNull(result.getZoom());
+        assertNull(result.getExtent());
         assertTrue(result.isPublic());
         assertNotNull(result.getSidebarIconUrl());
         assertNotNull(result.getFaviconUrl());
@@ -157,9 +151,12 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         assertTrue(result.getFeaturesConfig().containsKey("interactive_map"));
         assertTrue(result.getFeaturesConfig().containsKey("reports"));
         assertTrue(result.getFeaturesConfig().containsKey("url_store"));
-        assertTrue(geometriesAreEqual(new Point(new double[]{125.6, 10.1}), result.getCenterGeometry()));
         assertFalse(result.isPublic());
-        assertEquals(BigDecimal.valueOf(123.456), result.getZoom());
+        assertEquals(4, result.getExtent().size());
+        assertEquals(BigDecimal.valueOf(12.45), result.getExtent().get(0));
+        assertEquals(BigDecimal.valueOf(2), result.getExtent().get(1));
+        assertEquals(BigDecimal.valueOf(3), result.getExtent().get(2));
+        assertEquals(BigDecimal.valueOf(4), result.getExtent().get(3));
         assertEquals("sidebar/icon/url", result.getSidebarIconUrl());
         assertEquals("favicon/url", result.getFaviconUrl());
     }
@@ -221,8 +218,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         assertEquals(request.getName(), result.getName());
         assertEquals(request.getFeaturesConfig(), result.getFeaturesConfig());
         assertEquals(request.isPublic(), result.isPublic());
-        assertTrue(geometriesAreEqual(request.getCenterGeometry(), result.getCenterGeometry()));
-        assertEquals(request.getZoom(), result.getZoom());
+        assertEquals(request.getExtent(), result.getExtent());
         assertEquals(request.getSidebarIconUrl(), result.getSidebarIconUrl());
         assertEquals(request.getFaviconUrl(), result.getFaviconUrl());
 
@@ -392,8 +388,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         dto.setDescription("desc");
         dto.setPublic(true);
         dto.setFeaturesConfig(featureConfigToAppDto());
-        dto.setCenterGeometry(new Point(new double[]{1d, 2d}));
-        dto.setZoom(BigDecimal.valueOf(1.2345));
+        dto.setExtent(Arrays.asList(new BigDecimal(-180), new BigDecimal(-80), new BigDecimal(180), new BigDecimal(80)));
         dto.setSidebarIconUrl("sidebar/icon/url");
         dto.setFaviconUrl("favicon/url");
         return dto;
