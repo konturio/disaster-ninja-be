@@ -20,4 +20,7 @@ public class EventListDto {
     private Long loss;
     private OffsetDateTime updatedAt;
     private List<String> externalUrls;
+    private List<Double> bbox;
+    private List<Double> centroid;
+
 }

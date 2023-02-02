@@ -37,6 +37,9 @@ public class EventListEventDtoConverter {
         }
         dto.setUpdatedAt(event.getUpdatedAt());
 
+        dto.setBbox(event.getBbox());
+        dto.setCentroid(event.getCentroid());
+
         return dto;
     }
 

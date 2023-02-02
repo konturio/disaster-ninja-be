@@ -27,4 +27,7 @@ public class EventDto {
     private Long osmGaps;
     private Long loss;
     private OffsetDateTime updatedAt;
+    private List<Double> bbox;
+    private List<Double> centroid;
+
 }

@@ -64,6 +64,8 @@ public class EventDtoConverter {
         dto.setLatestEpisodeGeojson(event.getGeometries());
         dto.setUpdatedAt(event.getUpdatedAt());
 
+        dto.setBbox(event.getBbox());
+        dto.setCentroid(event.getCentroid());
         return dto;
     }
 
