@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
@@ -41,7 +42,7 @@ public class AppsController {
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = AppDto.class)))
     @PostMapping
-    public AppDto create(@Parameter(name = "app") @RequestBody AppDto appDto) {
+    public AppDto create(@Parameter(name = "app") @RequestBody @Valid AppDto appDto) {
         return userProfileClient.createApp(appDto);
     }
 
@@ -61,7 +62,7 @@ public class AppsController {
                     schema = @Schema(implementation = AppDto.class)))
     @PutMapping(path = "/{id}")
     public AppDto update(@PathVariable @Parameter(name = "id") UUID id,
-                         @RequestBody @Parameter(name = "app") AppDto appDto) {
+                         @RequestBody @Parameter(name = "app") @Valid AppDto appDto) {
         return userProfileClient.updateApp(id, appDto);
     }
 

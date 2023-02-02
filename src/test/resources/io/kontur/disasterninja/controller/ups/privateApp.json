@@ -8,14 +8,7 @@
     "url_store": null,
     "interactive_map": null
   },
-  "centerGeometry": {
-    "type": "Point",
-    "coordinates": [
-      125.6,
-      10.1
-    ]
-  },
-  "zoom": "123.456",
+  "extent": [12.45,2,3,4],
   "sidebarIconUrl": "sidebar/icon/url",
   "faviconUrl": "favicon/url",
   "public": false
