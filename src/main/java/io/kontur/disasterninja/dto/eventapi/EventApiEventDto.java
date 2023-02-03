@@ -25,4 +25,6 @@ public class EventApiEventDto {
     private Map<String, Object> eventDetails = new HashMap<>();
     private List<String> urls;
     private String location;
+    private List<Double> bbox = new ArrayList<>();
+    private List<Double> centroid = new ArrayList<>();
 }
