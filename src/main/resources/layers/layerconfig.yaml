@@ -78,8 +78,8 @@ configs:
             circle-color: '#051626'
         - stepName: 'Uncertainty Cones'
           stepShape: 'circle'
-          paramName: 'areaType'
-          paramValue: 'alertArea'
+          paramName: 'Class'
+          paramValue: 'Poly_Cones'
           style:
             width: 1
             color: '#646F78'
@@ -90,36 +90,6 @@ configs:
           style:
             width: 1
             color: '#051626'
-        #TODO Remove below config in #9831
-        - stepName: 'Centroid'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Point_Centroid'
-          style:
-            circle-radius: 3
-            circle-color: '#051626'
-        - stepName: 'Line Track'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramPattern: 'Line_Line_[0-9]+' #all matches to be merged into single step
-          paramValue: 'Line_Line'
-          style:
-            color: '#8C949B'
-        - stepName: 'Point Track'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramPattern: 'Point_Polygon_Point_[0-9]+' #all matches to be merged into single step
-          paramValue: 'Point_Polygon_Point'
-          style:
-            circle-radius: 2
-            circle-color: '#051626'
-        - stepName: 'Uncertainty Cones'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_Cones'
-          style:
-            width: 1
-            color: '#646F78'
 
   - id: 'eventShape.DROUGHT'
     globalOverlay: false
@@ -147,21 +117,6 @@ configs:
           style:
             width: 3
             color: '#051626'
-        #TODO Remove below config in #9831
-        - stepName: 'Centroid'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Point_Centroid'
-          style:
-            circle-radius: 3
-            circle-color: '#051626'
-        - stepName: 'Exposure Area'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_area'
-          style:
-            width: 3
-            color: '#051626'
 
   - id: 'eventShape.EARTHQUAKE'
     globalOverlay: false
@@ -185,21 +140,6 @@ configs:
           stepShape: 'circle'
           paramName: 'areaType'
           paramValue: 'alertArea'
-          style:
-            width: 3
-            color: '#646F78'
-        #TODO Remove below config in #9831
-        - stepName: 'Centroid'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Point_Centroid'
-          style:
-            circle-radius: 3
-            circle-color: '#051626'
-        - stepName: 'Exposure Area 100 km'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_Circle'
           style:
             width: 3
             color: '#646F78'
@@ -235,29 +175,6 @@ configs:
           paramName: 'areaType'
           paramPattern: 'globalArea|alertArea'
           paramValue: 'globalArea'
-          style:
-            width: 2
-            color: '#051626'
-            opacity: 0.5
-        #TODO Remove below config in #9831
-        - stepName: 'Centroid'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Point_Centroid'
-          style:
-            circle-radius: 3
-            circle-color: '#051626'
-        - stepName: 'Exposure Area'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_Affected'
-          style:
-            width: 3
-            color: '#051626'
-        - stepName: 'Alert Area'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_Global'
           style:
             width: 2
             color: '#051626'
@@ -302,21 +219,6 @@ configs:
           style:
             width: 3
             color: '#051626'
-        #TODO Remove below config in #9831
-        - stepName: 'Centroid'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Point_Centroid'
-          style:
-            circle-radius: 3
-            circle-color: '#051626'
-        - stepName: 'Exposure Area'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_area'
-          style:
-            width: 3
-            color: '#051626'
 
   - id: 'eventShape.VOLCANO'
     globalOverlay: false
@@ -350,52 +252,37 @@ configs:
           style:
             width: 3
             color: '#051626'
-        - stepName: 'Exposure Area'
+        - stepName: 'Initial Forecast'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_Cones_0'
+          paramName: 'forecastHrs'
+          paramValue: 0
           style:
             width: 3
             color: '#051626'
         - stepName: '6 hours Forecast'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_Cones_6'
+          paramName: 'forecastHrs'
+          paramValue: 6
           style:
             width: 2
             color: '#051626'
             opacity: 0.7
         - stepName: '12 hours Forecast'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_Cones_12'
+          paramName: 'forecastHrs'
+          paramValue: 12
           style:
             width: 2
             color: '#051626'
             opacity: 0.5
         - stepName: '18 hours Forecast'
           stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_Cones_18'
+          paramName: 'forecastHrs'
+          paramValue: 18
           style:
             width: 2
             color: '#051626'
             opacity: 0.3
-        #TODO Remove below config in #9831
-        - stepName: 'Centroid'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Point_Centroid'
-          style:
-            circle-radius: 3
-            circle-color: '#051626'
-        - stepName: 'Exposure Area 100 km'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_Circle'
-          style:
-            width: 3
-            color: '#051626'
 
   # --- empty template ---
   #- id: 'eventShape.'
