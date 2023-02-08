@@ -29,7 +29,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.client.RestTemplate;
 import org.wololo.geojson.GeoJSON;
@@ -42,9 +41,21 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class WebConfiguration {
 
-    private final int MAX_TOTAL_CONNECTIONS = 200;
+    @Bean
+    public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        connectionManager.setMaxTotal(100);
+        connectionManager.setDefaultMaxPerRoute(20);
 
-    private final int MAX_PER_ROUTE_CONNECTIONS = 200;
+        return connectionManager;
+    }
+
+    @Bean
+    public HttpClient httpClient() {
+        return HttpClientBuilder.create()
+                .setConnectionManager(poolingHttpClientConnectionManager())
+                .build();
+    }
 
     @Bean
     public RestTemplate eventApiRestTemplate(RestTemplateBuilder builder,
@@ -52,7 +63,7 @@ public class WebConfiguration {
                                              @Value("${kontur.platform.event-api.connectionTimeout}") Integer connectionTimeout,
                                              @Value("${kontur.platform.event-api.readTimeout}") Integer readTimeout) {
         return builder
-                .requestFactory(SimpleClientHttpRequestFactory::new)
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient()))
                 .rootUri(eventApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
@@ -65,7 +76,7 @@ public class WebConfiguration {
                                           @Value("${kontur.platform.kcApi.connectionTimeout}") Integer connectionTimeout,
                                           @Value("${kontur.platform.kcApi.readTimeout}") Integer readTimeout) {
         return builder
-                .requestFactory(SimpleClientHttpRequestFactory::new)
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient()))
                 .rootUri(kcApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
@@ -78,7 +89,7 @@ public class WebConfiguration {
                                               @Value("${kontur.platform.layersApi.connectionTimeout}") Integer connectionTimeout,
                                               @Value("${kontur.platform.layersApi.readTimeout}") Integer readTimeout) {
         return builder
-                .requestFactory(SimpleClientHttpRequestFactory::new)
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient()))
                 .rootUri(layersApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
@@ -91,16 +102,8 @@ public class WebConfiguration {
                                                 @Value("${kontur.platform.insightsApi.url}") String insightsApiUrl,
                                                 @Value("${kontur.platform.insightsApi.connectionTimeout}") Integer connectionTimeout,
                                                 @Value("${kontur.platform.insightsApi.readTimeout}") Integer readTimeout) {
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-        connectionManager.setMaxTotal(MAX_TOTAL_CONNECTIONS);
-        connectionManager.setDefaultMaxPerRoute(MAX_PER_ROUTE_CONNECTIONS);
-
-        HttpClient httpClient = HttpClientBuilder.create()
-                .setConnectionManager(connectionManager)
-                .build();
-
         return builder
-                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient()))
                 .rootUri(insightsApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
@@ -111,7 +114,7 @@ public class WebConfiguration {
     public RestTemplate authorizationRestTemplate(RestTemplateBuilder builder,
                                                   @Value("${kontur.platform.keycloak.url}") String keycloakUrl) {
         return builder
-                .requestFactory(SimpleClientHttpRequestFactory::new)
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient()))
                 .rootUri(keycloakUrl)
                 .build();
     }
@@ -121,16 +124,8 @@ public class WebConfiguration {
                                                 @Value("${kontur.platform.userProfileApi.url}") String userProfileApiUrl,
                                                 @Value("${kontur.platform.userProfileApi.connectionTimeout}") Integer connectionTimeout,
                                                 @Value("${kontur.platform.userProfileApi.readTimeout}") Integer readTimeout) {
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-        connectionManager.setMaxTotal(MAX_TOTAL_CONNECTIONS);
-        connectionManager.setDefaultMaxPerRoute(MAX_PER_ROUTE_CONNECTIONS);
-
-        HttpClient httpClient = HttpClientBuilder.create()
-                .setConnectionManager(connectionManager)
-                .build();
-
         return builder
-                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient()))
                 .rootUri(userProfileApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
