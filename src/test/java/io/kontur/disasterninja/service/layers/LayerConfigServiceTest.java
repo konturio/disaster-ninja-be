@@ -13,7 +13,6 @@ import org.wololo.geojson.Point;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LegendType.SIMPLE;
 import static io.kontur.disasterninja.dto.EventType.*;
 import static io.kontur.disasterninja.service.layers.providers.EventShapeLayerProvider.EVENT_SHAPE_LAYER_ID;
@@ -163,7 +162,7 @@ public class LayerConfigServiceTest {
                                 feature("areaType", "position"),
                                 feature("Class", "Poly_Green"),
                                 feature("areaType", "track"),
-                                feature("areaType", "alertArea")}
+                                feature("Class", "Poly_Cones")}
                         ))
                         .build())
                 .build();
@@ -198,7 +197,7 @@ public class LayerConfigServiceTest {
                                 feature("areaType", "centerPoint"),
                                 feature("areaType", "track"),
                                 feature("areaType", "position"),
-                                feature("areaType", "alertArea")}
+                                feature("Class", "Poly_Cones")}
                         ))
                         .build())
                 .build();
