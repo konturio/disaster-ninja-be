@@ -13,6 +13,9 @@ import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClientDummy;
 import io.kontur.disasterninja.config.metrics.ParamLessRestTemplateExchangeTagsProvider;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.binder.httpcomponents.PoolingHttpClientConnectionManagerMetricsBinder;
+import lombok.RequiredArgsConstructor;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.apache.http.client.HttpClient;
@@ -39,21 +42,22 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebConfiguration {
 
+    private final MeterRegistry meterRegistry;
+
     @Bean
-    public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
+    public HttpClient httpClient() {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         connectionManager.setMaxTotal(100);
         connectionManager.setDefaultMaxPerRoute(20);
 
-        return connectionManager;
-    }
+        new PoolingHttpClientConnectionManagerMetricsBinder(connectionManager, "connection_pool")
+                .bindTo(meterRegistry);
 
-    @Bean
-    public HttpClient httpClient() {
         return HttpClientBuilder.create()
-                .setConnectionManager(poolingHttpClientConnectionManager())
+                .setConnectionManager(connectionManager)
                 .build();
     }
 
