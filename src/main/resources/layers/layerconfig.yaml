@@ -250,8 +250,9 @@ configs:
           paramName: 'forecastHrs'
           paramValue: 0
           style:
-            width: 3
+            width: 2
             color: '#051626'
+            opacity: 0.8
         - stepName: '6 hours Forecast'
           stepShape: 'circle'
           paramName: 'forecastHrs'
@@ -259,7 +260,7 @@ configs:
           style:
             width: 2
             color: '#051626'
-            opacity: 0.7
+            opacity: 0.6
         - stepName: '12 hours Forecast'
           stepShape: 'circle'
           paramName: 'forecastHrs'
@@ -267,7 +268,7 @@ configs:
           style:
             width: 2
             color: '#051626'
-            opacity: 0.5
+            opacity: 0.4
         - stepName: '18 hours Forecast'
           stepShape: 'circle'
           paramName: 'forecastHrs'
@@ -275,14 +276,15 @@ configs:
           style:
             width: 2
             color: '#051626'
-            opacity: 0.3
-        - stepName: 'Exposure Area'
+            opacity: 0.2
+        - stepName: 'Initial Forecast'
           stepShape: 'circle'
-          paramName: 'areaType'
-          paramValue: 'exposure'
+          paramName: 'Class'
+          paramValue: 'Poly_Cones_0'
           style:
-            width: 3
+            width: 2
             color: '#051626'
+            opacity: 0.8
 
   # --- empty template ---
   #- id: 'eventShape.'

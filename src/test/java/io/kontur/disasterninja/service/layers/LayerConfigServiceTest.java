@@ -258,7 +258,6 @@ public class LayerConfigServiceTest {
                                 feature("forecastHrs", 6),
                                 feature("forecastHrs", 12),
                                 feature("areaType", "alertArea"),
-                                feature("areaType", "exposure"),
                                 feature("forecastHrs", 18)}
                         ))
                         .build())
@@ -270,10 +269,9 @@ public class LayerConfigServiceTest {
         Assertions.assertNotNull(layer.getLegend());
         assertFalse(layer.getLegend().getSteps().isEmpty());
         Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
-        Assertions.assertEquals(7, layer.getLegend().getSteps().size());
+        Assertions.assertEquals(6, layer.getLegend().getSteps().size());
         Assertions.assertEquals("Centroid", layer.getLegend().getSteps().get(0).getStepName());
         Assertions.assertEquals("Exposure Area 100 km", layer.getLegend().getSteps().get(1).getStepName());
-        Assertions.assertEquals("Exposure Area", layer.getLegend().getSteps().get(6).getStepName());
         Assertions.assertEquals("Initial Forecast", layer.getLegend().getSteps().get(2).getStepName());
         Assertions.assertEquals("6 hours Forecast", layer.getLegend().getSteps().get(3).getStepName());
         Assertions.assertEquals("12 hours Forecast", layer.getLegend().getSteps().get(4).getStepName());
@@ -288,7 +286,7 @@ public class LayerConfigServiceTest {
                 .source(LayerSource.builder()
                         .data(new FeatureCollection(new Feature[]{
                                 feature("Class", "Poly_Cones_0"),
-                                feature("areaType", "exposure")}
+                                feature("forecastHrs", 0)}
                         ))
                         .build())
                 .build();
@@ -299,7 +297,7 @@ public class LayerConfigServiceTest {
         assertFalse(layer.getLegend().getSteps().isEmpty());
         Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
         Assertions.assertEquals(1, layer.getLegend().getSteps().size());
-        Assertions.assertEquals("Exposure Area", layer.getLegend().getSteps().get(0).getStepName());
+        Assertions.assertEquals("Initial Forecast", layer.getLegend().getSteps().get(0).getStepName());
     }
 
     @Test
