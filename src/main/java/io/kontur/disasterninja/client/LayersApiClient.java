@@ -91,6 +91,15 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         return response.getBody();
     }
 
+    public FeatureCollection appendLayerFeaturesWithDefaultUser(String layerId, FeatureCollection body) {
+        ResponseEntity<FeatureCollection> response = layersApiRestTemplate
+                .exchange(String.format(UPDATE_FEATURES_URL, layerId), HttpMethod.POST,
+                        httpEntityWithDefaultBearerAuth(body),
+                        new ParameterizedTypeReference<>() {
+                        });
+        return response.getBody();
+    }
+
     public List<Layer> getApplicationLayers(UUID appId) {
         String urlTemplate = UriComponentsBuilder.fromUriString(String.format(APPS_URI, appId.toString()))
                 .queryParam("includeDefaultCollections", "true")
