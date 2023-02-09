@@ -254,11 +254,11 @@ public class LayerConfigServiceTest {
                 .source(LayerSource.builder()
                         .data(new FeatureCollection(new Feature[]{
                                 feature("areaType", "centerPoint"),
-                                feature("areaType", "alertArea"),
-                                feature("areaType", "exposure"),
                                 feature("forecastHrs", 0),
                                 feature("forecastHrs", 6),
                                 feature("forecastHrs", 12),
+                                feature("areaType", "alertArea"),
+                                feature("areaType", "exposure"),
                                 feature("forecastHrs", 18)}
                         ))
                         .build())
@@ -273,11 +273,11 @@ public class LayerConfigServiceTest {
         Assertions.assertEquals(7, layer.getLegend().getSteps().size());
         Assertions.assertEquals("Centroid", layer.getLegend().getSteps().get(0).getStepName());
         Assertions.assertEquals("Exposure Area 100 km", layer.getLegend().getSteps().get(1).getStepName());
-        Assertions.assertEquals("Exposure Area", layer.getLegend().getSteps().get(2).getStepName());
-        Assertions.assertEquals("Initial Forecast", layer.getLegend().getSteps().get(3).getStepName());
-        Assertions.assertEquals("6 hours Forecast", layer.getLegend().getSteps().get(4).getStepName());
-        Assertions.assertEquals("12 hours Forecast", layer.getLegend().getSteps().get(5).getStepName());
-        Assertions.assertEquals("18 hours Forecast", layer.getLegend().getSteps().get(6).getStepName());
+        Assertions.assertEquals("Exposure Area", layer.getLegend().getSteps().get(6).getStepName());
+        Assertions.assertEquals("Initial Forecast", layer.getLegend().getSteps().get(2).getStepName());
+        Assertions.assertEquals("6 hours Forecast", layer.getLegend().getSteps().get(3).getStepName());
+        Assertions.assertEquals("12 hours Forecast", layer.getLegend().getSteps().get(4).getStepName());
+        Assertions.assertEquals("18 hours Forecast", layer.getLegend().getSteps().get(5).getStepName());
     }
 
     @Test

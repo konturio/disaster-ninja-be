@@ -245,13 +245,6 @@ configs:
           style:
             width: 3
             color: '#051626'
-        - stepName: 'Exposure Area'
-          stepShape: 'circle'
-          paramName: 'areaType'
-          paramValue: 'exposure'
-          style:
-            width: 3
-            color: '#051626'
         - stepName: 'Initial Forecast'
           stepShape: 'circle'
           paramName: 'forecastHrs'
@@ -283,6 +276,13 @@ configs:
             width: 2
             color: '#051626'
             opacity: 0.3
+        - stepName: 'Exposure Area'
+          stepShape: 'circle'
+          paramName: 'areaType'
+          paramValue: 'exposure'
+          style:
+            width: 3
+            color: '#051626'
 
   # --- empty template ---
   #- id: 'eventShape.'
