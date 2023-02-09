@@ -124,7 +124,7 @@ public class Layer {
             return thisLegend;
         }
 
-        if (prototype.getSteps() != null) { //sourceLayer not taken into account as its related to tiles only
+        if (prototype.getSteps() != null) { //sourceLayer not taken into account as it's related to tiles only
             List<LegendStep> stepsToCheck = new ArrayList<>(prototype.getSteps());
             //save only steps for each at least one feature exist
             for (Feature feature : this.getSource().getData().getFeatures()) {
@@ -132,15 +132,15 @@ public class Layer {
                     break;
                 }
                 for (LegendStep step : stepsToCheck) {
-                    String featureValue = feature.getProperties() == null ? null
-                            : (String) (feature.getProperties()).get(step.getParamName());
+                    Object featureValue = feature.getProperties() == null ? null
+                            : (feature.getProperties()).get(step.getParamName());
                     if (featureValue == null) {
                         continue;
                     }
                     String paramPattern = step.getParamPattern();
                     //if step.paramPattern is set - filter by pattern and replace feature's value with step.paramValue
                     if (paramPattern != null) {
-                        if (Pattern.compile(paramPattern).matcher(featureValue).matches()) {
+                        if (Pattern.compile(paramPattern).matcher(featureValue.toString()).matches()) {
                             //a feature exists for this legend step
                             Optional<LegendStep> sameNameStep = thisLegend.getSteps().stream()
                                     .filter(s -> s.getStepName() != null &&
@@ -156,8 +156,8 @@ public class Layer {
 
                         //otherwise filter by paramValue
                     } else {
-                        String paramValue = (String) step.getParamValue(); //nulls not allowed
-                        if (paramValue.equalsIgnoreCase(featureValue)) {
+                        Object paramValue = step.getParamValue(); //nulls not allowed
+                        if (paramValue.equals(featureValue)) {
                             Optional<LegendStep> sameNameStep = thisLegend.getSteps().stream()
                                     .filter(s -> s.getStepName() != null &&
                                             s.getStepName().equals(step.getStepName()))
