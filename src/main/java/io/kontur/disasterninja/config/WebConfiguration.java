@@ -15,7 +15,6 @@ import io.kontur.disasterninja.config.metrics.ParamLessRestTemplateExchangeTagsP
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.binder.httpcomponents.PoolingHttpClientConnectionManagerMetricsBinder;
-import lombok.RequiredArgsConstructor;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.apache.http.client.HttpClient;
@@ -42,13 +41,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-@RequiredArgsConstructor
 public class WebConfiguration {
 
-    private final MeterRegistry meterRegistry;
-
     @Bean
-    public HttpClient httpClient() {
+    public HttpClient httpClient(MeterRegistry meterRegistry) {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         connectionManager.setMaxTotal(100);
         connectionManager.setDefaultMaxPerRoute(20);
@@ -62,12 +58,12 @@ public class WebConfiguration {
     }
 
     @Bean
-    public RestTemplate eventApiRestTemplate(RestTemplateBuilder builder,
+    public RestTemplate eventApiRestTemplate(RestTemplateBuilder builder, HttpClient httpClient,
                                              @Value("${kontur.platform.event-api.url}") String eventApiUrl,
                                              @Value("${kontur.platform.event-api.connectionTimeout}") Integer connectionTimeout,
                                              @Value("${kontur.platform.event-api.readTimeout}") Integer readTimeout) {
         return builder
-                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient()))
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
                 .rootUri(eventApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
@@ -75,12 +71,12 @@ public class WebConfiguration {
     }
 
     @Bean
-    public RestTemplate kcApiRestTemplate(RestTemplateBuilder builder,
+    public RestTemplate kcApiRestTemplate(RestTemplateBuilder builder, HttpClient httpClient,
                                           @Value("${kontur.platform.kcApi.url}") String kcApiUrl,
                                           @Value("${kontur.platform.kcApi.connectionTimeout}") Integer connectionTimeout,
                                           @Value("${kontur.platform.kcApi.readTimeout}") Integer readTimeout) {
         return builder
-                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient()))
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
                 .rootUri(kcApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
@@ -88,12 +84,12 @@ public class WebConfiguration {
     }
 
     @Bean
-    public RestTemplate layersApiRestTemplate(RestTemplateBuilder builder,
+    public RestTemplate layersApiRestTemplate(RestTemplateBuilder builder, HttpClient httpClient,
                                               @Value("${kontur.platform.layersApi.url}") String layersApiUrl,
                                               @Value("${kontur.platform.layersApi.connectionTimeout}") Integer connectionTimeout,
                                               @Value("${kontur.platform.layersApi.readTimeout}") Integer readTimeout) {
         return builder
-                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient()))
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
                 .rootUri(layersApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
@@ -102,12 +98,12 @@ public class WebConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "kontur.platform.insightsApi.url")
-    public RestTemplate insightsApiRestTemplate(RestTemplateBuilder builder,
+    public RestTemplate insightsApiRestTemplate(RestTemplateBuilder builder, HttpClient httpClient,
                                                 @Value("${kontur.platform.insightsApi.url}") String insightsApiUrl,
                                                 @Value("${kontur.platform.insightsApi.connectionTimeout}") Integer connectionTimeout,
                                                 @Value("${kontur.platform.insightsApi.readTimeout}") Integer readTimeout) {
         return builder
-                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient()))
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
                 .rootUri(insightsApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
@@ -115,21 +111,21 @@ public class WebConfiguration {
     }
 
     @Bean
-    public RestTemplate authorizationRestTemplate(RestTemplateBuilder builder,
+    public RestTemplate authorizationRestTemplate(RestTemplateBuilder builder, HttpClient httpClient,
                                                   @Value("${kontur.platform.keycloak.url}") String keycloakUrl) {
         return builder
-                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient()))
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
                 .rootUri(keycloakUrl)
                 .build();
     }
 
     @Bean
-    public RestTemplate userProfileRestTemplate(RestTemplateBuilder builder,
+    public RestTemplate userProfileRestTemplate(RestTemplateBuilder builder, HttpClient httpClient,
                                                 @Value("${kontur.platform.userProfileApi.url}") String userProfileApiUrl,
                                                 @Value("${kontur.platform.userProfileApi.connectionTimeout}") Integer connectionTimeout,
                                                 @Value("${kontur.platform.userProfileApi.readTimeout}") Integer readTimeout) {
         return builder
-                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient()))
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
                 .rootUri(userProfileApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
