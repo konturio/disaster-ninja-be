@@ -12,6 +12,7 @@ import io.kontur.disasterninja.dto.AppDto;
 import io.kontur.disasterninja.dto.AppLayerUpdateDto;
 import io.kontur.disasterninja.dto.AppSummaryDto;
 import io.kontur.disasterninja.service.ApplicationService;
+import io.kontur.disasterninja.service.layers.LayersApiService;
 import io.kontur.disasterninja.service.layers.providers.BivariateLayerProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,8 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-@RestClientTest(components = {UserProfileClient.class, LayersApiClient.class, ApplicationService.class})
+@RestClientTest(components = {UserProfileClient.class, LayersApiService.class, LayersApiClient.class,
+        ApplicationService.class})
 @AutoConfigureWebClient(registerRestTemplate = true)
 public class AppControllerTest extends TestDependingOnUserAuth {
 
@@ -52,7 +54,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     @Autowired
     private UserProfileClient userProfileClient;
     @Autowired
-    private LayersApiClient layersApiClient;
+    private LayersApiService layersApiService;
     @Autowired
     private ApplicationService applicationService;
     @MockBean
@@ -63,7 +65,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
 
     @BeforeEach
     public void before() {
-        appsController = new AppsController(userProfileClient, layersApiClient, bivariateLayerProvider, applicationService);
+        appsController =
+                new AppsController(userProfileClient, layersApiService, bivariateLayerProvider, applicationService);
     }
 
     @Test
@@ -72,7 +75,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         mockServer.expect(requestTo(PATH))
                 .andExpect(method(GET))
                 .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
-                .andRespond(withSuccess(readFile(this, "ups/publicApps.json"), MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess(readFile(this, "ups/publicApps.json"),
+                        MediaType.APPLICATION_JSON));
 
         List<AppSummaryDto> result = appsController.getList();
 
@@ -86,7 +90,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         mockServer.expect(requestTo(PATH))
                 .andExpect(method(GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
-                .andRespond(withSuccess(readFile(this, "ups/privateApps.json"), MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess(readFile(this, "ups/privateApps.json"),
+                        MediaType.APPLICATION_JSON));
 
         List<AppSummaryDto> result = appsController.getList();
 
@@ -125,7 +130,9 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         assertFalse(result.getOwnedByUser());
         assertEquals(28, result.getFeaturesConfig().size());
         assertTrue(result.getFeaturesConfig().containsKey("analytics_panel"));
-        assertEquals("{\"statistics\":[{\"x\":\"population\",\"formula\":\"sumX\"},{\"x\":\"populated_area_km2\",\"formula\":\"sumX\"}]}", result.getFeaturesConfig().get("analytics_panel").toString());
+        assertEquals("{\"statistics\":[{\"x\":\"population\",\"formula\":\"sumX\"}," +
+                        "{\"x\":\"populated_area_km2\",\"formula\":\"sumX\"}]}",
+                result.getFeaturesConfig().get("analytics_panel").toString());
         assertNull(result.getExtent());
         assertTrue(result.isPublic());
         assertNotNull(result.getSidebarIconUrl());
@@ -261,7 +268,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
                 .andExpect(method(GET))
                 .andExpect(headerDoesNotExist(HttpHeaders.AUTHORIZATION))
                 .andRespond(
-                        withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"), MediaType.APPLICATION_JSON));
+                        withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"),
+                                MediaType.APPLICATION_JSON));
 
         //WHEN
         List<Layer> result = appsController.getListOfLayers(appID);
@@ -281,7 +289,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
                 .andExpect(method(GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
                 .andRespond(
-                        withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"), MediaType.APPLICATION_JSON));
+                        withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"),
+                                MediaType.APPLICATION_JSON));
 
         //WHEN
         List<Layer> result = appsController.getListOfLayers(appID);
@@ -308,11 +317,13 @@ public class AppControllerTest extends TestDependingOnUserAuth {
                     assertThat(s, hasJsonPath("$.layers", hasSize(1)));
                     assertThat(s, hasJsonPath("$.layers[0].layerId", is("testLayerId")));
                     assertThat(s, hasJsonPath("$.layers[0].isDefault", is(Boolean.TRUE)));
-                    assertThat(s, hasJsonPath("$.layers[0].styleRule.id", is("623705fe3955c57d8b2c85ba")));
+                    assertThat(s, hasJsonPath("$.layers[0].styleRule.id",
+                            is("623705fe3955c57d8b2c85ba")));
                     assertThat(s, hasJsonPath("$.layers[0].styleRule.index", is(1)));
                 })
                 .andRespond(
-                        withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"), MediaType.APPLICATION_JSON));
+                        withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"),
+                                MediaType.APPLICATION_JSON));
 
         //WHEN
         List<Layer> result = appsController.updateListOfLayers(appID, Collections.singletonList(
@@ -388,7 +399,8 @@ public class AppControllerTest extends TestDependingOnUserAuth {
         dto.setDescription("desc");
         dto.setPublic(true);
         dto.setFeaturesConfig(featureConfigToAppDto());
-        dto.setExtent(Arrays.asList(new BigDecimal(-180), new BigDecimal(-80), new BigDecimal(180), new BigDecimal(80)));
+        dto.setExtent(Arrays.asList(new BigDecimal(-180), new BigDecimal(-80), new BigDecimal(180),
+                new BigDecimal(80)));
         dto.setSidebarIconUrl("sidebar/icon/url");
         dto.setFaviconUrl("favicon/url");
         return dto;
@@ -407,5 +419,4 @@ public class AppControllerTest extends TestDependingOnUserAuth {
             throw new RuntimeException("Could not parse needed string");
         }
     }
-
 }

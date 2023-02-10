@@ -1,8 +1,8 @@
 package io.kontur.disasterninja.service.layers.providers;
 
-import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSearchParams;
+import io.kontur.disasterninja.service.layers.LayersApiService;
 import io.kontur.disasterninja.util.AuthenticationUtil;
 import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 @RequiredArgsConstructor
 public class LayersApiProvider implements LayerProvider {
 
-    private final LayersApiClient layersApiClient;
+    private final LayersApiService layersApiService;
 
     @Override
     @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
@@ -55,7 +55,7 @@ public class LayersApiProvider implements LayerProvider {
 
     @Override
     public Layer obtainLayer(String layerId, LayerSearchParams searchParams) {
-        return layersApiClient.getLayer(searchParams.getBoundary(), layerId, searchParams.getAppId());
+        return layersApiService.getLayer(searchParams.getBoundary(), layerId, searchParams.getAppId());
     }
 
     @Override
@@ -65,15 +65,15 @@ public class LayersApiProvider implements LayerProvider {
 
     private List<Layer> obtainLayersByGeometry(Geometry geoJSON, UUID appId) {
         boolean omitLocalLayers = geoJSON == null;
-        return layersApiClient.findLayers(geoJSON, omitLocalLayers, ANY, appId);
+        return layersApiService.findLayers(geoJSON, omitLocalLayers, ANY, appId);
     }
 
     private List<Layer> obtainNonUserOwnedLayersByGeometry(Geometry geoJSON, UUID appId) {
         boolean omitLocalLayers = geoJSON == null;
-        return layersApiClient.findLayers(geoJSON, omitLocalLayers, NOT_ME, appId);
+        return layersApiService.findLayers(geoJSON, omitLocalLayers, NOT_ME, appId);
     }
 
     private List<Layer> obtainAllUserOwnedLayers(UUID appId) {
-        return layersApiClient.findLayers(null, false, ME, appId);
+        return layersApiService.findLayers(null, false, ME, appId);
     }
 }

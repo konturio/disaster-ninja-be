@@ -5,6 +5,7 @@ import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.dto.layer.*;
 import io.kontur.disasterninja.service.GeometryTransformer;
 import io.kontur.disasterninja.service.layers.LayerService;
+import io.kontur.disasterninja.service.layers.LayersApiService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -38,6 +39,7 @@ public class LayerController {
     public static final String PATH_SEARCH_SELECTED_AREA = "/search/selected_area";
     public static final String PATH_DETAILS = "/details";
     private final LayerService layerService;
+    private final LayersApiService layersApiService;
     private final GeometryTransformer geometryTransformer;
 
     @Operation(tags = "Layers", summary = "Create a new layer")
@@ -49,7 +51,7 @@ public class LayerController {
                                   @io.swagger.v3.oas.annotations.parameters.RequestBody(
                                           description = "Layer data")
                                   LayerCreateDto dto) {
-        Layer layer = layerService.create(dto);
+        Layer layer = layersApiService.createLayer(dto);
         return LayerSummaryDto.fromLayer(layer);
     }
 
@@ -61,7 +63,7 @@ public class LayerController {
     public LayerSummaryDto update(@PathVariable String id, @RequestBody
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Layer data") LayerUpdateDto dto) {
-        Layer layer = layerService.update(id, dto);
+        Layer layer = layersApiService.updateLayer(id, dto);
         return LayerSummaryDto.fromLayer(layer);
     }
 
@@ -70,7 +72,7 @@ public class LayerController {
     @DeleteMapping(path = "/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> delete(@PathVariable String id) {
-        layerService.delete(id);
+        layersApiService.deleteLayer(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -136,7 +138,7 @@ public class LayerController {
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
             @PathVariable("id") String layerId,
             @RequestBody FeatureCollection body) {
-        FeatureCollection fc = layerService.updateFeatures(layerId, body);
+        FeatureCollection fc = layersApiService.updateFeatures(layerId, body);
         return ResponseEntity.ok(fc);
     }
 
