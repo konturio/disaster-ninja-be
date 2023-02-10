@@ -13,7 +13,6 @@ import org.wololo.geojson.Point;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.kontur.disasterninja.domain.enums.LayerCategory.BASE;
 import static io.kontur.disasterninja.domain.enums.LegendType.SIMPLE;
 import static io.kontur.disasterninja.dto.EventType.*;
 import static io.kontur.disasterninja.service.layers.providers.EventShapeLayerProvider.EVENT_SHAPE_LAYER_ID;
@@ -163,7 +162,7 @@ public class LayerConfigServiceTest {
                                 feature("areaType", "position"),
                                 feature("Class", "Poly_Green"),
                                 feature("areaType", "track"),
-                                feature("areaType", "alertArea")}
+                                feature("Class", "Poly_Cones")}
                         ))
                         .build())
                 .build();
@@ -198,7 +197,7 @@ public class LayerConfigServiceTest {
                                 feature("areaType", "centerPoint"),
                                 feature("areaType", "track"),
                                 feature("areaType", "position"),
-                                feature("areaType", "alertArea")}
+                                feature("Class", "Poly_Cones")}
                         ))
                         .build())
                 .build();
@@ -246,6 +245,40 @@ public class LayerConfigServiceTest {
     }
 
     @Test
+    public void eventShapeVolcanoAllStepsTest() {
+        //event type = VOLCANO
+        //features with different areaType and forecastHrs value exist - each should be added to legend
+        Layer layer = Layer.builder()
+                .id(EVENT_SHAPE_LAYER_ID)
+                .eventType(VOLCANO)
+                .source(LayerSource.builder()
+                        .data(new FeatureCollection(new Feature[]{
+                                feature("areaType", "centerPoint"),
+                                feature("forecastHrs", 0),
+                                feature("forecastHrs", 6),
+                                feature("forecastHrs", 12),
+                                feature("areaType", "alertArea"),
+                                feature("forecastHrs", 18)}
+                        ))
+                        .build())
+                .build();
+
+        service.applyConfig(layer);
+        assertFalse(layer.isBoundaryRequiredForRetrieval());
+
+        Assertions.assertNotNull(layer.getLegend());
+        assertFalse(layer.getLegend().getSteps().isEmpty());
+        Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
+        Assertions.assertEquals(6, layer.getLegend().getSteps().size());
+        Assertions.assertEquals("Centroid", layer.getLegend().getSteps().get(0).getStepName());
+        Assertions.assertEquals("Exposure Area 100 km", layer.getLegend().getSteps().get(1).getStepName());
+        Assertions.assertEquals("Initial Forecast", layer.getLegend().getSteps().get(2).getStepName());
+        Assertions.assertEquals("6 hours Forecast", layer.getLegend().getSteps().get(3).getStepName());
+        Assertions.assertEquals("12 hours Forecast", layer.getLegend().getSteps().get(4).getStepName());
+        Assertions.assertEquals("18 hours Forecast", layer.getLegend().getSteps().get(5).getStepName());
+    }
+
+    @Test
     public void eventShapeVolcanoStepsShouldNotBeDuplicated() {
         Layer layer = Layer.builder()
                 .id(EVENT_SHAPE_LAYER_ID)
@@ -253,7 +286,7 @@ public class LayerConfigServiceTest {
                 .source(LayerSource.builder()
                         .data(new FeatureCollection(new Feature[]{
                                 feature("Class", "Poly_Cones_0"),
-                                feature("areaType", "exposure")}
+                                feature("forecastHrs", 0)}
                         ))
                         .build())
                 .build();
@@ -264,7 +297,7 @@ public class LayerConfigServiceTest {
         assertFalse(layer.getLegend().getSteps().isEmpty());
         Assertions.assertEquals(SIMPLE, layer.getLegend().getType());
         Assertions.assertEquals(1, layer.getLegend().getSteps().size());
-        Assertions.assertEquals("Exposure Area", layer.getLegend().getSteps().get(0).getStepName());
+        Assertions.assertEquals("Initial Forecast", layer.getLegend().getSteps().get(0).getStepName());
     }
 
     @Test
