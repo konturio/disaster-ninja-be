@@ -10,4 +10,12 @@ public class AuthenticationUtil {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication instanceof JwtAuthenticationToken;
     }
+
+    public static String getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.isAuthenticated()) {
+            return authentication.getName();
+        }
+        return null;
+    }
 }

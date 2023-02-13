@@ -28,6 +28,10 @@ public abstract class RestClientWithBearerAuth {
         return new HttpEntity<T>(body, httpHeadersWithUserOrDefaultBearerAuth());
     }
 
+    protected <T> HttpEntity<T> httpEntityWithDefaultBearerAuth(T body) {
+        return new HttpEntity<T>(body, httpHeadersWithDefaultBearerAuth());
+    }
+
     protected HttpHeaders httpHeadersWithUserBearerAuthIfPresent() {
         HttpHeaders headers = createHttpHeadersWithJsonMediaType();
 
@@ -45,6 +49,12 @@ public abstract class RestClientWithBearerAuth {
             headers.setBearerAuth(authorizationService.getAccessToken());
         }
 
+        return headers;
+    }
+
+    protected HttpHeaders httpHeadersWithDefaultBearerAuth() {
+        HttpHeaders headers = createHttpHeadersWithJsonMediaType();
+        headers.setBearerAuth(authorizationService.getAccessToken());
         return headers;
     }
 
