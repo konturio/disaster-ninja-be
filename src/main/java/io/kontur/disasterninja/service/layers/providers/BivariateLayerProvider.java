@@ -65,7 +65,7 @@ public class BivariateLayerProvider implements LayerProvider {
     }
 
     @Override
-    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
+    @Timed(value = "layers.obtainGlobalLayers", histogram = true)
     public CompletableFuture<List<Layer>> obtainGlobalLayers(LayerSearchParams searchParams) {
         reloadLayersIfEmpty();
         return CompletableFuture.completedFuture(bivariateLayers.values().stream().toList());

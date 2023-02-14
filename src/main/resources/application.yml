@@ -53,6 +53,10 @@ management:
     export:
       simple:
         enabled: false
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        http.client.requests: true
   health:
     ping:
       enabled: false
