@@ -153,11 +153,11 @@ public class LayerService {
                     layer = provider.obtainLayer(layerId, searchParams);
                 } catch (Exception e) {
                     if (e.getCause() instanceof HttpClientErrorException) {
-                        LOG.info("Client error occurred while obtaining layer from {}: {}",
-                                provider.getClass().getSimpleName(), e.getMessage(), e);
+                        LOG.warn("Client error occurred while obtaining layer {} from {}: {}",
+                                layerId, provider.getClass().getSimpleName(), e.getMessage(), e);
                     } else {
-                        LOG.warn("Caught exception while obtaining layer from {}: {}",
-                                provider.getClass().getSimpleName(), e.getMessage(), e);
+                        LOG.error("Caught exception while obtaining layer {} from {}: {}",
+                                layerId, provider.getClass().getSimpleName(), e.getMessage(), e);
                     }
                 }
                 if (layer != null) {
