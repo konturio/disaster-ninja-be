@@ -11,13 +11,7 @@ public class UserMetricDto {
     private final String name;
     @NotNull
     private final Double value;
-    @NotNull
-    private final UserMetricDtoType type;
     private final UUID appId;
     private boolean isUserLoggedIn;
     private final String buildVersion;
-
-    public enum UserMetricDtoType {
-        SUMMARY
-    }
 }
