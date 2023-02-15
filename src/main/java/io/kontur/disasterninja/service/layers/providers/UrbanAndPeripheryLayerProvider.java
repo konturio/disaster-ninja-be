@@ -45,7 +45,7 @@ public class UrbanAndPeripheryLayerProvider implements LayerProvider {
     }
 
     @Override
-    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
+    @Timed(value = "layers.obtainSelectedAreaLayers", histogram = true)
     public CompletableFuture<List<Layer>> obtainSelectedAreaLayers(LayerSearchParams searchParams) {
         if (searchParams.getBoundary() == null) {
             return CompletableFuture.completedFuture(Collections.emptyList());

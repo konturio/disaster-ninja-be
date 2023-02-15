@@ -16,23 +16,22 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.dto.layerapi.CollectionOwner.*;
-import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 @Service
-@Order(LOWEST_PRECEDENCE)
+@Order
 @RequiredArgsConstructor
 public class LayersApiProvider implements LayerProvider {
 
     private final LayersApiService layersApiService;
 
     @Override
-    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
+    @Timed(value = "layers.obtainGlobalLayers",  histogram = true)
     public CompletableFuture<List<Layer>> obtainGlobalLayers(LayerSearchParams searchParams) {
         return CompletableFuture.completedFuture(obtainLayersByGeometry(null, searchParams.getAppId()));
     }
 
     @Override
-    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
+    @Timed(value = "layers.obtainUserLayers", histogram = true)
     public CompletableFuture<List<Layer>> obtainUserLayers(LayerSearchParams searchParams) {
         if (AuthenticationUtil.isUserAuthenticated()) {
             return CompletableFuture.completedFuture(obtainAllUserOwnedLayers(searchParams.getAppId()));
@@ -42,7 +41,7 @@ public class LayersApiProvider implements LayerProvider {
     }
 
     @Override
-    @Timed(value = "layers.getLayersList", percentiles = {0.5, 0.75, 0.9, 0.99})
+    @Timed(value = "layers.obtainSelectedAreaLayers", histogram = true)
     public CompletableFuture<List<Layer>> obtainSelectedAreaLayers(LayerSearchParams searchParams) {
         if (AuthenticationUtil.isUserAuthenticated()) {
             return CompletableFuture.completedFuture(

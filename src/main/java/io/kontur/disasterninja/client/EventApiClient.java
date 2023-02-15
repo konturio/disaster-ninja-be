@@ -21,10 +21,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class EventApiClient extends RestClientWithBearerAuth {
@@ -53,11 +50,7 @@ public class EventApiClient extends RestClientWithBearerAuth {
     public Optional<EventApiSearchEventResponse> getEvents(String eventApiFeed, OffsetDateTime after, List<BigDecimal> bbox, int pageSize, SortOrder sortOrder) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(EVENT_API_EVENT_LIST_URI);
         uriBuilder.queryParam("episodeFilterType", "NONE");
-        if (sortOrder == null) {
-            uriBuilder.queryParam("sortOrder", "ASC");
-        } else {
-            uriBuilder.queryParam("sortOrder", sortOrder);
-        }
+        uriBuilder.queryParam("sortOrder", Objects.requireNonNullElse(sortOrder, "ASC"));
 
         if (after != null) {
             uriBuilder.queryParam("after", after.atZoneSameInstant(ZoneOffset.UTC).format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
@@ -103,7 +96,7 @@ public class EventApiClient extends RestClientWithBearerAuth {
         return response.getBody().data;
     }
 
-    @Timed(percentiles = {0.5, 0.75, 0.9, 0.99})
+    @Timed(value = "events.getEvent", histogram = true)
     public EventApiEventDto getEvent(UUID eventId, String eventApiFeed, boolean includeEpisodes) {
         if (eventId == null) {
             return null;
