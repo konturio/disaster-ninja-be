@@ -5,6 +5,7 @@ import io.kontur.disasterninja.domain.BivariateLegendAxisStep;
 import io.kontur.disasterninja.domain.BivariateLegendQuotient;
 import io.kontur.disasterninja.domain.Unit;
 import io.kontur.disasterninja.dto.bivariatematrix.*;
+import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
 import io.kontur.disasterninja.graphql.BivariateLayerLegendQuery;
 import io.kontur.disasterninja.graphql.BivariateMatrixQuery;
 import org.mapstruct.Mapper;

@@ -6,7 +6,14 @@ query AnalyticsTab($polygon: GeoJSON, $functionsArray: [FunctionArgs]) {
         analytics {
             functions(args: $functionsArray) {
                 id,
-                result
+                result,
+                unit {
+                    id,
+                    shortName,
+                    longName
+                },
+                x_label,
+                y_label
             }
         }
     }
