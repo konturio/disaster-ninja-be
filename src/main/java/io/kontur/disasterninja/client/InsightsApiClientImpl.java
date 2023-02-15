@@ -1,11 +1,10 @@
 package io.kontur.disasterninja.client;
 
+import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -14,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 @ConditionalOnProperty(name = "kontur.platform.insightsApi.url")
 public class InsightsApiClientImpl implements InsightsApiClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(InsightsApiClientImpl.class);
     private static final String INSIGHTS_API_TILE_MVT_URI = "/tiles/bivariate/v1/%s/%s/%s.mvt?indicatorsClass=%s";
 
     private final RestTemplate insightsApiRestTemplate;
@@ -41,6 +39,7 @@ public class InsightsApiClientImpl implements InsightsApiClient {
     }
 
     @Override
+    @Timed(value = "insights.getBivariateTileMvt", histogram = true)
     public byte[] getBivariateTileMvt(Integer z, Integer x, Integer y, String indicatorsClass) {
         if ("all".equals(indicatorsClass)) {
             incrementForCorrectLabels(z, AUTHENTICATED);
