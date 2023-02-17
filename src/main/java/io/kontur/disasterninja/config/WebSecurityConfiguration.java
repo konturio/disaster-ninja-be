@@ -74,6 +74,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .ignoringRequestMatchers(new AntPathRequestMatcher("/advanced_polygon_details/**", "POST"))
                 .ignoringRequestMatchers(new AntPathRequestMatcher("/polygon_details/**", "POST"))
+                .ignoringRequestMatchers(new AntPathRequestMatcher("/v2/polygon_details/**", "POST"))
                 .ignoringRequestMatchers(new AntPathRequestMatcher("/boundaries/**", "POST"))
                 .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/details/**", "POST"))
                 .ignoringRequestMatchers(new AntPathRequestMatcher("/layers/search/**", "POST"))

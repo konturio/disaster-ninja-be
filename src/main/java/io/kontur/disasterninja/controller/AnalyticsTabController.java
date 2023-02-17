@@ -1,6 +1,8 @@
 package io.kontur.disasterninja.controller;
 
 import io.kontur.disasterninja.dto.AnalyticsDto;
+import io.kontur.disasterninja.dto.AnalyticsRequestDto;
+import io.kontur.disasterninja.dto.AnalyticsResponseDto;
 import io.kontur.disasterninja.service.AnalyticsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -35,5 +37,18 @@ public class AnalyticsTabController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Polygon in GeoJSON format. Send polygon as FeatureCollection")
             @RequestBody GeoJSON geoJSON) {
         return analyticsService.calculateAnalyticsForPanel(geoJSON);
+    }
+
+    @Operation(summary = "Calculate data for analytics tab using insights-api service and application configuration from UPS",
+            tags = {"Analytics tab"},
+            description = "Calculate data for analytics tab using insights-api service and application configuration from UPS")
+    @ApiResponse(responseCode = "200", description = "Successful operation",
+            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AnalyticsDto.class))))
+    @PostMapping("/v2")
+    public List<AnalyticsResponseDto> getAnalyticsTab(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Application identifier from UPS in uuid format. Polygon in GeoJSON format. Send polygon as FeatureCollection")
+            @RequestBody AnalyticsRequestDto analyticsRequestDto) {
+        return analyticsService.calculateAnalyticsForPanelUsingAppConfig(analyticsRequestDto);
     }
 }

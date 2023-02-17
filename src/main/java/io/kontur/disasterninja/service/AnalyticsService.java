@@ -1,14 +1,18 @@
 package io.kontur.disasterninja.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.AnalyticsTabProperties;
-import io.kontur.disasterninja.dto.AnalyticsDto;
-import io.kontur.disasterninja.dto.AnalyticsField;
-import io.kontur.disasterninja.dto.Function;
+import io.kontur.disasterninja.dto.*;
 import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
 import io.kontur.disasterninja.graphql.type.FunctionArgs;
+import io.kontur.disasterninja.mapper.AnalyticsMapper;
+import io.kontur.disasterninja.mapper.BivariateStatisticMapper;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -30,6 +34,11 @@ public class AnalyticsService {
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
     private final DecimalFormat numberFormat = new DecimalFormat("#,###.##", new DecimalFormatSymbols(Locale.US));
     private final AnalyticsTabProperties configuration;
+    private final ApplicationService applicationService;
+
+    private final AnalyticsMapper mapper = Mappers.getMapper(AnalyticsMapper.class);
+
+    private final ObjectMapper objectMapper;
 
     public List<AnalyticsDto> calculateAnalyticsForPanel(GeoJSON geoJSON) {
         List<AnalyticsField> fields = configuration.getFields();
@@ -39,6 +48,72 @@ public class AnalyticsService {
         List<AnalyticsTabQuery.Function> functionsResults = calculateRawAnalytics(geoJSON, functions);
 
         return createResultDto(fields, functionsResults);
+    }
+
+    public List<AnalyticsResponseDto> calculateAnalyticsForPanelUsingAppConfig(AnalyticsRequestDto analyticsRequestDto) {
+
+        List<AnalyticsStatisticsConfigurationDto> configurations = getAnalyticsConfigurationForApplication(analyticsRequestDto.getAppId());
+
+        List<Function> functions = new ArrayList<>();
+
+        for (int i = 0; i < configurations.size(); i++) {
+
+            List<String> arguments = new ArrayList<>();
+            arguments.add(configurations.get(i).getX());
+            arguments.add(configurations.get(i).getY());
+
+            functions.add(new Function()
+                    .setId(Integer.toString(i))
+                    .setFunction(configurations.get(i).getFormula())
+                    .setArguments(arguments));
+        }
+
+        List<AnalyticsTabQuery.Function> functionsResults = calculateRawAnalytics(analyticsRequestDto.getFeatures(), functions);
+
+        return organizeResponse(functions, functionsResults);
+    }
+
+    private List<AnalyticsResponseDto> organizeResponse(List<Function> functions, List<AnalyticsTabQuery.Function> functionsResults) {
+        List<AnalyticsResponseDto> analytics = new ArrayList<>();
+        for (AnalyticsTabQuery.Function functionResult : functionsResults) {
+
+            Function function = functions.stream().filter(f -> f.getId().equals(functionResult.id())).findFirst().orElseThrow();
+
+            AnalyticsResponseDto combinedData = new AnalyticsResponseDto();
+
+            switch (function.getFunction()) {
+                case "maxX" -> combinedData.setPrefix("Maximum");
+                case "sumX" -> combinedData.setPrefix("Total");
+                case "sumXWhereNoY" -> combinedData.setPrefix("Total with no");
+                case "percentageXWhereNoY" -> combinedData.setPrefix("Percent with no");
+                default -> throw new WebApplicationException("Not a proper function name found", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            analytics.add(combinedData
+                    .setFormula(function.getFunction())
+                    .setValue(functionResult.result())
+                    .setXLabel(functionResult.x_label())
+                    .setYLabel(functionResult.y_label())
+                    .setUnit(mapper.analyticsTabQueryUnitToUnit(functionResult.unit())));
+        }
+        return analytics;
+    }
+
+    private List<AnalyticsStatisticsConfigurationDto> getAnalyticsConfigurationForApplication(UUID appUuid) {
+        try {
+            return Arrays.asList(objectMapper.treeToValue(applicationService.getAppConfig(appUuid)
+                    .getFeatures()
+                    .stream()
+                    .map(FeatureDto::getConfiguration)
+                    .filter(c -> c != null && c.get("statistics") != null)
+                    .findFirst().orElseThrow()
+                    .get("statistics"), AnalyticsStatisticsConfigurationDto[].class));
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+            throw new WebApplicationException(
+                    String.format("Can't find or convert configuration for analytics feature for application with UUID = %s", appUuid),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     public List<AnalyticsTabQuery.Function> calculateRawAnalytics(GeoJSON geoJSON, List<Function> functions) {

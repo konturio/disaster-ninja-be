@@ -46,6 +46,9 @@ input FunctionArgs {
 type FunctionResult {
   id: String
   result: Float
+  unit: Unit
+  x_label: String
+  y_label: String
 }
 
 scalar GeoJSON

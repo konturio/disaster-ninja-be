@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@Deprecated(since = "0.23.0")
 public class AnalyticsDto {
 
     private String name;
