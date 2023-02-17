@@ -2,7 +2,6 @@ package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.Legend;
 import io.kontur.disasterninja.domain.enums.LegendType;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
@@ -52,7 +51,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     }
 
     @Test
-    public void createLayerTest() {
+    public void createCollectionTest() {
         server.expect(ExpectedCount.times(1), requestTo("/collections"))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(jsonPath("$.itemType", is(LAYER_TYPE_FEATURE)))
@@ -64,22 +63,19 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
 
         final String id = "myId";
         final String title = "layer title";
-        Legend legend = createLegend();
 
         LayerCreateDto dto = new LayerCreateDto();
         dto.setId(id);
         dto.setTitle(title);
-        dto.setLegend(legend);
 
-        Layer layer = client.createLayer(dto);
-        assertEquals(id, layer.getId());
-        assertEquals(title, layer.getName());
-        assertEquals(legend, layer.getLegend());
-        assertTrue(layer.isOwnedByUser());
+        Collection collection = client.createCollection(dto);
+        assertEquals(id, collection.getId());
+        assertEquals(title, collection.getTitle());
+        assertTrue(collection.isOwnedByUser());
     }
 
     @Test
-    public void createLayerNegativeTest() {
+    public void createCollectionNegativeTest() {
         server.expect(ExpectedCount.times(1), requestTo("/collections"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.BAD_REQUEST));
@@ -88,7 +84,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     }
 
     @Test
-    public void updateLayerTest() {
+    public void updateCollectionTest() {
         final String id = "myId";
         server.expect(ExpectedCount.times(1), requestTo("/collections/" + id))
                 .andExpect(method(HttpMethod.PUT))
@@ -106,15 +102,14 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         dto.setTitle(title);
         dto.setLegend(legend);
 
-        Layer layer = client.updateLayer(id, dto);
-        assertEquals(id, layer.getId());
-        assertEquals(title, layer.getName());
-        assertEquals(legend, layer.getLegend());
-        assertTrue(layer.isOwnedByUser());
+        Collection collection = client.updateCollection(id, dto);
+        assertEquals(id, collection.getId());
+        assertEquals(title, collection.getTitle());
+        assertTrue(collection.isOwnedByUser());
     }
 
     @Test
-    public void updateLayerNegativeTest() {
+    public void updateCollectionNegativeTest() {
         final String id = "myId";
         server.expect(ExpectedCount.times(1), requestTo("/collections/" + id))
                 .andExpect(method(HttpMethod.PUT))
@@ -124,17 +119,17 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     }
 
     @Test
-    public void deleteLayerTest() {
+    public void deleteCollectionTest() {
         final String id = "myId";
         server.expect(ExpectedCount.times(1), requestTo("/collections/" + id))
                 .andExpect(method(HttpMethod.DELETE))
                 .andRespond(withSuccess());
 
-        client.deleteLayer(id);
+        client.deleteCollection(id);
     }
 
     @Test
-    public void deleteLayerNegativeTest() {
+    public void deleteCollectionNegativeTest() {
         final String id = "myId";
         server.expect(ExpectedCount.times(1), requestTo("/collections/" + id))
                 .andExpect(method(HttpMethod.DELETE))
@@ -151,7 +146,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
                 .andExpect(header(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue()))
                 .andRespond(withSuccess());
 
-        client.deleteLayer(id);
+        client.deleteCollection(id);
     }
 
     @Test
@@ -177,7 +172,8 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
                 });
 
         //when
-        List<Collection> collections = client.getCollections(objectMapper.readValue(json, Geometry.class), false, null, null);
+        List<Collection> collections = client.getCollections(objectMapper.readValue(json, Geometry.class),
+                false, null, null);
 
         //then
         assertEquals(12, collections.size());
@@ -213,8 +209,8 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(r -> withSuccess().createResponse(r));
         //when
-        List<Collection> collections = client.getCollections(objectMapper.readValue(json, Geometry.class), true,
-                null, appId);
+        List<Collection> collections = client.getCollections(objectMapper.readValue(json, Geometry.class),
+                true, null, appId);
 
         //then
         assertEquals(0, collections.size());
@@ -230,7 +226,8 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(r -> {
                     String body = r.getBody().toString();
-                    if (hasJsonPath("$.appId", is(not("a2a353ab-4126-44ef-a25d-a93fee401c1f"))).matches(body)) {
+                    if (hasJsonPath("$.appId", is(not("a2a353ab-4126-44ef-a25d-a93fee401c1f")))
+                            .matches(body)) {
                         throw new RuntimeException();
                     }
                     if (hasJsonPath("$.offset", is(0)).matches(body)) {
@@ -294,7 +291,8 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
                     if (hasJsonPath("$.collectionIds", hasSize(1)).matches(body) &&
                             hasJsonPath("$.collectionIds", contains("hotProjects")).matches(body) &&
                             hasJsonPath("$.appId", is(appId.toString())).matches(body)) {
-                        return withSuccess(readFile(this, "layers/layersAPI.search.hotProjects.response.json"),
+                        return withSuccess(
+                                readFile(this, "layers/layersAPI.search.hotProjects.response.json"),
                                 MediaType.APPLICATION_JSON).createResponse(r);
                     } else {
                         throw new RuntimeException();
@@ -323,7 +321,10 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     public void updateLayerFeaturesTest() throws JsonProcessingException {
         //GIVEN
         final String id = "layerId";
-        final String bodyJson = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"name\":\"feature1\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[41.1328125,27.059125784374068]}},{\"type\":\"Feature\",\"properties\":{\"name\":\"feature2\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[43.2421875,47.754097979680026]}}]}";
+        final String bodyJson = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":" +
+                "{\"name\":\"feature1\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":" +
+                "[41.1328125,27.059125784374068]}},{\"type\":\"Feature\",\"properties\":{\"name\":\"feature2\"}," +
+                "\"geometry\":{\"type\":\"Point\",\"coordinates\":[43.2421875,47.754097979680026]}}]}";
         FeatureCollection body = new ObjectMapper().readValue(bodyJson, FeatureCollection.class);
 
         server.expect(ExpectedCount.times(1), requestTo("/collections/" + id + "/items"))
@@ -358,5 +359,6 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         //THEN
         assertThrows(HttpClientErrorException.NotFound.class,
                 () -> client.updateLayerFeatures(id, new FeatureCollection(new Feature[0])));
+
     }
 }

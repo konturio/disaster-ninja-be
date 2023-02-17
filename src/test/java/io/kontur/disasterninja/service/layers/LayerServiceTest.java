@@ -4,8 +4,6 @@ import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.Legend;
-import io.kontur.disasterninja.dto.layer.LayerCreateDto;
-import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
 import io.kontur.disasterninja.service.layers.providers.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +25,6 @@ import static io.kontur.disasterninja.service.layers.providers.UrbanAndPeriphery
 import static io.kontur.disasterninja.util.TestUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -250,19 +247,17 @@ public class LayerServiceTest {
     }
 
     @Test
-    public void getShouldThrowIfAnyProviderThrowsTest() {
+    public void getShouldNotThrowIfAnyProviderThrowsTest() {
         when(urbanAndPeripheryLayerProvider.isApplicable(any())).thenReturn(true);
-        when(urbanAndPeripheryLayerProvider.obtainLayer(any(), any())).thenThrow(HttpClientErrorException.create(HttpStatus.NOT_FOUND,
-                "not found", HttpHeaders.EMPTY, null, Charset.defaultCharset()));
+        when(urbanAndPeripheryLayerProvider.obtainLayer(any(), any())).thenThrow(HttpClientErrorException
+                .create(HttpStatus.NOT_FOUND, "not found", HttpHeaders.EMPTY, null,
+                        Charset.defaultCharset()));
         when(layersApiProvider.isApplicable(any())).thenReturn(true);
         when(layersApiProvider.obtainLayer(any(), any())).thenReturn(userLayer);
 
-        try {
-            layerService.get(List.of(SETTLED_PERIPHERY_LAYER_ID), List.of(userLayer.getId()), paramsWithSomeBoundary());
-            throw new RuntimeException("Expected exception was not thrown!");
-        } catch (HttpClientErrorException.NotFound e) {
-            assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
-        }
+        List<Layer> layers = layerService.get(List.of(SETTLED_PERIPHERY_LAYER_ID), List.of(userLayer.getId()),
+                paramsWithSomeBoundary());
+        assertFalse(layers.isEmpty());
     }
 
     @Test
@@ -271,98 +266,5 @@ public class LayerServiceTest {
         List<Layer> layers = layerService.get(List.of("activeContributors"), List.of(), paramsWithSomeBoundary());
         assertEquals(1, layers.size());
         System.out.println(layers);
-    }
-
-    @Test
-    public void createTest() {
-        when(layersApiClient.createLayer(any())).thenReturn(layer);
-
-        LayerCreateDto dto = createDto();
-        Layer layer = layerService.create(dto);
-
-        verify(layersApiClient, times(1)).createLayer(dto);
-        assertLayer(layer);
-    }
-
-    @Test
-    public void createNoPermissionsTest() {
-        givenLayerApiCreateRespondsWith403();
-
-        LayerCreateDto dto = createDto();
-        assertThrows(HttpClientErrorException.Forbidden.class, () -> layerService.create(dto));
-    }
-
-    @Test
-    public void updateTest() {
-        when(layersApiClient.updateLayer(matches(id), any())).thenReturn(layer);
-
-        LayerUpdateDto dto = updateDto();
-        Layer layer = layerService.update(id, dto);
-
-        verify(layersApiClient, times(1)).updateLayer(id, dto);
-        assertLayer(layer);
-    }
-
-    @Test
-    public void updateNoPermissionsTest() {
-        givenLayerApiUpdateRespondsWith403();
-
-        LayerUpdateDto dto = updateDto();
-        assertThrows(HttpClientErrorException.Forbidden.class,
-                () -> layerService.update("123", dto));
-    }
-
-    @Test
-    public void deleteTest() {
-        layerService.delete(id);
-
-        verify(layersApiClient, times(1)).deleteLayer(id);
-    }
-
-    @Test
-    public void deleteNoPermissionsTest() {
-        givenLayerApiDeleteRespondsWith401();
-
-        assertThrows(HttpClientErrorException.Unauthorized.class,
-                () -> layerService.delete("123"));
-    }
-
-    private LayerUpdateDto updateDto() {
-        LayerUpdateDto dto = new LayerUpdateDto();
-        dto.setTitle(title);
-        dto.setLegend(legend);
-        return dto;
-    }
-
-    private LayerCreateDto createDto() {
-        LayerCreateDto dto = new LayerCreateDto();
-        dto.setId(id);
-        dto.setTitle(title);
-        dto.setLegend(legend);
-        return dto;
-    }
-
-    private void givenLayerApiCreateRespondsWith403() {
-        when(layersApiClient.createLayer(any()))
-                .thenThrow(HttpClientErrorException.create(HttpStatus.FORBIDDEN, "forbidden",
-                        new HttpHeaders(), null, Charset.defaultCharset()));
-    }
-
-    private void givenLayerApiUpdateRespondsWith403() {
-        when(layersApiClient.updateLayer(any(), any()))
-                .thenThrow(HttpClientErrorException.create(HttpStatus.FORBIDDEN, "forbidden",
-                        new HttpHeaders(), null, Charset.defaultCharset()));
-    }
-
-    private void givenLayerApiDeleteRespondsWith401() {
-        doThrow(HttpClientErrorException.create(HttpStatus.UNAUTHORIZED, "unauthorized",
-                new HttpHeaders(), null, Charset.defaultCharset()))
-                .when(layersApiClient).deleteLayer(any());
-    }
-
-    private void assertLayer(Layer layer) {
-        assertEquals(id, layer.getId());
-        assertEquals(title, layer.getName());
-        assertEquals(legend, layer.getLegend());
     }
 }

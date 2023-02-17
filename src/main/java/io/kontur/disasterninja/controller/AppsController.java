@@ -1,12 +1,12 @@
 package io.kontur.disasterninja.controller;
 
-import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.client.UserProfileClient;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.dto.AppDto;
 import io.kontur.disasterninja.dto.AppLayerUpdateDto;
 import io.kontur.disasterninja.dto.AppSummaryDto;
 import io.kontur.disasterninja.service.ApplicationService;
+import io.kontur.disasterninja.service.layers.LayersApiService;
 import io.kontur.disasterninja.service.layers.providers.BivariateLayerProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,7 +32,7 @@ public class AppsController {
 
     public static final String PATH = "/apps";
     private final UserProfileClient userProfileClient;
-    private final LayersApiClient layersApiClient;
+    private final LayersApiService layersApiService;
     private final BivariateLayerProvider bivariateLayerProvider;
     private final ApplicationService applicationService;
 
@@ -99,7 +99,7 @@ public class AppsController {
                     array = @ArraySchema(schema = @Schema(implementation = Layer.class))))
     @GetMapping("/{id}/layers")
     public List<Layer> getListOfLayers(@PathVariable("id") UUID appId) {
-        List<Layer> layers = layersApiClient.getApplicationLayers(appId);
+        List<Layer> layers = layersApiService.getApplicationLayers(appId);
 
         //TODO This is bad. To be removed during US1544 Serve bivariate layers via Layers API
         ListIterator<Layer> iterator = layers.listIterator();
@@ -121,7 +121,7 @@ public class AppsController {
     @PutMapping("/{id}/layers")
     public List<Layer> updateListOfLayers(@PathVariable("id") UUID appId,
                                           @RequestBody List<AppLayerUpdateDto> layers) {
-        return layersApiClient.updateApplicationLayers(appId, layers);
+        return layersApiService.updateApplicationLayers(appId, layers);
     }
 
     @Operation(summary = "Get application config with features and user settings by id. Returns default app if no appId is provided", tags = {"Applications"})

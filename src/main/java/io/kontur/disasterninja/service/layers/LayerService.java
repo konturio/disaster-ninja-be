@@ -1,11 +1,8 @@
 package io.kontur.disasterninja.service.layers;
 
-import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSearchParams;
-import io.kontur.disasterninja.dto.layer.LayerCreateDto;
-import io.kontur.disasterninja.dto.layer.LayerUpdateDto;
 import io.kontur.disasterninja.service.layers.providers.LayerProvider;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -13,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.wololo.geojson.FeatureCollection;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -29,19 +25,6 @@ public class LayerService {
     private static final Logger LOG = LoggerFactory.getLogger(LayerService.class);
     final LocalLayerConfigService layerConfigService;
     final List<LayerProvider> providers;
-    private final LayersApiClient layersApiClient;
-
-    public Layer create(LayerCreateDto dto) {
-        return layersApiClient.createLayer(dto);
-    }
-
-    public Layer update(String id, LayerUpdateDto dto) {
-        return layersApiClient.updateLayer(id, dto);
-    }
-
-    public void delete(String id) {
-        layersApiClient.deleteLayer(id);
-    }
 
     public List<Layer> getGlobalLayers(LayerSearchParams layerSearchParams) {
         Map<String, Layer> layers = loadLayersFromProviders(LayerProvider::obtainGlobalLayers, layerSearchParams);
@@ -165,19 +148,26 @@ public class LayerService {
         for (LayerProvider provider : providers) {
             //find first by layer id and use it
             if (provider.isApplicable(layerId)) {
-                Layer layer = provider.obtainLayer(layerId, searchParams);
+                Layer layer = null;
+                try {
+                    layer = provider.obtainLayer(layerId, searchParams);
+                } catch (Exception e) {
+                    if (e.getCause() instanceof HttpClientErrorException) {
+                        LOG.warn("Client error occurred while obtaining layer {} from {}: {}",
+                                layerId, provider.getClass().getSimpleName(), e.getMessage(), e);
+                    } else {
+                        LOG.error("Caught exception while obtaining layer {} from {}: {}",
+                                layerId, provider.getClass().getSimpleName(), e.getMessage(), e);
+                    }
+                }
                 if (layer != null) {
                     LOG.info("Found layer by id {} by provider {}", layerId, provider.getClass().getSimpleName());
                     layerConfigService.applyConfig(layer);
+                    return layer;
                 }
-                return layer;
             }
         }
         return null;
-    }
-
-    public FeatureCollection updateFeatures(String layerId, FeatureCollection body) {
-        return layersApiClient.updateLayerFeatures(layerId, body);
     }
 
     private List<Layer> mergeLayerListsByLayerId(List<Layer> mainList, List<Layer> otherList) {

@@ -2,10 +2,10 @@ package io.kontur.disasterninja.service.layers.providers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.client.TestDependingOnUserAuth;
 import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.dto.layerapi.CollectionOwner;
+import io.kontur.disasterninja.service.layers.LayersApiService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.wololo.geojson.Geometry;
@@ -18,8 +18,8 @@ import static org.mockito.Mockito.*;
 public class LayersApiProviderTest extends TestDependingOnUserAuth {
 
     @Mock
-    LayersApiClient client = mock(LayersApiClient.class);
-    LayersApiProvider provider = new LayersApiProvider(client);
+    LayersApiService layersApiService = mock(LayersApiService.class);
+    LayersApiProvider provider = new LayersApiProvider(layersApiService);
     ObjectMapper objectMapper = new ObjectMapper();
 
     String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
@@ -31,7 +31,7 @@ public class LayersApiProviderTest extends TestDependingOnUserAuth {
 
         provider.obtainGlobalLayers(emptyParams());
 
-        verify(client, times(1)).findLayers(null, true,
+        verify(layersApiService, times(1)).findLayers(null, true,
                 CollectionOwner.ANY, null);
     }
 
@@ -42,7 +42,7 @@ public class LayersApiProviderTest extends TestDependingOnUserAuth {
         UUID appId = UUID.randomUUID();
         provider.obtainUserLayers(LayerSearchParams.builder().boundary(null).appId(appId).build());
 
-        verify(client, never()).findLayers(null, false, CollectionOwner.ME, appId);
+        verify(layersApiService, never()).findLayers(null, false, CollectionOwner.ME, appId);
     }
 
     @Test
@@ -52,7 +52,7 @@ public class LayersApiProviderTest extends TestDependingOnUserAuth {
         UUID appId = UUID.randomUUID();
         provider.obtainUserLayers(LayerSearchParams.builder().boundary(null).appId(appId).build());
 
-        verify(client, times(1)).findLayers(null, false,
+        verify(layersApiService, times(1)).findLayers(null, false,
                 CollectionOwner.ME, appId);
     }
 
@@ -64,7 +64,7 @@ public class LayersApiProviderTest extends TestDependingOnUserAuth {
         UUID appId = UUID.randomUUID();
         provider.obtainSelectedAreaLayers(LayerSearchParams.builder().boundary(geometry).appId(appId).build());
 
-        verify(client, times(1)).findLayers(geometry, false,
+        verify(layersApiService, times(1)).findLayers(geometry, false,
                 CollectionOwner.ANY, appId);
     }
 
@@ -76,7 +76,7 @@ public class LayersApiProviderTest extends TestDependingOnUserAuth {
         UUID appId = UUID.randomUUID();
         provider.obtainSelectedAreaLayers(LayerSearchParams.builder().boundary(geometry).appId(appId).build());
 
-        verify(client, times(1)).findLayers(geometry, false,
+        verify(layersApiService, times(1)).findLayers(geometry, false,
                 CollectionOwner.NOT_ME, appId);
     }
 }
