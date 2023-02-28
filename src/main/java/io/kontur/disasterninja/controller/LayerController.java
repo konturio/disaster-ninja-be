@@ -112,7 +112,7 @@ public class LayerController {
 
     @Operation(tags = "Layers", summary = "Get Layers by their ids")
     @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = APPLICATION_JSON_VALUE,
-            array = @ArraySchema(schema = @Schema(implementation = LayerSummaryDto.class))))
+            array = @ArraySchema(schema = @Schema(implementation = LayerDetailsDto.class))))
     @PostMapping(path = PATH_DETAILS, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<LayerDetailsDto> getDetails(@RequestBody
                                             @io.swagger.v3.oas.annotations.parameters.RequestBody(

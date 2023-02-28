@@ -43,7 +43,7 @@ public class AnalyticsTabController {
             tags = {"Analytics tab"},
             description = "Calculate data for analytics tab using insights-api service and application configuration from UPS")
     @ApiResponse(responseCode = "200", description = "Successful operation",
-            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AnalyticsDto.class))))
+            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AnalyticsResponseDto.class))))
     @PostMapping("/v2")
     public List<AnalyticsResponseDto> getAnalyticsTab(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
