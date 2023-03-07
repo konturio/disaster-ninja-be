@@ -5,6 +5,7 @@ import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.dto.AppDto;
 import io.kontur.disasterninja.dto.AppLayerUpdateDto;
 import io.kontur.disasterninja.dto.AppSummaryDto;
+import io.kontur.disasterninja.dto.layer.LayerDto;
 import io.kontur.disasterninja.service.ApplicationService;
 import io.kontur.disasterninja.service.layers.LayersApiService;
 import io.kontur.disasterninja.service.layers.providers.BivariateLayerProvider;
@@ -96,9 +97,9 @@ public class AppsController {
     @Operation(summary = "Get list of default layers for the app", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    array = @ArraySchema(schema = @Schema(implementation = Layer.class))))
+                    array = @ArraySchema(schema = @Schema(implementation = LayerDto.class))))
     @GetMapping("/{id}/layers")
-    public List<Layer> getListOfLayers(@PathVariable("id") UUID appId) {
+    public List<LayerDto> getListOfLayers(@PathVariable("id") UUID appId) {
         List<Layer> layers = layersApiService.getApplicationLayers(appId);
 
         //TODO This is bad. To be removed during US1544 Serve bivariate layers via Layers API
@@ -110,18 +111,19 @@ public class AppsController {
             }
         }
 
-        return layers;
+        return layers.stream().map(LayerDto::fromLayer).toList();
     }
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Updates list of layers for the app", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    array = @ArraySchema(schema = @Schema(implementation = Layer.class))))
+                    array = @ArraySchema(schema = @Schema(implementation = LayerDto.class))))
     @PutMapping("/{id}/layers")
-    public List<Layer> updateListOfLayers(@PathVariable("id") UUID appId,
+    public List<LayerDto> updateListOfLayers(@PathVariable("id") UUID appId,
                                           @RequestBody List<AppLayerUpdateDto> layers) {
-        return layersApiService.updateApplicationLayers(appId, layers);
+        List<Layer> updatedLayers = layersApiService.updateApplicationLayers(appId, layers);
+        return updatedLayers.stream().map(LayerDto::fromLayer).toList();
     }
 
     @Operation(summary = "Get application config with features and user settings by id. Returns default app if no appId is provided", tags = {"Applications"})
