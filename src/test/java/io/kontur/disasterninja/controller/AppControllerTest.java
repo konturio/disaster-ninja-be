@@ -7,10 +7,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.client.TestDependingOnUserAuth;
 import io.kontur.disasterninja.client.UserProfileClient;
-import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.dto.AppDto;
 import io.kontur.disasterninja.dto.AppLayerUpdateDto;
 import io.kontur.disasterninja.dto.AppSummaryDto;
+import io.kontur.disasterninja.dto.layer.LayerDetailsDto;
 import io.kontur.disasterninja.service.ApplicationService;
 import io.kontur.disasterninja.service.layers.LayersApiService;
 import io.kontur.disasterninja.service.layers.providers.BivariateLayerProvider;
@@ -272,11 +272,11 @@ public class AppControllerTest extends TestDependingOnUserAuth {
                                 MediaType.APPLICATION_JSON));
 
         //WHEN
-        List<Layer> result = appsController.getListOfLayers(appID);
+        List<LayerDetailsDto> result = appsController.getListOfLayers(appID);
 
         //THEN
         assertEquals(1, result.size());
-        assertNotNull(result.get(0).getLegend());
+        assertNotNull(result.get(0).legend());
     }
 
     @Test
@@ -293,11 +293,11 @@ public class AppControllerTest extends TestDependingOnUserAuth {
                                 MediaType.APPLICATION_JSON));
 
         //WHEN
-        List<Layer> result = appsController.getListOfLayers(appID);
+        List<LayerDetailsDto> result = appsController.getListOfLayers(appID);
 
         //THEN
         assertEquals(1, result.size());
-        assertNotNull(result.get(0).getLegend());
+        assertNotNull(result.get(0).legend());
     }
 
     @Test
@@ -326,14 +326,14 @@ public class AppControllerTest extends TestDependingOnUserAuth {
                                 MediaType.APPLICATION_JSON));
 
         //WHEN
-        List<Layer> result = appsController.updateListOfLayers(appID, Collections.singletonList(
+        List<LayerDetailsDto> result = appsController.updateListOfLayers(appID, Collections.singletonList(
                 new AppLayerUpdateDto("testLayerId", true,
                         (ObjectNode) new ObjectMapper().readTree(randomJsonString))
         ));
 
         //THEN
         assertEquals(1, result.size());
-        assertNotNull(result.get(0).getLegend());
+        assertNotNull(result.get(0).legend());
     }
 
     @Test
@@ -408,13 +408,14 @@ public class AppControllerTest extends TestDependingOnUserAuth {
 
     private Map<String, JsonNode> featureConfigToAppDto() {
         try {
-            return Map.of("map_layers_panel", mapper.readTree("{\"statistics\": [{\n" +
-                    "              \"formula\": \"sumX\",\n" +
-                    "              \"x\": \"population\"\n" +
-                    "            }, {\n" +
-                    "              \"formula\": \"sumX\",\n" +
-                    "              \"x\": \"populated_area_km2\"\n" +
-                    "            }]}"));
+            return Map.of("map_layers_panel", mapper.readTree("""
+                    {"statistics": [{
+                                  "formula": "sumX",
+                                  "x": "population"
+                                }, {
+                                  "formula": "sumX",
+                                  "x": "populated_area_km2"
+                                }]}"""));
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Could not parse needed string");
         }

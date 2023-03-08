@@ -42,6 +42,7 @@ public class Layer {
     private boolean ownedByUser;
     private ObjectNode featureProperties;
     private ObjectNode mapboxStyles;
+    private ObjectNode properties;
 
     /**
      * Overrides all non-final fields with values from <b>other</b>, except for <b>this.source.data</b> as it's the
