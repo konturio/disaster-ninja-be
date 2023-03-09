@@ -118,6 +118,7 @@ public class LayersApiService {
                 .boundaryRequiredForRetrieval(boundaryRequiredForRetrieval)
                 .eventIdRequiredForRetrieval(eventIdRequiredForRetrieval)
                 .ownedByUser(collection.isOwnedByUser())
+                .properties(collection.getProperties())
                 .featureProperties(collection.getFeatureProperties())
                 .mapboxStyles(collection.getMapboxStyles());
 

@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Point;
@@ -38,8 +37,6 @@ public class DtoTest {
     LayerService layerService;
     @MockBean
     KeycloakAuthorizationService authorizationService;
-    @LocalServerPort
-    private int port;
     @Autowired
     private TestRestTemplate restTemplate;
     private final String SEARCH_URL = LayerController.PATH + PATH_SEARCH_GLOBAL;
@@ -63,15 +60,15 @@ public class DtoTest {
                 restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
                         .getBody());
 
-        Assertions.assertEquals(layer.getId(), response.get(0).getId());
-        Assertions.assertEquals(layer.isEventIdRequiredForRetrieval(), response.get(0).isEventIdRequiredForRetrieval());
-        Assertions.assertEquals(layer.getName(), response.get(0).getName());
-        Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
-        Assertions.assertEquals(layer.getCategory(), response.get(0).getCategory());
-        Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
+        Assertions.assertEquals(layer.getId(), response.get(0).id());
+        Assertions.assertEquals(layer.isEventIdRequiredForRetrieval(), response.get(0).eventIdRequiredForRetrieval());
+        Assertions.assertEquals(layer.getName(), response.get(0).name());
+        Assertions.assertEquals(layer.getDescription(), response.get(0).description());
+        Assertions.assertEquals(layer.getCategory(), response.get(0).category());
+        Assertions.assertEquals(layer.getGroup(), response.get(0).group());
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(),
-                response.get(0).isBoundaryRequiredForRetrieval());
-        Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
+                response.get(0).boundaryRequiredForRetrieval());
+        Assertions.assertEquals(layer.getCopyrights(), response.get(0).copyrights());
     }
 
     @Test
@@ -87,18 +84,18 @@ public class DtoTest {
                 restTemplate.postForEntity(DETAILS_URL, input, LayerDetailsDto[].class)
                         .getBody());
 
-        Assertions.assertEquals(layer.getId(), response.get(0).getId());
-        Assertions.assertEquals(layer.getMinZoom(), response.get(0).getMinZoom());
-        Assertions.assertEquals(layer.getMaxZoom(), response.get(0).getMaxZoom());
+        Assertions.assertEquals(layer.getId(), response.get(0).id());
+        Assertions.assertEquals(layer.getMinZoom(), response.get(0).minZoom());
+        Assertions.assertEquals(layer.getMaxZoom(), response.get(0).maxZoom());
 
         Assertions.assertArrayEquals(
                 ((Point) layer.getSource().getData().getFeatures()[0].getGeometry()).getCoordinates(),
-                ((Point) ((FeatureCollection) response.get(0).getSource()
-                        .getData()).getFeatures()[0].getGeometry()).getCoordinates());
+                ((Point) ((FeatureCollection) response.get(0).source()
+                        .data()).getFeatures()[0].getGeometry()).getCoordinates());
 
-        Assertions.assertEquals(layer.getSource().getType(), response.get(0).getSource().getType());
-        Assertions.assertEquals(layer.getSource().getTileSize(), response.get(0).getSource().getTileSize());
-        Assertions.assertEquals(layer.getSource().getUrls(), response.get(0).getSource().getUrls());
+        Assertions.assertEquals(layer.getSource().getType(), response.get(0).source().type());
+        Assertions.assertEquals(layer.getSource().getTileSize(), response.get(0).source().tileSize());
+        Assertions.assertEquals(layer.getSource().getUrls(), response.get(0).source().urls());
     }
 
     @Test
@@ -107,22 +104,23 @@ public class DtoTest {
         Layer layer = testLayer(id, new FeatureCollection(null));
         Mockito.when(layerService.getGlobalLayers(any())).thenReturn(List.of(layer));
 
-        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), UUID.randomUUID(), "some-feed",
+        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), UUID.randomUUID(),
+                "some-feed",
                 new Feature(new Point(
                         new double[]{1, 0}), new HashMap<>()));
         List<LayerSummaryDto> response = Arrays.asList(
                 restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
                         .getBody());
 
-        Assertions.assertEquals(layer.getId(), response.get(0).getId());
-        Assertions.assertEquals(layer.isEventIdRequiredForRetrieval(), response.get(0).isEventIdRequiredForRetrieval());
-        Assertions.assertEquals(layer.getName(), response.get(0).getName());
-        Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
-        Assertions.assertEquals(layer.getCategory(), response.get(0).getCategory());
-        Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
+        Assertions.assertEquals(layer.getId(), response.get(0).id());
+        Assertions.assertEquals(layer.isEventIdRequiredForRetrieval(), response.get(0).eventIdRequiredForRetrieval());
+        Assertions.assertEquals(layer.getName(), response.get(0).name());
+        Assertions.assertEquals(layer.getDescription(), response.get(0).description());
+        Assertions.assertEquals(layer.getCategory(), response.get(0).category());
+        Assertions.assertEquals(layer.getGroup(), response.get(0).group());
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(),
-                response.get(0).isBoundaryRequiredForRetrieval());
-        Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
+                response.get(0).boundaryRequiredForRetrieval());
+        Assertions.assertEquals(layer.getCopyrights(), response.get(0).copyrights());
     }
 
     @Test
@@ -131,21 +129,22 @@ public class DtoTest {
         Layer layer = testLayer(id, new FeatureCollection(null));
         Mockito.when(layerService.getGlobalLayers(any())).thenReturn(List.of(layer));
 
-        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), null, null, null);
+        LayerSummarySearchDto input = new LayerSummarySearchDto(UUID.randomUUID(), null, null,
+                null);
 
         List<LayerSummaryDto> response = Arrays.asList(
                 restTemplate.postForEntity(SEARCH_URL, input, LayerSummaryDto[].class)
                         .getBody());
 
-        Assertions.assertEquals(layer.getId(), response.get(0).getId());
-        Assertions.assertEquals(layer.isEventIdRequiredForRetrieval(), response.get(0).isEventIdRequiredForRetrieval());
-        Assertions.assertEquals(layer.getName(), response.get(0).getName());
-        Assertions.assertEquals(layer.getDescription(), response.get(0).getDescription());
-        Assertions.assertEquals(layer.getCategory(), response.get(0).getCategory());
-        Assertions.assertEquals(layer.getGroup(), response.get(0).getGroup());
+        Assertions.assertEquals(layer.getId(), response.get(0).id());
+        Assertions.assertEquals(layer.isEventIdRequiredForRetrieval(), response.get(0).eventIdRequiredForRetrieval());
+        Assertions.assertEquals(layer.getName(), response.get(0).name());
+        Assertions.assertEquals(layer.getDescription(), response.get(0).description());
+        Assertions.assertEquals(layer.getCategory(), response.get(0).category());
+        Assertions.assertEquals(layer.getGroup(), response.get(0).group());
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(),
-                response.get(0).isBoundaryRequiredForRetrieval());
-        Assertions.assertEquals(layer.getCopyrights(), response.get(0).getCopyrights());
+                response.get(0).boundaryRequiredForRetrieval());
+        Assertions.assertEquals(layer.getCopyrights(), response.get(0).copyrights());
     }
 
     private Layer testLayer(String id, FeatureCollection geoJSON) {
@@ -154,12 +153,13 @@ public class DtoTest {
                 .urls(List.of("url-com.com"))
                 .tileSize(2)
                 .data(geoJSON).build();
-        Legend legend = new Legend("legendName", LegendType.SIMPLE, null, new ArrayList<>(), new ArrayList<>(),
-                new BivariateLegendAxes(), null);
+        Legend legend = new Legend("legendName", LegendType.SIMPLE, null, new ArrayList<>(),
+                new ArrayList<>(), new BivariateLegendAxes(), null);
         Map<String, Object> map = new HashMap<>();
         map.put("prop", "value");
-        legend.getSteps().add(new LegendStep("param name", null, "param value", null, null, "step name",
-                HEX, map, "source-layer", "", ""));
+        legend.getSteps().add(new LegendStep("param name", null, "param value",
+                null, null, "step name", HEX, map, "source-layer", "",
+                ""));
 
         return Layer.builder()
                 .id(id)
