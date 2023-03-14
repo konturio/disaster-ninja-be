@@ -3,7 +3,7 @@ package io.kontur.disasterninja.dto;
 import io.kontur.disasterninja.controller.LayerController;
 import io.kontur.disasterninja.domain.*;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
-import io.kontur.disasterninja.domain.enums.LayerSourceType;
+import io.kontur.disasterninja.domain.enums.LayerType;
 import io.kontur.disasterninja.domain.enums.LegendType;
 import io.kontur.disasterninja.dto.layer.LayerDetailsDto;
 import io.kontur.disasterninja.dto.layer.LayerDetailsSearchDto;
@@ -149,7 +149,7 @@ public class DtoTest {
 
     private Layer testLayer(String id, FeatureCollection geoJSON) {
         LayerSource source = LayerSource.builder()
-                .type(LayerSourceType.RASTER)
+                .type(LayerType.RASTER)
                 .urls(List.of("url-com.com"))
                 .tileSize(2)
                 .data(geoJSON).build();

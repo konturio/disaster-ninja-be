@@ -5,23 +5,28 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Arrays;
 
-public enum LayerSourceType {
+public enum LayerType {
     VECTOR("vector"),
     RASTER("raster"),
-    GEOJSON("geojson");
+    GEOJSON("geojson"),
+    TILES("tiles"),
+    FEATURE("feature"),
+
+    // TODO Add new layer types in #15281. Remove types above after they are no longer used by FE
+    MAPLIBRE_STYLE_URL("maplibre-style-url");
 
     private final String value;
 
-    LayerSourceType(String value) {
+    LayerType(String value) {
         this.value = value;
     }
 
     @JsonCreator
-    public static LayerSourceType fromString(String value) {
-        return Arrays.stream(LayerSourceType.values())
+    public static LayerType fromString(String value) {
+        return Arrays.stream(LayerType.values())
                 .filter(t -> t.value.equals(value))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No enum constant with value " + value));
+                .orElse(null);
     }
 
     @JsonValue

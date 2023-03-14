@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
+import static io.kontur.disasterninja.domain.enums.LayerType.VECTOR;
 import static io.kontur.disasterninja.domain.enums.LegendType.BIVARIATE;
 import static java.util.Objects.requireNonNull;
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;

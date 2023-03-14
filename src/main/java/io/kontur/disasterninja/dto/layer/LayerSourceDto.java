@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
-import io.kontur.disasterninja.domain.enums.LayerSourceType;
+import io.kontur.disasterninja.domain.enums.LayerType;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -21,7 +21,7 @@ import java.util.List;
  * @param tileSize for 'vector' and 'raster' only
  * @param data     for geoJson only
  */
-public record LayerSourceDto(LayerSourceType type, List<String> urls, Integer tileSize, GeoJSON data, String apiKey) {
+public record LayerSourceDto(LayerType type, List<String> urls, Integer tileSize, GeoJSON data, String apiKey) {
 
     public static LayerSourceDto fromLayer(Layer layer) {
         LayerSource layerSource = layer.getSource();

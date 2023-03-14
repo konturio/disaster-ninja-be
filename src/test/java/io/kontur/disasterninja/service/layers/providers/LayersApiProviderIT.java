@@ -7,7 +7,7 @@ import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSearchParams;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
-import io.kontur.disasterninja.domain.enums.LayerSourceType;
+import io.kontur.disasterninja.domain.enums.LayerType;
 import io.kontur.disasterninja.domain.enums.LegendType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -135,7 +135,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         assertEquals("hotProjects", layer.getId());
         assertNotNull(layer.getSource());
         LayerSource source = layer.getSource();
-        assertEquals(LayerSourceType.VECTOR, source.getType());
+        assertEquals(LayerType.VECTOR, source.getType());
         assertEquals(1, source.getUrls().size());
         assertEquals("https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf",
                 source.getUrls().get(0));
@@ -192,7 +192,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         assertEquals("hotProjects_feature_type", layer.getId());
         assertNotNull(layer.getSource());
         LayerSource source = layer.getSource();
-        assertEquals(LayerSourceType.GEOJSON, source.getType());
+        assertEquals(LayerType.GEOJSON, source.getType());
         assertNull(source.getUrls());
         assertNotNull(source.getData());
         assertEquals(12, source.getData().getFeatures().length);

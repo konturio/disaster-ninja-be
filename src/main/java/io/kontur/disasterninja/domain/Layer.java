@@ -2,6 +2,7 @@ package io.kontur.disasterninja.domain;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
+import io.kontur.disasterninja.domain.enums.LayerType;
 import io.kontur.disasterninja.domain.enums.LegendType;
 import io.kontur.disasterninja.dto.EventType;
 import lombok.Builder;
@@ -43,6 +44,7 @@ public class Layer {
     private ObjectNode featureProperties;
     private ObjectNode mapboxStyles;
     private ObjectNode properties;
+    private LayerType type; // for filtering layers in layers panel
 
     /**
      * Overrides all non-final fields with values from <b>other</b>, except for <b>this.source.data</b> as it's the
