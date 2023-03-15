@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static io.kontur.disasterninja.domain.enums.LayerSourceType.VECTOR;
+import static io.kontur.disasterninja.domain.enums.LayerType.VECTOR;
 import static io.kontur.disasterninja.service.layers.providers.BivariateLayerProvider.LAYER_PREFIX;
 import static io.kontur.disasterninja.util.TestUtil.*;
 import static org.hamcrest.MatcherAssert.assertThat;

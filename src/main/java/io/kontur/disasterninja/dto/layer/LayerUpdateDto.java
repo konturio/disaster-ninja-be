@@ -13,6 +13,7 @@ import java.util.UUID;
 @Data
 public class LayerUpdateDto {
 
+    // TODO remove this constants in #15281. LayerType enum will be used for storing layer types.
     public static final String LAYER_TYPE_TILES = "tiles";
     public static final String LAYER_TYPE_VECTOR = "vector";
     public static final String LAYER_TYPE_FEATURE = "feature";

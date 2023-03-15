@@ -5,7 +5,7 @@ import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.Legend;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
-import io.kontur.disasterninja.domain.enums.LayerSourceType;
+import io.kontur.disasterninja.domain.enums.LayerType;
 import io.kontur.disasterninja.dto.AppLayerUpdateDto;
 import io.kontur.disasterninja.dto.LayersApiApplicationDto;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
@@ -120,16 +120,26 @@ public class LayersApiService {
                 .ownedByUser(collection.isOwnedByUser())
                 .properties(collection.getProperties())
                 .featureProperties(collection.getFeatureProperties())
+                .type(LayerType.fromString(collection.getItemType()))
                 .mapboxStyles(collection.getMapboxStyles());
 
         if (includeSource) {
             LayerSource source = null;
             if (collection.getItemType() != null) {
                 source = switch (collection.getItemType()) {
+                    /*
+                    All special cases will be considered first.
+                    For some layer types 'data' will be provided instead of 'url'.
+                    For some layer types 'tileSize' might be required.
+                    New layer types will be supported in #15281.
+                     */
                     case (LAYER_TYPE_VECTOR), (LAYER_TYPE_TILES) -> createVectorSource(collection);
                     case (LAYER_TYPE_RASTER) -> createRasterSource(collection);
                     case (LAYER_TYPE_FEATURE) -> createFeatureSource(geoJSON, collection.getId(), appId);
-                    default -> null;
+                    /*
+                      By default, each layer type will require 'url'.
+                     */
+                    default -> createDefaultSource(collection);
                 };
             }
             builder.minZoom(collection.getMinZoom())
@@ -144,7 +154,7 @@ public class LayersApiService {
         String apiKey = getSourceApiKey(collection);
 
         return LayerSource.builder()
-                .type(LayerSourceType.VECTOR)
+                .type(LayerType.VECTOR)
                 .tileSize(collection.getTileSize() != null ? collection.getTileSize() : 512)
                 .urls(url != null ? singletonList(url) : null)
                 .apiKey(apiKey)
@@ -156,7 +166,7 @@ public class LayersApiService {
         String apiKey = getSourceApiKey(collection);
 
         return LayerSource.builder()
-                .type(LayerSourceType.RASTER)
+                .type(LayerType.RASTER)
                 .tileSize(collection.getTileSize() != null ? collection.getTileSize() : 256)
                 .urls(url != null ? singletonList(url) : null)
                 .apiKey(apiKey)
@@ -166,8 +176,19 @@ public class LayersApiService {
     private LayerSource createFeatureSource(Geometry geoJSON, String layerId, UUID appId) {
         List<Feature> features = layersApiClient.getCollectionFeatures(geoJSON, layerId, appId);
         return LayerSource.builder()
-                .type(LayerSourceType.GEOJSON)
+                .type(LayerType.GEOJSON)
                 .data(new FeatureCollection(features.toArray(new Feature[0])))
+                .build();
+    }
+
+    private LayerSource createDefaultSource(Collection collection) {
+        String url = getSourceUrl(collection);
+        String apiKey = getSourceApiKey(collection);
+
+        return LayerSource.builder()
+                .type(LayerType.fromString(collection.getItemType()))
+                .urls(url != null ? singletonList(url) : null)
+                .apiKey(apiKey)
                 .build();
     }
 

@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static io.kontur.disasterninja.domain.DtoFeatureProperties.NAME;
-import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
+import static io.kontur.disasterninja.domain.enums.LayerType.GEOJSON;
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 @Service

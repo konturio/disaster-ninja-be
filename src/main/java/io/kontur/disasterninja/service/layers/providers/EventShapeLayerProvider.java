@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static io.kontur.disasterninja.config.logging.LogHttpTraceRepository.LOG;
-import static io.kontur.disasterninja.domain.enums.LayerSourceType.GEOJSON;
+import static io.kontur.disasterninja.domain.enums.LayerType.GEOJSON;
 import static io.kontur.disasterninja.service.converter.GeometryConverter.getJtsGeometry;
 import static io.kontur.disasterninja.service.converter.GeometryConverter.getPreparedGeometryFromRequest;
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
