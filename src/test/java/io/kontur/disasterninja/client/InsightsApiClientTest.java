@@ -37,12 +37,12 @@ class InsightsApiClientTest {
     private InsightsApiClient client;
 
     @BeforeEach
-    public void before(){
+    public void before() {
         client = new InsightsApiClientImpl(insightsApiRestTemplate, meterRegistry);
     }
 
     @Test
-    public void testGetBivariateTileMvt(){
+    public void testGetBivariateTileMvt() {
         byte[] result = new byte[100];
         new Random().nextBytes(result);
         Integer z = 4;
@@ -57,7 +57,7 @@ class InsightsApiClientTest {
                         MediaType.parseMediaType("application/vnd.mapbox-vector-tile")));
 
         //when
-        byte[] tile = client.getBivariateTileMvt(z, x, y, "all");
+        byte[] tile = client.getBivariateTileMvt(z, x, y, "all").getBody();
 
         //then
         assertEquals(100, tile.length);

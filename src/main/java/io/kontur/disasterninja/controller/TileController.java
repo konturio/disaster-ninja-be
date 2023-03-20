@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Tiles", description = "Tiles API")
@@ -23,8 +24,8 @@ public class TileController {
     @ApiResponse(responseCode = "200", description = "Successful operation",
             content = @Content(mediaType = "application/vnd.mapbox-vector-tile", schema = @Schema(implementation = byte[].class)))
     @GetMapping(value = "/bivariate/v1/{z}/{x}/{y}.mvt", produces = "application/vnd.mapbox-vector-tile")
-    public byte[] getBivariateTileMvt(@PathVariable Integer z, @PathVariable Integer x, @PathVariable Integer y,
-                                      @RequestParam(defaultValue = "all") String indicatorsClass){
+    public ResponseEntity<byte[]> getBivariateTileMvt(@PathVariable Integer z, @PathVariable Integer x, @PathVariable Integer y,
+                               @RequestParam(defaultValue = "all") String indicatorsClass){
         return tileService.getBivariateTileMvt(z, x, y, indicatorsClass);
     }
 }
