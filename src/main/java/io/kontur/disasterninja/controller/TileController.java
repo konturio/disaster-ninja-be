@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Tiles", description = "Tiles API")
@@ -21,10 +23,18 @@ public class TileController {
             tags = {"Tiles"},
             description = "Returns bivariate mvt tile using z, x, y, indicator class and Insights API service.")
     @ApiResponse(responseCode = "200", description = "Successful operation",
-            content = @Content(mediaType = "application/vnd.mapbox-vector-tile", schema = @Schema(implementation = byte[].class)))
+            content = @Content(mediaType = "application/vnd.mapbox-vector-tile",
+                    schema = @Schema(implementation = byte[].class)))
     @GetMapping(value = "/bivariate/v1/{z}/{x}/{y}.mvt", produces = "application/vnd.mapbox-vector-tile")
-    public byte[] getBivariateTileMvt(@PathVariable Integer z, @PathVariable Integer x, @PathVariable Integer y,
-                                      @RequestParam(defaultValue = "all") String indicatorsClass){
-        return tileService.getBivariateTileMvt(z, x, y, indicatorsClass);
+    public ResponseEntity<?> getBivariateTileMvt(@PathVariable Integer z,
+                                                 @PathVariable Integer x,
+                                                 @PathVariable Integer y,
+                                                 @RequestParam(defaultValue = "all") String indicatorsClass) {
+        // return tileService.getBivariateTileMvt(z, x, y, indicatorsClass);
+
+        return ResponseEntity
+                .status(HttpStatus.PERMANENT_REDIRECT)
+                .location(tileService.getTilesLocationUri(z, x, y, indicatorsClass))
+                .build();
     }
 }

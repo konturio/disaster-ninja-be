@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+
 @Component
 @ConditionalOnProperty(name = "kontur.platform.insightsApi.url")
 public class InsightsApiClientImpl implements InsightsApiClient {
@@ -46,8 +48,21 @@ public class InsightsApiClientImpl implements InsightsApiClient {
         } else {
             incrementForCorrectLabels(z, NOT_AUTHENTICATED);
         }
-        return insightsApiRestTemplate.getForEntity(String.format(INSIGHTS_API_TILE_MVT_URI, z, x, y, indicatorsClass), byte[].class)
+        return insightsApiRestTemplate
+                .getForEntity(String.format(INSIGHTS_API_TILE_MVT_URI, z, x, y, indicatorsClass), byte[].class)
                 .getBody();
+    }
+
+    // Move this logic to service if things work out. Also remove client and tests
+    @Override
+    public URI getTilesLocationUri(Integer z, Integer x, Integer y, String indicatorsClass) {
+        if ("all".equals(indicatorsClass)) {
+            incrementForCorrectLabels(z, AUTHENTICATED);
+        } else {
+            incrementForCorrectLabels(z, NOT_AUTHENTICATED);
+        }
+        return insightsApiRestTemplate.getUriTemplateHandler()
+                .expand(String.format(INSIGHTS_API_TILE_MVT_URI, z, x, y, indicatorsClass));
     }
 
     private void incrementForCorrectLabels(Integer z, String auth) {
