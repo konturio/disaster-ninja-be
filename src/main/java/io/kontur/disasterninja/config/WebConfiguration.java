@@ -7,8 +7,6 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.kontur.disasterninja.client.InsightsApiClient;
-import io.kontur.disasterninja.client.InsightsApiClientDummy;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClientDummy;
 import io.kontur.disasterninja.config.metrics.ParamLessRestTemplateExchangeTagsProvider;
@@ -97,20 +95,6 @@ public class WebConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "kontur.platform.insightsApi.url")
-    public RestTemplate insightsApiRestTemplate(RestTemplateBuilder builder, HttpClient httpClient,
-                                                @Value("${kontur.platform.insightsApi.url}") String insightsApiUrl,
-                                                @Value("${kontur.platform.insightsApi.connectionTimeout}") Integer connectionTimeout,
-                                                @Value("${kontur.platform.insightsApi.readTimeout}") Integer readTimeout) {
-        return builder
-                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
-                .rootUri(insightsApiUrl)
-                .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
-                .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
-                .build();
-    }
-
-    @Bean
     public RestTemplate authorizationRestTemplate(RestTemplateBuilder builder, HttpClient httpClient,
                                                   @Value("${kontur.platform.keycloak.url}") String keycloakUrl) {
         return builder
@@ -191,11 +175,4 @@ public class WebConfiguration {
     public InsightsApiGraphqlClient insightsApiGraphqlClientDummy() {
         return new InsightsApiGraphqlClientDummy();
     }
-
-    @Bean
-    @ConditionalOnMissingBean(InsightsApiClient.class)
-    public InsightsApiClient insightsApiClientDummy() {
-        return new InsightsApiClientDummy();
-    }
-
 }

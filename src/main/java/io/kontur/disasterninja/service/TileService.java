@@ -1,7 +1,7 @@
 package io.kontur.disasterninja.service;
 
-import io.kontur.disasterninja.client.InsightsApiClient;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -10,13 +10,12 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class TileService {
 
-    private final InsightsApiClient insightsApiClient;
+    @Value("${kontur.platform.insightsApi.url}")
+    private String insightsApiHost;
 
-    public byte[] getBivariateTileMvt(Integer z, Integer x, Integer y, String indicatorsClass){
-        return insightsApiClient.getBivariateTileMvt(z, x, y, indicatorsClass);
-    }
+    private static final String INSIGHTS_API_TILES_PATH = "/tiles/bivariate/v1/%s/%s/%s.mvt?indicatorsClass=%s";
 
     public URI getTilesLocationUri(Integer z, Integer x, Integer y, String indicatorsClass) {
-        return insightsApiClient.getTilesLocationUri(z, x, y, indicatorsClass);
+        return URI.create(insightsApiHost + String.format(INSIGHTS_API_TILES_PATH, z, x, y, indicatorsClass));
     }
 }
