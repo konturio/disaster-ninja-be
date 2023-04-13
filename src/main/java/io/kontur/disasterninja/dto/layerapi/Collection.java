@@ -35,6 +35,9 @@ public class Collection {
     @JsonProperty("styleRule")
     private ObjectNode styleRule;
 
+    @JsonProperty("style")
+    private ObjectNode style;
+
     @JsonProperty("displayRule")
     private ObjectNode displayRule;
 
@@ -58,6 +61,9 @@ public class Collection {
 
     @JsonProperty("mapboxStyles")
     private ObjectNode mapboxStyles;
+
+    @JsonProperty("popupConfig")
+    private ObjectNode popupConfig;
 
     @JsonProperty("tileSize")
     private Integer tileSize;
