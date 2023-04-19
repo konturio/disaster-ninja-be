@@ -34,7 +34,7 @@ public class Layer {
     private LayerCategory category;
     private String group;
     private Legend legend;
-    private Style style;
+    private Style mapStyle;
     private List<String> copyrights;
     //layer details
     private Integer maxZoom; //for 'vector' and 'raster' only (see source.type)
@@ -82,8 +82,8 @@ public class Layer {
                 this.legend = getLegendWithStepsForWhichFeaturesExist(other.getLegend());
             }
         }
-        if (other.getStyle() != null) {
-            this.style = other.style;
+        if (other.getMapStyle() != null) {
+            this.mapStyle = other.mapStyle;
         }
         if (other.getCopyrights() != null) {
             this.copyrights = other.getCopyrights();

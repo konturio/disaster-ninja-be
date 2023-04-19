@@ -26,7 +26,7 @@ public class LayerUpdateDto {
     @Schema(name = "name")
     private String title;
     @JsonAlias("legend")
-    @JsonProperty("styleRule")
+    @JsonProperty("legendStyle")
     @Schema(name = "legend")
     private Legend legend;
     private ObjectNode featureProperties;

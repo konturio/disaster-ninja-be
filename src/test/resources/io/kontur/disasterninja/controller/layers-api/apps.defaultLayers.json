@@ -18,7 +18,7 @@
         "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
       ],
       "ownedByUser": false,
-      "styleRule": {
+      "legendStyle": {
         "type": "simple",
         "linkProperty": "projectLink",
         "steps": [

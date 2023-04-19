@@ -190,7 +190,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         assertEquals("tiles", collection.getLinks().get(0).getRel());
         assertEquals("https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf",
                 collection.getLinks().get(0).getHref());
-        assertEquals(LegendType.SIMPLE.toString(), collection.getStyleRule().get("type").textValue());
+        assertEquals(LegendType.SIMPLE.toString(), collection.getLegendStyle().get("type").textValue());
     }
 
     @Test
@@ -314,7 +314,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         assertEquals("tiles", collection.getLinks().get(0).getRel());
         assertEquals("https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf",
                 collection.getLinks().get(0).getHref());
-        assertEquals(LegendType.SIMPLE.toString(), collection.getStyleRule().get("type").textValue());
+        assertEquals(LegendType.SIMPLE.toString(), collection.getLegendStyle().get("type").textValue());
     }
 
     @Test

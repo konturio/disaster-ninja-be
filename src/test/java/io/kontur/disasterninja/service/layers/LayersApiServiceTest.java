@@ -190,7 +190,7 @@ public class LayersApiServiceTest {
         Collection collection = new Collection();
         collection.setId(id);
         collection.setTitle(title);
-        collection.setStyleRule(new ObjectMapper().readValue("{\"name\":\"legendName\",\"type\":\"simple\"," +
+        collection.setLegendStyle(new ObjectMapper().readValue("{\"name\":\"legendName\",\"type\":\"simple\"," +
                 "\"linkProperty\":null,\"steps\":[{\"paramName\":\"param name\",\"paramValue\":\"qwe\",\"axis\":null," +
                 "\"axisValue\":null,\"stepName\":\"step name\",\"stepShape\":\"hex\",\"style\":{\"prop\":\"value\"}," +
                 "\"sourceLayer\":\"source-layer\",\"stepIconFill\":\"fill\",\"stepIconStroke\":\"stroke\"}," +
