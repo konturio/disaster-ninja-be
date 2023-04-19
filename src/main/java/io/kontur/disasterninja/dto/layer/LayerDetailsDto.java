@@ -9,10 +9,11 @@ import io.kontur.disasterninja.domain.Style;
  * @param minZoom for 'vector' and 'raster' only (see source.type)
  */
 public record LayerDetailsDto(String id, Integer maxZoom, Integer minZoom, LayerSourceDto source, Legend legend,
-                              Style mapStyle, boolean ownedByUser) {
+                              Style style, String popupConfig, boolean ownedByUser) {
 
     public static LayerDetailsDto fromLayer(Layer layer) {
         return layer == null ? null : new LayerDetailsDto(layer.getId(), layer.getMaxZoom(), layer.getMinZoom(),
-                LayerSourceDto.fromLayer(layer), layer.getLegend(), layer.getMapStyle(), layer.isOwnedByUser());
+                LayerSourceDto.fromLayer(layer), layer.getLegend(), layer.getMapStyle(),
+                layer.getPopupConfig() != null ? layer.getPopupConfig().toString() : null, layer.isOwnedByUser());
     }
 }
