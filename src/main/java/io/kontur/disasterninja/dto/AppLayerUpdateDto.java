@@ -10,5 +10,5 @@ public class AppLayerUpdateDto {
 
     private String layerId;
     private Boolean isDefault;
-    private ObjectNode legendStyle;
+    private ObjectNode styleRule;
 }
