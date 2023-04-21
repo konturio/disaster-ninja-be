@@ -6,7 +6,7 @@ server:
 kontur:
   platform:
     event-api:
-      url: 'https://prod-event-api.k8s-01.konturlabs.com/events'
+      url: 'https://apps.kontur.io/events/'
       connectionTimeout: 60
       pageSize: 1000
       readTimeout: 60
@@ -22,19 +22,18 @@ kontur:
       connectionTimeout: 60
       readTimeout: 60
     layersApi:
-      url: 'https://prod-layers-api.k8s-01.konturlabs.com/layers/v2'
+      url: 'https://api.kontur.io/layers/v2'
       pageSize: 1000
       connectionTimeout: 60
       readTimeout: 60
     insightsApi:
-      url: 'https://prod-insights-api.k8s-01.konturlabs.com/insights-api'
       connectionTimeout: 60
       readTimeout: 60
       layersReloadInterval: PT10M
     tiles:
       host: 'https://disaster.ninja'
     userProfileApi:
-      url: 'https://prod-user-profile-api.k8s-01.konturlabs.com/userprofile'
+      url: 'https://apps.kontur.io/userprofile/'
       connectionTimeout: 20
       readTimeout: 20
 
