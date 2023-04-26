@@ -317,9 +317,9 @@ public class AppControllerTest extends TestDependingOnUserAuth {
                     assertThat(s, hasJsonPath("$.layers", hasSize(1)));
                     assertThat(s, hasJsonPath("$.layers[0].layerId", is("testLayerId")));
                     assertThat(s, hasJsonPath("$.layers[0].isDefault", is(Boolean.TRUE)));
-                    assertThat(s, hasJsonPath("$.layers[0].styleRule.id",
+                    assertThat(s, hasJsonPath("$.layers[0].legendStyle.id",
                             is("623705fe3955c57d8b2c85ba")));
-                    assertThat(s, hasJsonPath("$.layers[0].styleRule.index", is(1)));
+                    assertThat(s, hasJsonPath("$.layers[0].legendStyle.index", is(1)));
                 })
                 .andRespond(
                         withSuccess(readFile(this, "layers-api/apps.defaultLayers.json"),

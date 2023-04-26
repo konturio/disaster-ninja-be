@@ -107,4 +107,3 @@ graphql:
     keepAliveDuration: 300
     connectionTimeout: 300
     readTimeout: 300
-
