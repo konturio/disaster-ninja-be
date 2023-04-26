@@ -6,6 +6,7 @@ import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,14 +41,14 @@ public class InsightsApiClientImpl implements InsightsApiClient {
 
     @Override
     @Timed(value = "insights.getBivariateTileMvt", histogram = true)
-    public byte[] getBivariateTileMvt(Integer z, Integer x, Integer y, String indicatorsClass) {
+    public ResponseEntity<byte[]> getBivariateTileMvt(Integer z, Integer x, Integer y, String indicatorsClass) {
         if ("all".equals(indicatorsClass)) {
             incrementForCorrectLabels(z, AUTHENTICATED);
         } else {
             incrementForCorrectLabels(z, NOT_AUTHENTICATED);
         }
-        return insightsApiRestTemplate.getForEntity(String.format(INSIGHTS_API_TILE_MVT_URI, z, x, y, indicatorsClass), byte[].class)
-                .getBody();
+        return insightsApiRestTemplate.getForEntity(String.format(INSIGHTS_API_TILE_MVT_URI, z, x, y, indicatorsClass),
+                byte[].class);
     }
 
     private void incrementForCorrectLabels(Integer z, String auth) {
