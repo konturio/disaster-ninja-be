@@ -32,8 +32,11 @@ public class Collection {
     private ObjectNode properties;
 
     @JsonAlias("legend")
-    @JsonProperty("styleRule")
-    private ObjectNode styleRule;
+    @JsonProperty("legendStyle")
+    private ObjectNode legendStyle;
+
+    @JsonProperty("mapStyle")
+    private ObjectNode mapStyle;
 
     @JsonProperty("displayRule")
     private ObjectNode displayRule;
@@ -56,8 +59,8 @@ public class Collection {
     @JsonProperty("featureProperties")
     private ObjectNode featureProperties;
 
-    @JsonProperty("mapboxStyles")
-    private ObjectNode mapboxStyles;
+    @JsonProperty("popupConfig")
+    private ObjectNode popupConfig;
 
     @JsonProperty("tileSize")
     private Integer tileSize;

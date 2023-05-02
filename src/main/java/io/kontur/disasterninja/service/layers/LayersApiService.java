@@ -4,6 +4,7 @@ import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.Legend;
+import io.kontur.disasterninja.domain.Style;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LayerType;
 import io.kontur.disasterninja.dto.AppLayerUpdateDto;
@@ -112,8 +113,10 @@ public class LayersApiService {
                 .category(collection.getCategory() != null ? LayerCategory.fromString(
                         collection.getCategory().getName()) : null)
                 .group(collection.getGroup() != null ? collection.getGroup().getName() : null)
-                .legend(collection.getStyleRule() != null ?
-                        JsonUtil.readObjectNode(collection.getStyleRule(), Legend.class) : null)
+                .legend(collection.getLegendStyle() != null ?
+                        JsonUtil.readObjectNode(collection.getLegendStyle(), Legend.class) : null)
+                .mapStyle(collection.getMapStyle() != null ?
+                        JsonUtil.readObjectNode(collection.getMapStyle(), Style.class) : null)
                 .copyrights(collection.getCopyrights() != null ? singletonList(collection.getCopyrights()) : null)
                 .boundaryRequiredForRetrieval(boundaryRequiredForRetrieval)
                 .eventIdRequiredForRetrieval(eventIdRequiredForRetrieval)
@@ -121,7 +124,7 @@ public class LayersApiService {
                 .properties(collection.getProperties())
                 .featureProperties(collection.getFeatureProperties())
                 .type(LayerType.fromString(collection.getItemType()))
-                .mapboxStyles(collection.getMapboxStyles());
+                .popupConfig(collection.getPopupConfig());
 
         if (includeSource) {
             LayerSource source = null;

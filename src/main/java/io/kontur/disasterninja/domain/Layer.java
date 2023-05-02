@@ -34,6 +34,7 @@ public class Layer {
     private LayerCategory category;
     private String group;
     private Legend legend;
+    private Style mapStyle;
     private List<String> copyrights;
     //layer details
     private Integer maxZoom; //for 'vector' and 'raster' only (see source.type)
@@ -43,6 +44,7 @@ public class Layer {
     private boolean ownedByUser;
     private ObjectNode featureProperties;
     private ObjectNode mapboxStyles;
+    private ObjectNode popupConfig;
     private ObjectNode properties;
     private LayerType type; // for filtering layers in layers panel
 
@@ -79,6 +81,9 @@ public class Layer {
             } else {
                 this.legend = getLegendWithStepsForWhichFeaturesExist(other.getLegend());
             }
+        }
+        if (other.getMapStyle() != null) {
+            this.mapStyle = other.mapStyle;
         }
         if (other.getCopyrights() != null) {
             this.copyrights = other.getCopyrights();
