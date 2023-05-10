@@ -17,18 +17,30 @@ public class ApplicationService {
 
     private final UserProfileClient userProfileClient;
 
-    public AppDto getAppConfig(UUID appId) {
-        if (appId == null) {
-            appId = UUID.fromString(Objects.requireNonNull(userProfileClient.getDefaultAppId().getBody()));
+    public AppDto getAppConfig(UUID appId, String domain) {
+        AppDto appDto = null;
+        if (appId != null) {
+            appDto = userProfileClient.getApp(appId);
+        } else {
+            // TODO: one UPS call can be made instead of three in case requester domain is unknown.
+            //  Corresponding UPS changes required
+            if (domain != null) {
+                appDto = userProfileClient.getApp(domain);
+            }
+            if (appDto == null) { // requester domain is unknown
+                appId = UUID.fromString(Objects.requireNonNull(userProfileClient.getDefaultAppId().getBody()));
+                appDto = userProfileClient.getApp(appId);
+            }
         }
-        AppDto appDto = userProfileClient.getApp(appId);
+
         if (AuthenticationUtil.isUserAuthenticated()) {
             appDto.setUser(userProfileClient.getCurrentUser());
         }
 
         // TODO: remove this logic when feature configs from UPS are received within List<FeatureDto> features parameter
         List<FeatureDto> features = userProfileClient.getUserAppFeatures(appId);
-        features.forEach(feature -> feature.setConfiguration(appDto.getFeaturesConfig().get(feature.getName())));
+        AppDto finalAppDto = appDto;
+        features.forEach(feature -> feature.setConfiguration(finalAppDto.getFeaturesConfig().get(feature.getName())));
         appDto.setFeatures(features);
         appDto.setFeaturesConfig(null);
 

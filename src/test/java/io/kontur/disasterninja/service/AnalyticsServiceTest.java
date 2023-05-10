@@ -161,7 +161,7 @@ class AnalyticsServiceTest {
         array[1] = new AnalyticsStatisticsConfigurationDto("sumXWhereNoY", "population", "count");
         array[2] = new AnalyticsStatisticsConfigurationDto("sumX", "population", null);
 
-        when(applicationService.getAppConfig(any(UUID.class))).thenReturn(appDto);
+        when(applicationService.getAppConfig(any(UUID.class), any())).thenReturn(appDto);
         when(objectMapperMock.treeToValue(any(JsonNode.class), same(AnalyticsStatisticsConfigurationDto[].class))).thenReturn(array);
         when(insightsApiGraphqlClient.analyticsTabQuery(geoJSONArgumentCaptor.capture(),
                 functionArgsArgumentCaptor.capture())).thenReturn(completableFuture);
@@ -228,7 +228,7 @@ class AnalyticsServiceTest {
 
         CompletableFuture<List<AnalyticsTabQuery.Function>> completableFuture = mock(CompletableFuture.class);
 
-        when(applicationService.getAppConfig(any(UUID.class))).thenReturn(appDto);
+        when(applicationService.getAppConfig(any(UUID.class), any())).thenReturn(appDto);
         when(objectMapperMock.treeToValue(any(JsonNode.class), same(AnalyticsStatisticsConfigurationDto[].class))).thenReturn(array);
         when(insightsApiGraphqlClient.analyticsTabQuery(any(GeoJSON.class), anyList())).thenReturn(completableFuture);
 

@@ -101,7 +101,7 @@ public class AnalyticsService {
 
     private List<AnalyticsStatisticsConfigurationDto> getAnalyticsConfigurationForApplication(UUID appUuid) {
         try {
-            return Arrays.asList(objectMapper.treeToValue(applicationService.getAppConfig(appUuid)
+            return Arrays.asList(objectMapper.treeToValue(applicationService.getAppConfig(appUuid, null)
                     .getFeatures()
                     .stream()
                     .map(FeatureDto::getConfiguration)

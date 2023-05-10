@@ -121,18 +121,19 @@ public class AppsController {
                     array = @ArraySchema(schema = @Schema(implementation = LayerDetailsDto.class))))
     @PutMapping("/{id}/layers")
     public List<LayerDetailsDto> updateListOfLayers(@PathVariable("id") UUID appId,
-                                          @RequestBody List<AppLayerUpdateDto> layers) {
+                                                    @RequestBody List<AppLayerUpdateDto> layers) {
         List<Layer> updatedLayers = layersApiService.updateApplicationLayers(appId, layers);
         return updatedLayers.stream().map(LayerDetailsDto::fromLayer).toList();
     }
 
     @Operation(summary = "Get application config with features and user settings by id. Returns default app if no " +
-            "appId is provided", tags = {"Applications"})
+            "appId is provided and requester domain is unknown", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = AppDto.class)))
     @GetMapping(path = "/configuration")
-    public AppDto getAppConfig(@RequestParam(name = "appId", required = false) UUID appId) {
-        return applicationService.getAppConfig(appId);
+    public AppDto getAppConfig(@RequestParam(name = "appId", required = false) UUID appId,
+                               @RequestHeader(name = "Host", required = false) String domain) {
+        return applicationService.getAppConfig(appId, domain);
     }
 }

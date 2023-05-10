@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +31,7 @@ public class UserProfileClient extends RestClientWithBearerAuth {
     private static final String FEATURES_URL = "/features";
     private static final String APP_URL = "/apps";
     private static final String APP_URL_WITH_ID = "/apps/{id}";
+    private static final String APP_CONFIG_URL = "/apps/configuration";
     private static final String DEFAULT_APP_ID_URL = "/apps/default_id";
     private static final String CURRENT_USER_URL = "/users/current_user";
     private final RestTemplate userProfileRestTemplate;
@@ -115,6 +117,19 @@ public class UserProfileClient extends RestClientWithBearerAuth {
 
     public AppDto getApp(UUID id) {
         return sendAppRequest(APP_URL_WITH_ID, id, GET, null).getBody();
+    }
+
+    public AppDto getApp(String domain) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(APP_CONFIG_URL)
+                .queryParam("domain", domain);
+        LOG.info("Requester domain: {}", domain);
+        ResponseEntity<AppDto> response = userProfileRestTemplate
+                .exchange(builder.build().toString(), GET,
+                        httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
+                        new ParameterizedTypeReference<>() {
+                        });
+
+        return response.getBody();
     }
 
     public AppDto createApp(AppDto input) {
