@@ -22,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
@@ -126,14 +127,20 @@ public class AppsController {
         return updatedLayers.stream().map(LayerDetailsDto::fromLayer).toList();
     }
 
-    @Operation(summary = "Get application config with features and user settings by id. Returns default app if no " +
-            "appId is provided and requester domain is unknown", tags = {"Applications"})
+    @Operation(summary = "Get application config with features and user settings by id. Returns default app if " +
+            "no appId is provided and requester domain is unknown", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = AppDto.class)))
     @GetMapping(path = "/configuration")
     public AppDto getAppConfig(@RequestParam(name = "appId", required = false) UUID appId,
-                               @RequestHeader(name = "Host", required = false) String domain) {
+                               @RequestHeader(name = "referer", required = false) String referer) {
+        String domain = null;
+        try {
+            domain = new URI(referer).getHost();
+        } catch (Exception ignored) {
+        }
+
         return applicationService.getAppConfig(appId, domain);
     }
 }
