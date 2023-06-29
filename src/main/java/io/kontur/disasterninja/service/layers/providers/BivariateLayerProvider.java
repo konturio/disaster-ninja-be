@@ -127,7 +127,7 @@ public class BivariateLayerProvider implements LayerProvider {
                         .build())
                 .legend(legend)
                 .copyrights(copyrights)
-                .maxZoom(8)
+//                .maxZoom(8)
                 .globalOverlay(true)
                 .boundaryRequiredForRetrieval(false)
                 .eventIdRequiredForRetrieval(false)
