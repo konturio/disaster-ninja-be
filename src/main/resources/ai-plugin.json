@@ -9,7 +9,7 @@
   },
   "api": {
     "type": "openapi",
-    "url": "https://disaster.ninja/active/api/openapi.yaml"
+    "url": "https://disaster.ninja/active/api/openapi.json"
   },
   "logo_url": "https://disaster.ninja/active/static/favicon/kontur_logo_512x512.svg",
   "contact_email": "hello@kontur.io",
