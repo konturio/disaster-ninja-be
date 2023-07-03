@@ -1,0 +1,1075 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Kontur",
+    "description": "A plugin that allows the user to get answers to geospatial analytical questions using ChatGPT.",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "https://disaster.ninja/active/api"
+    }
+  ],
+  "paths": {
+    "/polygon_details": {
+      "post": {
+        "tags": [
+          "Analytics tab"
+        ],
+        "summary": "Calculate data for analytics tab using insights-api service",
+        "description": "Calculate data for analytics tab using insights-api service",
+        "operationId": "getAnalyticsTab",
+        "requestBody": {
+          "description": "Polygon in GeoJSON format. Send polygon as FeatureCollection",
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/FeatureCollection"
+                  },
+                  {
+                    "$ref": "#/components/schemas/GeometryCollection"
+                  },
+                  {
+                    "$ref": "#/components/schemas/LineString"
+                  },
+                  {
+                    "$ref": "#/components/schemas/MultiLineString"
+                  },
+                  {
+                    "$ref": "#/components/schemas/MultiPoint"
+                  },
+                  {
+                    "$ref": "#/components/schemas/MultiPolygon"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Point"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Polygon"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AnalyticsDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/polygon_details/v2": {
+      "post": {
+        "tags": [
+          "Analytics tab"
+        ],
+        "summary": "Calculate data for analytics tab using insights-api service and application configuration from UPS",
+        "description": "Calculate data for analytics tab using insights-api service and application configuration from UPS",
+        "operationId": "getAnalyticsTab_1",
+        "requestBody": {
+          "description": "Application identifier from UPS in uuid format. Polygon in GeoJSON format. Send polygon as FeatureCollection",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyticsRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AnalyticsResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/advanced_polygon_details": {
+      "post": {
+        "tags": [
+          "Advanced Analytics Tab"
+        ],
+        "summary": "Calculate data for advanced analytics panel using insights-api service",
+        "description": "Calculate advanced analytics to test the concept of getting analytical data automatically so analytical data makes sense.",
+        "operationId": "getAdvancedAnalyticsTab",
+        "requestBody": {
+          "description": "Polygon in GeoJSON format. Send polygon as FeatureCollection",
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/FeatureCollection"
+                  },
+                  {
+                    "$ref": "#/components/schemas/GeometryCollection"
+                  },
+                  {
+                    "$ref": "#/components/schemas/LineString"
+                  },
+                  {
+                    "$ref": "#/components/schemas/MultiLineString"
+                  },
+                  {
+                    "$ref": "#/components/schemas/MultiPoint"
+                  },
+                  {
+                    "$ref": "#/components/schemas/MultiPolygon"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Point"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Polygon"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdvancedAnalyticsDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/advanced_polygon_details/layers": {
+      "post": {
+        "tags": [
+          "Advanced Analytics Tab"
+        ],
+        "summary": "Calculate data for advanced analytics panel using insights-api service",
+        "description": "Calculate advanced analytics to test the concept of getting analytical data automatically so analytical data makes sense.",
+        "operationId": "getAdvancedAnalyticsTab_1",
+        "requestBody": {
+          "description": "Polygon in GeoJSON format. Send polygon as FeatureCollection",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdvancedAnalyticsRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdvancedAnalyticsDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bivariate_matrix": {
+      "post": {
+        "tags": [
+          "Bivariate matrix"
+        ],
+        "summary": "Calculate data for bivariate matrix using insights-api service",
+        "description": "Calculate bivariate matrix for given geometry and important layers.",
+        "operationId": "getBivariateMatrix",
+        "requestBody": {
+          "description": "Polygon in GeoJSON format. Send polygon as FeatureCollection",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BivariateMatrixRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BivariateMatrixDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tiles/bivariate/v1/{z}/{x}/{y}.mvt": {
+      "get": {
+        "tags": [
+          "Tiles"
+        ],
+        "summary": "Returns bivariate mvt tile using z, x, y, indicator class and Insights API service.",
+        "description": "Returns bivariate mvt tile using z, x, y, indicator class and Insights API service.",
+        "operationId": "getBivariateTileMvt",
+        "parameters": [
+          {
+            "name": "z",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "x",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "y",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "indicatorsClass",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "all"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/vnd.mapbox-vector-tile": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FeatureCollection": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GeoJSON"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "features": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Feature"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "GeometryCollection": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GeoJSON"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "geometries": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Geometry"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "LineString": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GeoJSON"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                }
+              },
+              "bbox": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "format": "double"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "MultiLineString": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GeoJSON"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "number",
+                      "format": "double"
+                    }
+                  }
+                }
+              },
+              "bbox": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "format": "double"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "MultiPoint": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GeoJSON"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                }
+              },
+              "bbox": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "format": "double"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "MultiPolygon": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GeoJSON"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "number",
+                        "format": "double"
+                      }
+                    }
+                  }
+                }
+              },
+              "bbox": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "format": "double"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Point": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GeoJSON"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "format": "double"
+                }
+              },
+              "bbox": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "format": "double"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Polygon": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GeoJSON"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "number",
+                      "format": "double"
+                    }
+                  }
+                }
+              },
+              "bbox": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "format": "double"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "AnalyticsDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "percentValue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "AnalyticsRequestDto": {
+        "type": "object",
+        "properties": {
+          "appId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "features": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/FeatureCollection"
+              },
+              {
+                "$ref": "#/components/schemas/GeometryCollection"
+              },
+              {
+                "$ref": "#/components/schemas/LineString"
+              },
+              {
+                "$ref": "#/components/schemas/MultiLineString"
+              },
+              {
+                "$ref": "#/components/schemas/MultiPoint"
+              },
+              {
+                "$ref": "#/components/schemas/MultiPolygon"
+              },
+              {
+                "$ref": "#/components/schemas/Point"
+              },
+              {
+                "$ref": "#/components/schemas/Polygon"
+              }
+            ]
+          }
+        }
+      },
+      "AnalyticsResponseDto": {
+        "type": "object",
+        "properties": {
+          "formula": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "unit": {
+            "$ref": "#/components/schemas/Unit"
+          },
+          "prefix": {
+            "type": "string"
+          },
+          "xlabel": {
+            "type": "string"
+          },
+          "ylabel": {
+            "type": "string"
+          }
+        }
+      },
+      "AdvancedAnalyticsDto": {
+        "type": "object",
+        "properties": {
+          "numerator": {
+            "type": "string"
+          },
+          "denominator": {
+            "type": "string"
+          },
+          "numeratorLabel": {
+            "type": "string"
+          },
+          "denominatorLabel": {
+            "type": "string"
+          },
+          "analytics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdvancedAnalyticsValuesDto"
+            }
+          }
+        }
+      },
+      "AdvancedAnalyticsValuesDto": {
+        "type": "object",
+        "properties": {
+          "calculation": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "quality": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "AdvancedAnalyticsRequestDto": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdvancedAnalyticsRequestValuesDto"
+            }
+          },
+          "features": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/FeatureCollection"
+              },
+              {
+                "$ref": "#/components/schemas/GeometryCollection"
+              },
+              {
+                "$ref": "#/components/schemas/LineString"
+              },
+              {
+                "$ref": "#/components/schemas/MultiLineString"
+              },
+              {
+                "$ref": "#/components/schemas/MultiPoint"
+              },
+              {
+                "$ref": "#/components/schemas/MultiPolygon"
+              },
+              {
+                "$ref": "#/components/schemas/Point"
+              },
+              {
+                "$ref": "#/components/schemas/Polygon"
+              }
+            ]
+          }
+        }
+      },
+      "AdvancedAnalyticsRequestValuesDto": {
+        "type": "object",
+        "properties": {
+          "numerator": {
+            "type": "string"
+          },
+          "denominator": {
+            "type": "string"
+          },
+          "calculations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "BivariateMatrixRequestDto": {
+        "type": "object",
+        "properties": {
+          "geoJSON": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/FeatureCollection"
+              },
+              {
+                "$ref": "#/components/schemas/GeometryCollection"
+              },
+              {
+                "$ref": "#/components/schemas/LineString"
+              },
+              {
+                "$ref": "#/components/schemas/MultiLineString"
+              },
+              {
+                "$ref": "#/components/schemas/MultiPoint"
+              },
+              {
+                "$ref": "#/components/schemas/MultiPolygon"
+              },
+              {
+                "$ref": "#/components/schemas/Point"
+              },
+              {
+                "$ref": "#/components/schemas/Polygon"
+              }
+            ]
+          },
+          "importantLayers": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "BivariateMatrixDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/BivariateMatrixGraphqlResponseDataDto"
+          }
+        }
+      },
+      "BivariateMatrixGraphqlResponseDataDto": {
+        "type": "object",
+        "properties": {
+          "polygonStatistic": {
+            "$ref": "#/components/schemas/PolygonStatisticDto"
+          }
+        }
+      },
+      "BivariateStatisticDto": {
+        "type": "object",
+        "properties": {
+          "axis": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BivariateLegendAxisDescription"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/MetaDto"
+          },
+          "indicators": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IndicatorDto"
+            }
+          },
+          "overlays": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OverlayDto"
+            }
+          },
+          "correlationRates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CorrelationRateDto"
+            }
+          },
+          "colors": {
+            "$ref": "#/components/schemas/ColorsDto"
+          }
+        }
+      },
+      "ColorsDto": {
+        "type": "object",
+        "properties": {
+          "fallback": {
+            "type": "string"
+          },
+          "combinations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CombinationDto"
+            }
+          }
+        }
+      },
+      "GeoJSON": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "Feature": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "object"
+          },
+          "geometry": {
+            "$ref": "#/components/schemas/Geometry"
+          },
+          "properties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "Geometry": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "Unit": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "shortName": {
+            "type": "string"
+          },
+          "longName": {
+            "type": "string"
+          }
+        }
+      },
+      "PolygonStatisticDto": {
+        "type": "object",
+        "properties": {
+          "bivariateStatistic": {
+            "$ref": "#/components/schemas/BivariateStatisticDto"
+          }
+        }
+      },
+      "BivariateLegendAxisDescription": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BivariateLegendAxisStep"
+            }
+          },
+          "quality": {
+            "type": "number",
+            "format": "double"
+          },
+          "quotient": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "quotients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BivariateLegendQuotient"
+            }
+          },
+          "parent": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "BivariateLegendAxisStep": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "BivariateLegendQuotient": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "unit": {
+            "$ref": "#/components/schemas/Unit"
+          }
+        }
+      },
+      "MetaDto": {
+        "type": "object",
+        "properties": {
+          "max_zoom": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "min_zoom": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "IndicatorDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "copyrights": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "direction": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "unit": {
+            "$ref": "#/components/schemas/Unit"
+          }
+        }
+      },
+      "OverlayDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "x": {
+            "$ref": "#/components/schemas/BivariateLegendAxisDescription"
+          },
+          "y": {
+            "$ref": "#/components/schemas/BivariateLegendAxisDescription"
+          },
+          "colors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ColorDto"
+            }
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CombinationDto": {
+        "type": "object",
+        "properties": {
+          "color": {
+            "type": "string"
+          },
+          "corner": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "color_comment": {
+            "type": "string"
+          }
+        }
+      },
+      "CorrelationRateDto": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "$ref": "#/components/schemas/BivariateLegendAxisDescription"
+          },
+          "y": {
+            "$ref": "#/components/schemas/BivariateLegendAxisDescription"
+          },
+          "rate": {
+            "type": "number",
+            "format": "double"
+          },
+          "quality": {
+            "type": "number",
+            "format": "double"
+          },
+          "correlation": {
+            "type": "number",
+            "format": "double"
+          },
+          "avgCorrelationX": {
+            "type": "number",
+            "format": "double"
+          },
+          "avgCorrelationY": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ColorDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

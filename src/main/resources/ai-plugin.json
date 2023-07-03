@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Kontur",
+  "name_for_model": "kontur",
+  "description_for_human": "Get answers to geospatial analytical questions.",
+  "description_for_model": "Help the user get answers to geospatial analytical questions.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://disaster.ninja/active/api/openapi.yaml"
+  },
+  "logo_url": "https://disaster.ninja/active/static/favicon/kontur_logo_512x512.svg",
+  "contact_email": "hello@kontur.io",
+  "legal_info_url": "https://www.kontur.io/privacy-policy/"
+}
