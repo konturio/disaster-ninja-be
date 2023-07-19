@@ -120,7 +120,8 @@ public class BivariateLayerProvider implements LayerProvider {
 
         List<String> copyrights = copyrightsFromIndicators(legend, indicators);
 
-        String url = useInsightsV2 ? "api/tiles/bivariate/v2/{z}/{x}/{y}.mvt?indicatorsClass=general"
+        String url = (useInsightsV2 != null && useInsightsV2)
+                ? "api/tiles/bivariate/v2/{z}/{x}/{y}.mvt?indicatorsClass=general"
                 : "api/tiles/bivariate/v1/{z}/{x}/{y}.mvt?indicatorsClass=general";
         return Layer.builder()
                 .id(getIdWithPrefix(overlay.getName()))
