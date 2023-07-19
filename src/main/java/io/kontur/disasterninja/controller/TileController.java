@@ -28,4 +28,15 @@ public class TileController {
                                @RequestParam(defaultValue = "all") String indicatorsClass){
         return tileService.getBivariateTileMvt(z, x, y, indicatorsClass);
     }
+
+    @Operation(summary = "Returns bivariate mvt tile using z, x, y, indicator class and Insights API service version 2.",
+            tags = {"Tiles"},
+            description = "Returns bivariate mvt tile using z, x, y, indicator class and Insights API service version 2.")
+    @ApiResponse(responseCode = "200", description = "Successful operation",
+            content = @Content(mediaType = "application/vnd.mapbox-vector-tile", schema = @Schema(implementation = byte[].class)))
+    @GetMapping(value = "/bivariate/v2/{z}/{x}/{y}.mvt", produces = "application/vnd.mapbox-vector-tile")
+    public ResponseEntity<byte[]> getBivariateTileMvtV2(@PathVariable Integer z, @PathVariable Integer x, @PathVariable Integer y,
+                                                      @RequestParam(defaultValue = "all") String indicatorsClass){
+        return tileService.getBivariateTileMvtV2(z, x, y, indicatorsClass);
+    }
 }

@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 public class InsightsApiClientImpl implements InsightsApiClient {
 
     private static final String INSIGHTS_API_TILE_MVT_URI = "/tiles/bivariate/v1/%s/%s/%s.mvt?indicatorsClass=%s";
+    private static final String INSIGHTS_API_TILE_MVT_URI_V2 = "/tiles/bivariate/v2/%s/%s/%s.mvt?indicatorsClass=%s";
 
     private final RestTemplate insightsApiRestTemplate;
 
@@ -48,6 +49,18 @@ public class InsightsApiClientImpl implements InsightsApiClient {
             incrementForCorrectLabels(z, NOT_AUTHENTICATED);
         }
         return insightsApiRestTemplate.getForEntity(String.format(INSIGHTS_API_TILE_MVT_URI, z, x, y, indicatorsClass),
+                byte[].class);
+    }
+
+    @Override
+    @Timed(value = "insights.getBivariateTileMvt", histogram = true)
+    public ResponseEntity<byte[]> getBivariateTileMvtV2(Integer z, Integer x, Integer y, String indicatorsClass) {
+        if ("all".equals(indicatorsClass)) {
+            incrementForCorrectLabels(z, AUTHENTICATED);
+        } else {
+            incrementForCorrectLabels(z, NOT_AUTHENTICATED);
+        }
+        return insightsApiRestTemplate.getForEntity(String.format(INSIGHTS_API_TILE_MVT_URI_V2, z, x, y, indicatorsClass),
                 byte[].class);
     }
 
