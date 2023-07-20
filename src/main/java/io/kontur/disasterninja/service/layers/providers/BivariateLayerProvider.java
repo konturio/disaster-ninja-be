@@ -11,6 +11,7 @@ import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -41,6 +42,9 @@ public class BivariateLayerProvider implements LayerProvider {
             "(http|ftp|https):\\/\\/([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-])");
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
     private volatile Map<String, Layer> bivariateLayers = new ConcurrentHashMap<>();
+
+    @Value("${kontur.platform.insightsApi.useInsightsV2:false}")
+    private Boolean useInsightsV2;
 
     @PostConstruct
     @Scheduled(initialDelayString = "${kontur.platform.insightsApi.layersReloadInterval}",
@@ -116,13 +120,16 @@ public class BivariateLayerProvider implements LayerProvider {
 
         List<String> copyrights = copyrightsFromIndicators(legend, indicators);
 
+        String url = (useInsightsV2 != null && useInsightsV2)
+                ? "api/tiles/bivariate/v2/{z}/{x}/{y}.mvt?indicatorsClass=general"
+                : "api/tiles/bivariate/v1/{z}/{x}/{y}.mvt?indicatorsClass=general";
         return Layer.builder()
                 .id(getIdWithPrefix(overlay.getName()))
                 .name(overlay.getName())
                 .description(overlay.getDescription())
                 .source(LayerSource.builder()
                         .type(VECTOR)
-                        .urls(List.of("api/tiles/bivariate/v1/{z}/{x}/{y}.mvt?indicatorsClass=general"))
+                        .urls(List.of(url))
                         .tileSize(512)
                         .build())
                 .legend(legend)

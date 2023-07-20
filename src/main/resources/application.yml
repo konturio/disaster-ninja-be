@@ -30,6 +30,7 @@ kontur:
       connectionTimeout: 60
       readTimeout: 60
       layersReloadInterval: PT10M
+      useInsightsV2: false
     tiles:
       host: 'https://disaster.ninja'
     userProfileApi:
