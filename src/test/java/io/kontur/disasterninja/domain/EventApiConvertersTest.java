@@ -198,7 +198,7 @@ public class EventApiConvertersTest {
         //1. with 0 episodes
         event.setEpisodes(episodes);
         EventListDto dto = EventListEventDtoConverter.convert(event);
-        assertEquals(dte.getEpisodeCount(), 0);
+        assertEquals(dto.getEpisodeCount(), 0);
         
         //2. with 2 episodes
         FeedEpisode episode1 = new FeedEpisode();
@@ -209,6 +209,6 @@ public class EventApiConvertersTest {
         episodes.add(episode2);
         event.setEpisodes(episodes);
         dto = EventListEventDtoConverter.convert(event);
-        assertEquals(dte.getEpisodeCount(), 2);
+        assertEquals(dto.getEpisodeCount(), 2);
     }
 }
