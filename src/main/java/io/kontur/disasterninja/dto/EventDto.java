@@ -29,5 +29,6 @@ public class EventDto {
     private OffsetDateTime updatedAt;
     private List<Double> bbox;
     private List<Double> centroid;
+    private int episodeCount;
 
 }

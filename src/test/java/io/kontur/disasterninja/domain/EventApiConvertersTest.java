@@ -192,10 +192,11 @@ public class EventApiConvertersTest {
     @Test
     public void eventListDtoTestEpisodeCount() {
         EventApiEventDto event = testEvent();
-        List<FeedEpisode> episodes = new ArrayList<>();
+        EventListDto dto = EventListEventDtoConverter.convert(event);
+        assertEquals(dto.getEpisodeCount(), 1);
 
-        
         //1. with 0 episodes
+        List<FeedEpisode> episodes = new ArrayList<>();
         event.setEpisodes(episodes);
         EventListDto dto = EventListEventDtoConverter.convert(event);
         assertEquals(dto.getEpisodeCount(), 0);
