@@ -188,4 +188,27 @@ public class EventApiConvertersTest {
         dto = EventListEventDtoConverter.convert(event);
         assertEquals(DROUGHT.getName(), dto.getEventName());
     }
+
+    @Test
+    public void eventListDtoTestEpisodeCount() {
+        EventApiEventDto event = testEvent();
+        List<FeedEpisode> episodes = new ArrayList<>();
+
+        
+        //1. with 0 episodes
+        event.setEpisodes(episodes);
+        EventListDto dto = EventListEventDtoConverter.convert(event);
+        assertEquals(dte.getEpisodeCount(), 0);
+        
+        //2. with 2 episodes
+        FeedEpisode episode1 = new FeedEpisode();
+        FeedEpisode episode2 = new FeedEpisode();
+        episode1.setType(EventType.OTHER.toString());
+        episode2.setType(EventType.OTHER.toString());
+        episodes.add(episode1);
+        episodes.add(episode2);
+        event.setEpisodes(episodes);
+        dto = EventListEventDtoConverter.convert(event);
+        assertEquals(dte.getEpisodeCount(), 2);
+    }
 }
