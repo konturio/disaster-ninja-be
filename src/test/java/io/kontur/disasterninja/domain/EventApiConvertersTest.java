@@ -39,6 +39,7 @@ public class EventApiConvertersTest {
         episodes.add(episode);
 
         event.setEpisodes(episodes);
+        event.setEpisodeCount(1);
         return event;
     }
 
@@ -121,23 +122,16 @@ public class EventApiConvertersTest {
     @Test
     public void eventDtoTestEpisodeCount() {
         EventApiEventDto event = testEvent();
-        EventListDto dto = EventDtoConverter.convert(event);
+        EventDto dto = EventDtoConverter.convert(event);
         assertEquals(dto.getEpisodeCount(), 1);
 
         //1. with 0 episodes
-        List<FeedEpisode> episodes = new ArrayList<>();
-        event.setEpisodes(episodes);
+        event.setEpisodeCount(0);
         dto = EventDtoConverter.convert(event);
         assertEquals(dto.getEpisodeCount(), 0);
         
         //2. with 2 episodes
-        FeedEpisode episode1 = new FeedEpisode();
-        FeedEpisode episode2 = new FeedEpisode();
-        episode1.setType(EventType.OTHER.toString());
-        episode2.setType(EventType.OTHER.toString());
-        episodes.add(episode1);
-        episodes.add(episode2);
-        event.setEpisodes(episodes);
+        event.setEpisodeCount(2);
         dto = EventDtoConverter.convert(event);
         assertEquals(dto.getEpisodeCount(), 2);
     }
@@ -220,19 +214,12 @@ public class EventApiConvertersTest {
         assertEquals(dto.getEpisodeCount(), 1);
 
         //1. with 0 episodes
-        List<FeedEpisode> episodes = new ArrayList<>();
-        event.setEpisodes(episodes);
+        event.setEpisodeCount(0);
         dto = EventListEventDtoConverter.convert(event);
         assertEquals(dto.getEpisodeCount(), 0);
         
         //2. with 2 episodes
-        FeedEpisode episode1 = new FeedEpisode();
-        FeedEpisode episode2 = new FeedEpisode();
-        episode1.setType(EventType.OTHER.toString());
-        episode2.setType(EventType.OTHER.toString());
-        episodes.add(episode1);
-        episodes.add(episode2);
-        event.setEpisodes(episodes);
+        event.setEpisodeCount(2);
         dto = EventListEventDtoConverter.convert(event);
         assertEquals(dto.getEpisodeCount(), 2);
     }
