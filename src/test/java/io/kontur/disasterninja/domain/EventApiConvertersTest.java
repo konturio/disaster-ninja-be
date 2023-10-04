@@ -39,6 +39,7 @@ public class EventApiConvertersTest {
         episodes.add(episode);
 
         event.setEpisodes(episodes);
+        event.setEpisodeCount(1);
         return event;
     }
 
@@ -119,6 +120,23 @@ public class EventApiConvertersTest {
     }
 
     @Test
+    public void eventDtoTestEpisodeCount() {
+        EventApiEventDto event = testEvent();
+        EventDto dto = EventDtoConverter.convert(event);
+        assertEquals(dto.getEpisodeCount(), 1);
+
+        //1. with 0 episodes
+        event.setEpisodeCount(0);
+        dto = EventDtoConverter.convert(event);
+        assertEquals(dto.getEpisodeCount(), 0);
+        
+        //2. with 2 episodes
+        event.setEpisodeCount(2);
+        dto = EventDtoConverter.convert(event);
+        assertEquals(dto.getEpisodeCount(), 2);
+    }
+
+    @Test
     public void eventListDtoTestNulls() {
         EventApiEventDto event = testEvent();
         EventListDto dto = EventListEventDtoConverter.convert(event);
@@ -187,5 +205,22 @@ public class EventApiConvertersTest {
         event.setProperName(null);
         dto = EventListEventDtoConverter.convert(event);
         assertEquals(DROUGHT.getName(), dto.getEventName());
+    }
+
+    @Test
+    public void eventListDtoTestEpisodeCount() {
+        EventApiEventDto event = testEvent();
+        EventListDto dto = EventListEventDtoConverter.convert(event);
+        assertEquals(dto.getEpisodeCount(), 1);
+
+        //1. with 0 episodes
+        event.setEpisodeCount(0);
+        dto = EventListEventDtoConverter.convert(event);
+        assertEquals(dto.getEpisodeCount(), 0);
+        
+        //2. with 2 episodes
+        event.setEpisodeCount(2);
+        dto = EventListEventDtoConverter.convert(event);
+        assertEquals(dto.getEpisodeCount(), 2);
     }
 }
