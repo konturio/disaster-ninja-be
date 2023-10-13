@@ -134,10 +134,10 @@ public class AppsController {
                     schema = @Schema(implementation = AppDto.class)))
     @GetMapping(path = "/configuration")
     public AppDto getAppConfig(@RequestParam(name = "appId", required = false) UUID appId,
-                               @RequestHeader(name = "referer", required = false) String referer) {
+                               @RequestHeader(name = "X-Forwarded-Host", required = false) String xForwardedHost) {
         String domain = null;
         try {
-            domain = new URI(referer).getHost();
+            domain = new URI(xForwardedHost).getHost();
         } catch (Exception ignored) {
         }
 
