@@ -22,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
@@ -121,18 +122,25 @@ public class AppsController {
                     array = @ArraySchema(schema = @Schema(implementation = LayerDetailsDto.class))))
     @PutMapping("/{id}/layers")
     public List<LayerDetailsDto> updateListOfLayers(@PathVariable("id") UUID appId,
-                                          @RequestBody List<AppLayerUpdateDto> layers) {
+                                                    @RequestBody List<AppLayerUpdateDto> layers) {
         List<Layer> updatedLayers = layersApiService.updateApplicationLayers(appId, layers);
         return updatedLayers.stream().map(LayerDetailsDto::fromLayer).toList();
     }
 
-    @Operation(summary = "Get application config with features and user settings by id. Returns default app if no " +
-            "appId is provided", tags = {"Applications"})
+    @Operation(summary = "Get application config with features and user settings by id. Returns default app if " +
+            "no appId is provided and requester domain is unknown", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = AppDto.class)))
     @GetMapping(path = "/configuration")
-    public AppDto getAppConfig(@RequestParam(name = "appId", required = false) UUID appId) {
-        return applicationService.getAppConfig(appId);
+    public AppDto getAppConfig(@RequestParam(name = "appId", required = false) UUID appId,
+                               @RequestHeader(name = "X-Forwarded-Host", required = false) String xForwardedHost) {
+        String domain = null;
+        try {
+            domain = new URI(xForwardedHost).getHost();
+        } catch (Exception ignored) {
+        }
+
+        return applicationService.getAppConfig(appId, domain);
     }
 }

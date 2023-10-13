@@ -354,7 +354,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
                         MediaType.APPLICATION_JSON));
 
         //WHEN
-        AppDto result = appsController.getAppConfig(appID);
+        AppDto result = appsController.getAppConfig(appID, null);
 
         //THEN
         assertNotNull(result.getDescription());
@@ -385,7 +385,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
                         MediaType.APPLICATION_JSON));
 
         //WHEN
-        AppDto result = appsController.getAppConfig(appID);
+        AppDto result = appsController.getAppConfig(appID, null);
 
         //THEN
         assertNotNull(result.getDescription());
