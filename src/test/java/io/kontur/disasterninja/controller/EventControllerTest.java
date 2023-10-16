@@ -53,7 +53,7 @@ public class EventControllerTest {
     }
 
     @Test
-    public void fefaultFeedReturnedByUps_singleFeedReturnedByEventApiTest() {
+    public void defaultFeedReturnedByUps_singleFeedReturnedByEventApiTest() {
         givenUpsReturnsPublicFeed2AsDefault();
         givenEventApiReturnsOnlyFeed2();
 

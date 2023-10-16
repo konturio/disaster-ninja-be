@@ -9,4 +9,10 @@ public class InsightsApiClientDummy implements InsightsApiClient {
         return ResponseEntity.ok()
                 .body(new byte[0]);
     }
+
+    @Override
+    public ResponseEntity<byte[]> getBivariateTileMvtV2(Integer z, Integer x, Integer y, String indicatorsClass) {
+        return ResponseEntity.ok()
+                .body(new byte[0]);
+    }
 }

@@ -27,4 +27,5 @@ public class EventApiEventDto {
     private String location;
     private List<Double> bbox = new ArrayList<>();
     private List<Double> centroid = new ArrayList<>();
+    private int episodeCount;
 }

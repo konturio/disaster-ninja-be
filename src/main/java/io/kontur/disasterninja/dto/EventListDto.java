@@ -22,5 +22,6 @@ public class EventListDto {
     private List<String> externalUrls;
     private List<Double> bbox;
     private List<Double> centroid;
+    private int episodeCount;
 
 }
