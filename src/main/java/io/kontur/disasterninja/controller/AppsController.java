@@ -135,12 +135,6 @@ public class AppsController {
     @GetMapping(path = "/configuration")
     public AppDto getAppConfig(@RequestParam(name = "appId", required = false) UUID appId,
                                @RequestHeader(name = "X-Forwarded-Host", required = false) String xForwardedHost) {
-        String domain = null;
-        try {
-            domain = new URI(xForwardedHost).getHost();
-        } catch (Exception ignored) {
-        }
-
-        return applicationService.getAppConfig(appId, domain);
+        return applicationService.getAppConfig(appId, xForwardedHost);
     }
 }
