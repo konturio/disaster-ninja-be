@@ -123,7 +123,7 @@ configs:
           paramValue: 'centerPoint'
           style:
             circle-radius: 3
-            circle-color: '#051626в'
+            circle-color: '#051626'
         - stepName: 'Exposure Area'
           stepShape: 'circle'
           paramName: 'areaType'
