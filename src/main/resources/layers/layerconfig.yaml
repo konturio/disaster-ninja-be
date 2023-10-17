@@ -158,6 +158,102 @@ configs:
           style:
             width: 3
             color: '#646F78'
+        - stepName: 'Intensity III'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_3'
+          style:
+            width: 3
+            color: '#EAED41'
+            offset: 4
+            casing-offset: 2
+            casing-color: '#EAED41'
+            casing-width: 3
+            casing-opacity: 0.3
+        - stepName: 'Intensity IV'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_4'
+          style:
+            width: 2
+            color: '#FACD2D'
+            offset: 4
+            casing-offset: 2
+            casing-color: '#FACD2D'
+            casing-width: 3
+            casing-opacity: 0.3
+        - stepName: 'Intensity V'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_5'
+          style:
+            width: 2
+            color: '#FFAB2E'
+            offset: 4
+            casing-offset: 2
+            casing-color: '#FFAB2E'
+            casing-width: 3
+            casing-opacity: 0.3
+        - stepName: 'Intensity VI'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_6'
+          style:
+            width: 2
+            color: '#FF7C1D'
+            offset: 4
+            casing-offset: 2
+            casing-color: '#FF7C1D'
+            casing-width: 3
+            casing-opacity: 0.3
+        - stepName: 'Intensity VII'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_7'
+          style:
+            width: 2
+            color: '#FC4C00'
+            offset: 4
+            casing-offset: 2
+            casing-color: '#FC4C00'
+            casing-width: 3
+            casing-opacity: 0.3
+        - stepName: 'Intensity VIII'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_8'
+          style:
+            width: 2
+            color: '#DF2100'
+            offset: 4
+            casing-offset: 2
+            casing-color: '#DF2100'
+            casing-width: 3
+            casing-opacity: 0.3
+        - stepName: 'Intensity IX'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_9'
+          style:
+            width: 2
+            color: '#830909'
+            offset: 4
+            casing-offset: 2
+            casing-color: '#830909'
+            casing-width: 3
+            casing-opacity: 0.3
+        - stepName: 'Intensity X'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_10'
+          style:
+            width: 2
+            color: '#470A00'
+            offset: 4
+            casing-offset: 2
+            casing-color: '#470A00'
+            casing-width: 3
+            casing-opacity: 0.3
 
   - id: 'eventShape.FLOOD'
     globalOverlay: false
