@@ -130,8 +130,13 @@ configs:
           paramPattern: 'globalArea|exposure'
           paramValue: 'globalArea'
           style:
-            width: 3
-            color: '#051626'
+            width: 2
+            color: '#D52627'
+            offset: 4
+            casing-offset: 2
+            casing-color: '#D52627'
+            casing-width: 3
+            casing-opacity: 0.3
 
   - id: 'eventShape.EARTHQUAKE'
     globalOverlay: false
@@ -332,6 +337,11 @@ configs:
           style:
             width: 3
             color: '#051626'
+            offset: 4
+            casing-offset: 2
+            casing-color: '#051626'
+            casing-width: 3
+            casing-opacity: 0.3
         - stepName: 'Alert Area'
           stepShape: 'circle'
           paramName: 'areaType'
