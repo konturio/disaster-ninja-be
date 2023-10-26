@@ -130,8 +130,13 @@ configs:
           paramPattern: 'globalArea|exposure'
           paramValue: 'globalArea'
           style:
-            width: 3
-            color: '#051626'
+            width: 2
+            color: '#D52627'
+            offset: 4
+            casing-offset: 2
+            casing-color: '#D52627'
+            casing-width: 3
+            casing-opacity: 0.3
 
   - id: 'eventShape.EARTHQUAKE'
     globalOverlay: false
@@ -158,62 +163,153 @@ configs:
           style:
             width: 3
             color: '#646F78'
-        - stepName: 'Intensity III'
+        - stepName: 'Intensity 0.0 – Not Felt'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_0'
+          style:
+            width: 2
+            color: '#B6D433'
+        - stepName: 'Intensity 0.5 – Not Felt'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_0.5'
+          style:
+            width: 2
+            color: '#DAD12E'
+        - stepName: 'Intensity 1.0 – Not Felt'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_1'
+          style:
+            width: 2
+            color: '#FBCE2E'
+        - stepName: 'Intensity 1.5 – Weak'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_1.5'
+          style:
+            width: 2
+            color: '#F5BE2E'
+        - stepName: 'Intensity 2.0 – Weak'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_2'
+          style:
+            width: 2
+            color: '#F1AE2D'
+        - stepName: 'Intensity 2.5 – Weak'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_2.5'
+          style:
+            width: 2
+            color: '#EC9E2C'
+        - stepName: 'Intensity 3.0 – Weak'
           stepShape: 'circle'
           paramName: 'Class'
           paramValue: 'Poly_SMPInt_3'
           style:
             width: 2
-            color: '#EAED41'
-        - stepName: 'Intensity IV'
+            color: '#E88F2B'
+        - stepName: 'Intensity 3.5 – Light'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_3.5'
+          style:
+            width: 2
+            color: '#E4812A'
+        - stepName: 'Intensity 4.0 – Light'
           stepShape: 'circle'
           paramName: 'Class'
           paramValue: 'Poly_SMPInt_4'
           style:
             width: 2
-            color: '#FACD2D'
-        - stepName: 'Intensity V'
+            color: '#E17329'
+        - stepName: 'Intensity 4.5 – Moderate'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_4.5'
+          style:
+            width: 2
+            color: '#DE6328'
+        - stepName: 'Intensity 5.0 – Moderate'
           stepShape: 'circle'
           paramName: 'Class'
           paramValue: 'Poly_SMPInt_5'
           style:
             width: 2
-            color: '#FFAB2E'
-        - stepName: 'Intensity VI'
+            color: '#DB5228'
+        - stepName: 'Intensity 5.5 – Strong'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_5.5'
+          style:
+            width: 2
+            color: '#D73F27'
+        - stepName: 'Intensity 6.0 – Strong'
           stepShape: 'circle'
           paramName: 'Class'
           paramValue: 'Poly_SMPInt_6'
           style:
             width: 2
-            color: '#FF7C1D'
-        - stepName: 'Intensity VII'
+            color: '#D52627'
+        - stepName: 'Intensity 6.5 – Very Strong'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_6.5'
+          style:
+            width: 2
+            color: '#BD2A26'
+        - stepName: 'Intensity 7.0 – Very Strong'
           stepShape: 'circle'
           paramName: 'Class'
           paramValue: 'Poly_SMPInt_7'
           style:
             width: 2
-            color: '#FC4C00'
-        - stepName: 'Intensity VIII'
+            color: '#A72C26'
+        - stepName: 'Intensity 7.5 – Severe'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_7.5'
+          style:
+            width: 2
+            color: '#922B24'
+        - stepName: 'Intensity 8.0 – Severe'
           stepShape: 'circle'
           paramName: 'Class'
           paramValue: 'Poly_SMPInt_8'
           style:
             width: 2
-            color: '#DF2100'
-        - stepName: 'Intensity IX'
+            color: '#7D2922'
+        - stepName: 'Intensity 8.5 – Violent'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_8.5'
+          style:
+            width: 2
+            color: '#6A251F'
+        - stepName: 'Intensity 9.0 – Violent'
           stepShape: 'circle'
           paramName: 'Class'
           paramValue: 'Poly_SMPInt_9'
           style:
             width: 2
-            color: '#830909'
-        - stepName: 'Intensity X'
+            color: '#58211B'
+        - stepName: 'Intensity 9.5 – Extreme'
+          stepShape: 'circle'
+          paramName: 'Class'
+          paramValue: 'Poly_SMPInt_9.5'
+          style:
+            width: 2
+            color: '#481B17'
+        - stepName: 'Intensity 10+ – Extreme'
           stepShape: 'circle'
           paramName: 'Class'
           paramValue: 'Poly_SMPInt_10'
           style:
             width: 2
-            color: '#470A00'
+            color: '#371310'
 
   - id: 'eventShape.FLOOD'
     globalOverlay: false
@@ -239,8 +335,13 @@ configs:
           paramPattern: 'position|exposure'
           paramValue: 'exposure'
           style:
-            width: 3
+            width: 2
             color: '#051626'
+            offset: 4
+            casing-offset: 2
+            casing-color: '#051626'
+            casing-width: 3
+            casing-opacity: 0.3
         - stepName: 'Alert Area'
           stepShape: 'circle'
           paramName: 'areaType'
