@@ -40,10 +40,12 @@ public class SlackMessageFormatter {
         StringBuilder description = new StringBuilder();
         description.append(convertNotificationDescription(latestEpisode));
         description.append(convertUrbanStatistic(urbanPopulationProperties));
-        description.append(convertPopulationStatistic(episodeDetails));
-        description.append(convertIndustrialStatistic(episodeDetails, eventDetails));
-        description.append(convertForestStatistic(episodeDetails, eventDetails));
-        description.append(convertFireStatistic(episodeDetails, eventDetails, event));
+        if (episodeDetails != null && eventDetails != null) {
+            description.append(convertPopulationStatistic(episodeDetails));
+            description.append(convertIndustrialStatistic(episodeDetails, eventDetails));
+            description.append(convertForestStatistic(episodeDetails, eventDetails));
+            description.append(convertFireStatistic(episodeDetails, eventDetails, event));
+        }
         description.append(convertOsmQuality(analytics));
 
         String colorCode = getMessageColorCode(event, latestEpisode);
@@ -75,9 +77,6 @@ public class SlackMessageFormatter {
     }
 
     private String convertPopulationStatistic(Map<String, Object> episodeDetails) {
-        if (episodeDetails == null) {
-            return "";
-        }
         String pattern = "\\n>:family-div: Total population: %s people on %s km².";
         String population = formatNumber(episodeDetails.get("population"));
         String area = formatNumber(episodeDetails.get("populatedAreaKm2"));
