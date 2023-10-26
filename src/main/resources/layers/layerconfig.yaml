@@ -335,7 +335,7 @@ configs:
           paramPattern: 'position|exposure'
           paramValue: 'exposure'
           style:
-            width: 3
+            width: 2
             color: '#051626'
             offset: 4
             casing-offset: 2
