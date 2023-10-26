@@ -131,7 +131,7 @@ configs:
           paramValue: 'globalArea'
           style:
             width: 3
-            color: '#D52627'
+            color: '#051626'
 
   - id: 'eventShape.EARTHQUAKE'
     globalOverlay: false
