@@ -30,6 +30,8 @@ public class ApplicationService {
             if (appDto == null) { // requester domain is unknown
                 appId = UUID.fromString(Objects.requireNonNull(userProfileClient.getDefaultAppId().getBody()));
                 appDto = userProfileClient.getApp(appId);
+            } else {
+                appId = appDto.getId();
             }
         }
 
