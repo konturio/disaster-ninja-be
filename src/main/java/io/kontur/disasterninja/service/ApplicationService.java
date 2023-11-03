@@ -26,7 +26,6 @@ public class ApplicationService {
             //  Corresponding UPS changes required
             if (domain != null) {
                 appDto = userProfileClient.getApp(domain);
-                appId = appDto.getId();
             }
             if (appDto == null) { // requester domain is unknown
                 appId = UUID.fromString(Objects.requireNonNull(userProfileClient.getDefaultAppId().getBody()));
