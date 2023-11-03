@@ -158,13 +158,6 @@ configs:
           style:
             width: 3
             color: '#646F78'
-        - stepName: 'Intensity 0.0 – Not Felt'
-          stepShape: 'circle'
-          paramName: 'Class'
-          paramValue: 'Poly_SMPInt_0'
-          style:
-            width: 2
-            color: '#B6D433'
         - stepName: 'Intensity 0.5 – Not Felt'
           stepShape: 'circle'
           paramName: 'Class'
