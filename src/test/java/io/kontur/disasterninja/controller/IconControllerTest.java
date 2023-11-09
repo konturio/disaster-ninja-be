@@ -26,8 +26,8 @@ class IconControllerTest {
 
     private MockMvc mockMvc;
 
-    private final String EXPECTED_FAVICON_PATH = "/test/path/to/favicon.ico";
-    private final String EXPECTED_REDIRECT_URL = SCHEMA + "://" + DEFAULT_DOMAIN + EXPECTED_FAVICON_PATH;
+    private final String MAPS_KONTUR_IO_DOMAIN = "maps.kontur.io";
+    private final String EXPECTED_FAVICON_PATH = "/test/path/to/favicon.ico";;
 
     @BeforeEach
     public void setup() {
@@ -43,7 +43,7 @@ class IconControllerTest {
         // When & Then
         mockMvc.perform(get("/favicon.ico").header("X-Forwarded-Host", DEFAULT_DOMAIN))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(EXPECTED_REDIRECT_URL));
+                .andExpect(redirectedUrl(SCHEMA + "://" + DEFAULT_DOMAIN + EXPECTED_FAVICON_PATH));
     }
 
     @Test
@@ -54,7 +54,18 @@ class IconControllerTest {
         // When & Then
         mockMvc.perform(get("/favicon.ico"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(EXPECTED_REDIRECT_URL));
+                .andExpect(redirectedUrl(SCHEMA + "://" + DEFAULT_DOMAIN + EXPECTED_FAVICON_PATH));
+    }
+
+    @Test
+    public void whenXForwardedHostIsMapsKonturIo_thenRedirectToFavicon() throws Exception {
+        // Given
+        givenUPSReturnsAppConfig(MAPS_KONTUR_IO_DOMAIN);
+
+        // When & Then
+        mockMvc.perform(get("/favicon.ico").header("X-Forwarded-Host", MAPS_KONTUR_IO_DOMAIN))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(SCHEMA + "://" + MAPS_KONTUR_IO_DOMAIN + EXPECTED_FAVICON_PATH));
     }
 
     private void givenUPSReturnsAppConfig(String domain) {
