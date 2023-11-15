@@ -26,6 +26,7 @@ public class AppDto {
     private List<BigDecimal> extent;
     private String sidebarIconUrl;
     private String faviconUrl;
+    private JsonNode faviconPack;
 
     private UserDto user;
     private List<FeatureDto> features;
