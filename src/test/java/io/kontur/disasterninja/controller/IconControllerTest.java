@@ -1,13 +1,10 @@
 package io.kontur.disasterninja.controller;
 
-import static io.kontur.disasterninja.controller.IconController.DEFAULT_DOMAIN;
-import static io.kontur.disasterninja.controller.IconController.SCHEMA;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.dto.AppDto;
 import io.kontur.disasterninja.service.ApplicationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,62 +12,85 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.web.servlet.MockMvc;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-class IconControllerTest {
+public class IconControllerTest {
     @Mock
     private ApplicationService applicationService;
+
+    @Mock
+    private HttpServletRequest request;
+
+    @Mock
+    private HttpServletResponse response;
 
     @InjectMocks
     private IconController iconController;
 
-    private MockMvc mockMvc;
-
-    private final String MAPS_KONTUR_IO_DOMAIN = "maps.kontur.io";
-    private final String EXPECTED_FAVICON_PATH = "/test/path/to/favicon.ico";;
+    private final ObjectMapper mapper = new ObjectMapper();
+    private final String FAVICON_PACK_JSON = "{" +
+            "  \"favicon.svg\": \"/active/static/favicon/favicon.svg\"," +
+            "  \"favicon.ico\": \"/active/static/favicon/favicon.ico\"," +
+            "  \"apple-touch-icon.png\": \"/active/static/favicon/apple-touch-icon.png\"," +
+            "  \"icon-192x192.png\": \"/active/static/favicon/icon-192x192.png\"" +
+            "}";
+    private AppDto appDto = new AppDto();
 
     @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = standaloneSetup(iconController).build();
+    public void setUp() throws JsonProcessingException {
+        MockitoAnnotations.initMocks(this);
+        appDto.setFaviconPack(mapper.readTree(FAVICON_PACK_JSON));
     }
 
     @Test
-    public void whenXForwardedHostIsDisasterNinja_thenRedirectToFavicon() throws Exception {
+    public void testValidDomainWithKnownIconType() throws Exception {
         // Given
-        givenUPSReturnsAppConfig(DEFAULT_DOMAIN);
+        when(request.getHeader("X-Forwarded-Host")).thenReturn("example.com");
+        when(applicationService.getAppConfig(null, "example.com")).thenReturn(appDto);
 
-        // When & Then
-        mockMvc.perform(get("/favicon.ico").header("X-Forwarded-Host", DEFAULT_DOMAIN))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(SCHEMA + "://" + DEFAULT_DOMAIN + EXPECTED_FAVICON_PATH));
+        // When
+        iconController.getAppSvgFavicon(request, response);
+
+        // Then
+        verify(response).sendRedirect("https://example.com/active/static/favicon/favicon.svg");
     }
 
     @Test
-    public void whenXForwardedHostIsNull_thenUseDefaultDomain() throws Exception {
+    public void testNoDomainPresent() throws Exception {
         // Given
-        givenUPSReturnsAppConfig(DEFAULT_DOMAIN);
+        when(request.getHeader("X-Forwarded-Host")).thenReturn(null);
 
-        // When & Then
-        mockMvc.perform(get("/favicon.ico"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(SCHEMA + "://" + DEFAULT_DOMAIN + EXPECTED_FAVICON_PATH));
+        // When
+        iconController.getAppSvgFavicon(request, response);
+
+        // Then
+        verify(response).sendError(SC_NOT_FOUND);
     }
 
     @Test
-    public void whenXForwardedHostIsMapsKonturIo_thenRedirectToFavicon() throws Exception {
+    public void testRequiredIconNotPresent() throws Exception {
         // Given
-        givenUPSReturnsAppConfig(MAPS_KONTUR_IO_DOMAIN);
+        when(request.getHeader("X-Forwarded-Host")).thenReturn("example.com");
+        when(applicationService.getAppConfig(null, "example.com")).thenReturn(appDto);
 
-        // When & Then
-        mockMvc.perform(get("/favicon.ico").header("X-Forwarded-Host", MAPS_KONTUR_IO_DOMAIN))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(SCHEMA + "://" + MAPS_KONTUR_IO_DOMAIN + EXPECTED_FAVICON_PATH));
+        // When
+        iconController.getAppPng512Favicon(request, response);
+
+        // Then
+        verify(response).sendError(SC_NOT_FOUND);
     }
 
-    private void givenUPSReturnsAppConfig(String domain) {
-        AppDto appDto = new AppDto();
-        appDto.setFaviconUrl(EXPECTED_FAVICON_PATH);
-        when(applicationService.getAppConfig(null, domain)).thenReturn(appDto);
+    @Test
+    public void testNoIconsPresent() throws Exception {
+        // Given
+        when(request.getHeader("X-Forwarded-Host")).thenReturn("example.com");
+        when(applicationService.getAppConfig(null, "example.com")).thenReturn(new AppDto());
+
+        // When
+        iconController.getAppSvgFavicon(request, response);
+
+        // Then
+        verify(response).sendError(SC_NOT_FOUND);
     }
 }
