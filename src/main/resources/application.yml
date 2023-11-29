@@ -27,6 +27,7 @@ kontur:
       connectionTimeout: 60
       readTimeout: 60
     insightsApi:
+      url: 'http://localhost:8625/insights-api'
       connectionTimeout: 60
       readTimeout: 60
       layersReloadInterval: PT10M
