@@ -27,6 +27,7 @@ public class AnalyticsTabController {
 
     private final AnalyticsService analyticsService;
 
+    // NOTE: 16237 - /polygon_details is no longer used by DN-FE
     @Operation(summary = "Calculate data for analytics tab using insights-api service",
             tags = {"Analytics tab"},
             description = "Calculate data for analytics tab using insights-api service")
@@ -41,7 +42,7 @@ public class AnalyticsTabController {
 
     @Operation(summary = "Calculate data for analytics tab using insights-api service and application configuration from UPS",
             tags = {"Analytics tab"},
-            description = "Calculate data for analytics tab using insights-api service and application configuration from UPS")
+            description = "Calculate data for analytics tab using insights-api service and application configuration from UPS. Requested layers are configured in src/main/resources/analytics/analyticstabconfig.yaml")
     @ApiResponse(responseCode = "200", description = "Successful operation",
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AnalyticsResponseDto.class))))
     @PostMapping("/v2")
