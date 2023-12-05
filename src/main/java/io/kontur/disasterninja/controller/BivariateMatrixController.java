@@ -26,7 +26,7 @@ public class BivariateMatrixController {
 
     @Operation(summary = "Calculate data for bivariate matrix using insights-api service",
             tags = {"Bivariate matrix"},
-            description = "Calculate bivariate matrix for given geometry and important layers.")
+            description = "Calculate bivariate matrix for given geometry and important layers (hardcoded on front end, UI in US1414). Performs GraphQL query PolygonStatistics/bivariateStatistic. 'name' in the response corresponds to 'param_id'")
     @ApiResponse(responseCode = "200", description = "Successful operation",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BivariateMatrixDto.class)))
     @PostMapping
