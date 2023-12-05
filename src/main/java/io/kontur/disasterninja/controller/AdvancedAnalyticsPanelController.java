@@ -30,7 +30,7 @@ public class AdvancedAnalyticsPanelController {
 
     @Operation(summary = "Calculate data for advanced analytics panel using insights-api service for provided indicators",
             tags = {"Advanced Analytics Tab"},
-            description = "Calculate advanced analytics for polygon and requested layers. Executes GraphQL query PolygonStatistics/analytics/advancedAnalytics and returns a bunch of statistical functions for the list of provided indicators (numerators)")
+            description = "Calculate advanced analytics for polygon and requested layers. Calls Insights GraphQL query PolygonStatistics/analytics/advancedAnalytics and returns a bunch of statistical functions for the list of provided indicators (numerators)")
     @ApiResponse(responseCode = "200", description = "Successful operation",
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AdvancedAnalyticsDto.class))))
     @PostMapping("/layers")
@@ -41,7 +41,7 @@ public class AdvancedAnalyticsPanelController {
 
     @Operation(summary = "Calculate data for advanced analytics panel using insights-api service",
             tags = {"Advanced Analytics Tab"},
-            description = "Calculate advanced analytics for polygon. Executes GraphQL query PolygonStatistics/analytics/advancedAnalytics and returns a bunch of statistical functions for every available indicator (approx. 552 items)")
+            description = "Calculate advanced analytics for polygon. Calls Insights GraphQL query PolygonStatistics/analytics/advancedAnalytics and returns a bunch of statistical functions for every available indicator (approx. 552 items)")
     @ApiResponse(responseCode = "200", description = "Successful operation",
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = AdvancedAnalyticsDto.class))))
     @PostMapping
