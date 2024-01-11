@@ -145,8 +145,8 @@ public class LayerController {
 
     @Operation(tags = "Layers", summary = "Get layer feature set")
     @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = APPLICATION_JSON_VALUE,
-            array = @ArraySchema(schema = @Schema(implementation = LayerDetailsDto.class))))
-    @PostMapping(path = "/{id}/items", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+            array = @ArraySchema(schema = @Schema(implementation = List.class))))
+    @PostMapping(path = "/{id}/items/search", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<Feature> getFeatures(
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
             @PathVariable("id") String layerId,
