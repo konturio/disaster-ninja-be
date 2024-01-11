@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 
 import java.util.List;
@@ -142,6 +143,18 @@ public class LayerController {
         return ResponseEntity.ok(fc);
     }
 
+    @Operation(tags = "Layers", summary = "Get layer feature set")
+    @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = APPLICATION_JSON_VALUE,
+            array = @ArraySchema(schema = @Schema(implementation = List.class))))
+    @PostMapping(path = "/{id}/items/search", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public List<Feature> getFeatures(
+            @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
+            @PathVariable("id") String layerId,
+            @RequestBody LayerItemsSearchDto inputDto) {
+        LayerSearchParams searchParams = createLayerSearchParams(inputDto);
+        return layersApiService.getFeatures(searchParams.getBoundary(), layerId, searchParams.getAppId());
+    }
+
     private LayerSearchParams createLayerSearchParams(LayerDetailsSearchDto dto) {
         return LayerSearchParams.builder()
                 .appId(dto.getAppId())
@@ -156,6 +169,13 @@ public class LayerController {
                 .appId(dto.getAppId())
                 .eventId(dto.getEventId())
                 .eventFeed(dto.getEventFeed())
+                .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))
+                .build();
+    }
+
+    private LayerSearchParams createLayerSearchParams(LayerItemsSearchDto dto) {
+        return LayerSearchParams.builder()
+                .appId(dto.getAppId())
                 .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))
                 .build();
     }
