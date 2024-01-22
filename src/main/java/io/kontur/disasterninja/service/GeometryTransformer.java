@@ -5,9 +5,14 @@ import io.kontur.disasterninja.util.JsonUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.wololo.geojson.*;
+import org.wololo.jts2geojson.GeoJSONReader;
+import org.wololo.jts2geojson.GeoJSONWriter;
 
 @Service
 public class GeometryTransformer {
+
+    public static final GeoJSONReader geoJsonReader = new GeoJSONReader();
+    public static final GeoJSONWriter geoJsonWriter = new GeoJSONWriter();
 
     /**
      * Finds all nested features, collects their geometries.
@@ -55,5 +60,15 @@ public class GeometryTransformer {
     public static boolean geometriesAreEqual(org.wololo.geojson.Geometry geometry1,
                                              org.wololo.geojson.Geometry geometry2) {
         return JsonUtil.writeObjectNode(geometry1).equals(JsonUtil.writeObjectNode(geometry2));
+    }
+
+    public Geometry buffer(Geometry geometry, Double buffer) {
+        if (geometry == null) {
+            return null;
+        }
+        if ("Polygon".equals(geometry.getType()) || "MultiPolygon".equals(geometry.getType()) || "GeometryCollection".equals(geometry.getType())) {
+            return geoJsonWriter.write(geoJsonReader.read(geometry).buffer(buffer));
+        }
+        return geometry;
     }
 }

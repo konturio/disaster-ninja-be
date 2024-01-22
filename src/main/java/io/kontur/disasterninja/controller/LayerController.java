@@ -17,15 +17,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 
-import java.util.List;
-import java.util.UUID;
+import javax.validation.ValidationException;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController()
@@ -144,15 +146,37 @@ public class LayerController {
     }
 
     @Operation(tags = "Layers", summary = "Get layer feature set")
-    @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = APPLICATION_JSON_VALUE,
-            array = @ArraySchema(schema = @Schema(implementation = List.class))))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = Feature.class)))),
+            @ApiResponse(responseCode = "204", description = "No content", content = @Content(mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = Feature.class)))),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = APPLICATION_JSON_VALUE))
+    })
     @PostMapping(path = "/{id}/items/search", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public List<Feature> getFeatures(
-            @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
+    public ResponseEntity<List<Feature>> getFeatures(
+            @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true, example = "hotProjects")
             @PathVariable("id") String layerId,
             @RequestBody LayerItemsSearchDto inputDto) {
-        LayerSearchParams searchParams = createLayerSearchParams(inputDto);
-        return layersApiService.getFeatures(searchParams.getBoundary(), layerId, searchParams.getAppId());
+        LayerSearchParams searchParams;
+        try {
+            searchParams = createLayerSearchParams(inputDto);
+        } catch (Exception e) {
+            throw new ValidationException(e.getMessage(), e);
+        }
+        List<Feature> features = layersApiService.getFeatures(searchParams.getBoundary(), layerId, searchParams.getAppId());
+        if (features == null || features.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(emptyList());
+        }
+        return ResponseEntity.ok(features);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        return ResponseEntity.badRequest().body(ex.getCause().getMessage());
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<String> handleJsonMappingException(ValidationException ex) {
+        return ResponseEntity.badRequest().body(ex.getCause().getMessage());
     }
 
     private LayerSearchParams createLayerSearchParams(LayerDetailsSearchDto dto) {
@@ -176,7 +200,7 @@ public class LayerController {
     private LayerSearchParams createLayerSearchParams(LayerItemsSearchDto dto) {
         return LayerSearchParams.builder()
                 .appId(dto.getAppId())
-                .boundary(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()))
+                .boundary(geometryTransformer.buffer(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()), 0.))
                 .build();
     }
 
