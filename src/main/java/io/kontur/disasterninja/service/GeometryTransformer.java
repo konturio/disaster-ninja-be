@@ -62,7 +62,7 @@ public class GeometryTransformer {
         return JsonUtil.writeObjectNode(geometry1).equals(JsonUtil.writeObjectNode(geometry2));
     }
 
-    public Geometry buffer(Geometry geometry, Double buffer) {
+    public Geometry buffer(Geometry geometry, double buffer) {
         if (geometry == null) {
             return null;
         }

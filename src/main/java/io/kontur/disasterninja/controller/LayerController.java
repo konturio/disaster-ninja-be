@@ -171,12 +171,12 @@ public class LayerController {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<String> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
-        return ResponseEntity.badRequest().body(ex.getCause().getMessage());
+        return ResponseEntity.badRequest().body("Invalid request: " + ex.getCause().getMessage());
     }
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<String> handleJsonMappingException(ValidationException ex) {
-        return ResponseEntity.badRequest().body(ex.getCause().getMessage());
+        return ResponseEntity.badRequest().body("Invalid JSON: " + ex.getCause().getMessage());
     }
 
     private LayerSearchParams createLayerSearchParams(LayerDetailsSearchDto dto) {
