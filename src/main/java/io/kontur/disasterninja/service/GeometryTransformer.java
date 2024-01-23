@@ -62,12 +62,12 @@ public class GeometryTransformer {
         return JsonUtil.writeObjectNode(geometry1).equals(JsonUtil.writeObjectNode(geometry2));
     }
 
-    public Geometry buffer(Geometry geometry, double buffer) {
+    public Geometry makeValid(Geometry geometry) {
         if (geometry == null) {
             return null;
         }
         if ("Polygon".equals(geometry.getType()) || "MultiPolygon".equals(geometry.getType()) || "GeometryCollection".equals(geometry.getType())) {
-            return geoJsonWriter.write(geoJsonReader.read(geometry).buffer(buffer));
+            return geoJsonWriter.write(geoJsonReader.read(geometry).buffer(0.));
         }
         return geometry;
     }

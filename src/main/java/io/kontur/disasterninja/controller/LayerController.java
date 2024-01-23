@@ -200,7 +200,7 @@ public class LayerController {
     private LayerSearchParams createLayerSearchParams(LayerItemsSearchDto dto) {
         return LayerSearchParams.builder()
                 .appId(dto.getAppId())
-                .boundary(geometryTransformer.buffer(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON()), 0.))
+                .boundary(geometryTransformer.makeValid(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON())))
                 .build();
     }
 
