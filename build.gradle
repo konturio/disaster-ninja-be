@@ -31,6 +31,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
     implementation 'org.wololo:jts2geojson:0.18.1'
+    implementation('org.locationtech.jts:jts-core:1.19.0')
+    implementation 'org.locationtech.jts.io:jts-io-common:1.19.0'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.12'
     implementation 'com.apollographql.apollo:apollo-runtime:2.5.13'
 
