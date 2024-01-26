@@ -148,7 +148,7 @@ public class LayerController {
     @Operation(tags = "Layers", summary = "Get layer feature set")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = Feature.class)))),
-            @ApiResponse(responseCode = "204", description = "No content", content = @Content(mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = Feature.class)))),
+            @ApiResponse(responseCode = "204", description = "No content", content = @Content(mediaType = APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = APPLICATION_JSON_VALUE))
     })
     @PostMapping(path = "/{id}/items/search", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
