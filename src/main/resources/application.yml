@@ -39,6 +39,12 @@ kontur:
       connectionTimeout: 20
       readTimeout: 20
 
+sentry:
+  dsn: https://164b8dc642d740d60df032cb0b17f5bf@o4506354031329280.ingest.sentry.io/4506701534658560
+  # Set traces-sample-rate to 1.0 to capture 100% of transactions for performance monitoring.
+  # We recommend adjusting this value in production.
+  traces-sample-rate: 1.0
+
 notifications:
   enabled: false
 

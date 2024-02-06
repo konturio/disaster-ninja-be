@@ -40,6 +40,8 @@ jobs:
         distribution: 'corretto'
     - name: Build the app
       uses: gradle/gradle-build-action@v2
+      env:
+        SENTRY_AUTH_TOKEN: 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
       with:
         gradle-version: 7.4.2
         arguments: build -x test
