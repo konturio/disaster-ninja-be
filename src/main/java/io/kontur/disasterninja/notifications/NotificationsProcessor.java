@@ -99,8 +99,10 @@ public class NotificationsProcessor {
 
     private void initUpdateDate() {
         List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, eventApiFeed, 1);
-        EventApiEventDto latestEvent = events.get(0);
-        latestUpdatedDate = latestEvent.getUpdatedAt();
+        if (events != null && events.size() > 0) {
+            EventApiEventDto latestEvent = events.get(0);
+            latestUpdatedDate = latestEvent.getUpdatedAt();
+        }
     }
 
     private void process(EventApiEventDto event, Geometry geometry) {
