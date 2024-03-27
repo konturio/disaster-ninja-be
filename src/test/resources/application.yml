@@ -47,8 +47,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://127.0.0.1:8080/auth/realms/test
-          jwk-set-uri: http://127.0.0.1:8080/auth/realms/test/protocol/openid-connect/certs
+          issuer-uri: http://127.0.0.1:8080/realms/test
+          jwk-set-uri: http://127.0.0.1:8080/realms/test/protocol/openid-connect/certs
   jackson:
     deserialization:
       FAIL_ON_UNKNOWN_PROPERTIES: false
