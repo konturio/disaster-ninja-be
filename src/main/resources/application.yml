@@ -94,8 +94,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://keycloak01.kontur.io/auth/realms/kontur
-          jwk-set-uri: https://keycloak01.kontur.io/auth/realms/kontur/protocol/openid-connect/certs
+          issuer-uri: https://keycloak01.kontur.io/realms/kontur
+          jwk-set-uri: https://keycloak01.kontur.io/realms/kontur/protocol/openid-connect/certs
   jackson:
     deserialization:
       FAIL_ON_UNKNOWN_PROPERTIES: false
