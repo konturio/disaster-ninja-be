@@ -17,12 +17,12 @@ jobs:
     - name: Setup java
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'corretto'
     - name: Run tests
       uses: gradle/gradle-build-action@v2
       with:
-        gradle-version: 7.4.2
+        gradle-version: 8.7
         arguments: check
 
   build-and-publish:
@@ -36,17 +36,17 @@ jobs:
     - name: Setup java
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'corretto'
     - name: Build the app
       uses: gradle/gradle-build-action@v2
       with:
-        gradle-version: 7.4.2
+        gradle-version: 8.7
         arguments: build -x test
     - name: Download OpenTelemetry agent
       uses: gradle/gradle-build-action@v2
       with:
-        gradle-version: 7.4.2
+        gradle-version: 8.7
         arguments: verifyFile
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v2
