@@ -1,9 +1,6 @@
 package io.kontur.disasterninja.client;
 
-import io.kontur.disasterninja.dto.AppDto;
-import io.kontur.disasterninja.dto.AppSummaryDto;
-import io.kontur.disasterninja.dto.FeatureDto;
-import io.kontur.disasterninja.dto.UserDto;
+import io.kontur.disasterninja.dto.*;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,6 +31,7 @@ public class UserProfileClient extends RestClientWithBearerAuth {
     private static final String APP_CONFIG_URL = "/apps/configuration";
     private static final String DEFAULT_APP_ID_URL = "/apps/default_id";
     private static final String CURRENT_USER_URL = "/users/current_user";
+    private static final String ASSETS_URL = "/apps/{appId}/assets/{filename}";
     private final RestTemplate userProfileRestTemplate;
 
     @Value("${kontur.platform.userProfileApi.defaultAppId:}")
@@ -149,5 +147,10 @@ public class UserProfileClient extends RestClientWithBearerAuth {
                 .exchange(url, method, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(body),
                         new ParameterizedTypeReference<>() {
                         }, queryParam);
+    }
+
+    public ResponseEntity<AssetDto> getAsset(UUID appId, String filename) {
+        return userProfileRestTemplate.exchange(ASSETS_URL, GET, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
+                new ParameterizedTypeReference<>() {}, appId, filename);
     }
 }

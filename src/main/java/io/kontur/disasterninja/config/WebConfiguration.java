@@ -11,6 +11,7 @@ import io.kontur.disasterninja.client.InsightsApiClient;
 import io.kontur.disasterninja.client.InsightsApiClientDummy;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClientDummy;
+import io.kontur.disasterninja.config.interceptor.AcceptLanguageInterceptor;
 import io.kontur.disasterninja.config.metrics.ParamLessRestTemplateExchangeTagsProvider;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -30,6 +31,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.client.RestTemplate;
@@ -123,12 +125,14 @@ public class WebConfiguration {
     public RestTemplate userProfileRestTemplate(RestTemplateBuilder builder, HttpClient httpClient,
                                                 @Value("${kontur.platform.userProfileApi.url}") String userProfileApiUrl,
                                                 @Value("${kontur.platform.userProfileApi.connectionTimeout}") Integer connectionTimeout,
-                                                @Value("${kontur.platform.userProfileApi.readTimeout}") Integer readTimeout) {
+                                                @Value("${kontur.platform.userProfileApi.readTimeout}") Integer readTimeout,
+                                                ClientHttpRequestInterceptor acceptLanguageInterceptor) {
         return builder
                 .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
                 .rootUri(userProfileApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
+                .additionalInterceptors(acceptLanguageInterceptor)
                 .build();
     }
 
@@ -196,6 +200,11 @@ public class WebConfiguration {
     @ConditionalOnMissingBean(InsightsApiClient.class)
     public InsightsApiClient insightsApiClientDummy() {
         return new InsightsApiClientDummy();
+    }
+
+    @Bean
+    public ClientHttpRequestInterceptor acceptLanguageInterceptor() {
+        return new AcceptLanguageInterceptor();
     }
 
 }
