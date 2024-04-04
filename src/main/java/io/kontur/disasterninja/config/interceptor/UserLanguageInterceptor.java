@@ -10,15 +10,15 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-public class AcceptLanguageInterceptor implements ClientHttpRequestInterceptor {
+public class UserLanguageInterceptor implements ClientHttpRequestInterceptor {
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         HttpServletRequest currentRequest = getCurrentHttpRequest();
         if (currentRequest != null) {
-            String acceptLanguage = currentRequest.getHeader("Accept-Language");
-            if (acceptLanguage != null) {
-                request.getHeaders().add("Accept-Language", acceptLanguage);
+            String userLanguage = currentRequest.getHeader("User-Language");
+            if (userLanguage != null) {
+                request.getHeaders().add("User-Language", userLanguage);
             }
         }
         return execution.execute(request, body);

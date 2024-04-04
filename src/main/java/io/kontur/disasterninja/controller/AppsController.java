@@ -144,7 +144,7 @@ public class AppsController {
         return applicationService.getAppConfig(appId, xForwardedHost);
     }
 
-    @Operation(summary = "Get application asset by language and filename.")
+    @Operation(summary = "Get application asset by language and filename.", tags = {"Applications"})
     @ApiResponse(responseCode = "200",
             description = "Success. The actual content type will vary based on the asset (e.g., image/jpeg, text/plain, etc.).",
             content = @Content(mediaType = APPLICATION_OCTET_STREAM_VALUE))

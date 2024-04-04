@@ -11,7 +11,7 @@ import io.kontur.disasterninja.client.InsightsApiClient;
 import io.kontur.disasterninja.client.InsightsApiClientDummy;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClientDummy;
-import io.kontur.disasterninja.config.interceptor.AcceptLanguageInterceptor;
+import io.kontur.disasterninja.config.interceptor.UserLanguageInterceptor;
 import io.kontur.disasterninja.config.metrics.ParamLessRestTemplateExchangeTagsProvider;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -126,13 +126,13 @@ public class WebConfiguration {
                                                 @Value("${kontur.platform.userProfileApi.url}") String userProfileApiUrl,
                                                 @Value("${kontur.platform.userProfileApi.connectionTimeout}") Integer connectionTimeout,
                                                 @Value("${kontur.platform.userProfileApi.readTimeout}") Integer readTimeout,
-                                                ClientHttpRequestInterceptor acceptLanguageInterceptor) {
+                                                ClientHttpRequestInterceptor userLanguageInterceptor) {
         return builder
                 .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
                 .rootUri(userProfileApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
-                .additionalInterceptors(acceptLanguageInterceptor)
+                .additionalInterceptors(userLanguageInterceptor)
                 .build();
     }
 
@@ -203,8 +203,8 @@ public class WebConfiguration {
     }
 
     @Bean
-    public ClientHttpRequestInterceptor acceptLanguageInterceptor() {
-        return new AcceptLanguageInterceptor();
+    public ClientHttpRequestInterceptor userLanguageInterceptor() {
+        return new UserLanguageInterceptor();
     }
 
 }
