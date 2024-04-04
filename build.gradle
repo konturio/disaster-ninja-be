@@ -14,8 +14,8 @@ jar {
 
 group = 'io.kontur'
 version = '0.32.0'
-sourceCompatibility = '17'
-targetCompatibility = '17'
+sourceCompatibility = '21'
+targetCompatibility = '21'
 
 repositories {
     mavenCentral()
@@ -32,8 +32,8 @@ sentry {
 }
 
 dependencies {
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
-    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    compileOnly 'org.projectlombok:lombok:1.18.32'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
@@ -101,7 +101,7 @@ apollo {
 
 jacocoTestReport {
     reports {
-        csv.enabled true
+        csv.required = true
         csv.destination file("${buildDir}/jacoco.csv")
     }
 }
