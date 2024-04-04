@@ -2,13 +2,17 @@ package io.kontur.disasterninja.service;
 
 import io.kontur.disasterninja.client.UserProfileClient;
 import io.kontur.disasterninja.dto.AppDto;
+import io.kontur.disasterninja.dto.AssetDto;
 import io.kontur.disasterninja.dto.FeatureDto;
 import io.kontur.disasterninja.util.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -47,5 +51,13 @@ public class ApplicationService {
         appDto.setFeaturesConfig(null);
 
         return appDto;
+    }
+
+    public Optional<AssetDto> getAsset(UUID appId, String filename) {
+        ResponseEntity<AssetDto> assetDto = userProfileClient.getAsset(appId, filename);
+        if (assetDto != null && HttpStatus.OK == assetDto.getStatusCode() && assetDto.getBody() != null) {
+            return Optional.of(assetDto.getBody());
+        }
+        return Optional.empty();
     }
 }

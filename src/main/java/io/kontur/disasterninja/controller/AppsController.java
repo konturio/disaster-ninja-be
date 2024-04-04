@@ -5,6 +5,7 @@ import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.dto.AppDto;
 import io.kontur.disasterninja.dto.AppLayerUpdateDto;
 import io.kontur.disasterninja.dto.AppSummaryDto;
+import io.kontur.disasterninja.dto.AssetDto;
 import io.kontur.disasterninja.dto.layer.LayerDetailsDto;
 import io.kontur.disasterninja.service.ApplicationService;
 import io.kontur.disasterninja.service.layers.LayersApiService;
@@ -16,6 +17,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,7 +28,10 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Optional;
 import java.util.UUID;
+
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 
 @RequiredArgsConstructor
 @RestController
@@ -136,5 +142,22 @@ public class AppsController {
     public AppDto getAppConfig(@RequestParam(name = "appId", required = false) UUID appId,
                                @RequestHeader(name = "X-Forwarded-Host", required = false) String xForwardedHost) {
         return applicationService.getAppConfig(appId, xForwardedHost);
+    }
+
+    @Operation(summary = "Get application asset by language and filename.", tags = {"Applications"})
+    @ApiResponse(responseCode = "200",
+            description = "Success. The actual content type will vary based on the asset (e.g., image/jpeg, text/plain, etc.).",
+            content = @Content(mediaType = APPLICATION_OCTET_STREAM_VALUE))
+    @GetMapping(path = "/{appId}/assets/{filename}")
+    public ResponseEntity<byte[]> getAsset(@PathVariable(name = "appId", required = true) UUID appId,
+                                           @PathVariable(name = "filename", required = true) String filename) {
+        Optional<AssetDto> assetOpt = applicationService.getAsset(appId, filename);
+        if (assetOpt.isPresent()) {
+            AssetDto asset = assetOpt.get();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(new MediaType(asset.getMediaType(), asset.getMediaSubtype()));
+            return new ResponseEntity<>(asset.getAsset(), headers, HttpStatus.OK);
+        }
+        return ResponseEntity.notFound().build();
     }
 }
