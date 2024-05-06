@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.client;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.kontur.disasterninja.dto.*;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,7 @@ public class UserProfileClient extends RestClientWithBearerAuth {
     private static final Logger LOG = LoggerFactory.getLogger(UserProfileClient.class);
     private static final String FEATURES_USER_FEED_URL = "/features/user_feed";
     private static final String FEATURES_URL = "/features";
+    private static final String FEATURES_FEATURE_NAME_URL = "/features/{featureName}";
     private static final String APP_URL = "/apps";
     private static final String APP_URL_WITH_ID = "/apps/{id}";
     private static final String APP_CONFIG_URL = "/apps/configuration";
@@ -152,5 +154,15 @@ public class UserProfileClient extends RestClientWithBearerAuth {
     public ResponseEntity<AssetDto> getAsset(UUID appId, String filename) {
         return userProfileRestTemplate.exchange(ASSETS_URL, GET, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
                 new ParameterizedTypeReference<>() {}, appId, filename);
+    }
+
+    public ResponseEntity<Void> updateAppUserFeatureConfiguration(UUID appId, String featureName, JsonNode configuration) {
+        String url = UriComponentsBuilder.fromUriString(FEATURES_FEATURE_NAME_URL)
+                .buildAndExpand(featureName)
+                .toUriString();
+
+        return userProfileRestTemplate.exchange(
+                url, PUT, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(configuration),
+                new ParameterizedTypeReference<Void>() {}, appId);
     }
 }

@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.kontur.disasterninja.client.UserProfileClient;
 import io.kontur.disasterninja.dto.FeatureDto;
 import io.kontur.disasterninja.service.LiveSensorFeatureService;
@@ -40,6 +41,22 @@ public class FeaturesController {
     public List<FeatureDto> getUserAppFeatures(
             @RequestParam(name = "appId") @Parameter(name = "appId") UUID appId) {
         return userProfileClient.getUserAppFeatures(appId);
+    }
+
+    @Operation(tags = "Features", summary = "Update app feature configuration for a user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated the user's feature configuration"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized: User not authenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden: User is not allowed to configure this feature"),
+            @ApiResponse(responseCode = "404", description = "Not Found: App, feature, or user does not exist"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error: Error processing the update")
+    })
+    @PutMapping("/{featureName}")
+    public ResponseEntity<Void> updateUserFeatureConfiguration(
+            @PathVariable(name = "featureName", required = true) String featureName,
+            @RequestParam(name = "appId", defaultValue = "58851b50-9574-4aec-a3a6-425fa18dcb54", required = true) UUID appId,
+            @RequestBody JsonNode configuration) {
+        return userProfileClient.updateAppUserFeatureConfiguration(appId, featureName, configuration);
     }
 
     @Operation(tags = "Features", summary = "Append user's live sensor data")
