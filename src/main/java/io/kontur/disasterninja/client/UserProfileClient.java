@@ -158,11 +158,12 @@ public class UserProfileClient extends RestClientWithBearerAuth {
 
     public ResponseEntity<Void> updateAppUserFeatureConfiguration(UUID appId, String featureName, JsonNode configuration) {
         String url = UriComponentsBuilder.fromUriString(FEATURES_FEATURE_NAME_URL)
+                .queryParam("appId", appId)
                 .buildAndExpand(featureName)
                 .toUriString();
 
         return userProfileRestTemplate.exchange(
                 url, PUT, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(configuration),
-                new ParameterizedTypeReference<Void>() {}, appId);
+                new ParameterizedTypeReference<Void>() {});
     }
 }
