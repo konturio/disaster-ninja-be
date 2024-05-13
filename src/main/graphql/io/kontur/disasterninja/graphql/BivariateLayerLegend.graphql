@@ -59,6 +59,7 @@ query BivariateLayerLegend($polygon: GeoJSON) {
             indicators {
                 name,
                 label,
+                emoji,
                 direction,
                 copyrights,
                 unit {

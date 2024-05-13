@@ -65,14 +65,14 @@ public class BivariateLayerProviderTest extends LayerProvidersTest {
         );
         List<BivariateLayerLegendQuery.Indicator> indicators = List.of(
                 new BivariateLayerLegendQuery.Indicator("Indicator",
-                        "area_km2", "Area", List.of(List.of("neutral"), List.of("neutral")),
+                        "area_km2", "Area", null, List.of(List.of("neutral"), List.of("neutral")),
                         List.of("copyrights https://kontur.io/"),
                         new BivariateLayerLegendQuery.Unit2("", "km2", "km²", "square kilometers")),
                 new BivariateLayerLegendQuery.Indicator("Indicator",
-                        "count", "OSM Objects", List.of(List.of("bad"), List.of("good")), List.of("copyrights1"),
+                        "count", "OSM Objects", null, List.of(List.of("bad"), List.of("good")), List.of("copyrights1"),
                         new BivariateLayerLegendQuery.Unit2("", "n", "n", "number")),
                 new BivariateLayerLegendQuery.Indicator("Indicator",
-                        "population", "Population", List.of(List.of("unimportant"), List.of("important")),
+                        "population", "Population", null, List.of(List.of("unimportant"), List.of("important")),
                         List.of("copyrights1", "copyrights2"),
                         new BivariateLayerLegendQuery.Unit2("", "ppl", "ppl", "people")));
 
