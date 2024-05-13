@@ -12,6 +12,7 @@ public class IndicatorDto {
 
     private String name;
     private String label;
+    private String emoji;
     private List<String> copyrights;
     private List<List<String>> direction;
     private Unit unit;

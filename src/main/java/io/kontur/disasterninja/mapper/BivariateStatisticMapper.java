@@ -109,6 +109,7 @@ public interface BivariateStatisticMapper {
 
     @Mapping(target = "name", expression = "java(indicator.name())")
     @Mapping(target = "label", expression = "java(indicator.label())")
+    @Mapping(target = "emoji", expression = "java(indicator.emoji())")
     @Mapping(target = "copyrights", expression = "java(indicator.copyrights())")
     @Mapping(target = "direction", expression = "java(indicator.direction())")
     @Mapping(target = "unit", expression = "java(BivariateLayerLegendQueryUnit2ToUnit(indicator.unit()))")
@@ -124,6 +125,7 @@ public interface BivariateStatisticMapper {
 
     @Mapping(target = "name", expression = "java(indicator.name())")
     @Mapping(target = "label", expression = "java(indicator.label())")
+    @Mapping(target = "emoji", expression = "java(indicator.emoji())")
     @Mapping(target = "copyrights", expression = "java(indicator.copyrights())")
     @Mapping(target = "direction", expression = "java(indicator.direction())")
     @Mapping(target = "unit", expression = "java(bivariateMatrixQueryUnit1ToUnit(indicator.unit()))")
