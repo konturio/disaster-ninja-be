@@ -38,6 +38,10 @@ kontur:
       url: 'https://apps.kontur.io/userprofile/'
       connectionTimeout: 20
       readTimeout: 20
+    llmAnalyticsApi:
+      url: 'http://localhost:8000/'
+      connectionTimeout: 20
+      readTimeout: 60
 
 notifications:
   enabled: false
