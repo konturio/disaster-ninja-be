@@ -1,4 +1,12 @@
 package io.kontur.disasterninja.config;
+import okio.Buffer;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import okhttp3.Request;
+import okhttp3.Response;
+import java.io.IOException;
+import okhttp3.Interceptor;
+
 
 import com.apollographql.apollo.ApolloClient;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -133,6 +141,19 @@ public class WebConfiguration {
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
                 .additionalInterceptors(userLanguageInterceptor)
+                .build();
+    }
+
+    @Bean
+    public RestTemplate llmAnalyticsRestTemplate(RestTemplateBuilder builder, HttpClient httpClient,
+                                                @Value("${kontur.platform.llmAnalyticsApi.url}") String llmAnalyticsApiUrl,
+                                                @Value("${kontur.platform.llmAnalyticsApi.connectionTimeout}") Integer connectionTimeout,
+                                                @Value("${kontur.platform.llmAnalyticsApi.readTimeout}") Integer readTimeout) {
+        return builder
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
+                .rootUri(llmAnalyticsApiUrl)
+                .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
+                .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
                 .build();
     }
 

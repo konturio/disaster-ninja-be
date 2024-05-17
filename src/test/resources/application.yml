@@ -39,6 +39,10 @@ kontur:
       connectionTimeout: 20
       readTimeout: 20
       defaultAppId: '61d1be16-0230-4fb3-80e2-82010601025a'
+    llmAnalyticsApi:
+      url: 'http://localhost:8000/'
+      connectionTimeout: 20
+      readTimeout: 60
 
 spring:
   config:

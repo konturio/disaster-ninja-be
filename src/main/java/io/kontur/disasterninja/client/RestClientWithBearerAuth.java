@@ -18,6 +18,11 @@ public abstract class RestClientWithBearerAuth {
 
     private final KeycloakAuthorizationService authorizationService;
 
+    protected <T> HttpEntity<T> httpEntityWithUserBearerAuthIfPresent(T body) {
+        HttpHeaders headers = httpHeadersWithUserBearerAuthIfPresent();
+        return new HttpEntity<T>(body, headers);
+    }
+
     protected <T> HttpEntity<T> httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(T body) {
         HttpHeaders headers = httpHeadersWithUserBearerAuthIfPresent();
         headers.setCacheControl(CacheControl.noCache());
