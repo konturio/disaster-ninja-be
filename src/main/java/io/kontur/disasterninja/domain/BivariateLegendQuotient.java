@@ -17,6 +17,7 @@ public class BivariateLegendQuotient {
 
     private String name;
     private String label;
+    private String emoji;
     private List<List<String>> direction;
     private Unit unit;
 }
