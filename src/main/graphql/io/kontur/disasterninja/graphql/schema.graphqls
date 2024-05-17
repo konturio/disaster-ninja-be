@@ -194,6 +194,7 @@ type Query {
 type Quotient {
   name: String
   label: String
+  emoji: String
   direction: [[String]]
   unit: Unit
 }
