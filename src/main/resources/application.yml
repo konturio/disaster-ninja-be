@@ -27,7 +27,7 @@ kontur:
       connectionTimeout: 60
       readTimeout: 60
     insightsApi:
-      url: 'http://localhost:8625/insights-api'
+      url: 'https://apps.kontur.io/insights-api'
       connectionTimeout: 60
       readTimeout: 60
       layersReloadInterval: PT10M
@@ -39,7 +39,7 @@ kontur:
       connectionTimeout: 20
       readTimeout: 20
     llmAnalyticsApi:
-      url: 'http://localhost:8000/'
+      url: 'http://localhost:8000/'  # service not deployed yet
       connectionTimeout: 20
       readTimeout: 60
 
