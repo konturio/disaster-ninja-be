@@ -2,6 +2,7 @@ package io.kontur.disasterninja.controller;
 
 import io.kontur.disasterninja.client.InsightsLLMApiClient;
 import io.kontur.disasterninja.dto.AnalyticsRequestDto;
+import io.kontur.disasterninja.dto.LLMAnalyticsDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -35,7 +36,7 @@ public class LLMAnalyticsController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error: Error processing the request")
     })
     @PostMapping()
-    public ResponseEntity<Object> getLLMAnalytics(
+    public LLMAnalyticsDto getLLMAnalytics(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Polygon in GeoJSON format and appId as UUID")
             @RequestBody AnalyticsRequestDto llmAnalyticsRequest) {
         return llmAnalyticsClient.getLLMAnalytics(llmAnalyticsRequest);
