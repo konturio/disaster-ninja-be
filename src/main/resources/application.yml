@@ -41,7 +41,7 @@ kontur:
     llmAnalyticsApi:
       url: 'http://localhost:8000/'  # service not deployed yet
       connectionTimeout: 20
-      readTimeout: 60
+      readTimeout: 240
 
 notifications:
   enabled: false
