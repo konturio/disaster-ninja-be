@@ -148,12 +148,14 @@ public class WebConfiguration {
     public RestTemplate llmAnalyticsRestTemplate(RestTemplateBuilder builder, HttpClient httpClient,
                                                 @Value("${kontur.platform.llmAnalyticsApi.url}") String llmAnalyticsApiUrl,
                                                 @Value("${kontur.platform.llmAnalyticsApi.connectionTimeout}") Integer connectionTimeout,
-                                                @Value("${kontur.platform.llmAnalyticsApi.readTimeout}") Integer readTimeout) {
+                                                @Value("${kontur.platform.llmAnalyticsApi.readTimeout}") Integer readTimeout,
+                                                ClientHttpRequestInterceptor userLanguageInterceptor) {
         return builder
                 .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
                 .rootUri(llmAnalyticsApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
+                .additionalInterceptors(userLanguageInterceptor)
                 .build();
     }
 
