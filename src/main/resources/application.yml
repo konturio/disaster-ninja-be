@@ -39,7 +39,7 @@ kontur:
       connectionTimeout: 20
       readTimeout: 20
     llmAnalyticsApi:
-      url: 'http://localhost:8000/'  # service not deployed yet
+      url: 'https://apps.kontur.io/insights-llm-api'
       connectionTimeout: 20
       readTimeout: 240
 
