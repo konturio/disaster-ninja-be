@@ -57,6 +57,8 @@ public interface BivariateStatisticMapper {
     @Mapping(target = "name", expression = "java(quotient.name())")
     @Mapping(target = "label", expression = "java(quotient.label())")
     @Mapping(target = "emoji", expression = "java(quotient.emoji())")
+    @Mapping(target = "description", expression = "java(quotient.description())")
+    @Mapping(target = "copyrights", expression = "java(quotient.copyrights())")
     @Mapping(target = "direction", expression = "java(quotient.direction())")
     @Mapping(target = "unit", expression = "java(bivariateLayerLegendQueryUnitToUnit(quotient.unit()))")
     BivariateLegendQuotient bivariateLayerLegendQueryQuotientToBivariateLegendQuotient(
@@ -90,6 +92,8 @@ public interface BivariateStatisticMapper {
     @Mapping(target = "name", expression = "java(quotient1.name())")
     @Mapping(target = "label", expression = "java(quotient1.label())")
     @Mapping(target = "emoji", expression = "java(quotient1.emoji())")
+    @Mapping(target = "description", expression = "java(quotient1.description())")
+    @Mapping(target = "copyrights", expression = "java(quotient1.copyrights())")
     @Mapping(target = "direction", expression = "java(quotient1.direction())")
     @Mapping(target = "unit", expression = "java(BivariateLayerLegendQueryUnit1ToUnit(quotient1.unit()))")
     BivariateLegendQuotient bivariateLayerLegendQueryQuotient1ToBivariateLegendQuotient(
@@ -157,6 +161,8 @@ public interface BivariateStatisticMapper {
     @Mapping(target = "name", expression = "java(quotient.name())")
     @Mapping(target = "label", expression = "java(quotient.label())")
     @Mapping(target = "emoji", expression = "java(quotient.emoji())")
+    @Mapping(target = "description", expression = "java(quotient.description())")
+    @Mapping(target = "copyrights", expression = "java(quotient.copyrights())")
     @Mapping(target = "direction", expression = "java(quotient.direction())")
     @Mapping(target = "unit", expression = "java(bivariateMatrixQueryUnitToUnit(quotient.unit()))")
     BivariateLegendQuotient bivariateMatrixQueryQuotientToBivariateLegendQuotient(BivariateMatrixQuery.Quotient quotient);

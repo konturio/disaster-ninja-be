@@ -16,6 +16,8 @@ query BivariateLayerLegend($polygon: GeoJSON) {
                         name,
                         label,
                         emoji,
+                        description,
+                        copyrights,
                         direction,
                         unit {
                             id,
@@ -35,6 +37,8 @@ query BivariateLayerLegend($polygon: GeoJSON) {
                         name,
                         label,
                         emoji,
+                        description,
+                        copyrights,
                         direction,
                         unit {
                             id,

@@ -16,6 +16,8 @@ query BivariateMatrix($polygon: GeoJSON, $importantLayers: [[String]]) {
                     name
                     label
                     emoji
+                    description
+                    copyrights
                     direction
                     unit {
                         id
