@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +29,6 @@ public class BivariateMatrixController {
     @ApiResponse(responseCode = "200", description = "Successful operation",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BivariateMatrixDto.class)))
     @PostMapping
-    @PreAuthorize("hasRole('bivariateStatistic')")
     public BivariateMatrixDto getBivariateMatrix(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Polygon in GeoJSON format. Send polygon as FeatureCollection")
             @RequestBody(required = false) BivariateMatrixRequestDto bivariateMatrixRequestDto) {
