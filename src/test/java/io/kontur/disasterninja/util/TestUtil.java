@@ -27,9 +27,9 @@ public final class TestUtil {
 
         BivariateLegendAxes axes = new BivariateLegendAxes();
         axes.setX(new BivariateLegendAxisDescription("xLabel", null, null, null,
-                null, null));
+                null, null, null));
         axes.setY(new BivariateLegendAxisDescription("yLabel", null, null, null,
-                null, null));
+                null, null, null));
 
         Legend legend = new Legend("legendName", LegendType.SIMPLE, null, new ArrayList<>(),
                 Collections.singletonList(new ColorDto("A1", "rgb(232,232,157)")), axes,

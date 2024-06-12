@@ -25,6 +25,15 @@ query BivariateMatrix($polygon: GeoJSON, $importantLayers: [[String]]) {
                         longName
                     }
                 }
+                transformation {
+                    transformation
+                    min
+                    mean
+                    stddev
+                    lowerBound
+                    upperBound
+                    skew
+                }
                 parent
             }
             meta {

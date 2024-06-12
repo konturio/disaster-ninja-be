@@ -4,6 +4,8 @@ type Axis {
   quality: Float
   quotient: [String]
   quotients: [Quotient]
+  transformation: Transformation
+  transformations: [Transformation]
   parent: [String]
 }
 
@@ -205,6 +207,17 @@ type Unit {
   id: String
   shortName: String
   longName: String
+}
+
+type Transformation {
+    transformation: String
+    min: Float
+    mean: Float
+    skew: Float
+    stddev: Float
+    lowerBound: Float
+    upperBound: Float
+    points: [Float]
 }
 
 schema {
