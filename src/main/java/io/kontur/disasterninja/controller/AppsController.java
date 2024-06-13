@@ -114,7 +114,12 @@ public class AppsController {
         while (iterator.hasNext()) {
             Layer next = iterator.next();
             if (bivariateLayerProvider.isApplicable(next.getId())) {
-                iterator.set(bivariateLayerProvider.obtainLayer(next.getId(), null));
+                Layer obtainedLayer = bivariateLayerProvider.obtainLayer(next.getId(), null);
+                if (obtainedLayer != null) {
+                    iterator.set(obtainedLayer);
+                } else {
+                    iterator.remove();
+                }
             }
         }
 
