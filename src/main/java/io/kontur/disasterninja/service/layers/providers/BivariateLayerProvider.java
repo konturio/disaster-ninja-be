@@ -99,6 +99,9 @@ public class BivariateLayerProvider implements LayerProvider {
             return null;
         }
         reloadLayersIfEmpty();
+        if (!bivariateLayers.containsKey(layerId)) {
+            reloadLayers();
+        }
         return bivariateLayers.get(layerId);
     }
 
