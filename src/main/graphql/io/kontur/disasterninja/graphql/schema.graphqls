@@ -9,6 +9,10 @@ type Axis {
   parent: [String]
 }
 
+type AxisInfo {
+  axis: [Axis]
+}
+
 type BivariateStatistic {
   axis: [Axis]
   meta: Meta
@@ -191,6 +195,7 @@ type UrbanCore {
 type Query {
   allStatistic(defaultParam: Int): Statistic
   polygonStatistic(polygonStatisticRequest: PolygonStatisticRequest): PolygonStatistic
+  getAxes(numerator: String, denominator: String): AxisInfo
 }
 
 type Quotient {

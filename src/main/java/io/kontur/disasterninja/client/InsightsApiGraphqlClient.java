@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.client;
 
+import io.kontur.disasterninja.domain.BivariateLegendAxisDescription;
 import io.kontur.disasterninja.dto.bivariatematrix.BivariateMatrixDto;
 import io.kontur.disasterninja.dto.bivariatematrix.BivariateStatisticDto;
 import io.kontur.disasterninja.graphql.AdvancedAnalyticalPanelQuery;
@@ -11,6 +12,7 @@ import org.wololo.geojson.GeoJSON;
 import org.wololo.geojson.Geometry;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface InsightsApiGraphqlClient {
@@ -22,6 +24,8 @@ public interface InsightsApiGraphqlClient {
 
     CompletableFuture<List<AdvancedAnalyticalPanelQuery.AdvancedAnalytic>> advancedAnalyticsPanelQuery(
             GeoJSON argPolygon, List<AdvancedAnalyticsRequest> argRequest);
+
+    CompletableFuture<List<BivariateLegendAxisDescription>> getAxisList(UUID numerator, UUID denominator);
 
     CompletableFuture<BivariateStatisticDto> getBivariateStatistic();
 

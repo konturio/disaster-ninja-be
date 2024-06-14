@@ -1,0 +1,34 @@
+query AxisList($numerator: String, $denominator: String) {
+    getAxes(numerator: $numerator, denominator: $denominator) {axis{
+        label
+        steps {
+            label
+            value
+        }
+        quality
+        quotient
+        quotients {
+            name
+            label
+            emoji
+            description
+            copyrights
+            direction
+            unit {
+                id
+                shortName
+                longName
+            }
+        }
+        transformation {
+            transformation
+            min
+            mean
+            stddev
+            lowerBound
+            upperBound
+            skew
+        }
+        parent
+    }}
+}
