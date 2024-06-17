@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.client;
 
 import io.kontur.disasterninja.domain.BivariateLegendAxisDescription;
+import io.kontur.disasterninja.domain.Transformation;
 import io.kontur.disasterninja.dto.bivariatematrix.BivariateMatrixDto;
 import io.kontur.disasterninja.dto.bivariatematrix.BivariateStatisticDto;
 import io.kontur.disasterninja.graphql.AdvancedAnalyticalPanelQuery;
@@ -33,7 +34,11 @@ public class InsightsApiGraphqlClientDummy implements InsightsApiGraphqlClient {
         return CompletableFuture.completedFuture(Collections.emptyList());
     }
 
-    public CompletableFuture<List<BivariateLegendAxisDescription>> getAxisList(UUID numerator, UUID denominator) {
+    public CompletableFuture<List<BivariateLegendAxisDescription>> getAxisList() {
+        return CompletableFuture.completedFuture(Collections.emptyList());
+    }
+
+    public CompletableFuture<List<Transformation>> getTransformationList(UUID numerator, UUID denominator) {
         return CompletableFuture.completedFuture(Collections.emptyList());
     }
 

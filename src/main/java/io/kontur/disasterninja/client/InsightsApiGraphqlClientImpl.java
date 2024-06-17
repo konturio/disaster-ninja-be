@@ -10,12 +10,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.kontur.disasterninja.domain.BivariateLegendAxisDescription;
+import io.kontur.disasterninja.domain.Transformation;
 import io.kontur.disasterninja.dto.bivariatematrix.*;
 import io.kontur.disasterninja.graphql.*;
 import io.kontur.disasterninja.graphql.type.AdvancedAnalyticsRequest;
 import io.kontur.disasterninja.graphql.type.FunctionArgs;
-import io.kontur.disasterninja.mapper.BivariateStatisticMapper;
 import io.kontur.disasterninja.mapper.AxisListMapper;
+import io.kontur.disasterninja.mapper.BivariateStatisticMapper;
+import io.kontur.disasterninja.mapper.TransformationListMapper;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.CollectorRegistry;
@@ -42,6 +44,7 @@ public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
     private final ApolloClient apolloClient;
     private final BivariateStatisticMapper mapper = Mappers.getMapper(BivariateStatisticMapper.class);
     private final AxisListMapper axisMapper = Mappers.getMapper(AxisListMapper.class);
+    private final TransformationListMapper transformationMapper = Mappers.getMapper(TransformationListMapper.class);
     private final static String SUCCESS = "SUCCESS";
     private final static String FAILED = "FAILED";
     private final Summary metrics; //todo use histogram once we know which buckets to use
@@ -151,13 +154,40 @@ public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
         return future;
     }
 
-    public CompletableFuture<List<BivariateLegendAxisDescription>> getAxisList(UUID numerator, UUID denominator) {
+    public CompletableFuture<List<Transformation>> getTransformationList(UUID numerator, UUID denominator) {
+        CompletableFuture<List<Transformation>> future = new CompletableFuture<>();
+        SimpleTimer timer = new SimpleTimer();
+        apolloClient
+                .query(new TransformationListQuery(
+                            Input.optional(numerator == null ? null : numerator.toString()),
+                            Input.optional(denominator == null ? null : denominator.toString())))
+                .enqueue(new ApolloCall.Callback<>() {
+                    @Override
+                    public void onResponse(@NotNull Response<TransformationListQuery.Data> response) {
+                        metrics.labels(SUCCESS, "200").observe(timer.elapsedSeconds());
+
+                        if (response.getData() != null && response.getData().getTransformations() != null
+                                && response.getData().getTransformations().transformation() != null) {
+                            future.complete(
+                                    transformationMapper.transformationListQueryTransformationListToTransformationList(
+                                            response.getData().getTransformations().transformation()));
+                        }
+                        future.complete(List.of());
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull ApolloException e) {
+                        observeMetricsAndCompleteExceptionally(e, future, timer);
+                    }
+                });
+        return future;
+    }
+
+    public CompletableFuture<List<BivariateLegendAxisDescription>> getAxisList() {
         CompletableFuture<List<BivariateLegendAxisDescription>> future = new CompletableFuture<>();
         SimpleTimer timer = new SimpleTimer();
         apolloClient
-                .query(new AxisListQuery(
-                            Input.optional(numerator == null ? null : numerator.toString()),
-                            Input.optional(denominator == null ? null : denominator.toString())))
+                .query(new AxisListQuery())
                 .enqueue(new ApolloCall.Callback<>() {
                     @Override
                     public void onResponse(@NotNull Response<AxisListQuery.Data> response) {

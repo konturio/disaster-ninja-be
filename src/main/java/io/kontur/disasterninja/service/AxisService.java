@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.service;
 
 import io.kontur.disasterninja.domain.BivariateLegendAxisDescription;
+import io.kontur.disasterninja.domain.Transformation;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,19 @@ public class AxisService {
 
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
 
-        public List<BivariateLegendAxisDescription> getDataForAxis(UUID numerator, UUID denominator) {
+    public List<Transformation> getTransformations(UUID numerator, UUID denominator) {
         try {
-            return insightsApiGraphqlClient.getAxisList(numerator, denominator).get();
+            return insightsApiGraphqlClient.getTransformationList(numerator, denominator).get();
+        } catch (Exception e) {
+            LOG.error("Can't load transformations due to exception in graphql call: {}", e.getMessage(), e);
+            throw new WebApplicationException("Exception when getting data from insights-api using apollo client",
+                    HttpStatus.BAD_GATEWAY);
+        }
+    }
+
+    public List<BivariateLegendAxisDescription> getDataForAxis() {
+        try {
+            return insightsApiGraphqlClient.getAxisList().get();
         } catch (Exception e) {
             LOG.error("Can't load axis due to exception in graphql call: {}", e.getMessage(), e);
             throw new WebApplicationException("Exception when getting data from insights-api using apollo client",
