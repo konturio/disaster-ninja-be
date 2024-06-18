@@ -6,7 +6,6 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@JsonInclude
 public class Transformation {
 
     private String transformation;

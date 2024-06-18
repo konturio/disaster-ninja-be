@@ -31,7 +31,7 @@ public class AxisController {
     @Operation(summary = "Get axis transformations by numerator and denominator UUID", tags = {"Axis"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = BivariateLegendAxisDescription.class)))
+                    array = @ArraySchema(schema = @Schema(implementation = Transformation.class))))
     @ApiResponse(responseCode = "404", description = "Axis is not found", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
     @GetMapping(path = "/{numerator}/{denominator}/transformations")
     public ResponseEntity<List<Transformation>> get(
