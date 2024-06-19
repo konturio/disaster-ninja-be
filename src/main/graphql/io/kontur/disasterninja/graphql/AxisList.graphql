@@ -1,0 +1,36 @@
+query AxisList {
+    getAxes {
+        axis{
+            label
+            steps {
+                label
+                value
+            }
+            quality
+            quotient
+            quotients {
+                name
+                label
+                emoji
+                description
+                copyrights
+                direction
+                unit {
+                    id
+                    shortName
+                    longName
+                }
+            }
+            transformation {
+                transformation
+                min
+                mean
+                stddev
+                lowerBound
+                upperBound
+                skew
+            }
+            parent
+        }
+    }
+}

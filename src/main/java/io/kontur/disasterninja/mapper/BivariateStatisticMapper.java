@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.mapper;
 
+import io.kontur.disasterninja.domain.Transformation;
 import io.kontur.disasterninja.domain.BivariateLegendAxisDescription;
 import io.kontur.disasterninja.domain.BivariateLegendAxisStep;
 import io.kontur.disasterninja.domain.BivariateLegendQuotient;
@@ -41,6 +42,7 @@ public interface BivariateStatisticMapper {
     @Mapping(target = "steps",
             expression = "java(bivariateLayerLegendQueryStepListToBivariateLegendAxisStepList(x.steps()))")
     @Mapping(target = "quality", ignore = true)
+    @Mapping(target = "transformation", ignore = true)
     @Mapping(target = "parent", ignore = true)
     BivariateLegendAxisDescription bivariateLayerLegendQueryXAxisToAxisDescription(BivariateLayerLegendQuery.X x);
 
@@ -69,6 +71,16 @@ public interface BivariateStatisticMapper {
     @Mapping(target = "longName", expression = "java(unit.longName())")
     Unit bivariateLayerLegendQueryUnitToUnit(BivariateLayerLegendQuery.Unit unit);
 
+    @Mapping(target = "transformation", expression = "java(transformation.transformation())")
+    @Mapping(target = "min", expression = "java(transformation.min())")
+    @Mapping(target = "mean", expression = "java(transformation.mean())")
+    @Mapping(target = "skew", expression = "java(transformation.skew())")
+    @Mapping(target = "stddev", expression = "java(transformation.stddev())")
+    @Mapping(target = "lowerBound", expression = "java(transformation.lowerBound())")
+    @Mapping(target = "upperBound", expression = "java(transformation.upperBound())")
+    @Mapping(target = "points", ignore = true)
+    Transformation bivariateMatrixQueryTransformationToTransformation(BivariateMatrixQuery.Transformation transformation);
+
     @Mapping(target = "label", expression = "java(y.label())")
     @Mapping(target = "quotient", expression = "java(y.quotient())")
     @Mapping(target = "quotients",
@@ -76,6 +88,7 @@ public interface BivariateStatisticMapper {
     @Mapping(target = "steps",
             expression = "java(bivariateLayerLegendQueryStep1ListToBivariateLegendAxisStepList(y.steps()))")
     @Mapping(target = "quality", ignore = true)
+    @Mapping(target = "transformation", ignore = true)
     @Mapping(target = "parent", ignore = true)
     BivariateLegendAxisDescription bivariateLayerLegendQueryYAxisToAxisDescription(BivariateLayerLegendQuery.Y y);
 
@@ -152,6 +165,7 @@ public interface BivariateStatisticMapper {
     @Mapping(target = "steps",
             expression = "java(bivariateMatrixQueryStepListToBivariateLegendAxisStepList(axis.steps()))")
     @Mapping(target = "quality", expression = "java(axis.quality())")
+    @Mapping(target = "transformation", expression = "java(bivariateMatrixQueryTransformationToTransformation(axis.transformation()))")
     @Mapping(target = "parent", expression = "java(axis.parent())")
     BivariateLegendAxisDescription bivariateMatrixQueryAxisToAxisDescription(BivariateMatrixQuery.Axis axis);
 
@@ -201,6 +215,7 @@ public interface BivariateStatisticMapper {
     @Mapping(target = "steps",
             expression = "java(bivariateMatrixQueryStep1ListToBivariateLegendAxisStepList(x.steps()))")
     @Mapping(target = "quality", expression = "java(x.quality())")
+    @Mapping(target = "transformation", ignore = true)
     @Mapping(target = "parent", expression = "java(x.parent())")
     @Mapping(target = "quotients", ignore = true)
     BivariateLegendAxisDescription bivariateMatrixQueryXAxisToAxisDescription(BivariateMatrixQuery.X x);
@@ -217,6 +232,7 @@ public interface BivariateStatisticMapper {
     @Mapping(target = "steps",
             expression = "java(bivariateMatrixQueryStep2ListToBivariateLegendAxisStepList(y.steps()))")
     @Mapping(target = "quality", expression = "java(y.quality())")
+    @Mapping(target = "transformation", ignore = true)
     @Mapping(target = "parent", expression = "java(y.parent())")
     @Mapping(target = "quotients", ignore = true)
     BivariateLegendAxisDescription bivariateMatrixQueryYAxisToAxisDescription(BivariateMatrixQuery.Y y);

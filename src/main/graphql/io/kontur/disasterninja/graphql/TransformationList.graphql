@@ -1,0 +1,14 @@
+query TransformationList($numerator: String, $denominator: String) {
+    getTransformations(numerator: $numerator, denominator: $denominator) {
+        transformation {
+            transformation
+            min
+            mean
+            stddev
+            lowerBound
+            upperBound
+            skew
+            points
+        }
+    }
+}

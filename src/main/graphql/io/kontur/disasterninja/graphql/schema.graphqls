@@ -4,7 +4,17 @@ type Axis {
   quality: Float
   quotient: [String]
   quotients: [Quotient]
+  transformation: Transformation
+  transformations: [Transformation]
   parent: [String]
+}
+
+type AxisInfo {
+  axis: [Axis]
+}
+
+type TransformationInfo {
+  transformation: [Transformation]
 }
 
 type BivariateStatistic {
@@ -189,6 +199,8 @@ type UrbanCore {
 type Query {
   allStatistic(defaultParam: Int): Statistic
   polygonStatistic(polygonStatisticRequest: PolygonStatisticRequest): PolygonStatistic
+  getAxes: AxisInfo
+  getTransformations(numerator: String, denominator: String): TransformationInfo
 }
 
 type Quotient {
@@ -205,6 +217,17 @@ type Unit {
   id: String
   shortName: String
   longName: String
+}
+
+type Transformation {
+    transformation: String
+    min: Float
+    mean: Float
+    skew: Float
+    stddev: Float
+    lowerBound: Float
+    upperBound: Float
+    points: [Float]
 }
 
 schema {
