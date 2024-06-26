@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.http.HttpMethod.*;
@@ -33,6 +34,7 @@ public class UserProfileClient extends RestClientWithBearerAuth {
     private static final String APP_CONFIG_URL = "/apps/configuration";
     private static final String DEFAULT_APP_ID_URL = "/apps/default_id";
     private static final String CURRENT_USER_URL = "/users/current_user";
+    private static final String BILLING_SUBSCRIPTION_URL = "/users/current_user/billing_subscription";
     private static final String ASSETS_URL = "/apps/{appId}/assets/{filename}";
     private final RestTemplate userProfileRestTemplate;
 
@@ -61,6 +63,31 @@ public class UserProfileClient extends RestClientWithBearerAuth {
                         httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(userDto),
                         new ParameterizedTypeReference<>() {
                         });
+
+        return response.getBody();
+    }
+
+    public Optional<ActiveSubscriptionDto> getActiveSubscription(UUID appId) {
+        String url = UriComponentsBuilder.fromUriString(BILLING_SUBSCRIPTION_URL)
+                .queryParam("appId", appId)
+                .toUriString();
+        ResponseEntity<ActiveSubscriptionDto> response = userProfileRestTemplate.exchange(
+                url, GET, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
+                new ParameterizedTypeReference<>() {});
+
+        return Optional.ofNullable(response.getBody());
+    }
+
+    public ActiveSubscriptionDto setActiveSubscription(UUID appId, String billingPlanId, String billingSubscriptionId) {
+        String url = UriComponentsBuilder.fromUriString(BILLING_SUBSCRIPTION_URL)
+                .queryParam("appId", appId)
+                .queryParam("billingPlanId", billingPlanId)
+                .queryParam("billingSubscriptionId", billingSubscriptionId)
+                .toUriString();
+
+        ResponseEntity<ActiveSubscriptionDto> response = userProfileRestTemplate.exchange(
+                url, POST, httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
+                new ParameterizedTypeReference<>() {});
 
         return response.getBody();
     }
