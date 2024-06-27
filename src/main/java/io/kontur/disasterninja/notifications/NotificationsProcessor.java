@@ -84,7 +84,7 @@ public class NotificationsProcessor {
                     break;
                 }
 
-                if (isEventInPopulatedArea(event) && isEventTypeAppropriate(event)) {
+                if (isEventTypeAppropriate(event)) {
                     Geometry geometry = convertGeometry(event.getGeometries());
                     latestUpdatedDate = event.getUpdatedAt();
                     process(event, geometry);

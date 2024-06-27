@@ -40,10 +40,12 @@ public class SlackMessageFormatter {
         StringBuilder description = new StringBuilder();
         description.append(convertNotificationDescription(latestEpisode));
         description.append(convertUrbanStatistic(urbanPopulationProperties));
-        description.append(convertPopulationStatistic(episodeDetails));
-        description.append(convertIndustrialStatistic(episodeDetails, eventDetails));
-        description.append(convertForestStatistic(episodeDetails, eventDetails));
-        description.append(convertFireStatistic(episodeDetails, eventDetails, event));
+        if (episodeDetails != null && eventDetails != null) {
+            description.append(convertPopulationStatistic(episodeDetails));
+            description.append(convertIndustrialStatistic(episodeDetails, eventDetails));
+            description.append(convertForestStatistic(episodeDetails, eventDetails));
+            description.append(convertFireStatistic(episodeDetails, eventDetails, event));
+        }
         description.append(convertOsmQuality(analytics));
 
         String colorCode = getMessageColorCode(event, latestEpisode);
