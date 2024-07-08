@@ -19,7 +19,7 @@ import io.kontur.disasterninja.client.InsightsApiClient;
 import io.kontur.disasterninja.client.InsightsApiClientDummy;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClientDummy;
-import io.kontur.disasterninja.config.interceptor.UserLanguageInterceptor;
+import io.kontur.disasterninja.config.interceptor.HeaderInterceptor;
 import io.kontur.disasterninja.config.metrics.ParamLessRestTemplateExchangeTagsProvider;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -49,6 +49,7 @@ import org.wololo.geojson.GeoJSONFactory;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 @Configuration
 public class WebConfiguration {
@@ -111,12 +112,14 @@ public class WebConfiguration {
     public RestTemplate insightsApiRestTemplate(RestTemplateBuilder builder, HttpClient httpClient,
                                                 @Value("${kontur.platform.insightsApi.url}") String insightsApiUrl,
                                                 @Value("${kontur.platform.insightsApi.connectionTimeout}") Integer connectionTimeout,
-                                                @Value("${kontur.platform.insightsApi.readTimeout}") Integer readTimeout) {
+                                                @Value("${kontur.platform.insightsApi.readTimeout}") Integer readTimeout,
+                                                ClientHttpRequestInterceptor insightsHeadersInterceptor) {
         return builder
                 .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
                 .rootUri(insightsApiUrl)
                 .setConnectTimeout(Duration.of(connectionTimeout, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(readTimeout, ChronoUnit.SECONDS))
+                .additionalInterceptors(insightsHeadersInterceptor)
                 .build();
     }
 
@@ -226,8 +229,13 @@ public class WebConfiguration {
     }
 
     @Bean
+    public ClientHttpRequestInterceptor insightsHeadersInterceptor() {
+        return new HeaderInterceptor(List.of("If-None-Match", "If-Modified-Since"));
+    }
+
+    @Bean
     public ClientHttpRequestInterceptor userLanguageInterceptor() {
-        return new UserLanguageInterceptor();
+        return new HeaderInterceptor(List.of("User-Language"));
     }
 
 }
