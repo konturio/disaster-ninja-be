@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.UUID;
 import static java.util.Collections.emptyList;
 
@@ -50,11 +51,19 @@ public class AxisController {
                     array = @ArraySchema(schema = @Schema(implementation = BivariateLegendAxisDescription.class))))
     @ApiResponse(responseCode = "204", description = "No content", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
     @GetMapping
-    public ResponseEntity<List<BivariateLegendAxisDescription>> getList() {
+    public ResponseEntity<List<BivariateLegendAxisDescription>> getList(
+            @RequestParam(name = "minQuality", required = false) Double minQuality) {
         List<BivariateLegendAxisDescription> axes = axisService.getDataForAxis();
         if (axes.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(emptyList());
         }
+
+        if (minQuality != null) {
+            axes = axes.stream()
+                       .filter(axis -> axis.getQuality() != null && axis.getQuality() >= minQuality)
+                       .collect(Collectors.toList());
+        }
+
         return ResponseEntity.ok(axes);
     }
 }
