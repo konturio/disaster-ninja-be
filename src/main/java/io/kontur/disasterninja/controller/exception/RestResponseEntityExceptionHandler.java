@@ -1,12 +1,15 @@
 package io.kontur.disasterninja.controller.exception;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -41,6 +44,35 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             errors.put(fieldName, errorMessage);
         });
         return new ResponseEntity<>(errors, status);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex,
+                                                        HttpHeaders headers, HttpStatus status,
+                                                        WebRequest request) {
+        String fieldName = ex.getPropertyName();
+        String requiredType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown";
+        String value = ex.getValue() != null ? ex.getValue().toString() : "null";
+        String message = String.format("Invalid value '%s' for field '%s'. Expected type: %s", value, fieldName, requiredType);
+        return ResponseEntity.status(status).body(message);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+                                                                  HttpHeaders headers, HttpStatus status,
+                                                                  WebRequest request) {
+        String error = "Malformed JSON request";
+        Throwable cause = ex.getCause();
+        if (cause instanceof InvalidFormatException) {
+            InvalidFormatException invalidFormatException = (InvalidFormatException) cause;
+            String fieldName = invalidFormatException.getPath().stream()
+                    .map(reference -> reference.getFieldName())
+                    .findFirst().orElse("unknown");
+            String value = invalidFormatException.getValue().toString();
+            String requiredType = invalidFormatException.getTargetType().getSimpleName();
+            error = String.format("Invalid value '%s' for field '%s'. Expected type: %s", value, fieldName, requiredType);
+        }
+        return ResponseEntity.status(status).body(error);
     }
 
     @ExceptionHandler(HttpClientErrorException.class)

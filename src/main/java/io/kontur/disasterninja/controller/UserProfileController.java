@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.controller;
 
 import io.kontur.disasterninja.dto.ActiveSubscriptionDto;
+import io.kontur.disasterninja.dto.ActiveSubscriptionRequestDto;
 import io.kontur.disasterninja.dto.UserDto;
 import io.kontur.disasterninja.service.UserProfileService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
@@ -71,10 +73,8 @@ public class UserProfileController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/current_user/billing_subscription")
     public ResponseEntity<ActiveSubscriptionDto> setActiveSubscription(
-            @RequestParam(name = "appId", required = true) UUID appId,
-            @RequestParam(name = "billingPlanId", required = true) String billingPlanId,
-            @RequestParam(name = "billingSubscriptionId", required = true) String billingSubscriptionId
+            @Valid @RequestBody(required = true) ActiveSubscriptionRequestDto dto
     ) {
-        return ResponseEntity.ok(userProfileService.setActiveSubscription(appId, billingPlanId, billingSubscriptionId));
+        return ResponseEntity.ok(userProfileService.setActiveSubscription(dto.getAppId(), dto.getBillingPlanId(), dto.getBillingSubscriptionId()));
     }
 }
