@@ -52,6 +52,7 @@ public class AxisController {
     @ApiResponse(responseCode = "204", description = "No content", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
     @GetMapping
     public ResponseEntity<List<BivariateLegendAxisDescription>> getList(
+            @Parameter(description = "Minimum quality to filter the axes")
             @RequestParam(name = "minQuality", required = false) Double minQuality) {
         List<BivariateLegendAxisDescription> axes = axisService.getDataForAxis();
         if (axes.size() == 0) {
