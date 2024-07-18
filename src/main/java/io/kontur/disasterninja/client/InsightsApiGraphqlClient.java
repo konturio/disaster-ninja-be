@@ -13,7 +13,6 @@ import org.wololo.geojson.GeoJSON;
 import org.wololo.geojson.Geometry;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface InsightsApiGraphqlClient {
@@ -28,7 +27,7 @@ public interface InsightsApiGraphqlClient {
 
     CompletableFuture<List<BivariateLegendAxisDescription>> getAxisList();
 
-    CompletableFuture<List<Transformation>> getTransformationList(UUID numerator, UUID denominator);
+    CompletableFuture<List<Transformation>> getTransformationList(String numerator, String denominator);
 
     CompletableFuture<BivariateStatisticDto> getBivariateStatistic();
 

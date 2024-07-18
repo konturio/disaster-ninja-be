@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.UUID;
 import static java.util.Collections.emptyList;
 
 
@@ -29,15 +28,15 @@ public class AxisController {
 
     private final AxisService axisService;
 
-    @Operation(summary = "Get axis transformations by numerator and denominator UUID", tags = {"Axis"})
+    @Operation(summary = "Get axis transformations by numerator and denominator names", tags = {"Axis"})
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     array = @ArraySchema(schema = @Schema(implementation = Transformation.class))))
     @ApiResponse(responseCode = "404", description = "Axis is not found", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
     @GetMapping(path = "/{numerator}/{denominator}/transformations")
     public ResponseEntity<List<Transformation>> get(
-            @PathVariable @Parameter(name = "numerator") UUID numerator,
-            @PathVariable @Parameter(name = "denominator") UUID denominator) {
+            @PathVariable @Parameter(name = "numerator") String numerator,
+            @PathVariable @Parameter(name = "denominator") String denominator) {
         List<Transformation> transformations = axisService.getTransformations(numerator, denominator);
         if (transformations.size() == 0) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(emptyList());
