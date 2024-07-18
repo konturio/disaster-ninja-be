@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +19,7 @@ public class AxisService {
 
     private final InsightsApiGraphqlClient insightsApiGraphqlClient;
 
-    public List<Transformation> getTransformations(UUID numerator, UUID denominator) {
+    public List<Transformation> getTransformations(String numerator, String denominator) {
         try {
             return insightsApiGraphqlClient.getTransformationList(numerator, denominator).get();
         } catch (Exception e) {

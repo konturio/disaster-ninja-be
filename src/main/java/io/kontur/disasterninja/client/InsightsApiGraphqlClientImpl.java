@@ -34,7 +34,6 @@ import org.wololo.geojson.GeoJSON;
 import org.wololo.geojson.Geometry;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -154,13 +153,13 @@ public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
         return future;
     }
 
-    public CompletableFuture<List<Transformation>> getTransformationList(UUID numerator, UUID denominator) {
+    public CompletableFuture<List<Transformation>> getTransformationList(String numerator, String denominator) {
         CompletableFuture<List<Transformation>> future = new CompletableFuture<>();
         SimpleTimer timer = new SimpleTimer();
         apolloClient
                 .query(new TransformationListQuery(
-                            Input.optional(numerator == null ? null : numerator.toString()),
-                            Input.optional(denominator == null ? null : denominator.toString())))
+                            Input.optional(numerator == null ? null : numerator),
+                            Input.optional(denominator == null ? null : denominator)))
                 .enqueue(new ApolloCall.Callback<>() {
                     @Override
                     public void onResponse(@NotNull Response<TransformationListQuery.Data> response) {

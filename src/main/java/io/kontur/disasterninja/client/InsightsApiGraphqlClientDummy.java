@@ -15,7 +15,6 @@ import org.wololo.geojson.Geometry;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class InsightsApiGraphqlClientDummy implements InsightsApiGraphqlClient {
@@ -38,7 +37,7 @@ public class InsightsApiGraphqlClientDummy implements InsightsApiGraphqlClient {
         return CompletableFuture.completedFuture(Collections.emptyList());
     }
 
-    public CompletableFuture<List<Transformation>> getTransformationList(UUID numerator, UUID denominator) {
+    public CompletableFuture<List<Transformation>> getTransformationList(String numerator, String denominator) {
         return CompletableFuture.completedFuture(Collections.emptyList());
     }
 
