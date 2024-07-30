@@ -1,6 +1,6 @@
 package io.kontur.disasterninja.service;
 
-import io.kontur.disasterninja.client.KcApiClient;
+import io.kontur.disasterninja.client.LayersApiClient;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 class BoundariesServiceTest {
 
     @Mock
-    private KcApiClient kcApiClient;
+    private LayersApiClient layersApiClient;
 
     @Mock
     private GeometryTransformer geometryTransformer;
@@ -47,7 +47,7 @@ class BoundariesServiceTest {
 
         when(geometryTransformer.getGeometryFromGeoJson(geoJSONArgumentCaptor.capture())).thenReturn(geometry);
         when(geometryTransformer.getPointFromGeometry(geometry)).thenReturn(point);
-        when(kcApiClient.getCollectionItemsByPoint(point, "bounds")).thenReturn(Lists.newArrayList());
+        when(layersApiClient.getCollectionFeatures(point, "konturBoundaries", null)).thenReturn(Lists.newArrayList());
 
         //when
         boundariesService.getBoundaries(geoJSON);
@@ -58,7 +58,7 @@ class BoundariesServiceTest {
 
         verify(geometryTransformer).getGeometryFromGeoJson(any(GeoJSON.class));
         verify(geometryTransformer).getPointFromGeometry(geometry);
-        verify(kcApiClient).getCollectionItemsByPoint(point, "bounds");
+        verify(layersApiClient).getCollectionFeatures(point, "konturBoundaries", null);
 
     }
 
