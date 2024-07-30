@@ -34,11 +34,6 @@ public class GeometryTransformer {
             for (int i = 0; i < length; i++) {
                 result[i] = ((FeatureCollection) input).getFeatures()[i].getGeometry();
             }
-
-            if (length == 1) {
-                return result[0];
-            }
-
             return new GeometryCollection(result);
         }
         //it's a Geometry otherwise
