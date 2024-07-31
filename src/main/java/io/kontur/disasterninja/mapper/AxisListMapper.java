@@ -30,8 +30,8 @@ public interface AxisListMapper {
 
     @Mapping(target = "minValue", expression = "java(datasetStats.minValue())")
     @Mapping(target = "maxValue", expression = "java(datasetStats.minValue())")
-    @Mapping(target = "meanValue", expression = "java(datasetStats.meanValue())")
-    @Mapping(target = "stddevValue", expression = "java(datasetStats.stddevValue())")
+    @Mapping(target = "mean", expression = "java(datasetStats.mean())")
+    @Mapping(target = "stddev", expression = "java(datasetStats.stddev())")
     DatasetStats axisListQueryDatasetStatsToDatasetStats(AxisListQuery.DatasetStats datasetStats);
 
     @Mapping(target = "id", expression = "java(unit.id())")

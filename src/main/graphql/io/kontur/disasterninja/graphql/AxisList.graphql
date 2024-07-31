@@ -9,8 +9,8 @@ query AxisList {
             datasetStats{
                 minValue,
                 maxValue,
-                meanValue,
-                stddevValue
+                mean,
+                stddev
             }
             quality
             quotient

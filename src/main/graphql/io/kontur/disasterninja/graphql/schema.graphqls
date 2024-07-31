@@ -234,8 +234,8 @@ type Transformation {
 type DatasetStats {
     minValue: Float
     maxValue: Float
-    meanValue: Float
-    stddevValue: Float
+    mean: Float
+    stddev: Float
 }
 
 schema {
