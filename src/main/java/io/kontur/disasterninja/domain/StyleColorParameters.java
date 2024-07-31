@@ -19,4 +19,7 @@ public class StyleColorParameters {
     private List<List<Object>> fillColor;
     @JsonProperty("fill-opacity")
     private Double fillOpacity;
+    // sentiments
+    private String bad;
+    private String good;
 }
