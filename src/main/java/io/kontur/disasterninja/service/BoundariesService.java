@@ -21,7 +21,7 @@ public class BoundariesService {
         Geometry geometry = geometryTransformer.getGeometryFromGeoJson(geoJSON);
         Point point = geometryTransformer.getPointFromGeometry(geometry);
         List<Feature> features = layersApiClient.getCollectionFeatures(point, KONTUR_BOUNDARIES, null);
-        return new FeatureCollection(features == null ? new Feature[]{} : features.toArray(Feature[]::new));
+        return new FeatureCollection(features.toArray(Feature[]::new));
     }
 
 }
