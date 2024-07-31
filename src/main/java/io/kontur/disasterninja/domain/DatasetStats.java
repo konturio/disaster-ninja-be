@@ -2,8 +2,6 @@ package io.kontur.disasterninja.domain;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class DatasetStats {
 

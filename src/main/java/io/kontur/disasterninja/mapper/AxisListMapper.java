@@ -29,7 +29,7 @@ public interface AxisListMapper {
     Transformation axisListQueryTransformationToTransformation(AxisListQuery.Transformation transformation);
 
     @Mapping(target = "minValue", expression = "java(datasetStats.minValue())")
-    @Mapping(target = "maxValue", expression = "java(datasetStats.minValue())")
+    @Mapping(target = "maxValue", expression = "java(datasetStats.maxValue())")
     @Mapping(target = "mean", expression = "java(datasetStats.mean())")
     @Mapping(target = "stddev", expression = "java(datasetStats.stddev())")
     DatasetStats axisListQueryDatasetStatsToDatasetStats(AxisListQuery.DatasetStats datasetStats);
