@@ -22,9 +22,9 @@ public class BoundariesController {
 
     private final BoundariesService boundariesService;
 
-    @Operation(summary = "Returns boundaries for selected point using kcApi service",
+    @Operation(summary = "Returns boundaries for selected point using LayersApi service",
             tags = {"Boundaries"},
-            description = "Returns boundaries for selected point using kcApi service")
+            description = "Returns boundaries for selected point using LayersApi service")
     @ApiResponse(responseCode = "200", description = "Successful operation",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = FeatureCollection.class)))
     @PostMapping
