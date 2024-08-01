@@ -19,6 +19,8 @@ public class BivariateLegendAxisDescription {
 
     private List<BivariateLegendAxisStep> steps;
 
+    private DatasetStats datasetStats;
+
     private Double quality;
 
     private List<String> quotient;
