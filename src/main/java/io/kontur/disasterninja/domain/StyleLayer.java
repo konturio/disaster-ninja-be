@@ -14,10 +14,14 @@ import lombok.extern.jackson.Jacksonized;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StyleLayer {
+    private String id;
+    private String name;
+    private String unit;
     private List<String> axis;
     private List<Integer> range;
     private List<String> sentiment;
-    private Integer coefficient;
+    private Double coefficient;
     private String transformationFunction;
     private String normalization;
+    private String outliers;
 }
