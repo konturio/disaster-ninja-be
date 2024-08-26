@@ -3,9 +3,9 @@ package io.kontur.disasterninja.notifications;
 import io.kontur.disasterninja.client.EventApiClient;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
-import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
 import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
 import io.kontur.disasterninja.service.AnalyticsService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -84,7 +84,7 @@ public class NotificationsProcessor {
                     break;
                 }
 
-                if (isEventInPopulatedArea(event) && isEventTypeAppropriate(event)) {
+                if (isEventSeverityAppropriate(event) && isEventInPopulatedArea(event) && isEventTypeAppropriate(event)) {
                     Geometry geometry = convertGeometry(event.getGeometries());
                     latestUpdatedDate = event.getUpdatedAt();
                     process(event, geometry);
@@ -129,6 +129,10 @@ public class NotificationsProcessor {
      */
     private boolean isEventTypeAppropriate(EventApiEventDto eventApiEventDto) {
         return acceptableTypes.contains(eventApiEventDto.getType());
+    }
+
+    private boolean isEventSeverityAppropriate(EventApiEventDto event) {
+        return StringUtils.isBlank(event.getName()) || !event.getName().startsWith("Green");
     }
 
     private boolean isEventInPopulatedArea(EventApiEventDto event) {
