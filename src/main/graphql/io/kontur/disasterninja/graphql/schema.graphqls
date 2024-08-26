@@ -1,6 +1,7 @@
 type Axis {
   label: String
   steps: [Step]
+  datasetStats: DatasetStats
   quality: Float
   quotient: [String]
   quotients: [Quotient]
@@ -228,6 +229,13 @@ type Transformation {
     lowerBound: Float
     upperBound: Float
     points: [Float]
+}
+
+type DatasetStats {
+    minValue: Float
+    maxValue: Float
+    mean: Float
+    stddev: Float
 }
 
 schema {

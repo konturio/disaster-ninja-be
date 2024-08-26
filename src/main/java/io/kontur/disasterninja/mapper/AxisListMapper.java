@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.mapper;
 
 import io.kontur.disasterninja.domain.Transformation;
+import io.kontur.disasterninja.domain.DatasetStats;
 import io.kontur.disasterninja.domain.BivariateLegendAxisDescription;
 import io.kontur.disasterninja.domain.BivariateLegendAxisStep;
 import io.kontur.disasterninja.domain.BivariateLegendQuotient;
@@ -27,6 +28,12 @@ public interface AxisListMapper {
     @Mapping(target = "points", ignore = true)
     Transformation axisListQueryTransformationToTransformation(AxisListQuery.Transformation transformation);
 
+    @Mapping(target = "minValue", expression = "java(datasetStats.minValue())")
+    @Mapping(target = "maxValue", expression = "java(datasetStats.maxValue())")
+    @Mapping(target = "mean", expression = "java(datasetStats.mean())")
+    @Mapping(target = "stddev", expression = "java(datasetStats.stddev())")
+    DatasetStats axisListQueryDatasetStatsToDatasetStats(AxisListQuery.DatasetStats datasetStats);
+
     @Mapping(target = "id", expression = "java(unit.id())")
     @Mapping(target = "shortName", expression = "java(unit.shortName())")
     @Mapping(target = "longName", expression = "java(unit.longName())")
@@ -43,6 +50,7 @@ public interface AxisListMapper {
             expression = "java(axisListQueryStepListToBivariateLegendAxisStepList(axis.steps()))")
     @Mapping(target = "quality", expression = "java(axis.quality())")
     @Mapping(target = "transformation", expression = "java(axisListQueryTransformationToTransformation(axis.transformation()))")
+    @Mapping(target = "datasetStats", expression = "java(axisListQueryDatasetStatsToDatasetStats(axis.datasetStats()))")
     @Mapping(target = "parent", expression = "java(axis.parent())")
     BivariateLegendAxisDescription axisListQueryAxisToAxisDescription(AxisListQuery.Axis axis);
 

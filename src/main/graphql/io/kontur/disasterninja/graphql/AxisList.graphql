@@ -6,6 +6,12 @@ query AxisList {
                 label
                 value
             }
+            datasetStats{
+                minValue,
+                maxValue,
+                mean,
+                stddev
+            }
             quality
             quotient
             quotients {
