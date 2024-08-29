@@ -3,6 +3,7 @@ package io.kontur.disasterninja.client;
 import io.kontur.disasterninja.dto.AnalyticsRequestDto;
 import io.kontur.disasterninja.dto.LLMAnalyticsDto;
 import io.kontur.disasterninja.dto.SearchDto;
+import io.kontur.disasterninja.dto.SearchClickRequestDto;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +31,9 @@ public class InsightsLLMApiClient extends RestClientWithBearerAuth {
 
     public LLMAnalyticsDto getLLMAnalytics(AnalyticsRequestDto llmAnalyticsRequest) {
         ResponseEntity<LLMAnalyticsDto> response = llmAnalyticsRestTemplate
-                .exchange("/llm-analytics", POST, httpEntityWithUserBearerAuthIfPresent(llmAnalyticsRequest),
-                        new ParameterizedTypeReference<>() {
-                        });
+                .exchange("/llm-analytics", POST,
+                        httpEntityWithUserBearerAuthIfPresent(llmAnalyticsRequest),
+                        new ParameterizedTypeReference<>() {});
         return response.getBody();
     }
 
@@ -42,5 +43,12 @@ public class InsightsLLMApiClient extends RestClientWithBearerAuth {
                         httpEntityWithUserBearerAuthIfPresent(null),
                         new ParameterizedTypeReference<>() {});
         return response.getBody();
+    }
+
+    public ResponseEntity<?> logSearchClick(SearchClickRequestDto searchClickRequest) {
+        return llmAnalyticsRestTemplate
+                .exchange("/search/click", POST,
+                        httpEntityWithUserBearerAuthIfPresent(searchClickRequest),
+                        new ParameterizedTypeReference<>() {});
     }
 }
