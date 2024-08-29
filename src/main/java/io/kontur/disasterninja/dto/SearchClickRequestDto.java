@@ -8,7 +8,7 @@ import java.util.UUID;
 import java.util.List;
 
 @Data
-public class SearchClickRequest {
+public class SearchClickRequestDto {
     private UUID appId;
     private String query;
     private List<SearchGroup> searchResults;

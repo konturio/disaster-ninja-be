@@ -2,7 +2,7 @@ package io.kontur.disasterninja.controller;
 
 import io.kontur.disasterninja.client.InsightsLLMApiClient;
 import io.kontur.disasterninja.dto.SearchDto;
-import io.kontur.disasterninja.dto.SearchClickRequest;
+import io.kontur.disasterninja.dto.SearchClickRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -49,7 +49,7 @@ public class SearchController {
     })
     @PostMapping("/click")
     public ResponseEntity<?> handleSearchClick(
-            @RequestBody SearchClickRequest searchClickRequest) {
+            @RequestBody SearchClickRequestDto searchClickRequest) {
         return llmAnalyticsClient.logSearchClick(searchClickRequest);
     }
 }
