@@ -83,7 +83,9 @@ public class AnalyticsService {
 
             switch (function.getFunction()) {
                 case "maxX" -> combinedData.setPrefix("Maximum");
+                case "minX" -> combinedData.setPrefix("Minimum");
                 case "sumX" -> combinedData.setPrefix("Total");
+                case "avgX" -> combinedData.setPrefix("Average");
                 case "sumXWhereNoY" -> combinedData.setPrefix("Total with no");
                 case "percentageXWhereNoY" -> combinedData.setPrefix("Percent with no");
                 default -> throw new WebApplicationException("Not a proper function name found", HttpStatus.INTERNAL_SERVER_ERROR);
