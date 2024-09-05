@@ -25,4 +25,5 @@ public class StyleLayer {
     private String normalization;
     private String outliers;
     private AxisTransformation transformation;
+    private AxisDatasetStats datasetStats;
 }
