@@ -26,4 +26,5 @@ public class StyleLayer {
     private String outliers;
     private AxisTransformation transformation;
     private AxisDatasetStats datasetStats;
+    private List<Indicator> indicators;
 }
