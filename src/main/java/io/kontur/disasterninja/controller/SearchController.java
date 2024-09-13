@@ -52,4 +52,19 @@ public class SearchController {
             @RequestBody SearchClickRequestDto searchClickRequest) {
         return llmAnalyticsClient.logSearchClick(searchClickRequest);
     }
+
+    @Operation(summary = "mcda suggestion",
+            tags = {"Search"},
+            description = "Generate MCDA from search query using AI")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Bad Request: invalid input data"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized: User not authenticated"),
+    })
+    @GetMapping("/mcda_suggestion")
+    public ResponseEntity<byte[]> mcda_suggestion(
+                @RequestParam(name = "appId", required = true) UUID appId,
+                @RequestParam(name = "query", required = true) String query) {
+        return llmAnalyticsClient.mcda_suggestion(appId, query);
+    }
 }

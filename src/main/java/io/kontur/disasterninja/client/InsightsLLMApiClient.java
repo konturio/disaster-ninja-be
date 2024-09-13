@@ -37,6 +37,13 @@ public class InsightsLLMApiClient extends RestClientWithBearerAuth {
         return response.getBody();
     }
 
+    public ResponseEntity<byte[]> mcda_suggestion(UUID appId, String query) {
+        return llmAnalyticsRestTemplate
+                .exchange(String.format("/mcda_suggestion?appId=%s&query=%s", appId, query), GET,
+                        httpEntityWithUserBearerAuthIfPresent(null),
+                        new ParameterizedTypeReference<>() {});
+    }
+
     public SearchDto search(UUID appId, String query) {
         ResponseEntity<SearchDto> response = llmAnalyticsRestTemplate
                 .exchange(String.format("/search?appId=%s&query=%s", appId, query), GET,
