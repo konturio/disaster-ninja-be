@@ -19,7 +19,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/search")
 @RequiredArgsConstructor
-@PreAuthorize("isAuthenticated()")
 public class SearchController {
 
     private final InsightsLLMApiClient llmAnalyticsClient;
