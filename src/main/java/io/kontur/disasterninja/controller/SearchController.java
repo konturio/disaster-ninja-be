@@ -62,9 +62,9 @@ public class SearchController {
     })
     @GetMapping("/mcda_suggestion")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<byte[]> mcda_suggestion(
+    public ResponseEntity<byte[]> mcdaSuggestion(
                 @RequestParam(name = "appId", required = true) UUID appId,
                 @RequestParam(name = "query", required = true) String query) {
-        return llmAnalyticsClient.mcda_suggestion(appId, query);
+        return llmAnalyticsClient.mcdaSuggestion(appId, query);
     }
 }
