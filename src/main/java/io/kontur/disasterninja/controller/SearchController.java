@@ -61,6 +61,7 @@ public class SearchController {
         @ApiResponse(responseCode = "401", description = "Unauthorized: User not authenticated"),
     })
     @GetMapping("/mcda_suggestion")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<byte[]> mcda_suggestion(
                 @RequestParam(name = "appId", required = true) UUID appId,
                 @RequestParam(name = "query", required = true) String query) {
