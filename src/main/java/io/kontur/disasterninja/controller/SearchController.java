@@ -59,6 +59,7 @@ public class SearchController {
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "400", description = "Bad Request: invalid input data"),
         @ApiResponse(responseCode = "401", description = "Unauthorized: User not authenticated"),
+        @ApiResponse(responseCode = "422", description = "LLM failed to provide meaningful analysis"),
     })
     @GetMapping("/mcda_suggestion")
     @PreAuthorize("isAuthenticated()")
