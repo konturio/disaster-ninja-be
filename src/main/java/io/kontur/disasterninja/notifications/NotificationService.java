@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.*;
 
-@Component
-@ConditionalOnProperty(value = "notifications.enabled")
 public abstract class NotificationService {
 
     private static final List<String> acceptableTypes = Arrays.asList("FLOOD", "EARTHQUAKE", "CYCLONE", "VOLCANO", "WILDFIRE");
