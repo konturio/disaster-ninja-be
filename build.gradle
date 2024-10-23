@@ -57,6 +57,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus:1.9.5'
 
+    //email
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
     implementation 'junit:junit:4.13.2'
     implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.2.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'

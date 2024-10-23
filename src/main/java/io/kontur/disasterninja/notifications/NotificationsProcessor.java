@@ -3,22 +3,15 @@ package io.kontur.disasterninja.notifications;
 import io.kontur.disasterninja.client.EventApiClient;
 import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
-import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
 import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
 import io.kontur.disasterninja.service.AnalyticsService;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
@@ -26,7 +19,6 @@ import org.wololo.geojson.GeometryCollection;
 import org.wololo.jts2geojson.GeoJSONReader;
 import org.wololo.jts2geojson.GeoJSONWriter;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -48,26 +40,24 @@ public class NotificationsProcessor {
 
     private final EventApiClient eventApiClient;
     private final InsightsApiGraphqlClient insightsApiClient;
-    private final SlackMessageFormatter slackMessageFormatter;
     private final AnalyticsService analyticsService;
     private final NotificationsAnalyticsConfig notificationsAnalyticsConfig;
+    private final List<NotificationService> notificationServices;
 
-    @Value("${notifications.slackWebHook:}")
-    private String slackWebHookUrl;
     @Value("${notifications.feed}")
     private String eventApiFeed;
 
-    public NotificationsProcessor(SlackMessageFormatter slackMessageFormatter,
-                                  EventApiClient eventApiClient,
+    public NotificationsProcessor(EventApiClient eventApiClient,
                                   InsightsApiGraphqlClient insightsApiClient,
                                   AnalyticsService analyticsService,
-                                  NotificationsAnalyticsConfig notificationsAnalyticsConfig) {
+                                  NotificationsAnalyticsConfig notificationsAnalyticsConfig,
+                                  List<NotificationService> notificationServices) {
 
-        this.slackMessageFormatter = slackMessageFormatter;
         this.eventApiClient = eventApiClient;
         this.insightsApiClient = insightsApiClient;
         this.analyticsService = analyticsService;
         this.notificationsAnalyticsConfig = notificationsAnalyticsConfig;
+        this.notificationServices = notificationServices;
     }
 
     @Scheduled(fixedRate = 60000, initialDelay = 1000)
@@ -85,10 +75,20 @@ public class NotificationsProcessor {
                     break;
                 }
 
-                if (isEventInPopulatedArea(event) && isEventTypeAppropriate(event) && isEventSeverityAppropriate(event)) {
-                    Geometry geometry = convertGeometry(event.getGeometries());
-                    latestUpdatedDate = event.getUpdatedAt();
-                    process(event, geometry);
+                for (NotificationService notificationService : notificationServices) {
+                    if (notificationService.isApplicable(event)) {
+                        Geometry geometry = convertGeometry(event.getGeometries());
+                        Map<String, Object> urbanPopulationProperties = new HashMap<>();
+                        Map<String, Double> analytics = new HashMap<>();
+                        try {
+                            urbanPopulationProperties = obtainUrbanPopulation(geometry);
+                            analytics = obtainAnalytics(geometry);
+                        } catch (ExecutionException | InterruptedException e) {
+                            LOG.error("Failed to obtain analytics for slack notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
+                        }
+                        notificationService.process(event, urbanPopulationProperties, analytics);
+                        latestUpdatedDate = event.getUpdatedAt();
+                    }
                 }
             }
         } catch (RestClientException e) {
@@ -104,45 +104,6 @@ public class NotificationsProcessor {
             EventApiEventDto latestEvent = events.get(0);
             latestUpdatedDate = latestEvent.getUpdatedAt();
         }
-    }
-
-    private void process(EventApiEventDto event, Geometry geometry) {
-        LOG.info("New event has been occurred. Sending notifications. Event ID = '{}', name = '{}'",
-                event.getEventId(), event.getName());
-
-        Map<String, Object> urbanPopulationProperties = new HashMap<>();
-        Map<String, Double> analytics = new HashMap<>();
-        try {
-            urbanPopulationProperties = obtainUrbanPopulation(geometry);
-            analytics = obtainAnalytics(geometry);
-        } catch (ExecutionException | InterruptedException e) {
-            LOG.warn(e.getMessage(), e);
-        }
-
-        String message = slackMessageFormatter.format(event, urbanPopulationProperties, analytics);
-        sendNotification(message);
-
-        LOG.info("Notifications were sent.");
-    }
-
-    /**
-     * Hotfix for Industrial heats being wildfires #7985
-     */
-    private boolean isEventTypeAppropriate(EventApiEventDto eventApiEventDto) {
-        return acceptableTypes.contains(eventApiEventDto.getType());
-    }
-
-    private boolean isEventSeverityAppropriate(EventApiEventDto event) {
-        return StringUtils.isBlank(event.getName()) || !event.getName().startsWith("Green");
-    }
-
-    private boolean isEventInPopulatedArea(EventApiEventDto event) {
-        if (event.getEpisodes().get(0).getEpisodeDetails() == null) {
-            return false;
-        }
-        String population = String.valueOf(event.getEpisodes().get(0).getEpisodeDetails().get("population"));
-        return population != null &&
-                new BigDecimal(population).compareTo(new BigDecimal(500)) >= 0;
     }
 
     private Map<String, Object> obtainUrbanPopulation(
@@ -166,18 +127,6 @@ public class NotificationsProcessor {
         return functionsResults.stream()
                 .collect(Collectors.toMap(AnalyticsTabQuery.Function::id,
                         value -> Optional.ofNullable(value.result()).orElse(0.0)));
-    }
-
-    private void sendNotification(String message) {
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            new RestTemplate().exchange(slackWebHookUrl, HttpMethod.POST,
-                    new HttpEntity<>(message, headers), String.class);
-        } catch (Exception e) {
-            LOG.error("Unexpected error when sending notifications", e);
-        }
     }
 
     private Geometry convertGeometry(FeatureCollection shape) {

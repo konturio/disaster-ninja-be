@@ -1,0 +1,19 @@
+Event Overview:
+View the event on globalgiving.kontur.io: ${link}
+${description}
+
+Impact Summary:
+- Urban core: ${urbanPopulation} people on ${urbanArea} km².
+- Total population: ${population} people on ${populatedArea} km².
+- Industrial area: ${industrialArea} km².
+- Forest area: ${forestArea} km².
+- Location: ${location}
+
+Event Status:
+- Type: ${type}
+- Severity: ${severity}
+- Start Date: ${startedAt}
+- Latest Update: ${updatedAt}
+
+Need Help?
+For any questions or issues, feel free to contact us at hello@kontur.io.
