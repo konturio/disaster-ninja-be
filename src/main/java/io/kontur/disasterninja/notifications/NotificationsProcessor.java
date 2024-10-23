@@ -84,7 +84,7 @@ public class NotificationsProcessor {
                             urbanPopulationProperties = obtainUrbanPopulation(geometry);
                             analytics = obtainAnalytics(geometry);
                         } catch (ExecutionException | InterruptedException e) {
-                            LOG.error("Failed to obtain analytics for slack notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
+                            LOG.error("Failed to obtain analytics for notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
                         }
                         notificationService.process(event, urbanPopulationProperties, analytics);
                         latestUpdatedDate = event.getUpdatedAt();
