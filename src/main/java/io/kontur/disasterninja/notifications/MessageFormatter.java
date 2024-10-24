@@ -24,18 +24,12 @@ public class MessageFormatter {
     protected String getMessageColorCode(EventApiEventDto event, FeedEpisode latestEpisode, boolean unicode) {
         String name = event.getName();
 
-        if (StringUtils.isNotBlank(name) && name.startsWith("Green") && unicode) {
-            return "🟢 ";
-        } else if (StringUtils.isNotBlank(name) && name.startsWith("Orange") && unicode) {
-            return "🟠 ";
-        } else if (StringUtils.isNotBlank(name) && name.startsWith("Red") && unicode) {
-            return "🔴 ";
-        } else if (StringUtils.isNotBlank(name) && name.startsWith("Green") && !unicode) {
-            return ":large_green_circle: ";
-        } else if (StringUtils.isNotBlank(name) && name.startsWith("Orange") && !unicode) {
-            return ":large_orange_circle: ";
-        } else if (StringUtils.isNotBlank(name) && name.startsWith("Red") && !unicode) {
-            return ":red_circle: ";
+        if (StringUtils.isNotBlank(name) && name.startsWith("Green")) {
+            return (unicode ? "🟢 " : ":large_green_circle: ");
+        } else if (StringUtils.isNotBlank(name) && name.startsWith("Orange")) {
+            return (unicode ? "🟠 " : ":large_orange_circle: ");
+        } else if (StringUtils.isNotBlank(name) && name.startsWith("Red")) {
+            return (unicode ? "🔴 " : ":red_circle: ");
         } else if (Severity.TERMINATION.equals(latestEpisode.getSeverity())) {
             return "▰▱▱▱▱ ";
         } else if (Severity.MINOR.equals(latestEpisode.getSeverity())) {
