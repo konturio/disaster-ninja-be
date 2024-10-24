@@ -1,39 +1,30 @@
-package io.kontur.disasterninja.notifications;
+package io.kontur.disasterninja.notifications.slack;
 
-import io.kontur.disasterninja.dto.Severity;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
+import io.kontur.disasterninja.notifications.MessageFormatter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+
+import static io.kontur.disasterninja.util.FormatUtil.formatNumber;
 
 @Component
 @ConditionalOnProperty(value = "notifications.enabled")
-public class SlackMessageFormatter {
+public class SlackMessageFormatter extends MessageFormatter {
 
     private static final String BODY = "{\"text\":\"><%s|%s>%s\", \"unfurl_links\":true, \"unfurl_media\": true}";
     private static final String gdacsReportLinkPattern = "https://www.gdacs.org/report.aspx?eventtype=%s&eventid=%s";
-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,###.##",
-            new DecimalFormatSymbols(Locale.US));
+
     @Value("${notifications.alertUrlPattern:}")
     private String notificationAlertUrlPattern;
 
     public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
                          Map<String, Double> analytics) {
-
-        List<FeedEpisode> eventEpisodes = event.getEpisodes();
-        eventEpisodes.sort(Comparator.comparing(FeedEpisode::getUpdatedAt));
-
-        FeedEpisode latestEpisode = eventEpisodes.get(eventEpisodes.size() - 1);
+        FeedEpisode latestEpisode = getLatestEpisode(event);
         Map<String, Object> episodeDetails = latestEpisode.getEpisodeDetails();
         Map<String, Object> eventDetails = event.getEventDetails();
 
@@ -46,7 +37,7 @@ public class SlackMessageFormatter {
         description.append(convertFireStatistic(episodeDetails, eventDetails, event));
         description.append(convertOsmQuality(analytics));
 
-        String colorCode = getMessageColorCode(event, latestEpisode);
+        String colorCode = getMessageColorCode(event, latestEpisode, false);
         String status = getEventStatus(event);
         String alertUrl = createAlertLink(event, latestEpisode);
         String title = colorCode + status + event.getName();
@@ -172,33 +163,6 @@ public class SlackMessageFormatter {
         return result.toString();
     }
 
-    private String getEventStatus(EventApiEventDto event) {
-        return event.getVersion() == 1 ? "" : "[Update] ";
-    }
-
-    private String getMessageColorCode(EventApiEventDto event, FeedEpisode latestEpisode) {
-        String name = event.getName();
-
-        if (StringUtils.isNotBlank(name) && name.startsWith("Green")) {
-            return ":large_green_circle: ";
-        } else if (StringUtils.isNotBlank(name) && name.startsWith("Orange")) {
-            return ":large_orange_circle: ";
-        } else if (StringUtils.isNotBlank(name) && name.startsWith("Red")) {
-            return ":red_circle: ";
-        } else if (Severity.TERMINATION.equals(latestEpisode.getSeverity())) {
-            return "▰▱▱▱▱ ";
-        } else if (Severity.MINOR.equals(latestEpisode.getSeverity())) {
-            return "▰▰▱▱▱ ";
-        } else if (Severity.MODERATE.equals(latestEpisode.getSeverity())) {
-            return "▰▰▰▱▱ ";
-        } else if (Severity.SEVERE.equals(latestEpisode.getSeverity())) {
-            return "▰▰▰▰▱ ";
-        } else if (Severity.EXTREME.equals(latestEpisode.getSeverity())) {
-            return "▰▰▰▰▰ ";
-        }
-        return "";
-    }
-
     private String createAlertLink(EventApiEventDto event, FeedEpisode episode) {
         if (StringUtils.isBlank(notificationAlertUrlPattern)) {
             Map<String, Object> properties = episode.getGeometries().getFeatures()[0].getProperties();
@@ -209,12 +173,4 @@ public class SlackMessageFormatter {
             return String.format(notificationAlertUrlPattern, event.getEventId().toString());
         }
     }
-
-    private String formatNumber(Object number) {
-        if (number == null) {
-            return "0";
-        }
-        return DECIMAL_FORMAT.format(new BigDecimal(String.valueOf(number)));
-    }
-
 }
