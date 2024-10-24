@@ -28,9 +28,12 @@ public class SlackNotificationService extends NotificationService {
     public void process(EventApiEventDto event, Map<String, Object> urbanPopulationProperties, Map<String, Double> analytics) {
         LOG.info("Found new event, sending slack notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
 
-        String message = slackMessageFormatter.format(event, urbanPopulationProperties, analytics);
-        slackSender.send(message);
-
-        LOG.info("Successfully sent slack notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
+        try {
+            String message = slackMessageFormatter.format(event, urbanPopulationProperties, analytics);
+            slackSender.send(message);
+            LOG.info("Successfully sent slack notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
+        } catch (Exception e) {
+            LOG.error("Failed to process slack notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
+        }
     }
 }

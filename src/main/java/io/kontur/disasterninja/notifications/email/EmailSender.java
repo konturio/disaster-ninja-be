@@ -30,6 +30,9 @@ public class EmailSender {
     }
 
     public void send(EmailDto emailDto) {
+        if (javaMailSender == null) {
+            throw new RuntimeException("Not able to proceed with email notifications because javaMailSender is not initialized.");
+        }
         for (String recipient : recipients) {
             try {
                 MimeMessage mimeMessage = javaMailSender.createMimeMessage();

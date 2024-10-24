@@ -31,9 +31,9 @@ public class EmailNotificationService extends NotificationService {
         try {
             EmailDto emailDto = emailMessageFormatter.format(event, urbanPopulationProperties, analytics);
             emailSender.send(emailDto);
+            LOG.info("Successfully sent email notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
         } catch (Exception e) {
             LOG.error("Failed to process email notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
         }
-        LOG.info("Successfully sent email notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
     }
 }
