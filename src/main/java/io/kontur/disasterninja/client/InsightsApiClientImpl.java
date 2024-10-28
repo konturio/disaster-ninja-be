@@ -42,13 +42,13 @@ public class InsightsApiClientImpl implements InsightsApiClient {
 
     @Override
     @Timed(value = "insights.getBivariateTileMvt", histogram = true)
-    public ResponseEntity<byte[]> getBivariateTileMvt(Integer z, Integer x, Integer y, String indicatorsClass) {
+    public ResponseEntity<byte[]> getBivariateTileMvt(Integer z, Integer x, Integer y, String indicatorsClass, String indicators) {
         if ("all".equals(indicatorsClass)) {
             incrementForCorrectLabels(z, AUTHENTICATED);
         } else {
             incrementForCorrectLabels(z, NOT_AUTHENTICATED);
         }
-        return insightsApiRestTemplate.getForEntity(String.format(INSIGHTS_API_TILE_MVT_URI, z, x, y, indicatorsClass),
+        return insightsApiRestTemplate.getForEntity(String.format(INSIGHTS_API_TILE_MVT_URI + (indicators == null ? "" : "&indicators=" + indicators), z, x, y, indicatorsClass),
                 byte[].class);
     }
 

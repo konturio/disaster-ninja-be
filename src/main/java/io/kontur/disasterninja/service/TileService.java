@@ -11,8 +11,8 @@ public class TileService {
 
     private final InsightsApiClient insightsApiClient;
 
-    public ResponseEntity<byte[]> getBivariateTileMvt(Integer z, Integer x, Integer y, String indicatorsClass){
-        return insightsApiClient.getBivariateTileMvt(z, x, y, indicatorsClass);
+    public ResponseEntity<byte[]> getBivariateTileMvt(Integer z, Integer x, Integer y, String indicatorsClass, String indicators){
+        return insightsApiClient.getBivariateTileMvt(z, x, y, indicatorsClass, indicators);
     }
 
     public ResponseEntity<byte[]> getBivariateTileMvtV2(Integer z, Integer x, Integer y, String indicatorsClass){

@@ -57,7 +57,7 @@ class InsightsApiClientTest {
                         MediaType.parseMediaType("application/vnd.mapbox-vector-tile")));
 
         //when
-        byte[] tile = client.getBivariateTileMvt(z, x, y, "all").getBody();
+        byte[] tile = client.getBivariateTileMvt(z, x, y, "all", null).getBody();
 
         //then
         assertNotNull(tile);
