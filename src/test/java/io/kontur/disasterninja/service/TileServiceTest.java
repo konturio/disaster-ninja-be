@@ -31,11 +31,11 @@ class TileServiceTest {
         Integer x = 8;
         Integer y = 6;
 
-        when(insightsApiClient.getBivariateTileMvt(z, x, y, "all")).thenReturn(result);
+        when(insightsApiClient.getBivariateTileMvt(z, x, y, "all", null)).thenReturn(result);
 
-        byte[] tile = service.getBivariateTileMvt(z, x, y, "all").getBody();
+        byte[] tile = service.getBivariateTileMvt(z, x, y, "all", null).getBody();
 
-        verify(insightsApiClient).getBivariateTileMvt(z, x, y, "all");
+        verify(insightsApiClient).getBivariateTileMvt(z, x, y, "all", null);
         assertEquals(100, tile.length);
     }
 }

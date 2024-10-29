@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 public class InsightsApiClientDummy implements InsightsApiClient {
 
     @Override
-    public ResponseEntity<byte[]> getBivariateTileMvt(Integer z, Integer x, Integer y, String indicatorsClass) {
+    public ResponseEntity<byte[]> getBivariateTileMvt(Integer z, Integer x, Integer y, String indicatorsClass, String indicators) {
         return ResponseEntity.ok()
                 .body(new byte[0]);
     }

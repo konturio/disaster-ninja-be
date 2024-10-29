@@ -25,8 +25,9 @@ public class TileController {
             content = @Content(mediaType = "application/vnd.mapbox-vector-tile", schema = @Schema(implementation = byte[].class)))
     @GetMapping(value = "/bivariate/v1/{z}/{x}/{y}.mvt", produces = "application/vnd.mapbox-vector-tile")
     public ResponseEntity<byte[]> getBivariateTileMvt(@PathVariable Integer z, @PathVariable Integer x, @PathVariable Integer y,
-                               @RequestParam(defaultValue = "all") String indicatorsClass){
-        return tileService.getBivariateTileMvt(z, x, y, indicatorsClass);
+            @RequestParam(defaultValue = "all") String indicatorsClass,
+            @RequestParam(required = false) String indicators){
+        return tileService.getBivariateTileMvt(z, x, y, indicatorsClass, indicators);
     }
 
     @Operation(summary = "Returns bivariate mvt tile using z, x, y, indicator class and Insights API service version 2.",
