@@ -1,23 +1,25 @@
 package io.kontur.disasterninja.notifications.email;
 
 import io.kontur.disasterninja.dto.EmailDto;
+import io.kontur.disasterninja.dto.Partner;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
 import io.kontur.disasterninja.notifications.MessageFormatter;
-import io.micrometer.core.instrument.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 import static io.kontur.disasterninja.util.FormatUtil.formatNumber;
+import static java.time.ZoneOffset.UTC;
 import static org.apache.commons.lang3.text.WordUtils.capitalizeFully;
 
 @Component
@@ -26,7 +28,9 @@ public class EmailMessageFormatter extends MessageFormatter {
 
     private final static Logger LOG = LoggerFactory.getLogger(EmailMessageFormatter.class);
 
-    private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
+    private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy HH:mm 'UTC'");
+
+    private final TemplateEngine templateEngine;
 
     @Value("${notifications.konturUrlPattern}")
     private String konturUrlPattern;
@@ -34,53 +38,43 @@ public class EmailMessageFormatter extends MessageFormatter {
     @Value("${notifications.feed}")
     private String feed;
 
-    public EmailDto format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
-                            Map<String, Double> analytics) throws IOException {
-        String textTemplate = loadTemplate("notification/gg-email-template.txt");
-        String htmlTemplate = loadTemplate("notification/gg-email-template.html");
-
-        FeedEpisode lastEpisode = getLatestEpisode(event);
-
-        return new EmailDto(
-                createSubject(event, lastEpisode),
-                replacePlaceholders(textTemplate, event, lastEpisode, urbanPopulationProperties),
-                replacePlaceholders(htmlTemplate, event, lastEpisode, urbanPopulationProperties));
+    public EmailMessageFormatter(TemplateEngine templateEngine) {
+        this.templateEngine = templateEngine;
     }
 
-    private String loadTemplate(String templateName) throws IOException {
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(templateName)) {
-            if (inputStream == null) {
-                throw new IllegalArgumentException("Failed to find notification template: " + templateName);
-            }
-            return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-        }
+    public EmailDto format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
+                            Map<String, Double> analytics, List<Partner> partners) throws IOException {
+        FeedEpisode lastEpisode = getLatestEpisode(event);
+        return new EmailDto(
+                createSubject(event, lastEpisode),
+                generateTemplate("gg-email-template.txt", event, lastEpisode, urbanPopulationProperties, partners),
+                generateTemplate("gg-email-template.html", event, lastEpisode, urbanPopulationProperties, partners));
     }
 
     private String createSubject(EventApiEventDto event, FeedEpisode lastEpisode) {
         StringBuilder sb = new StringBuilder();
         sb.append(getMessageColorCode(event, lastEpisode, true));
-        sb.append(getEventStatus(event));
         sb.append(event.getName());
         return sb.toString();
     }
 
-    private String replacePlaceholders(String template, EventApiEventDto event, FeedEpisode lastEpisode, Map<String, Object> urbanPopulationProperties) {
+    public String generateTemplate(String template, EventApiEventDto event, FeedEpisode lastEpisode, Map<String, Object> urbanPopulationProperties, List<Partner> partners) {
+        Context context = new Context();
+        context.setVariable("link", String.format(konturUrlPattern, event.getEventId(), feed));
+        context.setVariable("description", lastEpisode.getDescription());
+        context.setVariable("urbanPopulation", formatNumber(urbanPopulationProperties.get("population")));
+        context.setVariable("urbanArea", formatNumber(urbanPopulationProperties.get("areaKm2")));
+        context.setVariable("population", formatNumber(lastEpisode.getEpisodeDetails().get("population")));
+        context.setVariable("populatedArea", formatNumber(lastEpisode.getEpisodeDetails().get("populatedAreaKm2")));
+        context.setVariable("industrialArea", formatNumber(lastEpisode.getEpisodeDetails().get("industrialAreaKm2")));
+        context.setVariable("forestArea", formatNumber(lastEpisode.getEpisodeDetails().get("forestAreaKm2")));
+        context.setVariable("type", capitalizeFully(event.getType()));
+        context.setVariable("severity", capitalizeFully(event.getSeverity().name()));
+        context.setVariable("location", event.getLocation());
+        context.setVariable("startedAt", event.getStartedAt().withOffsetSameInstant(UTC).format(dateFormatter));
+        context.setVariable("updatedAt", event.getUpdatedAt().withOffsetSameInstant(UTC).format(dateFormatter));
+        context.setVariable("partners", partners);
 
-        return template
-                .replace("${name}", event.getName())
-                .replace("${link}", String.format(konturUrlPattern, event.getEventId(), feed))
-                .replace("${description}", lastEpisode.getDescription())
-                .replace("${urbanPopulation}", formatNumber(urbanPopulationProperties.get("population")))
-                .replace("${urbanArea}", formatNumber(urbanPopulationProperties.get("areaKm2")))
-                .replace("${population}", formatNumber(lastEpisode.getEpisodeDetails().get("population")))
-                .replace("${populatedArea}", formatNumber(lastEpisode.getEpisodeDetails().get("populatedAreaKm2")))
-                .replace("${industrialArea}", formatNumber(lastEpisode.getEpisodeDetails().get("industrialAreaKm2")))
-                .replace("${forestArea}", formatNumber(lastEpisode.getEpisodeDetails().get("forestAreaKm2")))
-                .replace("${location}", event.getLocation())
-                .replace("${type}", capitalizeFully(event.getType()))
-                .replace("${severity}", capitalizeFully(event.getSeverity().name()))
-                .replace("${startedAt}", event.getStartedAt().format(dateFormatter))
-                .replace("${updatedAt}", event.getUpdatedAt().format(dateFormatter));
+        return templateEngine.process(template, context);
     }
-
 }

@@ -1,6 +1,7 @@
 package io.kontur.disasterninja.notifications.email;
 
 import io.kontur.disasterninja.dto.EmailDto;
+import io.kontur.disasterninja.dto.Partner;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.notifications.NotificationService;
 import io.kontur.disasterninja.service.GeometryTransformer;
@@ -12,11 +13,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.wololo.geojson.Feature;
+import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 @ConditionalOnProperty(value = "notifications.enabled")
@@ -50,7 +54,8 @@ public class EmailNotificationService extends NotificationService {
         LOG.info("Found new event, sending email notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
 
         try {
-            EmailDto emailDto = emailMessageFormatter.format(event, urbanPopulationProperties, analytics);
+            List<Partner> partners = getPartners(getRelevantLocations(event.getGeometries()));
+            EmailDto emailDto = emailMessageFormatter.format(event, urbanPopulationProperties, analytics, partners);
             emailSender.send(emailDto);
             LOG.info("Successfully sent email notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
         } catch (Exception e) {
@@ -60,8 +65,27 @@ public class EmailNotificationService extends NotificationService {
 
     @Override
     public boolean isApplicable(EventApiEventDto event) {
-        Geometry geometry = geometryTransformer.makeValid(geometryTransformer.getGeometryFromGeoJson(event.getGeometries()));
-        List<Feature> features = layersApiService.getFeatures(geometry, relevantLocationsLayer, UUID.fromString(relevantLocationsLayerAppId));
-        return !CollectionUtils.isEmpty(features);
+        return event.getEventDetails() != null
+                && event.getEpisodes() != null
+                && event.getEpisodes().stream().noneMatch(episode -> episode.getEpisodeDetails() == null)
+                && !CollectionUtils.isEmpty(getRelevantLocations(event.getGeometries()));
+    }
+
+    private List<Partner> getPartners(List<Feature> partnerLocations) {
+        Map<String, List<String>> partnerLocationMap = partnerLocations.stream()
+                .collect(Collectors.groupingBy(
+                        feature -> (String) feature.getProperties().get("partner"),
+                        Collectors.mapping(
+                                feature -> (String) feature.getProperties().get("location"),
+                                Collectors.toList())));
+
+        return partnerLocationMap.entrySet().stream()
+                .map(entry -> new Partner(entry.getKey(), entry.getValue().size(), new HashSet<>(entry.getValue())))
+                .collect(Collectors.toList());
+    }
+
+    private List<Feature> getRelevantLocations(FeatureCollection fc) {
+        Geometry geometry = geometryTransformer.makeValid(geometryTransformer.getGeometryFromGeoJson(fc));
+        return layersApiService.getFeatures(geometry, relevantLocationsLayer, UUID.fromString(relevantLocationsLayerAppId));
     }
 }

@@ -106,6 +106,10 @@ spring:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
     default-property-inclusion: non_null
+  thymeleaf:
+    prefix: classpath:/notification/
+    cache: false
+    encoding: UTF-8
 
 graphql:
   apollo:
