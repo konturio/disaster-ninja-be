@@ -59,6 +59,7 @@ dependencies {
 
     //email
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
     implementation 'junit:junit:4.13.2'
     implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.2.Final'

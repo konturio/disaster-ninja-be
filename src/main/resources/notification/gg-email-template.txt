@@ -1,19 +1,29 @@
 Event Overview:
-View the event on globalgiving.kontur.io: ${link}
-${description}
-
+[(${description})]
+View Full Event Details: [(${link})]
+[# th:if="${urbanPopulation != null && urbanArea != null || population != null && populatedArea != null || industrialArea != null || forestArea != null}"]
 Impact Summary:
-- Urban core: ${urbanPopulation} people on ${urbanArea} km².
-- Total population: ${population} people on ${populatedArea} km².
-- Industrial area: ${industrialArea} km².
-- Forest area: ${forestArea} km².
-- Location: ${location}
-
+    [# th:if="${urbanPopulation != null && urbanArea != null}"]- Urban core: [(${urbanPopulation})] people on [(${urbanArea})] km².[/]
+    [# th:if="${population != null && populatedArea != null}"]- Total population: [(${population})] people on [(${populatedArea})] km².[/]
+    [# th:if="${industrialArea != null}"]- Industrial area: [(${industrialArea})] km².[/]
+    [# th:if="${forestArea != null}"]- Forest area: [(${forestArea})] km².[/]
+[/]
+[# th:if="${type != null || severity != null || startedAt != null || updatedAt != null || location != null}"]
 Event Status:
-- Type: ${type}
-- Severity: ${severity}
-- Start Date: ${startedAt}
-- Latest Update: ${updatedAt}
-
+    [# th:if="${type != null}"]- Type: [(${type})].[/]
+    [# th:if="${severity != null}"]- Severity: [(${severity})].[/]
+    [# th:if="${location != null}"]- Location: [(${location})].[/]
+    [# th:if="${startedAt != null}"]- Start Date: [(${startedAt})].[/]
+    [# th:if="${updatedAt != null}"]- Latest Update: [(${updatedAt})].[/]
+[/]
+[# th:if="${partners != null && #lists.size(partners) > 0}"]
+Affected Partner Locations:
+    [# th:each="partner : ${partners}"]
+        - Partner [(${partner.name})] has [(${partner.totalLocations})] affected location[# th:if="${partner.totalLocations > 1}"]s[/]:
+        [# th:each="partnerLocation, iterStat : ${partner.locations}"]
+            [# th:if="${iterStat.index < 10}"]- [(${location})][/]
+        [/]
+    [/]
+[/]
 Need Help?
 For any questions or issues, feel free to contact us at hello@kontur.io.
