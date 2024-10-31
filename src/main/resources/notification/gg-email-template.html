@@ -94,8 +94,7 @@
                 Partner <strong><span th:text="${partner.name}"></span></strong> has <span th:text="${partner.totalLocations}"></span> affected location<span th:if="${partner.totalLocations > 1}">s</span>:
                 <ul>
                     <li th:each="partnerLocation, iterStat : ${partner.locations}">
-                        <span th:if="${iterStat.index < 3}" th:text="${partnerLocation}"></span>
-                        <span th:if="${iterStat.index == 3}">See full list of locations on <a th:href="${link}" target="_blank">globalgiving.kontur.io</a></span>
+                        <span th:if="${iterStat.index < 10}" th:text="${partnerLocation}"></span>
                     </li>
                 </ul>
             </li>
