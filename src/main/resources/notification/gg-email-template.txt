@@ -1,6 +1,6 @@
 Event Overview:
-View the event on globalgiving.kontur.io: [(${link})]
 [(${description})]
+View Full Event Details: [(${link})]
 [# th:if="${urbanPopulation != null && urbanArea != null || population != null && populatedArea != null || industrialArea != null || forestArea != null}"]
 Impact Summary:
     [# th:if="${urbanPopulation != null && urbanArea != null}"]- Urban core: [(${urbanPopulation})] people on [(${urbanArea})] km².[/]
