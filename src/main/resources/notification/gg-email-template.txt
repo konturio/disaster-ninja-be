@@ -21,7 +21,7 @@ Affected Partner Locations:
     [# th:each="partner : ${partners}"]
         - Partner [(${partner.name})] has [(${partner.totalLocations})] affected location[# th:if="${partner.totalLocations > 1}"]s[/]:
         [# th:each="partnerLocation, iterStat : ${partner.locations}"]
-            [# th:if="${iterStat.index < 5}"]- [(${location})][/]
+            [# th:if="${iterStat.index < 10}"]- [(${location})][/]
         [/]
     [/]
 [/]
