@@ -19,6 +19,8 @@ public class StyleColorParameters {
     private List<List<Object>> fillColor;
     @JsonProperty("fill-opacity")
     private Double fillOpacity;
+    @JsonProperty("fill-antialias")
+    private Boolean fillAntialias;
     // sentiments
     private String bad;
     private String good;
