@@ -22,4 +22,15 @@ public class StyleColorParameters {
     // sentiments
     private String bad;
     private String good;
+    private List<Midpoint> midpoints;
+
+    @Data
+    @Builder
+    @Jacksonized
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Midpoint {
+        private Double value;
+        private String color;
+    }
 }
