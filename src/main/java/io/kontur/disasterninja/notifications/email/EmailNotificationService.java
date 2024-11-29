@@ -35,11 +35,13 @@ public class EmailNotificationService extends NotificationService {
     private final LayersApiService layersApiService;
     private final GeometryTransformer geometryTransformer;
 
+    // ConcurrentHashMap is used because the implementation of Guava and Caffeine cache has bugs,
+    // which cause race conditions and can lead to incorrect behavior.
+    // For our simple case, the map with a manual cleaning function should be enough.
     private final ConcurrentHashMap<UUID, Long> notificationTimestamps = new ConcurrentHashMap<>();
 
     @Value("${notifications.emailNotificationsFrequencyMs}")
     private long emailNotificationsFrequencyMs;
-
 
     @Value("${notifications.relevantLocationsLayer}")
     private String relevantLocationsLayer;
@@ -62,7 +64,7 @@ public class EmailNotificationService extends NotificationService {
         LOG.info("Found new event, sending email notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
 
         try {
-            if (!canSendNotification(event.getEventId())) {
+            if (exceedsNotificationFrequencyLimit(event.getEventId())) {
                 LOG.info("Skipped email notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
                 return;
             }
@@ -102,13 +104,13 @@ public class EmailNotificationService extends NotificationService {
         return layersApiService.getFeatures(geometry, relevantLocationsLayer, UUID.fromString(relevantLocationsLayerAppId));
     }
 
-    private boolean canSendNotification(UUID eventId) {
+    private boolean exceedsNotificationFrequencyLimit(UUID eventId) {
         long now = System.currentTimeMillis();
         Long lastNotificationTime = notificationTimestamps.get(eventId);
         if (lastNotificationTime != null && (now - lastNotificationTime) < emailNotificationsFrequencyMs)
-            return false;
+            return true;
         notificationTimestamps.put(eventId, now);
-        return true;
+        return false;
     }
 
     /**
