@@ -113,7 +113,7 @@ public class EmailNotificationService extends NotificationService {
 
     /**
      * Periodically cleans up old entries from the map to save space.
-     * Removes records where the last notification was sent more than NOTIFICATIONS_FREQUENCY_HOURS hours ago.
+     * Removes records where the last notification was sent more than the configured amount of time ago.
      */
     @Scheduled(fixedRate = 600000)
     public void cleanupOldEntries() {
