@@ -62,8 +62,10 @@ public class EmailNotificationService extends NotificationService {
         LOG.info("Found new event, sending email notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
 
         try {
-            if (!canSendNotification(event.getEventId()))
+            if (!canSendNotification(event.getEventId())) {
+                LOG.info("Skipped email notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
                 return;
+            }
 
             List<Partner> partners = getPartners(getRelevantLocations(event.getGeometries()));
             EmailDto emailDto = emailMessageFormatter.format(event, urbanPopulationProperties, analytics, partners);
