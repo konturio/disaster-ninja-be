@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.wololo.geojson.Feature;
@@ -20,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Component
@@ -32,6 +34,14 @@ public class EmailNotificationService extends NotificationService {
     private final EmailSender emailSender;
     private final LayersApiService layersApiService;
     private final GeometryTransformer geometryTransformer;
+
+    // ConcurrentHashMap is used because the implementation of Guava and Caffeine cache has bugs,
+    // which cause race conditions and can lead to incorrect behavior.
+    // For our simple case, the map with a manual cleaning function should be enough.
+    private final ConcurrentHashMap<UUID, Long> notificationTimestamps = new ConcurrentHashMap<>();
+
+    @Value("${notifications.emailNotificationsFrequencyMs}")
+    private long emailNotificationsFrequencyMs;
 
     @Value("${notifications.relevantLocationsLayer}")
     private String relevantLocationsLayer;
@@ -54,6 +64,11 @@ public class EmailNotificationService extends NotificationService {
         LOG.info("Found new event, sending email notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
 
         try {
+            if (exceedsNotificationFrequencyLimit(event.getEventId())) {
+                LOG.info("Skipped email notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
+                return;
+            }
+
             List<Partner> partners = getPartners(getRelevantLocations(event.getGeometries()));
             EmailDto emailDto = emailMessageFormatter.format(event, urbanPopulationProperties, analytics, partners);
             emailSender.send(emailDto);
@@ -87,5 +102,24 @@ public class EmailNotificationService extends NotificationService {
     private List<Feature> getRelevantLocations(FeatureCollection fc) {
         Geometry geometry = geometryTransformer.makeValid(geometryTransformer.getGeometryFromGeoJson(fc));
         return layersApiService.getFeatures(geometry, relevantLocationsLayer, UUID.fromString(relevantLocationsLayerAppId));
+    }
+
+    private boolean exceedsNotificationFrequencyLimit(UUID eventId) {
+        long now = System.currentTimeMillis();
+        Long lastNotificationTime = notificationTimestamps.get(eventId);
+        if (lastNotificationTime != null && (now - lastNotificationTime) < emailNotificationsFrequencyMs)
+            return true;
+        notificationTimestamps.put(eventId, now);
+        return false;
+    }
+
+    /**
+     * Periodically cleans up old entries from the map to save space.
+     * Removes records where the last notification was sent more than the configured amount of time ago.
+     */
+    @Scheduled(fixedRate = 600000)
+    public void cleanupOldEntries() {
+        long now = System.currentTimeMillis();
+        notificationTimestamps.entrySet().removeIf(entry -> (now - entry.getValue()) > emailNotificationsFrequencyMs);
     }
 }
