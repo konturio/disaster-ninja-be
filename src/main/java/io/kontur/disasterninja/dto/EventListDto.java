@@ -11,6 +11,7 @@ public class EventListDto {
 
     private UUID eventId;
     private String eventName;
+    private String eventType;
     private String description;
     private String location;
     private Severity severity;
@@ -18,12 +19,11 @@ public class EventListDto {
     private Double settledArea;
     private Long osmGaps;
     private Long loss;
+    private OffsetDateTime startedAt;
     private OffsetDateTime updatedAt;
     private List<String> externalUrls;
     private List<Double> bbox;
     private List<Double> centroid;
     private int episodeCount;
-    private String eventType;
-    private OffsetDateTime startedAt;
 
 }
