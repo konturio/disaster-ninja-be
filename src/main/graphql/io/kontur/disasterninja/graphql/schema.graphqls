@@ -68,6 +68,7 @@ type Indicator {
   name: String
   label: String
   emoji: String
+  maxZoom: Int
   copyrights: [String]
   direction: [[String]]
   unit: Unit
@@ -208,6 +209,7 @@ type Quotient {
   name: String
   label: String
   emoji: String
+  maxZoom: Int
   description: String
   copyrights: [String]
   direction: [[String]]
