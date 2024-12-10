@@ -23,5 +23,7 @@ public class EventListDto {
     private List<Double> bbox;
     private List<Double> centroid;
     private int episodeCount;
+    private String eventType;
+    private OffsetDateTime startedAt;
 
 }
