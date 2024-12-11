@@ -60,6 +60,7 @@ public interface AxisListMapper {
     @Mapping(target = "name", expression = "java(quotient.name())")
     @Mapping(target = "label", expression = "java(quotient.label())")
     @Mapping(target = "emoji", expression = "java(quotient.emoji())")
+    @Mapping(target = "maxZoom", expression = "java(quotient.maxZoom())")
     @Mapping(target = "description", expression = "java(quotient.description())")
     @Mapping(target = "copyrights", expression = "java(quotient.copyrights())")
     @Mapping(target = "direction", expression = "java(quotient.direction())")

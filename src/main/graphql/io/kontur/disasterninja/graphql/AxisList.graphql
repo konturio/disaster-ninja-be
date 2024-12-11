@@ -18,6 +18,7 @@ query AxisList {
                 name
                 label
                 emoji
+                maxZoom
                 description
                 copyrights
                 direction

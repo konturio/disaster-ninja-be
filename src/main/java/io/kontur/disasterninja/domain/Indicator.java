@@ -17,6 +17,7 @@ public class Indicator {
     private String name;
     private String label;
     private String emoji;
+    private Integer maxZoom;
     private String description;
     private List<String> copyrights;
     private List<List<String>> direction; // I have no idea why the FE needs an array of arrays here
