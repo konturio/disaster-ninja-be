@@ -14,6 +14,7 @@ public class EventListEventDtoConverter {
         dto.setEventId(event.getEventId());
 
         dto.setEventName(eventName(event));
+        dto.setEventType(eventType(event));
         dto.setDescription(event.getDescription());
         dto.setLocation(event.getLocation());
         dto.setEpisodeCount(event.getEpisodeCount());
@@ -37,6 +38,7 @@ public class EventListEventDtoConverter {
             }
         }
         dto.setUpdatedAt(event.getUpdatedAt());
+        dto.setStartedAt(event.getStartedAt());
 
         dto.setBbox(event.getBbox());
         dto.setCentroid(event.getCentroid());
@@ -76,5 +78,15 @@ public class EventListEventDtoConverter {
             return eventType.getName() + " " + properName;
         }
         return eventType.getName();
+    }
+
+    protected static String eventType(EventApiEventDto event) {
+        EventType eventType;
+        try {
+            eventType = EventType.valueOf(event.getType());
+        } catch (IllegalArgumentException ex) {
+            eventType = EventType.OTHER;
+        }
+        return eventType.name();
     }
 }
