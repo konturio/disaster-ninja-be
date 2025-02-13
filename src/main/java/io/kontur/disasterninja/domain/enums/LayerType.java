@@ -11,6 +11,8 @@ public enum LayerType {
     GEOJSON("geojson"),
     TILES("tiles"),
     FEATURE("feature"),
+    VECTOR_MVT("vector-mvt"),
+    MULTIVARIATE("multivariate"),
 
     // TODO Add new layer types in #15281. Remove types above after they are no longer used by FE
     MAPLIBRE_STYLE_URL("maplibre-style-url");
