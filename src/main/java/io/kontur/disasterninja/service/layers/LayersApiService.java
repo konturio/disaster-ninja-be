@@ -4,7 +4,6 @@ import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.LayerSource;
 import io.kontur.disasterninja.domain.Legend;
-import io.kontur.disasterninja.domain.Style;
 import io.kontur.disasterninja.domain.enums.LayerCategory;
 import io.kontur.disasterninja.domain.enums.LayerType;
 import io.kontur.disasterninja.dto.AppLayerUpdateDto;
@@ -119,8 +118,7 @@ public class LayersApiService {
                 .group(collection.getGroup() != null ? collection.getGroup().getName() : null)
                 .legend(collection.getLegendStyle() != null ?
                         JsonUtil.readObjectNode(collection.getLegendStyle(), Legend.class) : null)
-                .mapStyle(collection.getMapStyle() != null ?
-                        JsonUtil.readObjectNode(collection.getMapStyle(), Style.class) : null)
+                .mapStyle(collection.getMapStyle())
                 .copyrights(collection.getCopyrights() != null ? singletonList(collection.getCopyrights()) : null)
                 .boundaryRequiredForRetrieval(boundaryRequiredForRetrieval)
                 .eventIdRequiredForRetrieval(eventIdRequiredForRetrieval)
