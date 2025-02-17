@@ -34,7 +34,7 @@ public class Layer {
     private LayerCategory category;
     private String group;
     private Legend legend;
-    private Style mapStyle;
+    private ObjectNode mapStyle;
     private List<String> copyrights;
     //layer details
     private Integer maxZoom; //for 'vector' and 'raster' only (see source.type)
