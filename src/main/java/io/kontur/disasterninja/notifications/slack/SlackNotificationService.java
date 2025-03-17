@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-@ConditionalOnProperty(value = "notifications.enabled")
+@ConditionalOnProperty(value = "notifications.slack.enabled")
 public class SlackNotificationService extends NotificationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SlackNotificationService.class);

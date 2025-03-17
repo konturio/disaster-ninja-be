@@ -45,6 +45,10 @@ kontur:
 
 notifications:
   enabled: false
+  slack:
+    enabled: false
+  email:
+    enabled: false
 
 springdoc:
   writer-with-default-pretty-printer: true

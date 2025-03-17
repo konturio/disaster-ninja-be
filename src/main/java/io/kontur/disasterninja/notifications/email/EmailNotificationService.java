@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Component
-@ConditionalOnProperty(value = "notifications.enabled")
+@ConditionalOnProperty(value = "notifications.email.enabled")
 public class EmailNotificationService extends NotificationService {
 
     private final static Logger LOG = LoggerFactory.getLogger(EmailNotificationService.class);
