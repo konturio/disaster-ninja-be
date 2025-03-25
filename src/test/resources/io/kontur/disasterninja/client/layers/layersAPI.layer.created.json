@@ -2,7 +2,7 @@
   "id": "myId",
   "title": "layer title",
   "description": "An address.",
-  "copyrights": "string",
+  "copyrights": ["string"],
   "properties": {},
   "legendStyle": {"name":"legendName","type":"simple","linkProperty":null,"steps":[{"paramName":"param name","paramValue":"qwe","axis":null,"axisValue":null,"stepName":"step name","stepShape":"hex","style":{"prop":"value"},"sourceLayer":"source-layer","stepIconFill":"fill","stepIconStroke":"stroke"},{"paramName":"param name","paramValue":"asd","axis":null,"axisValue":null,"stepName":"step name2","stepShape":"hex","style":{"prop":"value"},"sourceLayer":"source-layer","stepIconFill":"","stepIconStroke":""}],"tooltip": {"type": "markdown","paramName": "tooltipContent"},"colors": [{"id":"A1","color":"rgb(232,232,157)"}],"axes":{"x":{"label": "xLabel"},"y":{"label": "yLabel"}}},
   "group": {

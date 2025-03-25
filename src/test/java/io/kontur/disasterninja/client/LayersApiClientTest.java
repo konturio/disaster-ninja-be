@@ -182,7 +182,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         assertEquals("hotProjects", collection.getId());
         assertEquals("HOT Tasking Manager Projects", collection.getTitle());
         assertEquals("Projects on HOT Tasking manager, ongoing and historical", collection.getDescription());
-        assertEquals("(c) Kontur", collection.getCopyrights());
+        assertEquals(List.of("(c) Kontur"), collection.getCopyrights());
         assertEquals("overlay", collection.getCategory().getName());
         assertEquals("tiles", collection.getItemType());
         assertEquals("tiles", collection.getItemType());
@@ -306,7 +306,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         assertEquals("hotProjects", collection.getId());
         assertEquals("HOT Tasking Manager Projects", collection.getTitle());
         assertEquals("Projects on HOT Tasking manager, ongoing and historical", collection.getDescription());
-        assertEquals("(c) Kontur", collection.getCopyrights());
+        assertEquals(List.of("(c) Kontur"), collection.getCopyrights());
         assertEquals("overlay", collection.getCategory().getName());
         assertEquals("tiles", collection.getItemType());
         assertEquals("tiles", collection.getItemType());

@@ -119,7 +119,7 @@ public class LayersApiService {
                 .legend(collection.getLegendStyle() != null ?
                         JsonUtil.readObjectNode(collection.getLegendStyle(), Legend.class) : null)
                 .mapStyle(collection.getMapStyle())
-                .copyrights(collection.getCopyrights() != null ? singletonList(collection.getCopyrights()) : null)
+                .copyrights(collection.getCopyrights())
                 .boundaryRequiredForRetrieval(boundaryRequiredForRetrieval)
                 .eventIdRequiredForRetrieval(eventIdRequiredForRetrieval)
                 .ownedByUser(collection.isOwnedByUser())

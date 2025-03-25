@@ -12,7 +12,7 @@
       "id": "hotProjects",
       "title": "HOT Tasking Manager Projects",
       "description": "Projects on HOT Tasking manager, ongoing and historical",
-      "copyrights": "(c) Kontur",
+      "copyrights": ["(c) Kontur"],
       "legendStyle": {
         "type": "simple",
         "steps": [

@@ -68,7 +68,10 @@ public class DtoTest {
         Assertions.assertEquals(layer.getGroup(), response.get(0).group());
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(),
                 response.get(0).boundaryRequiredForRetrieval());
-        Assertions.assertEquals(layer.getCopyrights(), response.get(0).copyrights());
+        Assertions.assertEquals(
+                layer.getCopyrights() != null ? layer.getCopyrights() : List.of(),
+                response.get(0).copyrights() != null ? response.get(0).copyrights() : List.of());
+
     }
 
     @Test
@@ -120,7 +123,9 @@ public class DtoTest {
         Assertions.assertEquals(layer.getGroup(), response.get(0).group());
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(),
                 response.get(0).boundaryRequiredForRetrieval());
-        Assertions.assertEquals(layer.getCopyrights(), response.get(0).copyrights());
+        Assertions.assertEquals(
+                layer.getCopyrights() != null ? layer.getCopyrights() : List.of(),
+                response.get(0).copyrights() != null ? response.get(0).copyrights() : List.of());
     }
 
     @Test
@@ -144,7 +149,9 @@ public class DtoTest {
         Assertions.assertEquals(layer.getGroup(), response.get(0).group());
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(),
                 response.get(0).boundaryRequiredForRetrieval());
-        Assertions.assertEquals(layer.getCopyrights(), response.get(0).copyrights());
+        Assertions.assertEquals(
+                layer.getCopyrights() != null ? layer.getCopyrights() : List.of(),
+                response.get(0).copyrights() != null ? response.get(0).copyrights() : List.of());
     }
 
     private Layer testLayer(String id, FeatureCollection geoJSON) {

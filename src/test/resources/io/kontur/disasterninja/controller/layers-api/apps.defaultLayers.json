@@ -6,7 +6,7 @@
       "id": "hotProjects",
       "title": "HOT Tasking Manager Projects",
       "description": "Projects on HOT Tasking manager, ongoing and historical",
-      "copyrights": "© Humanitarian OpenStreetMap Team, © Kontur",
+      "copyrights": ["© Humanitarian OpenStreetMap Team", "© Kontur"],
       "links": [
         {
           "href": "https://test-api02.konturlabs.com/tiles/public.hot_projects/{z}/{x}/{y}.pbf",
