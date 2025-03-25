@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-@ConditionalOnProperty(value = "notifications.enabled")
+@ConditionalOnProperty(value = "notifications.slack.enabled")
 public class SlackSender {
 
     private final static Logger LOG = LoggerFactory.getLogger(SlackSender.class);

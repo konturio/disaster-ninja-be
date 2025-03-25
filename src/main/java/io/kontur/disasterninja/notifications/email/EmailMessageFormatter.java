@@ -23,7 +23,7 @@ import static java.time.ZoneOffset.UTC;
 import static org.apache.commons.lang3.text.WordUtils.capitalizeFully;
 
 @Component
-@ConditionalOnProperty(value = "notifications.enabled")
+@ConditionalOnProperty(value = "notifications.email.enabled")
 public class EmailMessageFormatter extends MessageFormatter {
 
     private final static Logger LOG = LoggerFactory.getLogger(EmailMessageFormatter.class);

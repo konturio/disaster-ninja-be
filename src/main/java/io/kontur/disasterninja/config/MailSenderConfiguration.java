@@ -14,7 +14,7 @@ import java.util.Properties;
 import static org.apache.commons.lang3.StringUtils.isAnyBlank;
 
 @Configuration
-@ConditionalOnProperty(value = "notifications.enabled")
+@ConditionalOnProperty(value = "notifications.email.enabled")
 public class MailSenderConfiguration {
 
     private final static Logger LOG = LoggerFactory.getLogger(MailSenderConfiguration.class);

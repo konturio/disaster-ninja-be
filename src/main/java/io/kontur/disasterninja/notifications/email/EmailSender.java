@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.mail.internet.MimeMessage;
 
 @Component
-@ConditionalOnProperty(value = "notifications.enabled")
+@ConditionalOnProperty(value = "notifications.email.enabled")
 public class EmailSender {
 
     private final static Logger LOG = LoggerFactory.getLogger(EmailSender.class);

@@ -13,7 +13,7 @@ import java.util.Map;
 import static io.kontur.disasterninja.util.FormatUtil.formatNumber;
 
 @Component
-@ConditionalOnProperty(value = "notifications.enabled")
+@ConditionalOnProperty(value = "notifications.slack.enabled")
 public class SlackMessageFormatter extends MessageFormatter {
 
     private static final String BODY = "{\"text\":\"><%s|%s>%s\", \"unfurl_links\":true, \"unfurl_media\": true}";
