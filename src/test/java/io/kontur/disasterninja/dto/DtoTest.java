@@ -69,6 +69,7 @@ public class DtoTest {
         Assertions.assertEquals(layer.isBoundaryRequiredForRetrieval(),
                 response.get(0).boundaryRequiredForRetrieval());
         Assertions.assertEquals(layer.getCopyrights(), response.get(0).copyrights());
+
     }
 
     @Test

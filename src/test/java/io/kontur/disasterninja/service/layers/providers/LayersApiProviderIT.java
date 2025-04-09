@@ -92,7 +92,7 @@ public class LayersApiProviderIT extends TestDependingOnUserAuth {
         assertEquals("Projects on HOT Tasking manager, ongoing and historical", layer.getDescription());
         assertEquals(LayerCategory.OVERLAY, layer.getCategory());
         assertEquals("group_1", layer.getGroup());
-        assertEquals("(c) Kontur", layer.getCopyrights().get(0));
+        assertEquals(List.of("(c) Kontur"), layer.getCopyrights());
         assertEquals(LegendType.SIMPLE, layer.getLegend().getType());
         assertEquals("hotProjects", layer.getLegend().getSteps().get(0).getSourceLayer());
         assertEquals("#bbd1e6", layer.getLegend().getSteps().get(0).getStepIconFill());
