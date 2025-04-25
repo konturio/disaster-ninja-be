@@ -9,7 +9,6 @@ import io.kontur.disasterninja.dto.AssetDto;
 import io.kontur.disasterninja.dto.layer.LayerDetailsDto;
 import io.kontur.disasterninja.service.ApplicationService;
 import io.kontur.disasterninja.service.layers.LayersApiService;
-import io.kontur.disasterninja.service.layers.providers.BivariateLayerProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -41,7 +40,6 @@ public class AppsController {
     public static final String PATH = "/apps";
     private final UserProfileClient userProfileClient;
     private final LayersApiService layersApiService;
-    private final BivariateLayerProvider bivariateLayerProvider;
     private final ApplicationService applicationService;
 
     @PreAuthorize("isAuthenticated()")
@@ -108,21 +106,6 @@ public class AppsController {
     @GetMapping("/{id}/layers")
     public List<LayerDetailsDto> getListOfLayers(@PathVariable("id") UUID appId) {
         List<Layer> layers = layersApiService.getApplicationLayers(appId);
-
-        //TODO This is bad. To be removed during US1544 Serve bivariate layers via Layers API
-        ListIterator<Layer> iterator = layers.listIterator();
-        while (iterator.hasNext()) {
-            Layer next = iterator.next();
-            if (bivariateLayerProvider.isApplicable(next.getId())) {
-                Layer obtainedLayer = bivariateLayerProvider.obtainLayer(next.getId(), null);
-                if (obtainedLayer != null) {
-                    iterator.set(obtainedLayer);
-                } else {
-                    iterator.remove();
-                }
-            }
-        }
-
         return layers.stream().map(LayerDetailsDto::fromLayer).toList();
     }
 

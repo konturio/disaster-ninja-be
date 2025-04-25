@@ -16,7 +16,4 @@ public class LayerProvidersTest {
     @Autowired
     EventShapeLayerProvider eventShapeLayerProvider;
 
-    @Autowired
-    BivariateLayerProvider bivariateLayerProvider;
-
 }

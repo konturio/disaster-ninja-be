@@ -47,8 +47,6 @@ public class LayerServiceTest {
     @MockBean
     EventShapeLayerProvider eventApiProvider;
     @MockBean
-    BivariateLayerProvider bivariateLayerProvider;
-    @MockBean
     LayersApiClient layersApiClient;
     @MockBean
     LayersApiProvider layersApiProvider;
@@ -62,8 +60,6 @@ public class LayerServiceTest {
                 CompletableFuture.completedFuture(new ArrayList<>()));
         when(eventApiProvider.obtainGlobalLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
-        when(bivariateLayerProvider.obtainGlobalLayers(any())).thenReturn(
-                CompletableFuture.completedFuture(new ArrayList<>()));
         when(layersApiProvider.obtainGlobalLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
 
@@ -71,16 +67,12 @@ public class LayerServiceTest {
                 CompletableFuture.completedFuture(new ArrayList<>()));
         when(eventApiProvider.obtainUserLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
-        when(bivariateLayerProvider.obtainUserLayers(any())).thenReturn(
-                CompletableFuture.completedFuture(new ArrayList<>()));
         when(layersApiProvider.obtainUserLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
 
         when(urbanAndPeripheryLayerProvider.obtainSelectedAreaLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
         when(eventApiProvider.obtainSelectedAreaLayers(any())).thenReturn(
-                CompletableFuture.completedFuture(new ArrayList<>()));
-        when(bivariateLayerProvider.obtainSelectedAreaLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
         when(layersApiProvider.obtainSelectedAreaLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(new ArrayList<>()));
@@ -133,7 +125,6 @@ public class LayerServiceTest {
         when(layersApiProvider.isApplicable(any())).thenCallRealMethod();
         when(eventApiProvider.isApplicable(any())).thenCallRealMethod();
         when(urbanAndPeripheryLayerProvider.isApplicable(any())).thenCallRealMethod();
-        when(bivariateLayerProvider.isApplicable(any())).thenCallRealMethod();
 
         Layer layer = Layer.builder().id(EventShapeLayerProvider.EVENT_SHAPE_LAYER_ID).build();
 
@@ -152,7 +143,6 @@ public class LayerServiceTest {
         when(layersApiProvider.isApplicable(any())).thenCallRealMethod();
         when(eventApiProvider.isApplicable(any())).thenCallRealMethod();
         when(urbanAndPeripheryLayerProvider.isApplicable(any())).thenCallRealMethod();
-        when(bivariateLayerProvider.isApplicable(any())).thenCallRealMethod();
 
         Layer layer = Layer.builder().id(URBAN_CORE_LAYER_ID).build();
 
@@ -161,25 +151,6 @@ public class LayerServiceTest {
         List<Layer> result = layerService.get(Collections.emptyList(), List.of(layer.getId()),
                 paramsWithSomeBoundary());
         verify(urbanAndPeripheryLayerProvider, times(1)).obtainLayer(eq(layer.getId()),
-                any());
-
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    public void bivariateLayersAreProcessedByBivariateProviderTest() {
-        when(layersApiProvider.isApplicable(any())).thenCallRealMethod();
-        when(eventApiProvider.isApplicable(any())).thenCallRealMethod();
-        when(urbanAndPeripheryLayerProvider.isApplicable(any())).thenCallRealMethod();
-        when(bivariateLayerProvider.isApplicable(any())).thenCallRealMethod();
-
-        Layer layer = Layer.builder().id(BivariateLayerProvider.LAYER_PREFIX + "layerId").build();
-
-        when(bivariateLayerProvider.obtainLayer(any(), any())).thenReturn(layer);
-
-        List<Layer> result = layerService.get(Collections.emptyList(), List.of(layer.getId()),
-                paramsWithSomeBoundary());
-        verify(bivariateLayerProvider, times(1)).obtainLayer(eq(layer.getId()),
                 any());
 
         assertEquals(1, result.size());
@@ -212,7 +183,7 @@ public class LayerServiceTest {
 
     @Test
     public void getGlobalLayersShouldWorkEvenIfSomeProvidersThrowTest() {
-        when(bivariateLayerProvider.obtainGlobalLayers(any())).thenThrow(HttpClientErrorException.create(
+        when(eventApiProvider.obtainGlobalLayers(any())).thenThrow(HttpClientErrorException.create(
                 HttpStatus.BAD_REQUEST, "fail", HttpHeaders.EMPTY, null, Charset.defaultCharset()));
         when(layersApiProvider.obtainGlobalLayers(any())).thenReturn(
                 CompletableFuture.completedFuture(List.of(layer)));

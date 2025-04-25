@@ -30,8 +30,6 @@ kontur:
       url: 'https://test.test/insights'
       connectionTimeout: 60
       readTimeout: 60
-      layersReloadInterval: PT10M
-      useInsightsV2: false
     tiles:
       host: 'https://test.test/tiles'
     userProfileApi:
