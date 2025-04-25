@@ -18,7 +18,7 @@ configs:
           stepShape: 'circle'
           style:
             width: 3
-            color: '#58211B'
+            color: '#A72C26'
 
   ## Event Shape: configs per event type
   - id: 'eventShape.CYCLONE'
@@ -131,7 +131,7 @@ configs:
           paramValue: 'globalArea'
           style:
             width: 3
-            color: '#58211B'
+            color: '#A72C26'
 
   - id: 'eventShape.EARTHQUAKE'
     globalOverlay: false
@@ -324,7 +324,7 @@ configs:
           paramValue: 'exposure'
           style:
             width: 3
-            color: '#58211B'
+            color: '#A72C26'
         - stepName: 'Alert Area'
           stepShape: 'circle'
           paramName: 'areaType'
@@ -366,7 +366,7 @@ configs:
           paramValue: 'exposure'
           style:
             width: 3
-            color: '#58211B'
+            color: '#A72C26'
         - stepName: 'Alert Area'
           stepShape: 'circle'
           paramName: 'areaType'
@@ -406,7 +406,7 @@ configs:
           paramValue: 0
           style:
             width: 2
-            color: '#58211B'
+            color: '#A72C26'
             opacity: 0.8
         - stepName: '6 hours Forecast'
           stepShape: 'circle'
@@ -414,7 +414,7 @@ configs:
           paramValue: 6
           style:
             width: 2
-            color: '#58211B'
+            color: '#A72C26'
             opacity: 0.6
         - stepName: '12 hours Forecast'
           stepShape: 'circle'
@@ -422,7 +422,7 @@ configs:
           paramValue: 12
           style:
             width: 2
-            color: '#58211B'
+            color: '#A72C26'
             opacity: 0.4
         - stepName: '18 hours Forecast'
           stepShape: 'circle'
@@ -430,7 +430,7 @@ configs:
           paramValue: 18
           style:
             width: 2
-            color: '#58211B'
+            color: '#A72C26'
             opacity: 0.2
         - stepName: 'Initial Forecast'
           stepShape: 'circle'
@@ -438,7 +438,7 @@ configs:
           paramValue: 'Poly_Cones_0'
           style:
             width: 2
-            color: '#58211B'
+            color: '#A72C26'
             opacity: 0.8
 
   # --- empty template ---
