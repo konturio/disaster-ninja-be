@@ -333,7 +333,7 @@ configs:
           style:
             width: 2
             color: '#D52627'
-            opacity: 0.5
+            opacity: 0.6
 
   - id: 'eventShape.WILDFIRE'
     globalOverlay: false
@@ -374,7 +374,7 @@ configs:
           style:
             width: 3
             color: '#D52627'
-            opacity: 0.5
+            opacity: 0.6
 
   - id: 'eventShape.VOLCANO'
     globalOverlay: false
