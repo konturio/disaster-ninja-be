@@ -18,7 +18,7 @@ configs:
           stepShape: 'circle'
           style:
             width: 3
-            color: '#051626'
+            color: '#D52627'
 
   ## Event Shape: configs per event type
   - id: 'eventShape.CYCLONE'
@@ -131,7 +131,7 @@ configs:
           paramValue: 'globalArea'
           style:
             width: 3
-            color: '#051626'
+            color: '#D52627'
 
   - id: 'eventShape.EARTHQUAKE'
     globalOverlay: false
@@ -324,7 +324,7 @@ configs:
           paramValue: 'exposure'
           style:
             width: 3
-            color: '#051626'
+            color: '#D52627'
         - stepName: 'Alert Area'
           stepShape: 'circle'
           paramName: 'areaType'
@@ -332,8 +332,8 @@ configs:
           paramValue: 'globalArea'
           style:
             width: 2
-            color: '#051626'
-            opacity: 0.5
+            color: '#D52627'
+            opacity: 0.6
 
   - id: 'eventShape.WILDFIRE'
     globalOverlay: false
@@ -366,14 +366,15 @@ configs:
           paramValue: 'exposure'
           style:
             width: 3
-            color: '#051626'
+            color: '#D52627'
         - stepName: 'Alert Area'
           stepShape: 'circle'
           paramName: 'areaType'
           paramValue: 'alertArea'
           style:
             width: 3
-            color: '#051626'
+            color: '#D52627'
+            opacity: 0.6
 
   - id: 'eventShape.VOLCANO'
     globalOverlay: false
@@ -406,7 +407,7 @@ configs:
           paramValue: 0
           style:
             width: 2
-            color: '#051626'
+            color: '#D52627'
             opacity: 0.8
         - stepName: '6 hours Forecast'
           stepShape: 'circle'
@@ -414,7 +415,7 @@ configs:
           paramValue: 6
           style:
             width: 2
-            color: '#051626'
+            color: '#D52627'
             opacity: 0.6
         - stepName: '12 hours Forecast'
           stepShape: 'circle'
@@ -422,7 +423,7 @@ configs:
           paramValue: 12
           style:
             width: 2
-            color: '#051626'
+            color: '#D52627'
             opacity: 0.4
         - stepName: '18 hours Forecast'
           stepShape: 'circle'
@@ -430,7 +431,7 @@ configs:
           paramValue: 18
           style:
             width: 2
-            color: '#051626'
+            color: '#D52627'
             opacity: 0.2
         - stepName: 'Initial Forecast'
           stepShape: 'circle'
@@ -438,7 +439,7 @@ configs:
           paramValue: 'Poly_Cones_0'
           style:
             width: 2
-            color: '#051626'
+            color: '#D52627'
             opacity: 0.8
 
   # --- empty template ---
