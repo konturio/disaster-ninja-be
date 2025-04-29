@@ -13,7 +13,6 @@ import io.kontur.disasterninja.dto.AppSummaryDto;
 import io.kontur.disasterninja.dto.layer.LayerDetailsDto;
 import io.kontur.disasterninja.service.ApplicationService;
 import io.kontur.disasterninja.service.layers.LayersApiService;
-import io.kontur.disasterninja.service.layers.providers.BivariateLayerProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +56,6 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     private LayersApiService layersApiService;
     @Autowired
     private ApplicationService applicationService;
-    @MockBean
-    private BivariateLayerProvider bivariateLayerProvider;
     private AppsController appsController;
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -66,7 +63,7 @@ public class AppControllerTest extends TestDependingOnUserAuth {
     @BeforeEach
     public void before() {
         appsController =
-                new AppsController(userProfileClient, layersApiService, bivariateLayerProvider, applicationService);
+                new AppsController(userProfileClient, layersApiService, applicationService);
     }
 
     @Test

@@ -222,11 +222,8 @@ public class InsightsApiGraphqlClientImpl implements InsightsApiGraphqlClient {
                         if (response.getData() != null &&
                                 response.getData().polygonStatistic() != null &&
                                 response.getData().polygonStatistic().bivariateStatistic() != null &&
-                                response.getData().polygonStatistic().bivariateStatistic().overlays() != null &&
                                 response.getData().polygonStatistic().bivariateStatistic().indicators() != null) {
                             BivariateStatisticDto bivariateStatisticDto = BivariateStatisticDto.builder()
-                                    .overlays(mapper.bivariateLayerLegendQueryOverlayListToOverlayDtoList(
-                                            response.getData().polygonStatistic().bivariateStatistic().overlays()))
                                     .indicators(mapper.bivariateLayerLegendQueryIndicatorListToIndicatorDtoList(
                                             response.getData().polygonStatistic().bivariateStatistic().indicators()))
                                     .build();
