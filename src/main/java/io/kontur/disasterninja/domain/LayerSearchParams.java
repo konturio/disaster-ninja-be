@@ -14,12 +14,18 @@ public class LayerSearchParams {
     private final UUID appId;
     private final UUID eventId;
     private final String eventFeed;
+    @Builder.Default
+    private Integer limit = null;
+    @Builder.Default
+    private Integer offset = null;
 
     public LayerSearchParams getCopyWithoutBoundary() {
         return LayerSearchParams.builder()
                 .appId(appId)
                 .eventId(eventId)
                 .eventFeed(eventFeed)
+                .limit(limit)
+                .offset(offset)
                 .build();
     }
 }

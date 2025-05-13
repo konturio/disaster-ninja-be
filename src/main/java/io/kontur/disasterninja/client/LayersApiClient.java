@@ -171,6 +171,29 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         return response.getBody();
     }
 
+    public List<Feature> getCollectionFeatures(Geometry geoJson, String collectionId, UUID appId, int limit, int offset) {
+        Assert.notNull(collectionId, "Collection ID should not be null");
+
+        Map<String, Object> body = new HashMap<>();
+        if (geoJson != null) {
+            body.put("geometry", geoJson);
+        }
+        if (appId != null) {
+            body.put("appId", appId);
+        }
+
+        body.put("limit", limit);
+        body.put("offset", offset);
+
+        ResponseEntity<ApiFeatureCollection> response = layersApiRestTemplate
+                .exchange(String.format(LAYERS_FEATURES_SEARCH_URI, collectionId), HttpMethod.POST,
+                        httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(body),
+                        new ParameterizedTypeReference<>() {
+                        });
+
+        return response.getBody().getFeatures();
+    }
+
     public List<Feature> getCollectionFeatures(Geometry geoJson, String collectionId, UUID appId) {
         Assert.notNull(collectionId, "Collection ID should not be null");
 
