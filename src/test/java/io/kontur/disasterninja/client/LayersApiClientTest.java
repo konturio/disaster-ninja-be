@@ -256,6 +256,38 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     }
 
     @Test
+    public void getCollectionFeaturesWithLimit() throws JsonProcessingException {
+        //given
+        String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
+                "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
+
+        server.expect(ExpectedCount.times(1), requestTo("/collections/hotProjects/items/search"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(r -> {
+                    String body = r.getBody().toString();
+                    if (hasJsonPath("$.appId", is(not("a2a353ab-4126-44ef-a25d-a93fee401c1f")))
+                            .matches(body)) {
+                        throw new RuntimeException();
+                    }
+                    if (hasJsonPath("$.offset", is(0)).matches(body) &&
+                        hasJsonPath("$.limit", is(5)).matches(body)) {
+                        return withSuccess(readFile(this, "layers/layersAPI.features.page2.json"),
+                                MediaType.APPLICATION_JSON).createResponse(r);
+                    } else {
+                        throw new RuntimeException();
+                    }
+
+                });
+
+        //when
+        List<Feature> features = client.getCollectionFeatures(objectMapper.readValue(json, Geometry.class),
+                "hotProjects", UUID.fromString("a2a353ab-4126-44ef-a25d-a93fee401c1f"), 5, 0);
+
+        //then
+        assertEquals(2, features.size());
+    }
+
+    @Test
     public void getCollectionFeaturesWithoutAppId() throws JsonProcessingException {
         //given
         String json = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
