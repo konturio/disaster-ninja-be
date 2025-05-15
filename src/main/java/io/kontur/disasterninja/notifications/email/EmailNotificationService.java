@@ -101,7 +101,7 @@ public class EmailNotificationService extends NotificationService {
 
     private List<Feature> getRelevantLocations(FeatureCollection fc) {
         Geometry geometry = geometryTransformer.makeValid(geometryTransformer.getGeometryFromGeoJson(fc));
-        return layersApiService.getFeatures(geometry, relevantLocationsLayer, UUID.fromString(relevantLocationsLayerAppId));
+        return layersApiService.getAllFeatures(geometry, relevantLocationsLayer, UUID.fromString(relevantLocationsLayerAppId));
     }
 
     private boolean exceedsNotificationFrequencyLimit(UUID eventId) {
