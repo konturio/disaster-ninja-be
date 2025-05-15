@@ -284,6 +284,8 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
                 "hotProjects", UUID.fromString("a2a353ab-4126-44ef-a25d-a93fee401c1f"), 5, 0);
 
         //then
+        // Only 2 features are returned because the test data file contains 2 features,
+        // even though the limit is set to 5
         assertEquals(2, features.size());
     }
 

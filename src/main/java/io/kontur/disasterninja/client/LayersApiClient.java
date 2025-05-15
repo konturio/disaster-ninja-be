@@ -191,7 +191,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
                         new ParameterizedTypeReference<>() {
                         });
 
-        return response.getBody().getFeatures();
+        return response.getBody() != null ? response.getBody().getFeatures() : Collections.emptyList();
     }
 
     public List<Feature> getCollectionFeatures(Geometry geoJson, String collectionId, UUID appId) {
