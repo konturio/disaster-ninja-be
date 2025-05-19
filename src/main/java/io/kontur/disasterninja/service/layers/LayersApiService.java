@@ -68,7 +68,11 @@ public class LayersApiService {
         return layersApiClient.updateLayerFeatures(layerId, body);
     }
 
-    public List<Feature> getFeatures(Geometry geoJSON, String layerId, UUID appId) {
+    public List<Feature> getFeatures(Geometry geoJSON, String layerId, UUID appId, int limit, int offset) {
+        return layersApiClient.getCollectionFeatures(geoJSON, layerId, appId, limit, offset);
+    }
+
+    public List<Feature> getAllFeatures(Geometry geoJSON, String layerId, UUID appId) {
         return layersApiClient.getCollectionFeatures(geoJSON, layerId, appId);
     }
 

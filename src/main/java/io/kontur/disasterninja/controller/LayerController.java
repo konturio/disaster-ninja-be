@@ -162,7 +162,19 @@ public class LayerController {
         } catch (Exception e) {
             throw new ValidationException(e.getMessage(), e);
         }
-        List<Feature> features = layersApiService.getFeatures(searchParams.getBoundary(), layerId, searchParams.getAppId());
+
+        List<Feature> features;
+        Integer limit = searchParams.getLimit();
+        if (limit != null) {
+            if (limit <= 0) throw new ValidationException("Limit must be positive");
+            // load the requested slice of features
+            final int offset = searchParams.getOffset() == null ? 0 : Math.max(0, searchParams.getOffset());
+            features = layersApiService.getFeatures(searchParams.getBoundary(), layerId, searchParams.getAppId(), limit, offset);
+        } else {
+            // load all features
+            features = layersApiService.getAllFeatures(searchParams.getBoundary(), layerId, searchParams.getAppId());
+        }
+
         if (features == null || features.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(emptyList());
         }
@@ -201,6 +213,8 @@ public class LayerController {
         return LayerSearchParams.builder()
                 .appId(dto.getAppId())
                 .boundary(geometryTransformer.makeValid(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON())))
+                .limit(dto.getLimit())
+                .offset(dto.getOffset())
                 .build();
     }
 
