@@ -169,7 +169,7 @@ public class LayerController {
             if (limit <= 0) throw new ValidationException("Limit must be positive");
             // load the requested slice of features
             final int offset = searchParams.getOffset() == null ? 0 : Math.max(0, searchParams.getOffset());
-            features = layersApiService.getFeatures(searchParams.getBoundary(), layerId, searchParams.getAppId(), limit, offset);
+            features = layersApiService.getFeatures(searchParams.getBoundary(), layerId, searchParams.getAppId(), limit, offset, searchParams.getOrder());
         } else {
             // load all features
             features = layersApiService.getAllFeatures(searchParams.getBoundary(), layerId, searchParams.getAppId());
