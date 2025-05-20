@@ -18,6 +18,9 @@ public class LayerSearchParams {
     private Integer limit = null;
     @Builder.Default
     private Integer offset = null;
+    @Builder.Default
+    private String order = null;
+
 
     public LayerSearchParams getCopyWithoutBoundary() {
         return LayerSearchParams.builder()
@@ -26,6 +29,7 @@ public class LayerSearchParams {
                 .eventFeed(eventFeed)
                 .limit(limit)
                 .offset(offset)
+                .order(order)
                 .build();
     }
 }

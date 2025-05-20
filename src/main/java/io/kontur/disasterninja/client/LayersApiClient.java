@@ -171,7 +171,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         return response.getBody();
     }
 
-    public List<Feature> getCollectionFeatures(Geometry geoJson, String collectionId, UUID appId, int limit, int offset) {
+    public List<Feature> getCollectionFeatures(Geometry geoJson, String collectionId, UUID appId, int limit, int offset, String order) {
         Assert.notNull(collectionId, "Collection ID should not be null");
 
         Map<String, Object> body = new HashMap<>();
@@ -180,6 +180,9 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         }
         if (appId != null) {
             body.put("appId", appId);
+        }
+        if (order != null) {
+            body.put("order", order);
         }
 
         body.put("limit", limit);

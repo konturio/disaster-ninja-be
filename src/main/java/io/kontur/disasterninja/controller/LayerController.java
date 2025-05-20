@@ -215,6 +215,7 @@ public class LayerController {
                 .boundary(geometryTransformer.makeValid(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON())))
                 .limit(dto.getLimit())
                 .offset(dto.getOffset())
+                .order(dto.getOrder())
                 .build();
     }
 
