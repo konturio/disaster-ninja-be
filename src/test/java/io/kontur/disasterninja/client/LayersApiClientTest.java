@@ -314,7 +314,8 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     }
 
     @Test
-    public void getCollectionFeaturesWithOrderAsc() throws JsonProcessingException {
+-   public void getCollectionFeaturesWithOrderAsc() throws JsonProcessingException {
++   public void getCollectionFeaturesWithOrderAsc() throws JsonProcessingException, IOException {
         // given
         String polygonJson = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
                 "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
