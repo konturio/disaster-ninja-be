@@ -340,17 +340,18 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     }
 
     @Test
-    public void getCollectionFeaturesWithOrderDesc() throws JsonProcessingException {
+-   public void getCollectionFeaturesWithOrderDesc() throws JsonProcessingException {
++   public void getCollectionFeaturesWithOrderDesc() throws JsonProcessingException, IOException {
         // given
-        String polygonJson = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
-                "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
+        String polygonJson = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427],"
+                + "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
         Geometry geometry = objectMapper.readValue(polygonJson, Geometry.class);
 
         server.expect(ExpectedCount.once(), requestTo("/collections/hotProjects/items/search"))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(content().string(containsString("\"order\":\"desc\"")))
-                .andRespond(withSuccess(readFile(this, "layers/layersAPI.features.page2_desc.json"),
-                        MediaType.APPLICATION_JSON));
+            .andExpect(method(HttpMethod.POST))
+            .andExpect(content().string(containsString("\"order\":\"desc\"")))
+            .andRespond(withSuccess(readFile(this, "layers/layersAPI.features.page2_desc.json"),
+                    MediaType.APPLICATION_JSON));
 
         // when
         List<Feature> features = client.getCollectionFeatures(geometry,
