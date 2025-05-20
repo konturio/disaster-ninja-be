@@ -2,6 +2,7 @@ package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import io.kontur.disasterninja.domain.Legend;
 import io.kontur.disasterninja.domain.enums.LegendType;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
