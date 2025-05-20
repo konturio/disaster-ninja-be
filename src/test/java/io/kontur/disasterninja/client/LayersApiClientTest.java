@@ -281,7 +281,7 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
 
         //when
         List<Feature> features = client.getCollectionFeatures(objectMapper.readValue(json, Geometry.class),
-                "hotProjects", UUID.fromString("a2a353ab-4126-44ef-a25d-a93fee401c1f"), 5, 0);
+                "hotProjects", UUID.fromString("a2a353ab-4126-44ef-a25d-a93fee401c1f"), 5, 0, null);
 
         //then
         // Only 2 features are returned because the test data file contains 2 features,
@@ -316,6 +316,8 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
     @Test
     public void getCollectionFeaturesWithOrderAsc() throws JsonProcessingException {
         // given
+        String polygonJson = "{\"type\":\"Polygon\",\"coordinates\":[[[1.83975,6.2578],[1.83975,7.11427],[2.5494,7.11427]," +
+                "[2.5494,6.48905],[2.49781,6.25806],[1.83975,6.2578]]]}";
         Geometry geometry = objectMapper.readValue(polygonJson, Geometry.class);
 
         server.expect(ExpectedCount.once(), requestTo("/collections/hotProjects/items/search"))
@@ -361,8 +363,6 @@ class LayersApiClientTest extends TestDependingOnUserAuth {
         String secondId = features.get(1).getId().toString();
         assertTrue(firstId.compareTo(secondId) > 0); // "10011" > "10010"
     }
-
-
 
     @Test
     public void getCollection() {
