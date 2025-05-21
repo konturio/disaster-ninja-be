@@ -166,11 +166,11 @@ public class LayerController {
         List<Feature> features;
         Integer limit = searchParams.getLimit();
         if (limit != null) {
-            if (limit < 0) {
+            if (limit <= 0) {
                 Map<String, Object> error = new HashMap<>();
                 error.put("status", 400);
                 error.put("error", "Bad Request");
-                error.put("message", "Limit can not be negative");
+                error.put("message", "Limit must be greater than or equal to 1");
                 return ResponseEntity.badRequest().body(error);
             }
 
