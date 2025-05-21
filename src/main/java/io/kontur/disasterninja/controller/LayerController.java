@@ -152,7 +152,7 @@ public class LayerController {
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = APPLICATION_JSON_VALUE))
     })
     @PostMapping(path = "/{id}/items/search", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Feature>> getFeatures(
+    public ResponseEntity<?> getFeatures(
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true, example = "hotProjects")
             @PathVariable("id") String layerId,
             @RequestBody LayerItemsSearchDto inputDto) {
@@ -166,7 +166,14 @@ public class LayerController {
         List<Feature> features;
         Integer limit = searchParams.getLimit();
         if (limit != null) {
-            if (limit <= 0) throw new ValidationException("Limit must be positive");
+            if (limit < 0) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("status", 400);
+                error.put("error", "Bad Request");
+                error.put("message", "Limit can not be negative");
+                return ResponseEntity.badRequest().body(error);
+            }
+
             // load the requested slice of features
             final int offset = searchParams.getOffset() == null ? 0 : Math.max(0, searchParams.getOffset());
             features = layersApiService.getFeatures(searchParams.getBoundary(), layerId, searchParams.getAppId(), limit, offset, searchParams.getOrder());
