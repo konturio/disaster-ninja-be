@@ -20,4 +20,6 @@ public class LayerItemsSearchDto {
     // But mixing mandatory (final) and optional in the same class didn't work for me
     private Integer limit = null;
     private Integer offset = null;
+    private String order = null;
+
 }

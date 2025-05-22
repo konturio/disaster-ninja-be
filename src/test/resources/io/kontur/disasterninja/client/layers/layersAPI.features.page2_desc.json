@@ -1,0 +1,290 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                20.618577982,
+                -23.875762121
+              ],
+              [
+                19.99999989,
+                -23.785427967
+              ],
+              [
+                19.999998095,
+                -23.750499723
+              ],
+              [
+                20.503492312,
+                -23.550769255
+              ],
+              [
+                20.495338418,
+                -23.551615099
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "teams": [
+          {
+            "name": "Validator Trainees",
+            "role": "VALIDATOR",
+            "teamId": 1
+          },
+          {
+            "name": "HOT Global Validators",
+            "role": "VALIDATOR",
+            "teamId": 7
+          }
+        ],
+        "author": "SColchester",
+        "k_type": "polygon",
+        "status": "PUBLISHED",
+        "aoiBBOX": [
+          19.9999980944898,
+          -23.87576212074,
+          20.6198985819303,
+          -23.3088893865547
+        ],
+        "created": "2020-12-09T09:17:50.167310Z",
+        "dueDate": null,
+        "imagery": "",
+        "private": false,
+        "campaigns": [
+          {
+            "id": 237,
+            "name": "COVID-19"
+          }
+        ],
+        "idPresets": [
+          "building"
+        ],
+        "interests": [],
+        "licenseId": null,
+        "projectId": 10011,
+        "countryTag": [
+          "Botswana"
+        ],
+        "lastUpdated": "2022-01-13T07:11:44.971927Z",
+        "mapperLevel": "BEGINNER",
+        "projectInfo": {
+          "name": "COVID-19 Hukuntsi District-01, Botswana",
+          "locale": "en",
+          "description": "HOT has been requested by the Botswana Institute of Geomatics (BIG) to map buildings in Botswana. This data will provide a basemap for COVID-19 monitoring tools used by the Government of Botswana.  Please join our global effort to help control this disease by mapping on this project. \n\nGlobally HOT is committed to fighting [COVID-19](https://wiki.openstreetmap.org/wiki/COVID19) by providing 3 critical services:\n1. Helping government agencies and responders with basic data needs: we’re providing this through the  [UN’s Humanitarian Data Exchange](https://data.humdata.org/), among other ways.\n2. Helping to Identify populations living in places most at risk: prioritizing our existing queue of mapping projects to get volunteers immediately mapping areas with high proportions of COVID-19 cases, or of greater vulnerability.\n3. Creating new mapping projects in highest risk places; which is what this project does. Every feature you map will help in this objective!\n\nThe goal of this project is to digitize the buildings using **Bing Imagery**. While other services may have more recent imagery, Bing imagery for this area is the highest quality available for digitization. While this task is ideal for beginner level mappers with a low density of buildings, please split or unlock the task and move on to something you are more comfortable with if needed.",
+          "instructions": "Project Specific Mapping Notes\n=========================\n* **Imagery:** Please use **Bing Imagery**, the default imagery in the iD editor. You may switch to MAXAR, ESRI or others for comparison but Bing has been chosen for this area due to resolution and clarity. \n* Many of these squares will already be partially or fully mapped, map in more if needed or fix up the existing mapping, or just mark it \"Completely Mapped\" if it is already complete.\n* **Existing mapping does not match imagery** - This happens in some areas, when different imagery sources are used. If this occurs, check to make sure you are using Bing imagery. If necessary, adjust existing mapping to align with Bing, then continue mapping. \n* **Alternative imagery is better** - Sometimes due to shadows, alignment and other factors it may be easier to trace features using other imagery. That is fine as long as you adjust for any offset. When finished please leave a comment in the Tasking Manager when you mark done/stop mapping to say you used alternative imagery.  See [LearnOSM](https://learnosm.org/en/josm/correcting-imagery-offset/) for detailed instructions on handling imagery offset, or [Aerial Imagery & Alignment](https://learnosm.org/en/hot-tips/imagery/) for adjusting in the iD editor.\n\nBuildings\n=======\n* Buildings tutorial - https://youtu.be/nswUcgMfKTM?t=131\n* Please accurately outline all the buildings you can find. The outline should be for the full size of the building even if it is partly covered by trees in the imagery.\n* Take care to not include the building shadow in the building outline.\n* After drawing the outline and tagging as a building, **use the 'Q' key in the iD & JOSM editors to \"square\" the corners**. We suggest using the Buildings plug-in in JOSM to make building tracing more efficient. \n* Buildings may be very close, but do not actually touch each other, try to map them close to each other without letting them connect or share nodes with each other, roads or residential area outlines. In the iD web editor, holding down the \"alt\" key will keep nodes from \"snapping\" to each other and accidentally connecting.\n* In the iD web editor, you will only have the option to tag new features as buildings, see below for editing or adding other features.\n\n**Only if you have personal knowledge of a building**, please add that information to the building, like the name or type of building (hospital, school, gas station, etc)\n\n### Roads and Other Features\n* Roads are being done in another project, only adjust roads if they are incorrect and affecting your ability to map buildings (i.e. crossing); otherwise leave alone.\n* Other features such as waterways, landuse, etc. can be mapped but please do not do so via this Tasking Manager project as the other mappers will likely not continue a waterway you start (as example). Map these 'traditionally' through [OpenStreetMap.org](http://www.openstreetmap.org)",
+          "shortDescription": "HOT has been requested to map areas in Botswana susceptible to, or identified as impacted, by the COVID-19 outbreak. Please join our global effort to help control this disease by mapping on this project.\n\nThe goal of this project is to digitize the buildings using **Bing** imagery.",
+          "perTaskInstructions": ""
+        },
+        "mappingTypes": [
+          "BUILDINGS"
+        ],
+        "organisation": 73,
+        "activeMappers": 0,
+        "defaultLocale": "en",
+        "percentMapped": 100,
+        "priorityAreas": null,
+        "mappingEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "osmchaFilterId": null,
+        "projectPriority": "MEDIUM",
+        "allowedUsernames": [],
+        "changesetComment": "#hotosm-project-10011 #covid19 #COVBots",
+        "organisationLogo": "https://cdn.hotosm.org/tasking-manager/uploads/1588741335578_hot-logo.png",
+        "organisationName": "HOT",
+        "organisationSlug": "hot",
+        "percentValidated": 26,
+        "taskCreationMode": "GRID",
+        "mappingPermission": "ANY",
+        "percentBadImagery": 0,
+        "validationEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "validationPermission": "TEAMS",
+        "enforceRandomTaskSelection": false
+      },
+      "id": "10011",
+      "links": [
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items/10011",
+          "rel": "self",
+          "type": "application/geo+json"
+        },
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "title": "HOT Tasking Manager Projects"
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                20.825477654,
+                -25.99303579
+              ],
+              [
+                21.351214759,
+                -26.05171222
+              ],
+              [
+                20.825159075,
+                -25.993490217
+              ],
+              [
+                20.825279238,
+                -25.993320463
+              ],
+              [
+                20.825420382,
+                -25.993120191
+              ],
+              [
+                20.825477654,
+                -25.99303579
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "teams": [
+          {
+            "name": "Validator Trainees",
+            "role": "VALIDATOR",
+            "teamId": 1
+          },
+          {
+            "name": "HOT Global Validators",
+            "role": "VALIDATOR",
+            "teamId": 7
+          }
+        ],
+        "author": "SColchester",
+        "k_type": "polygon",
+        "status": "PUBLISHED",
+        "aoiBBOX": [
+          20.616018297383,
+          -26.4695034006876,
+          21.3512147591777,
+          -25.9930357895695
+        ],
+        "created": "2020-12-09T08:17:30.753543Z",
+        "dueDate": null,
+        "imagery": "",
+        "private": false,
+        "campaigns": [
+          {
+            "id": 237,
+            "name": "COVID-19"
+          }
+        ],
+        "idPresets": [
+          "building"
+        ],
+        "interests": [],
+        "licenseId": null,
+        "projectId": 10010,
+        "countryTag": [
+          "Botswana"
+        ],
+        "lastUpdated": "2021-04-16T22:06:57.484551Z",
+        "mapperLevel": "BEGINNER",
+        "projectInfo": {
+          "name": "COVID-19 Gemsbok District-07, Botswana",
+          "locale": "en",
+          "description": "HOT has been requested by the Botswana Institute of Geomatics (BIG) to map buildings in Botswana. This data will provide a basemap for COVID-19 monitoring tools used by the Government of Botswana.  Please join our global effort to help control this disease by mapping on this project. \n\nGlobally HOT is committed to fighting [COVID-19](https://wiki.openstreetmap.org/wiki/COVID19) by providing 3 critical services:\n1. Helping government agencies and responders with basic data needs: we’re providing this through the  [UN’s Humanitarian Data Exchange](https://data.humdata.org/), among other ways.\n2. Helping to Identify populations living in places most at risk: prioritizing our existing queue of mapping projects to get volunteers immediately mapping areas with high proportions of COVID-19 cases, or of greater vulnerability.\n3. Creating new mapping projects in highest risk places; which is what this project does. Every feature you map will help in this objective!\n\nThe goal of this project is to digitize the buildings using **Bing Imagery**. While other services may have more recent imagery, Bing imagery for this area is the highest quality available for digitization. While this task is ideal for beginner level mappers with a low density of buildings, please split or unlock the task and move on to something you are more comfortable with if needed.",
+          "instructions": "Project Specific Mapping Notes\n=========================\n* **Imagery:** Please use **Bing Imagery**, the default imagery in the iD editor. You may switch to MAXAR, ESRI or others for comparison but Bing has been chosen for this area due to resolution and clarity. \n* Many of these squares will already be partially or fully mapped, map in more if needed or fix up the existing mapping, or just mark it \"Completely Mapped\" if it is already complete.\n* **Existing mapping does not match imagery** - This happens in some areas, when different imagery sources are used. If this occurs, check to make sure you are using Bing imagery. If necessary, adjust existing mapping to align with Bing, then continue mapping. \n* **Alternative imagery is better** - Sometimes due to shadows, alignment and other factors it may be easier to trace features using other imagery. That is fine as long as you adjust for any offset. When finished please leave a comment in the Tasking Manager when you mark done/stop mapping to say you used alternative imagery.  See [LearnOSM](https://learnosm.org/en/josm/correcting-imagery-offset/) for detailed instructions on handling imagery offset, or [Aerial Imagery & Alignment](https://learnosm.org/en/hot-tips/imagery/) for adjusting in the iD editor.\n\nBuildings\n=======\n* Buildings tutorial - https://youtu.be/nswUcgMfKTM?t=131\n* Please accurately outline all the buildings you can find. The outline should be for the full size of the building even if it is partly covered by trees in the imagery.\n* Take care to not include the building shadow in the building outline.\n* After drawing the outline and tagging as a building, **use the 'Q' key in the iD & JOSM editors to \"square\" the corners**. We suggest using the Buildings plug-in in JOSM to make building tracing more efficient. \n* Buildings may be very close, but do not actually touch each other, try to map them close to each other without letting them connect or share nodes with each other, roads or residential area outlines. In the iD web editor, holding down the \"alt\" key will keep nodes from \"snapping\" to each other and accidentally connecting.\n* In the iD web editor, you will only have the option to tag new features as buildings, see below for editing or adding other features.\n\n**Only if you have personal knowledge of a building**, please add that information to the building, like the name or type of building (hospital, school, gas station, etc)\n\n### Roads and Other Features\n* Roads are being done in another project, only adjust roads if they are incorrect and affecting your ability to map buildings (i.e. crossing); otherwise leave alone.\n* Other features such as waterways, landuse, etc. can be mapped but please do not do so via this Tasking Manager project as the other mappers will likely not continue a waterway you start (as example). Map these 'traditionally' through [OpenStreetMap.org](http://www.openstreetmap.org)",
+          "shortDescription": "HOT has been requested to map areas in Botswana susceptible to, or identified as impacted, by the COVID-19 outbreak. Please join our global effort to help control this disease by mapping on this project.\n\nThe goal of this project is to digitize the buildings using **Bing** imagery.",
+          "perTaskInstructions": ""
+        },
+        "mappingTypes": [
+          "BUILDINGS"
+        ],
+        "organisation": 73,
+        "activeMappers": 0,
+        "defaultLocale": "en",
+        "percentMapped": 100,
+        "priorityAreas": null,
+        "mappingEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "osmchaFilterId": null,
+        "projectPriority": "MEDIUM",
+        "allowedUsernames": [],
+        "changesetComment": "#hotosm-project-10010 #covid19 #COVBots",
+        "organisationLogo": "https://cdn.hotosm.org/tasking-manager/uploads/1588741335578_hot-logo.png",
+        "organisationName": "HOT",
+        "organisationSlug": "hot",
+        "percentValidated": 0,
+        "taskCreationMode": "GRID",
+        "mappingPermission": "ANY",
+        "percentBadImagery": 0,
+        "validationEditors": [
+          "ID",
+          "JOSM",
+          "POTLATCH_2"
+        ],
+        "validationPermission": "TEAMS",
+        "enforceRandomTaskSelection": false
+      },
+      "id": "10010",
+      "links": [
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items/10010",
+          "rel": "self",
+          "type": "application/geo+json"
+        },
+        {
+          "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects",
+          "rel": "collection",
+          "type": "application/geo+json",
+          "title": "HOT Tasking Manager Projects"
+        }
+      ]
+    }    
+  ],
+  "links": [
+    {
+      "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items?limit=2&offset=10",
+      "rel": "self",
+      "type": "application/geo+json",
+      "title": "HOT Tasking Manager Projects"
+    },
+    {
+      "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items?limit=2&offset=12",
+      "rel": "next",
+      "type": "application/geo+json",
+      "title": "HOT Tasking Manager Projects"
+    },
+    {
+      "href": "http://test-api02.konturlabs.com/layers/v2/collections/hotProjects/items?limit=2&offset=8",
+      "rel": "prev",
+      "type": "application/geo+json",
+      "title": "HOT Tasking Manager Projects"
+    }
+  ],
+  "timeStamp": "2022-01-14T13:22:55Z",
+  "numberMatched": 12,
+  "numberReturned": 2
+}

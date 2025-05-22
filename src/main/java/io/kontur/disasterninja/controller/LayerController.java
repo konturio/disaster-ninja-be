@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.wololo.geojson.Feature;
@@ -156,6 +157,7 @@ public class LayerController {
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true, example = "hotProjects")
             @PathVariable("id") String layerId,
             @RequestBody LayerItemsSearchDto inputDto) {
+
         LayerSearchParams searchParams;
         try {
             searchParams = createLayerSearchParams(inputDto);
@@ -165,11 +167,15 @@ public class LayerController {
 
         List<Feature> features;
         Integer limit = searchParams.getLimit();
+
         if (limit != null) {
-            if (limit <= 0) throw new ValidationException("Limit must be positive");
+            if (limit <= 0) {
+                throw new WebApplicationException("Limit must be greater than or equal to 1", HttpStatus.BAD_REQUEST);
+            }
+
             // load the requested slice of features
             final int offset = searchParams.getOffset() == null ? 0 : Math.max(0, searchParams.getOffset());
-            features = layersApiService.getFeatures(searchParams.getBoundary(), layerId, searchParams.getAppId(), limit, offset);
+            features = layersApiService.getFeatures(searchParams.getBoundary(), layerId, searchParams.getAppId(), limit, offset, searchParams.getOrder());
         } else {
             // load all features
             features = layersApiService.getAllFeatures(searchParams.getBoundary(), layerId, searchParams.getAppId());
@@ -178,6 +184,7 @@ public class LayerController {
         if (features == null || features.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(emptyList());
         }
+
         return ResponseEntity.ok(features);
     }
 
@@ -215,6 +222,7 @@ public class LayerController {
                 .boundary(geometryTransformer.makeValid(geometryTransformer.getGeometryFromGeoJson(dto.getGeoJSON())))
                 .limit(dto.getLimit())
                 .offset(dto.getOffset())
+                .order(dto.getOrder())
                 .build();
     }
 
