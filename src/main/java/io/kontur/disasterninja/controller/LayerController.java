@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.wololo.geojson.Feature;
@@ -152,10 +153,11 @@ public class LayerController {
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = APPLICATION_JSON_VALUE))
     })
     @PostMapping(path = "/{id}/items/search", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getFeatures(
+    public ResponseEntity<List<Feature>> getFeatures(
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true, example = "hotProjects")
             @PathVariable("id") String layerId,
             @RequestBody LayerItemsSearchDto inputDto) {
+
         LayerSearchParams searchParams;
         try {
             searchParams = createLayerSearchParams(inputDto);
@@ -165,13 +167,10 @@ public class LayerController {
 
         List<Feature> features;
         Integer limit = searchParams.getLimit();
+
         if (limit != null) {
             if (limit <= 0) {
-                Map<String, Object> error = new HashMap<>();
-                error.put("status", 400);
-                error.put("error", "Bad Request");
-                error.put("message", "Limit must be greater than or equal to 1");
-                return ResponseEntity.badRequest().body(error);
+                throw new WebApplicationException("Limit must be greater than or equal to 1", HttpStatus.BAD_REQUEST);
             }
 
             // load the requested slice of features
@@ -185,6 +184,7 @@ public class LayerController {
         if (features == null || features.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(emptyList());
         }
+
         return ResponseEntity.ok(features);
     }
 
