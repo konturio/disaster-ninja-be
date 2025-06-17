@@ -16,7 +16,8 @@ import static io.kontur.disasterninja.util.FormatUtil.formatNumber;
 @ConditionalOnProperty(value = "notifications.slack.enabled")
 public class SlackMessageFormatter extends MessageFormatter {
 
-    private static final String BODY = "{\"text\":\"><%s|%s>%s\", \"unfurl_links\":true, \"unfurl_media\": true}";
+    private static final String QUOTE_SIGN = "\u227D"; // '≽'
+    private static final String BODY_TEMPLATE = "{\"text\":\"%s<%s|%s>%s\", \"unfurl_links\":true, \"unfurl_media\": true}";
     private static final String gdacsReportLinkPattern = "https://www.gdacs.org/report.aspx?eventtype=%s&eventid=%s";
 
     @Value("${notifications.alertUrlPattern:}")
@@ -41,7 +42,7 @@ public class SlackMessageFormatter extends MessageFormatter {
         String status = getEventStatus(event);
         String alertUrl = createAlertLink(event, latestEpisode);
         String title = colorCode + status + event.getName();
-        return String.format(BODY, alertUrl, title, description);
+        return String.format(BODY_TEMPLATE, QUOTE_SIGN, alertUrl, title, description);
     }
 
     private String convertNotificationDescription(FeedEpisode latestEpisode) {
@@ -49,34 +50,34 @@ public class SlackMessageFormatter extends MessageFormatter {
         if (StringUtils.isBlank(description)) {
             return "";
         }
-        return "\\n>" + description;
+        return "\n" + QUOTE_SIGN + sanitize(description);
     }
 
     private String convertUrbanStatistic(Map<String, Object> urbanPopulationProperties) {
         if (urbanPopulationProperties == null) {
             return "";
         }
-        String pattern = "\\n>:cityscape: Urban core: %s people on %s km².";
+        String pattern = "\n%s:cityscape: Urban core: %s people on %s km².";
         String population = formatNumber(urbanPopulationProperties.get("population"));
         String area = formatNumber(urbanPopulationProperties.get("areaKm2"));
         if ("0".equals(population) && "0".equals(area)) {
             return "";
         }
-        return String.format(pattern, population, area);
+        return String.format(pattern, QUOTE_SIGN, population, area);
     }
 
     private String convertPopulationStatistic(Map<String, Object> episodeDetails) {
-        String pattern = "\\n>:family-div: Total population: %s people on %s km².";
+        String pattern = "\n%s:family-div: Total population: %s people on %s km².";
         String population = formatNumber(episodeDetails.get("population"));
         String area = formatNumber(episodeDetails.get("populatedAreaKm2"));
         if ("0".equals(population) && "0".equals(area)) {
             return "";
         }
-        return String.format(pattern, population, area);
+        return String.format(pattern, QUOTE_SIGN, population, area);
     }
 
     private String convertIndustrialStatistic(Map<String, Object> episodeDetails, Map<String, Object> eventDetails) {
-        String patternEpisode = "\\n>:factory: Industrial area: %s km²";
+        String patternEpisode = "\n%s:factory: Industrial area: %s km²";
         String patternEvent = " (currently), %s km² (from beginning)";
         String episodeValue = formatNumber(episodeDetails.get("industrialAreaKm2"));
         String eventValue = formatNumber(eventDetails.get("industrialAreaKm2"));
@@ -84,7 +85,7 @@ public class SlackMessageFormatter extends MessageFormatter {
     }
 
     private String convertForestStatistic(Map<String, Object> episodeDetails, Map<String, Object> eventDetails) {
-        String patternEpisode = "\\n>:deciduous_tree: Forest area: %s km²";
+        String patternEpisode = "\n%s:deciduous_tree: Forest area: %s km²";
         String patternEvent = " (currently), %s km² (from beginning)";
         String episodeValue = formatNumber(episodeDetails.get("forestAreaKm2"));
         String eventValue = formatNumber(eventDetails.get("forestAreaKm2"));
@@ -96,7 +97,7 @@ public class SlackMessageFormatter extends MessageFormatter {
         if (!"WILDFIRE".equals(event.getType())) {
             return "";
         }
-        String patternEpisode = "\\n>:sparkles: Wildfire days in last year: %s";
+        String patternEpisode = "\n%s:sparkles: Wildfire days in last year: %s";
         String patternEvent = " (episode), %s (event)";
         String episodeValue = formatNumber(episodeDetails.get("hotspotDaysPerYearMax"));
         String eventValue = formatNumber(eventDetails.get("hotspotDaysPerYearMax"));
@@ -111,38 +112,38 @@ public class SlackMessageFormatter extends MessageFormatter {
         result.append(convertNoRoadsValue(analytics));
 
         if (StringUtils.isNotBlank(result)) {
-            return "\\n>OpenStreetMap gaps:" + result;
+            return "\n" + QUOTE_SIGN + "OpenStreetMap gaps:" + result;
         }
         return "";
     }
 
     private String convertOsmGapsValues(Map<String, Double> analytics) {
-        String osmObjects = "\\n>:world_map: %s km² (%s%%) of populated area needs a map for %s people.";
+        String osmObjects = "\n%s:world_map: %s km² (%s%%) of populated area needs a map for %s people.";
         String osmGapsArea = formatNumber(analytics.get("osmGapsArea"));
         String osmGapsPercentage = formatNumber(analytics.get("osmGapsPercentage"));
         String osmGapsPopulation = formatNumber(analytics.get("osmGapsPopulation"));
         if (!"0".equals(osmGapsArea) && !"0".equals(osmGapsPopulation)) {
-            return String.format(osmObjects, osmGapsArea, osmGapsPercentage, osmGapsPopulation);
+            return String.format(osmObjects, QUOTE_SIGN, osmGapsArea, osmGapsPercentage, osmGapsPopulation);
         }
         return "";
     }
 
     private String convertNoBuildingsValues(Map<String, Double> analytics) {
-        String osmBuildings = "\\n>:house_buildings: Buildings map gaps: %s km² for %s people.";
+        String osmBuildings = "\n%s:house_buildings: Buildings map gaps: %s km² for %s people.";
         String noBuildingsArea = formatNumber(analytics.get("noBuildingsArea"));
         String noBuildingsPopulation = formatNumber(analytics.get("noBuildingsPopulation"));
         if (!"0".equals(noBuildingsArea) && !"0".equals(noBuildingsPopulation)) {
-            return String.format(osmBuildings, noBuildingsArea, noBuildingsPopulation);
+            return String.format(osmBuildings, QUOTE_SIGN, noBuildingsArea, noBuildingsPopulation);
         }
         return "";
     }
 
     private String convertNoRoadsValue(Map<String, Double> analytics) {
-        String osmRoads = "\\n>:motorway: Roads map gaps: %s km² for %s people.";
+        String osmRoads = "\n%s:motorway: Roads map gaps: %s km² for %s people.";
         String noRoadsArea = formatNumber(analytics.get("noRoadsArea"));
         String noRoadsPopulation = formatNumber(analytics.get("noRoadsPopulation"));
         if (!"0".equals(noRoadsArea) && !"0".equals(noRoadsPopulation)) {
-            return String.format(osmRoads, noRoadsArea, noRoadsPopulation);
+            return String.format(osmRoads, QUOTE_SIGN, noRoadsArea, noRoadsPopulation);
         }
         return "";
     }
@@ -154,13 +155,20 @@ public class SlackMessageFormatter extends MessageFormatter {
         }
         StringBuilder result = new StringBuilder();
         if (episodeValue.equals(eventValue)) {
-            result.append(String.format(patternEpisode, episodeValue));
+            result.append(String.format(patternEpisode, QUOTE_SIGN, episodeValue));
         } else {
-            result.append(String.format(patternEpisode, episodeValue))
+            result.append(String.format(patternEpisode, QUOTE_SIGN, episodeValue))
                     .append(String.format(patternEvent, eventValue));
         }
         result.append(".");
         return result.toString();
+    }
+
+    private String sanitize(String text) {
+        if (text == null) {
+            return null;
+        }
+        return text.replace(">=", "\u2265").replace(">", "\u227D");
     }
 
     private String createAlertLink(EventApiEventDto event, FeedEpisode episode) {
