@@ -6,6 +6,7 @@ import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.dto.EventEpisodeListDto;
 import io.kontur.disasterninja.dto.EventFeedDto;
 import io.kontur.disasterninja.dto.EventListDto;
+import io.kontur.disasterninja.dto.GeometryFilterType;
 import io.kontur.disasterninja.service.EventApiService;
 import io.kontur.disasterninja.service.UserProfileService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,9 +57,12 @@ public class EventsController {
                     "The coordinate reference system of the values is WGS 84 longitude/latitude (http://www.opengis.net/def/crs/OGC/1.3/CRS84). For WGS 84 longitude/latitude the values are the sequence of minimum longitude, minimum latitude, maximum longitude and maximum latitude.")
             @RequestParam(required = false)
             @ValidBbox
-            List<BigDecimal> bbox
+            List<BigDecimal> bbox,
+            @Parameter(description = "Geometry filter type", example = "ALL")
+            @RequestParam(defaultValue = "ALL")
+            GeometryFilterType geometryFilterType
     ) {
-        List<EventListDto> events = service.getEvents(feed, bbox);
+        List<EventListDto> events = service.getEvents(feed, bbox, geometryFilterType);
         if (offset >= events.size()) {
             throw new WebApplicationException("Offset is larger than resultset size", HttpStatus.NO_CONTENT);
         }
@@ -73,8 +77,9 @@ public class EventsController {
     @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = EventDto.class)))
     @ApiResponse(responseCode = "404", description = "Event is not found", content = @Content(mediaType = "application/json"))
     @GetMapping("/{feed}/{eventId}")
-    public EventDto getEvent(@PathVariable UUID eventId, @PathVariable String feed) {
-        return service.getEvent(eventId, feed);
+    public EventDto getEvent(@PathVariable UUID eventId, @PathVariable String feed,
+                             @RequestParam(defaultValue = "ALL") GeometryFilterType geometryFilterType) {
+        return service.getEvent(eventId, feed, geometryFilterType);
     }
 
     @Operation(tags = "Events", summary = "Returns event episodes")

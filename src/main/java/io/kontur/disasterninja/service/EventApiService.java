@@ -6,6 +6,7 @@ import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.dto.EventEpisodeListDto;
 import io.kontur.disasterninja.dto.EventFeedDto;
 import io.kontur.disasterninja.dto.EventListDto;
+import io.kontur.disasterninja.dto.GeometryFilterType;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.service.converter.EventDtoConverter;
 import io.kontur.disasterninja.service.converter.EventListEventDtoConverter;
@@ -36,14 +37,18 @@ public class EventApiService {
     }
 
     public List<EventListDto> getEvents(String feed, List<BigDecimal> bbox) {
+        return getEvents(feed, bbox, GeometryFilterType.ALL);
+    }
+
+    public List<EventListDto> getEvents(String feed, List<BigDecimal> bbox, GeometryFilterType geometryFilterType) {
         OffsetDateTime after = OffsetDateTime.now().minusDays(4).truncatedTo(ChronoUnit.HOURS);
         Optional<EventApiClient.EventApiSearchEventResponse> eventsResponse = client.getEvents(feed, after, bbox,
-                pageSize, EventApiClient.SortOrder.ASC);
+                pageSize, EventApiClient.SortOrder.ASC, geometryFilterType);
 
         List<EventApiEventDto> events = new ArrayList<>();
         if (eventsResponse.isEmpty() || eventsResponse.get().getData().size() < pageSize) {
             //in case of the amount of events in the last 4 days is less than pageSize than gather the latest 1000 events
-            events.addAll(client.getEvents(feed, null, bbox, pageSize, EventApiClient.SortOrder.DESC)
+            events.addAll(client.getEvents(feed, null, bbox, pageSize, EventApiClient.SortOrder.DESC, geometryFilterType)
                     .orElse(new EventApiClient.EventApiSearchEventResponse())
                     .getData());
         } else {
@@ -51,7 +56,7 @@ public class EventApiService {
             after = eventsResponse.get().getPageMetadata().getNextAfterValue();
 
             while (true) {
-                eventsResponse = client.getEvents(feed, after, bbox, pageSize, EventApiClient.SortOrder.ASC);
+                eventsResponse = client.getEvents(feed, after, bbox, pageSize, EventApiClient.SortOrder.ASC, geometryFilterType);
                 if (eventsResponse.isEmpty() || CollectionUtils.isEmpty(eventsResponse.get().getData())) {
                     break;
                 }
@@ -69,7 +74,11 @@ public class EventApiService {
     }
 
     public EventDto getEvent(UUID eventId, String feed) {
-        EventApiEventDto event = client.getEvent(eventId, feed, false);
+        return getEvent(eventId, feed, GeometryFilterType.ALL);
+    }
+
+    public EventDto getEvent(UUID eventId, String feed, GeometryFilterType geometryFilterType) {
+        EventApiEventDto event = client.getEvent(eventId, feed, false, geometryFilterType);
         if (event == null) {
             throw new WebApplicationException("Event " + eventId + " is not found", HttpStatus.NOT_FOUND);
         }
@@ -77,7 +86,7 @@ public class EventApiService {
     }
 
     public List<EventEpisodeListDto> getEventEpisodes(UUID eventId, String feed) {
-        EventApiEventDto event = client.getEvent(eventId, feed, true);
+        EventApiEventDto event = client.getEvent(eventId, feed, true, GeometryFilterType.ALL);
         if (event == null) {
             throw new WebApplicationException("Event " + eventId + " is not found", HttpStatus.NOT_FOUND);
         }
