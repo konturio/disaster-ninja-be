@@ -96,6 +96,42 @@ public class EventApiClient extends RestClientWithBearerAuth {
         return response.getBody().data;
     }
 
+    public Optional<EventApiSearchEventResponse> getEventsBySeverities(String eventApiFeed,
+                                                                     OffsetDateTime after,
+                                                                     List<String> severities,
+                                                                     int limit,
+                                                                     SortOrder sortOrder) {
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("/v1/");
+        uriBuilder.queryParam("feed", eventApiFeed);
+        uriBuilder.queryParam("limit", limit);
+        uriBuilder.queryParam("episodeFilterType", "NONE");
+        uriBuilder.queryParam("sortOrder", Objects.requireNonNullElse(sortOrder, "ASC"));
+
+        if (after != null) {
+            uriBuilder.queryParam("after", after.atZoneSameInstant(ZoneOffset.UTC)
+                    .format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
+        }
+        if (!CollectionUtils.isEmpty(severities)) {
+            uriBuilder.queryParam("severities", String.join(",", severities));
+        }
+
+        ResponseEntity<EventApiSearchEventResponse> response = restTemplate
+                .exchange(uriBuilder.build().toString(), HttpMethod.GET,
+                        httpEntityWithUserOrDefaultBearerAuth(null),
+                        new ParameterizedTypeReference<>() {
+                        });
+
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            LOG.info("Received {} response from eventapi. Request uri: {}", response.getStatusCode(), uriBuilder);
+        }
+        if (response.getStatusCode() == HttpStatus.NO_CONTENT ||
+                response.getBody() == null || response.getBody().data == null ||
+                response.getBody().data.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(response.getBody());
+    }
+
     @Timed(value = "events.getEvent", histogram = true)
     public EventApiEventDto getEvent(UUID eventId, String eventApiFeed, boolean includeEpisodes) {
         if (eventId == null) {

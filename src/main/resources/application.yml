@@ -45,6 +45,7 @@ notifications:
   enabled: false
   slack:
     enabled: false
+    digestCron: '0 0 18 * * *'
   email:
     enabled: false
 
