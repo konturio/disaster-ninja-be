@@ -75,6 +75,11 @@ public class NotificationsProcessor {
                     break;
                 }
 
+                if (!NotificationService.hasPopulationIncreasedSignificantly(event)) {
+                    continue;
+                }
+
+                boolean processed = false;
                 for (NotificationService notificationService : notificationServices) {
                     if (notificationService.isApplicable(event)) {
                         Geometry geometry = convertGeometry(event.getGeometries());
@@ -87,8 +92,12 @@ public class NotificationsProcessor {
                             LOG.error("Failed to obtain analytics for notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
                         }
                         notificationService.process(event, urbanPopulationProperties, analytics);
-                        latestUpdatedDate = event.getUpdatedAt();
+                        processed = true;
                     }
+                }
+                if (processed) {
+                    NotificationService.recordPopulation(event);
+                    latestUpdatedDate = event.getUpdatedAt();
                 }
             }
         } catch (RestClientException e) {

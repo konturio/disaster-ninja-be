@@ -83,7 +83,8 @@ public class EmailNotificationService extends NotificationService {
         return event.getEventDetails() != null
                 && event.getEpisodes() != null
                 && event.getEpisodes().stream().noneMatch(episode -> episode.getEpisodeDetails() == null)
-                && !CollectionUtils.isEmpty(getRelevantLocations(event.getGeometries()));
+                && !CollectionUtils.isEmpty(getRelevantLocations(event.getGeometries()))
+                && super.isApplicable(event);
     }
 
     private List<Partner> getPartners(List<Feature> partnerLocations) {
