@@ -61,7 +61,7 @@ public class EventDtoConverter {
             }
         }
 
-        dto.setGeojson(uniteGeometry(event));
+        dto.setGeojson(event.getGeometries());
         dto.setLatestEpisodeGeojson(event.getGeometries());
         dto.setUpdatedAt(event.getUpdatedAt());
 
@@ -84,19 +84,4 @@ public class EventDtoConverter {
         return result;
     }
 
-    private static FeatureCollection uniteGeometry(EventApiEventDto event) {
-        FeatureCollection geom = event.getGeometries();
-        if (geom == null || geom.getFeatures() == null || geom.getFeatures().length == 0) {
-            return new FeatureCollection(new Feature[0]);
-        }
-        Feature[] episodeFeatures = geom.getFeatures();
-        List<Geometry> episodeGeometries = new ArrayList<>(episodeFeatures.length);
-        Stream.of(episodeFeatures).forEach(f -> episodeGeometries.add(geoJSONReader.read(f.getGeometry())));
-
-        GeometryFactory geometryFactory = new GeometryFactory(episodeGeometries.get(0).getPrecisionModel());
-        org.locationtech.jts.geom.Geometry unitedGeometry = geometryFactory
-                .createGeometryCollection(episodeGeometries.toArray(new org.locationtech.jts.geom.Geometry[0]))
-                .union();
-        return new FeatureCollection(new Feature[]{new Feature(geoJSONWriter.write(unitedGeometry), emptyMap())});
-    }
 }

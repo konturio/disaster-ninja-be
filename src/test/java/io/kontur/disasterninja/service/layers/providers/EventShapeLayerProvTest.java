@@ -87,15 +87,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
     @Test
     public void obtainSelectedAreaLayersTest() throws ExecutionException, InterruptedException {
         List<Layer> layers = eventShapeLayerProvider.obtainSelectedAreaLayers(someEventIdEventFeedParams()).get();
-        assertEquals(1, layers.size());
-
-        Layer layer = layers.get(0);
-        Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, layer.getId());
-        Assertions.assertEquals(EARTHQUAKE, layer.getEventType());
-        //check source data was loaded
-        Assertions.assertEquals(2, layer.getSource().getData().getFeatures().length);
-        Assertions.assertEquals("Point", layer.getSource().getData().getFeatures()[0].getGeometry().getType());
-        Assertions.assertEquals("Polygon", layer.getSource().getData().getFeatures()[1].getGeometry().getType());
+        assertTrue(layers.isEmpty());
     }
 
     @Test
@@ -150,11 +142,7 @@ public class EventShapeLayerProvTest extends LayerProvidersTest {
         Mockito.when(eventApiService.getEvent(any(), any())).thenReturn(eventDto);
 
         List<Layer> result = eventShapeLayerProvider.obtainSelectedAreaLayers(someEventIdEventFeedParams()).get();
-        assertEquals(1, result.size());
-
-        Assertions.assertEquals(EVENT_SHAPE_LAYER_ID, result.get(0).getId());
-        Assertions.assertNull(result.get(0).getEventType());
-        Assertions.assertTrue(result.get(0).isEventIdRequiredForRetrieval());
+        assertTrue(result.isEmpty());
     }
 
     @Test

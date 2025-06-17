@@ -130,12 +130,14 @@ public class LayerServiceTest {
 
         when(eventApiProvider.obtainLayer(any(), any())).thenReturn(layer);
 
-        List<Layer> result = layerService.get(Collections.emptyList(), List.of(layer.getId()),
-                paramsWithSomeBoundary());
-        verify(eventApiProvider, times(1)).obtainLayer(eq(layer.getId()),
-                any());
-
-        assertEquals(1, result.size());
+        try {
+            layerService.get(Collections.emptyList(), List.of(layer.getId()),
+                    paramsWithSomeBoundary());
+            fail("Expected exception not thrown");
+        } catch (WebApplicationException e) {
+            verify(eventApiProvider, times(0)).obtainLayer(eq(layer.getId()), any());
+            assertEquals("Layer not found / no layer data found by id and boundary!", e.getMessage());
+        }
     }
 
     @Test

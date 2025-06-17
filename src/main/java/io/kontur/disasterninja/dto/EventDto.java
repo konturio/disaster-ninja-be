@@ -3,6 +3,8 @@ package io.kontur.disasterninja.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.wololo.geojson.FeatureCollection;
+import io.kontur.disasterninja.dto.layer.LayerDetailsDto;
+import io.kontur.disasterninja.dto.layer.LayerSummaryDto;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -30,5 +32,12 @@ public class EventDto {
     private List<Double> bbox;
     private List<Double> centroid;
     private int episodeCount;
+    private AssociatedLayer associatedLayer;
+
+    @Data
+    public static class AssociatedLayer {
+        private LayerDetailsDto mapData;
+        private LayerSummaryDto layerInfo;
+    }
 
 }

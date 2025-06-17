@@ -47,11 +47,7 @@ public class EventShapeLayerProvider implements LayerProvider {
     @Override
     @Timed(value = "layers.obtainSelectedAreaLayers", histogram = true)
     public CompletableFuture<List<Layer>> obtainSelectedAreaLayers(LayerSearchParams searchParams) {
-        if (searchParams.getEventId() == null || searchParams.getEventFeed() == null) {
-            return CompletableFuture.completedFuture(Collections.emptyList());
-        }
-        Layer layer = obtainLayer(EVENT_SHAPE_LAYER_ID, searchParams);
-        return CompletableFuture.completedFuture(layer == null ? Collections.emptyList() : List.of(layer));
+        return CompletableFuture.completedFuture(Collections.emptyList());
     }
 
     @Override
@@ -85,7 +81,7 @@ public class EventShapeLayerProvider implements LayerProvider {
                 .id(EVENT_SHAPE_LAYER_ID)
                 .source(LayerSource.builder()
                         .type(GEOJSON)
-                        .data(eventDto.getLatestEpisodeGeojson()) //sic!
+                        .data(eventDto.getGeojson())
                         .build())
                 .eventIdRequiredForRetrieval(true)
                 .build();
