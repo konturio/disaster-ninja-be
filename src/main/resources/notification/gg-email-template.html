@@ -66,6 +66,21 @@
         </ul>
     </div>
 
+    <div class="section" th:if="${osmGapsArea != '0' && osmGapsPopulation != '0' || noBuildingsArea != '0' && noBuildingsPopulation != '0' || noRoadsArea != '0' && noRoadsPopulation != '0'}">
+        <h3>🗺️ OpenStreetMap Gaps</h3>
+        <ul>
+            <li th:if="${osmGapsArea != '0' && osmGapsPopulation != '0'}">
+                <strong>Map gaps:</strong> <span th:text="${osmGapsArea}"></span> km² (<span th:text="${osmGapsPercentage}"></span>%) for <span th:text="${osmGapsPopulation}"></span> people
+            </li>
+            <li th:if="${noBuildingsArea != '0' && noBuildingsPopulation != '0'}">
+                <strong>Buildings map gaps:</strong> <span th:text="${noBuildingsArea}"></span> km² for <span th:text="${noBuildingsPopulation}"></span> people
+            </li>
+            <li th:if="${noRoadsArea != '0' && noRoadsPopulation != '0'}">
+                <strong>Roads map gaps:</strong> <span th:text="${noRoadsArea}"></span> km² for <span th:text="${noRoadsPopulation}"></span> people
+            </li>
+        </ul>
+    </div>
+
     <div class="section" th:if="${type != null || severity != null || startedAt != null || updatedAt != null || location != null}">
         <h3>🗓️ Event Status</h3>
         <ul>

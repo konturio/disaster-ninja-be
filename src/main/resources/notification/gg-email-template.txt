@@ -8,6 +8,12 @@ Impact Summary:
     [# th:if="${industrialArea != null}"]- Industrial area: [(${industrialArea})] km².[/]
     [# th:if="${forestArea != null}"]- Forest area: [(${forestArea})] km².[/]
 [/]
+[# th:if="${osmGapsArea != '0' && osmGapsPopulation != '0' || noBuildingsArea != '0' && noBuildingsPopulation != '0' || noRoadsArea != '0' && noRoadsPopulation != '0'}"]
+OpenStreetMap gaps:
+    [# th:if="${osmGapsArea != '0' && osmGapsPopulation != '0'}"]- Map gaps: [(${osmGapsArea})] km² ([(${osmGapsPercentage})]%) for [(${osmGapsPopulation})] people.[/]
+    [# th:if="${noBuildingsArea != '0' && noBuildingsPopulation != '0'}"]- Buildings map gaps: [(${noBuildingsArea})] km² for [(${noBuildingsPopulation})] people.[/]
+    [# th:if="${noRoadsArea != '0' && noRoadsPopulation != '0'}"]- Roads map gaps: [(${noRoadsArea})] km² for [(${noRoadsPopulation})] people.[/]
+[/]
 [# th:if="${type != null || severity != null || startedAt != null || updatedAt != null || location != null}"]
 Event Status:
     [# th:if="${type != null}"]- Type: [(${type})].[/]

@@ -47,8 +47,8 @@ public class EmailMessageFormatter extends MessageFormatter {
         FeedEpisode lastEpisode = getLatestEpisode(event);
         return new EmailDto(
                 createSubject(event, lastEpisode),
-                generateTemplate("gg-email-template.txt", event, lastEpisode, urbanPopulationProperties, partners),
-                generateTemplate("gg-email-template.html", event, lastEpisode, urbanPopulationProperties, partners));
+                generateTemplate("gg-email-template.txt", event, lastEpisode, urbanPopulationProperties, analytics, partners),
+                generateTemplate("gg-email-template.html", event, lastEpisode, urbanPopulationProperties, analytics, partners));
     }
 
     private String createSubject(EventApiEventDto event, FeedEpisode lastEpisode) {
@@ -58,7 +58,9 @@ public class EmailMessageFormatter extends MessageFormatter {
         return sb.toString();
     }
 
-    public String generateTemplate(String template, EventApiEventDto event, FeedEpisode lastEpisode, Map<String, Object> urbanPopulationProperties, List<Partner> partners) {
+    public String generateTemplate(String template, EventApiEventDto event, FeedEpisode lastEpisode,
+                                   Map<String, Object> urbanPopulationProperties,
+                                   Map<String, Double> analytics, List<Partner> partners) {
         Context context = new Context();
         context.setVariable("link", String.format(konturUrlPattern, event.getEventId(), feed));
         context.setVariable("description", lastEpisode.getDescription());
@@ -68,6 +70,13 @@ public class EmailMessageFormatter extends MessageFormatter {
         context.setVariable("populatedArea", formatNumber(lastEpisode.getEpisodeDetails().get("populatedAreaKm2")));
         context.setVariable("industrialArea", formatNumber(lastEpisode.getEpisodeDetails().get("industrialAreaKm2")));
         context.setVariable("forestArea", formatNumber(lastEpisode.getEpisodeDetails().get("forestAreaKm2")));
+        context.setVariable("osmGapsArea", formatNumber(analytics.get("osmGapsArea")));
+        context.setVariable("osmGapsPercentage", formatNumber(analytics.get("osmGapsPercentage")));
+        context.setVariable("osmGapsPopulation", formatNumber(analytics.get("osmGapsPopulation")));
+        context.setVariable("noBuildingsArea", formatNumber(analytics.get("noBuildingsArea")));
+        context.setVariable("noBuildingsPopulation", formatNumber(analytics.get("noBuildingsPopulation")));
+        context.setVariable("noRoadsArea", formatNumber(analytics.get("noRoadsArea")));
+        context.setVariable("noRoadsPopulation", formatNumber(analytics.get("noRoadsPopulation")));
         context.setVariable("type", capitalizeFully(event.getType()));
         context.setVariable("severity", capitalizeFully(event.getSeverity().name()));
         context.setVariable("location", event.getLocation());
