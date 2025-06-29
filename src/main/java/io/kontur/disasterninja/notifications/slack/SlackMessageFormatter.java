@@ -40,8 +40,15 @@ public class SlackMessageFormatter extends MessageFormatter {
         String colorCode = getMessageColorCode(event, latestEpisode, false);
         String status = getEventStatus(event);
         String alertUrl = createAlertLink(event, latestEpisode);
-        String title = colorCode + status + event.getName();
+        String title = colorCode + status + sanitizeEventName(event.getName());
         return String.format(BODY, alertUrl, title, description);
+    }
+
+    static String sanitizeEventName(String name) {
+        if (StringUtils.isBlank(name)) {
+            return name;
+        }
+        return name.replace(">=", "\u2265").replace('>', '\u2265');
     }
 
     private String convertNotificationDescription(FeedEpisode latestEpisode) {
