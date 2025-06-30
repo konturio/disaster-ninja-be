@@ -18,6 +18,8 @@ public class FeedEpisode {
     private String location;
     private Boolean active;
     private Severity severity;
+    private Double magnitude;
+    private String category;
     private OffsetDateTime startedAt;
     private OffsetDateTime endedAt;
     private OffsetDateTime updatedAt;

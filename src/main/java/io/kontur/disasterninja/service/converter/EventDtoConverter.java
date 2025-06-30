@@ -44,6 +44,8 @@ public class EventDtoConverter {
         }
         dto.setEventType(eventType);
         dto.setSeverity(event.getSeverity());
+        dto.setMagnitude(event.getMagnitude());
+        dto.setCategory(event.getCategory());
 
         if (event.getEventDetails() != null) {
             Map<String, Object> eventDetails = event.getEventDetails();
@@ -58,6 +60,12 @@ public class EventDtoConverter {
             }
             if (eventDetails.containsKey("osmGapsPercentage")) {
                 dto.setOsmGaps(convertLong(eventDetails.get("osmGapsPercentage")));
+            }
+            if (eventDetails.containsKey("magnitude")) {
+                dto.setMagnitude(convertDouble(eventDetails.get("magnitude")));
+            }
+            if (eventDetails.containsKey("category")) {
+                dto.setCategory(String.valueOf(eventDetails.get("category")));
             }
         }
 
@@ -81,6 +89,21 @@ public class EventDtoConverter {
                 .updatedAt(episode.getUpdatedAt())
                 .geojson(episode.getGeometries())
                 .build();
+        Map<String, Object> details = episode.getEpisodeDetails();
+        if (details != null) {
+            if (details.containsKey("magnitude")) {
+                result.setMagnitude(convertDouble(details.get("magnitude")));
+            }
+            if (details.containsKey("category")) {
+                result.setCategory(String.valueOf(details.get("category")));
+            }
+        }
+        if (result.getMagnitude() == null) {
+            result.setMagnitude(episode.getMagnitude());
+        }
+        if (result.getCategory() == null) {
+            result.setCategory(episode.getCategory());
+        }
         return result;
     }
 
