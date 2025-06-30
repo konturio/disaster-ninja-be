@@ -48,7 +48,7 @@ public class SlackMessageFormatter extends MessageFormatter {
         if (StringUtils.isBlank(name)) {
             return name;
         }
-        return name.replace(">=", "\u2265").replace('>', '\u2265');
+        return name.replace(">=", "\u2265");
     }
 
     private String convertNotificationDescription(FeedEpisode latestEpisode) {
