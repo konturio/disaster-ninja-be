@@ -20,6 +20,7 @@ public class FeedEpisode {
     private Severity severity;
     private Double magnitude;
     private String category;
+    private Map<String, Object> severityData;
     private OffsetDateTime startedAt;
     private OffsetDateTime endedAt;
     private OffsetDateTime updatedAt;

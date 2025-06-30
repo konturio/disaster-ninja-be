@@ -46,6 +46,15 @@ public class EventDtoConverter {
         dto.setSeverity(event.getSeverity());
         dto.setMagnitude(event.getMagnitude());
         dto.setCategory(event.getCategory());
+        Map<String, Object> severityData = event.getSeverityData();
+        if (severityData != null) {
+            if (severityData.containsKey("magnitude")) {
+                dto.setMagnitude(convertDouble(severityData.get("magnitude")));
+            }
+            if (severityData.containsKey("categorySaffirSimpson")) {
+                dto.setCategory(String.valueOf(severityData.get("categorySaffirSimpson")));
+            }
+        }
 
         if (event.getEventDetails() != null) {
             Map<String, Object> eventDetails = event.getEventDetails();
@@ -60,12 +69,6 @@ public class EventDtoConverter {
             }
             if (eventDetails.containsKey("osmGapsPercentage")) {
                 dto.setOsmGaps(convertLong(eventDetails.get("osmGapsPercentage")));
-            }
-            if (eventDetails.containsKey("magnitude")) {
-                dto.setMagnitude(convertDouble(eventDetails.get("magnitude")));
-            }
-            if (eventDetails.containsKey("category")) {
-                dto.setCategory(String.valueOf(eventDetails.get("category")));
             }
         }
 
@@ -89,13 +92,13 @@ public class EventDtoConverter {
                 .updatedAt(episode.getUpdatedAt())
                 .geojson(episode.getGeometries())
                 .build();
-        Map<String, Object> details = episode.getEpisodeDetails();
-        if (details != null) {
-            if (details.containsKey("magnitude")) {
-                result.setMagnitude(convertDouble(details.get("magnitude")));
+        Map<String, Object> severityData = episode.getSeverityData();
+        if (severityData != null) {
+            if (severityData.containsKey("magnitude")) {
+                result.setMagnitude(convertDouble(severityData.get("magnitude")));
             }
-            if (details.containsKey("category")) {
-                result.setCategory(String.valueOf(details.get("category")));
+            if (severityData.containsKey("categorySaffirSimpson")) {
+                result.setCategory(String.valueOf(severityData.get("categorySaffirSimpson")));
             }
         }
         if (result.getMagnitude() == null) {

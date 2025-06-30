@@ -19,6 +19,7 @@ public class EventApiEventDto {
     private Severity severity;
     private Double magnitude;
     private String category;
+    private Map<String, Object> severityData = new HashMap<>();
     private OffsetDateTime startedAt;
     private OffsetDateTime endedAt;
     private OffsetDateTime updatedAt;
