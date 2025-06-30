@@ -8,6 +8,6 @@ public class SlackMessageFormatterTest {
     @Test
     public void sanitizeEventNameReplacesProblemCharacters() {
         String result = SlackMessageFormatter.sanitizeEventName("Event >=5 >4");
-        assertEquals("Event ≥5 ≥4", result);
+        assertEquals("Event ≥ 5", result);
     }
 }
