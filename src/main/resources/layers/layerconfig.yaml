@@ -332,8 +332,7 @@ configs:
           paramValue: 'globalArea'
           style:
             width: 2
-            color: '#D52627'
-            opacity: 0.6
+            color: 'rgba(213, 38, 39, 0.6)'
 
   - id: 'eventShape.WILDFIRE'
     globalOverlay: false
@@ -373,8 +372,7 @@ configs:
           paramValue: 'alertArea'
           style:
             width: 3
-            color: '#D52627'
-            opacity: 0.6
+            color: 'rgba(213, 38, 39, 0.6)'
 
   - id: 'eventShape.VOLCANO'
     globalOverlay: false
@@ -407,40 +405,35 @@ configs:
           paramValue: 0
           style:
             width: 2
-            color: '#D52627'
-            opacity: 0.8
+            color: 'rgba(213, 38, 39, 0.8)'
         - stepName: '6 hours Forecast'
           stepShape: 'circle'
           paramName: 'forecastHrs'
           paramValue: 6
           style:
             width: 2
-            color: '#D52627'
-            opacity: 0.6
+            color: 'rgba(213, 38, 39, 0.6)'
         - stepName: '12 hours Forecast'
           stepShape: 'circle'
           paramName: 'forecastHrs'
           paramValue: 12
           style:
             width: 2
-            color: '#D52627'
-            opacity: 0.4
+            color: 'rgba(213, 38, 39, 0.4)'
         - stepName: '18 hours Forecast'
           stepShape: 'circle'
           paramName: 'forecastHrs'
           paramValue: 18
           style:
             width: 2
-            color: '#D52627'
-            opacity: 0.2
+            color: 'rgba(213, 38, 39, 0.2)'
         - stepName: 'Initial Forecast'
           stepShape: 'circle'
           paramName: 'Class'
           paramValue: 'Poly_Cones_0'
           style:
             width: 2
-            color: '#D52627'
-            opacity: 0.8
+            color: 'rgba(213, 38, 39, 0.8)'
 
   # --- empty template ---
   #- id: 'eventShape.'
@@ -571,6 +564,5 @@ configs:
             max-width: 3
         - sourceLayer: 'hexagon'
           style:
-            color: 'black'
+            color: 'rgba(0, 0, 0, 0.2)'
             width: 1
-            opacity: 0.2
