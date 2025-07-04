@@ -96,7 +96,15 @@ public class NotificationsProcessor {
                         } catch (ExecutionException | InterruptedException e) {
                             LOG.error("Failed to obtain analytics for notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
                         }
-                        notificationService.process(event, urbanPopulationProperties, analytics);
+                        try {
+                            notificationService.process(event, urbanPopulationProperties, analytics);
+                        } catch (Exception e) {
+                            LOG.error("Notification service {} failed for event {}. {}",
+                                    notificationService.getClass().getSimpleName(),
+                                    event.getEventId(), e.getMessage(), e);
+                            // continue with the next service
+                            continue;
+                        }
                         latestUpdatedDate = event.getUpdatedAt();
                         LOG.info("Event {} processed. Latest processed time updated to {}", event.getEventId(), latestUpdatedDate);
                     } else {
