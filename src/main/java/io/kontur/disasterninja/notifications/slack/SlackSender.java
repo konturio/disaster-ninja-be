@@ -22,6 +22,7 @@ public class SlackSender {
 
     public void send(String message) {
         try {
+            LOG.info("Sending message to Slack");
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 

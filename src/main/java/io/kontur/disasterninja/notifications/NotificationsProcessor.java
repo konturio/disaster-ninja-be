@@ -62,32 +62,45 @@ public class NotificationsProcessor {
 
     @Scheduled(fixedRate = 60000, initialDelay = 1000)
     public void run() {
+        LOG.info("Notifications processor tick. Latest processed event time: {}", latestUpdatedDate);
         if (latestUpdatedDate == null) {
+            LOG.info("Latest update date is null. Initializing on first run");
             initUpdateDate();
             return;
         }
         try {
+            LOG.info("Requesting latest events from Event API. Feed: {}, types: {}", eventApiFeed, acceptableTypes);
             List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, eventApiFeed, 100);
+            LOG.info("Event API returned {} events", events == null ? 0 : events.size());
 
             for (EventApiEventDto event : events) {
+                LOG.info("Considering event {} updated at {}", event.getEventId(), event.getUpdatedAt());
                 if (event.getUpdatedAt().isBefore(latestUpdatedDate)
                         || event.getUpdatedAt().isEqual(latestUpdatedDate)) {
+                    LOG.info("Event {} is older than last processed event. Stopping iteration", event.getEventId());
                     break;
                 }
 
                 for (NotificationService notificationService : notificationServices) {
+                    LOG.info("Checking applicability for service {} on event {}", notificationService.getClass().getSimpleName(), event.getEventId());
                     if (notificationService.isApplicable(event)) {
+                        LOG.info("Service {} applicable. Preparing analytics", notificationService.getClass().getSimpleName());
                         Geometry geometry = convertGeometry(event.getGeometries());
                         Map<String, Object> urbanPopulationProperties = new HashMap<>();
                         Map<String, Double> analytics = new HashMap<>();
                         try {
                             urbanPopulationProperties = obtainUrbanPopulation(geometry);
+                            LOG.info("Obtained urban population analytics: {}", urbanPopulationProperties);
                             analytics = obtainAnalytics(geometry);
+                            LOG.info("Obtained additional analytics: {}", analytics);
                         } catch (ExecutionException | InterruptedException e) {
                             LOG.error("Failed to obtain analytics for notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
                         }
                         notificationService.process(event, urbanPopulationProperties, analytics);
                         latestUpdatedDate = event.getUpdatedAt();
+                        LOG.info("Event {} processed. Latest processed time updated to {}", event.getEventId(), latestUpdatedDate);
+                    } else {
+                        LOG.info("Service {} not applicable for event {}", notificationService.getClass().getSimpleName(), event.getEventId());
                     }
                 }
             }
@@ -99,18 +112,24 @@ public class NotificationsProcessor {
     }
 
     private void initUpdateDate() {
+        LOG.info("Initializing latest update date from Event API");
         List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, eventApiFeed, 1);
         if (events != null && events.size() > 0) {
             EventApiEventDto latestEvent = events.get(0);
             latestUpdatedDate = latestEvent.getUpdatedAt();
+            LOG.info("Initialized latest update date as {} from event {}", latestUpdatedDate, latestEvent.getEventId());
+        } else {
+            LOG.info("Event API returned no events when initializing latest update date");
         }
     }
 
     private Map<String, Object> obtainUrbanPopulation(
             Geometry geometry) throws ExecutionException, InterruptedException {
+        LOG.info("Obtaining urban population data for geometry");
         Feature[] features = insightsApiClient.humanitarianImpactQuery(geometry)
                 .get()
                 .getFeatures();
+        LOG.info("Urban population query returned {} features", features == null ? 0 : features.length);
         if (features == null || features.length == 0) {
             return emptyMap();
         }
@@ -122,8 +141,10 @@ public class NotificationsProcessor {
     }
 
     private Map<String, Double> obtainAnalytics(Geometry geometry) {
+        LOG.info("Calculating analytics for geometry");
         List<AnalyticsTabQuery.Function> functionsResults = analyticsService.calculateRawAnalytics(geometry,
                 notificationsAnalyticsConfig.getFunctions());
+        LOG.info("Analytics service returned {} function results", functionsResults == null ? 0 : functionsResults.size());
         return functionsResults.stream()
                 .collect(Collectors.toMap(AnalyticsTabQuery.Function::id,
                         value -> Optional.ofNullable(value.result()).orElse(0.0)));
@@ -133,6 +154,7 @@ public class NotificationsProcessor {
         if (shape == null) {
             return null;
         }
+        LOG.info("Converting {} geometries to unified geometry", shape.getFeatures() == null ? 0 : shape.getFeatures().length);
         org.wololo.geojson.Geometry[] geometries = Stream.of(shape.getFeatures())
                 .map(Feature::getGeometry)
                 .toArray(org.wololo.geojson.Geometry[]::new);
