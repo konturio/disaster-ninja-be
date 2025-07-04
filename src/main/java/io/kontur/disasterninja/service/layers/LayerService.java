@@ -13,6 +13,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,7 @@ public class LayerService {
     private static final Logger LOG = LoggerFactory.getLogger(LayerService.class);
     final LocalLayerConfigService layerConfigService;
     final List<LayerProvider> providers;
+    final Executor executor;
 
     public List<Layer> getGlobalLayers(LayerSearchParams layerSearchParams) {
         Map<String, Layer> layers = loadLayersFromProviders(LayerProvider::obtainGlobalLayers, layerSearchParams);
@@ -111,18 +113,19 @@ public class LayerService {
     }
 
     protected List<Layer> get(List<String> layerIds, LayerSearchParams searchParams) {
-        List<Layer> result = new ArrayList<>();
-
         if (isEmpty(layerIds)) {
             return List.of();
         }
 
-        for (String layerId : layerIds) {
-            Layer layer = getFromProvidersOrGlobalOverlays(layerId, searchParams);
-            if (layer != null) {
-                result.add(layer);
-            }
-        }
+        List<CompletableFuture<Layer>> futures = layerIds.stream()
+                .map(id -> CompletableFuture.supplyAsync(
+                        () -> getFromProvidersOrGlobalOverlays(id, searchParams), executor))
+                .toList();
+
+        List<Layer> result = futures.stream()
+                .map(CompletableFuture::join)
+                .filter(Objects::nonNull)
+                .toList();
 
         if (result.isEmpty()) {
             throw new WebApplicationException("Layer not found / no layer data found by id and boundary!",
