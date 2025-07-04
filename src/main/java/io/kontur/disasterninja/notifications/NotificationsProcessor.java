@@ -83,32 +83,38 @@ public class NotificationsProcessor {
 
                 for (NotificationService notificationService : notificationServices) {
                     LOG.info("Checking applicability for service {} on event {}", notificationService.getClass().getSimpleName(), event.getEventId());
-                    if (notificationService.isApplicable(event)) {
-                        LOG.info("Service {} applicable. Preparing analytics", notificationService.getClass().getSimpleName());
-                        Geometry geometry = convertGeometry(event.getGeometries());
-                        Map<String, Object> urbanPopulationProperties = new HashMap<>();
-                        Map<String, Double> analytics = new HashMap<>();
-                        try {
-                            urbanPopulationProperties = obtainUrbanPopulation(geometry);
-                            LOG.info("Obtained urban population analytics: {}", urbanPopulationProperties);
-                            analytics = obtainAnalytics(geometry);
-                            LOG.info("Obtained additional analytics: {}", analytics);
-                        } catch (ExecutionException | InterruptedException e) {
-                            LOG.error("Failed to obtain analytics for notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
+                    try {
+                        if (notificationService.isApplicable(event)) {
+                            LOG.info("Service {} applicable. Preparing analytics", notificationService.getClass().getSimpleName());
+                            Geometry geometry = convertGeometry(event.getGeometries());
+                            Map<String, Object> urbanPopulationProperties = new HashMap<>();
+                            Map<String, Double> analytics = new HashMap<>();
+                            try {
+                                urbanPopulationProperties = obtainUrbanPopulation(geometry);
+                                LOG.info("Obtained urban population analytics: {}", urbanPopulationProperties);
+                                analytics = obtainAnalytics(geometry);
+                                LOG.info("Obtained additional analytics: {}", analytics);
+                            } catch (ExecutionException | InterruptedException e) {
+                                LOG.error("Failed to obtain analytics for notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
+                            }
+                            try {
+                                notificationService.process(event, urbanPopulationProperties, analytics);
+                            } catch (Exception e) {
+                                LOG.error("Notification service {} failed for event {}. {}",
+                                        notificationService.getClass().getSimpleName(),
+                                        event.getEventId(), e.getMessage(), e);
+                                // continue with the next service
+                                continue;
+                            }
+                            latestUpdatedDate = event.getUpdatedAt();
+                            LOG.info("Event {} processed. Latest processed time updated to {}", event.getEventId(), latestUpdatedDate);
+                        } else {
+                            LOG.info("Service {} not applicable for event {}", notificationService.getClass().getSimpleName(), event.getEventId());
                         }
-                        try {
-                            notificationService.process(event, urbanPopulationProperties, analytics);
-                        } catch (Exception e) {
-                            LOG.error("Notification service {} failed for event {}. {}",
-                                    notificationService.getClass().getSimpleName(),
-                                    event.getEventId(), e.getMessage(), e);
-                            // continue with the next service
-                            continue;
-                        }
-                        latestUpdatedDate = event.getUpdatedAt();
-                        LOG.info("Event {} processed. Latest processed time updated to {}", event.getEventId(), latestUpdatedDate);
-                    } else {
-                        LOG.info("Service {} not applicable for event {}", notificationService.getClass().getSimpleName(), event.getEventId());
+                    } catch (RestClientException e) {
+                        LOG.error("Notification service {} failed for event {}. {}",
+                                notificationService.getClass().getSimpleName(),
+                                event.getEventId(), e.getMessage(), e);
                     }
                 }
             }
