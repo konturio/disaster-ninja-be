@@ -51,7 +51,7 @@ public class EventDtoConverter {
                 dto.setMagnitude(convertDouble(severityData.get("magnitude")));
             }
             if (severityData.containsKey("categorySaffirSimpson")) {
-                dto.setCategory(convertInteger(severityData.get("categorySaffirSimpson")));
+                dto.setCategory(convertCategory(severityData.get("categorySaffirSimpson")));
             }
         }
 
@@ -89,7 +89,7 @@ public class EventDtoConverter {
                         ? convertDouble(episode.getSeverityData().get("magnitude"))
                         : null)
                 .category(episode.getSeverityData() != null && episode.getSeverityData().containsKey("categorySaffirSimpson")
-                        ? convertInteger(episode.getSeverityData().get("categorySaffirSimpson"))
+                        ? convertCategory(episode.getSeverityData().get("categorySaffirSimpson"))
                         : null)
                 .location(episode.getLocation())
                 .startedAt(episode.getStartedAt())

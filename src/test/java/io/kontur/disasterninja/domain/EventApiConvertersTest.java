@@ -142,20 +142,20 @@ public class EventApiConvertersTest {
         EventApiEventDto event = testEvent();
         event.setSeverityData(new HashMap<>());
         event.getSeverityData().put("magnitude", 5.6);
-        event.getSeverityData().put("categorySaffirSimpson", 3);
+        event.getSeverityData().put("categorySaffirSimpson", "3");
 
         EventDto dto = EventDtoConverter.convert(event);
         assertEquals(5.6, dto.getMagnitude());
-        assertEquals(3, dto.getCategory());
+        assertEquals("3", dto.getCategory());
 
         FeedEpisode episode = event.getEpisodes().get(0);
         episode.setSeverityData(new HashMap<>());
         episode.getSeverityData().put("magnitude", 4.5);
-        episode.getSeverityData().put("categorySaffirSimpson", 2);
+        episode.getSeverityData().put("categorySaffirSimpson", "2");
 
         EventEpisodeListDto episodeDto = EventDtoConverter.convertEventEpisode(episode);
         assertEquals(4.5, episodeDto.getMagnitude());
-        assertEquals(2, episodeDto.getCategory());
+        assertEquals("2", episodeDto.getCategory());
     }
 
     @Test
@@ -185,13 +185,13 @@ public class EventApiConvertersTest {
         event.getSeverityData().put("categorySaffirSimpson", null);
         dto = EventDtoConverter.convert(event);
         assertEquals(0.0, dto.getMagnitude());
-        assertEquals(0, dto.getCategory());
+        assertNull(dto.getCategory());
 
         episode.getSeverityData().put("magnitude", null);
         episode.getSeverityData().put("categorySaffirSimpson", null);
         episodeDto = EventDtoConverter.convertEventEpisode(episode);
         assertEquals(0.0, episodeDto.getMagnitude());
-        assertEquals(0, episodeDto.getCategory());
+        assertNull(episodeDto.getCategory());
     }
 
     @Test

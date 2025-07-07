@@ -17,7 +17,7 @@ public class EventDto {
     private List<String> externalUrls;
     private Severity severity;
     private Double magnitude;
-    private Integer category;
+    private String category;
     private FeatureCollection geojson;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private EventType eventType;

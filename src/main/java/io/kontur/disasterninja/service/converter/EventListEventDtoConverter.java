@@ -28,7 +28,7 @@ public class EventListEventDtoConverter {
                 dto.setMagnitude(convertDouble(severityData.get("magnitude")));
             }
             if (severityData.containsKey("categorySaffirSimpson")) {
-                dto.setCategory(convertInteger(severityData.get("categorySaffirSimpson")));
+                dto.setCategory(convertCategory(severityData.get("categorySaffirSimpson")));
             }
         }
         Map<String, Object> eventDetails = event.getEventDetails();
@@ -76,6 +76,14 @@ public class EventListEventDtoConverter {
             return 0;
         } else {
             return (int) Math.round(Double.parseDouble(String.valueOf(value)));
+        }
+    }
+
+    protected static String convertCategory(Object value) {
+        if (value == null || "null".equals(String.valueOf(value))) {
+            return null;
+        } else {
+            return String.valueOf(value);
         }
     }
 
