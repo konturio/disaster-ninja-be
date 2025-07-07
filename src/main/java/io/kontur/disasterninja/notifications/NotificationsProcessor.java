@@ -8,6 +8,8 @@ import io.kontur.disasterninja.service.AnalyticsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.lang.Nullable;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -55,13 +57,17 @@ public class NotificationsProcessor {
                                   InsightsApiGraphqlClient insightsApiClient,
                                   AnalyticsService analyticsService,
                                   NotificationsAnalyticsConfig notificationsAnalyticsConfig,
-                                  List<NotificationService> notificationServices) {
+                                  @Nullable EmailNotificationService emailNotificationService,
+                                  @Nullable SlackNotificationService slackNotificationService,
+                                  @Nullable @Qualifier("slackNotificationService2") SlackNotificationService slackNotificationService2) {
 
         this.eventApiClient = eventApiClient;
         this.insightsApiClient = insightsApiClient;
         this.analyticsService = analyticsService;
         this.notificationsAnalyticsConfig = notificationsAnalyticsConfig;
-        this.notificationServices = notificationServices;
+        this.notificationServices = Stream.of(emailNotificationService, slackNotificationService, slackNotificationService2)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @Scheduled(fixedRate = 60000, initialDelay = 1000)

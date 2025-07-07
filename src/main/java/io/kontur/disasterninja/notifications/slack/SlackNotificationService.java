@@ -4,28 +4,26 @@ import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.notifications.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Component
-@ConditionalOnProperty(value = "notifications.slack.enabled")
 public class SlackNotificationService extends NotificationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SlackNotificationService.class);
 
     private final SlackMessageFormatter slackMessageFormatter;
     private final SlackSender slackSender;
-
-    @Value("${notifications.feed}")
-    private String eventApiFeed;
+    private final String eventApiFeed;
+    private final String slackWebHookUrl;
 
     public SlackNotificationService(SlackMessageFormatter slackMessageFormatter,
-                                    SlackSender slackSender) {
+                                    SlackSender slackSender,
+                                    String eventApiFeed,
+                                    String slackWebHookUrl) {
         this.slackMessageFormatter = slackMessageFormatter;
         this.slackSender = slackSender;
+        this.eventApiFeed = eventApiFeed;
+        this.slackWebHookUrl = slackWebHookUrl;
     }
 
     @Override
@@ -34,7 +32,8 @@ public class SlackNotificationService extends NotificationService {
 
         try {
             String message = slackMessageFormatter.format(event, urbanPopulationProperties, analytics);
-            slackSender.send(message);
+            // customize formatter if needed for a specific Slack receiver
+            slackSender.send(message, slackWebHookUrl);
             LOG.info("Successfully sent slack notification from feed {}. Event ID = '{}', name = '{}'", eventApiFeed, event.getEventId(), event.getName());
         } catch (Exception e) {
             LOG.error("Failed to process slack notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);

@@ -2,8 +2,6 @@ package io.kontur.disasterninja.notifications;
 
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
