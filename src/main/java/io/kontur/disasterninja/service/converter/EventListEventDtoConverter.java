@@ -63,9 +63,9 @@ public class EventListEventDtoConverter {
         }
     }
 
-    protected static double convertDouble(Object value) {
+    protected static Double convertDouble(Object value) {
         if (value == null || "null".equals(String.valueOf(value))) {
-            return 0L;
+            return 0d;
         } else {
             return Double.parseDouble(String.valueOf(value));
         }
