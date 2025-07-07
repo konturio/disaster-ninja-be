@@ -73,13 +73,15 @@ public class SlackMessageFormatter extends MessageFormatter {
     }
 
     private String convertPopulationStatistic(Map<String, Object> episodeDetails) {
-        String pattern = "\\n>:family-div: Total population: %s people on %s km².";
         String population = formatNumber(episodeDetails.get("population"));
         String area = formatNumber(episodeDetails.get("populatedAreaKm2"));
         if ("0".equals(population) && "0".equals(area)) {
             return "";
         }
-        return String.format(pattern, population, area);
+        if (!"0".equals(population) && "0".equals(area)) {
+            return String.format("\\n>:family-div: Total population: %s people.", population);
+        }
+        return String.format("\\n>:family-div: Total population: %s people on %s km².", population, area);
     }
 
     private String convertIndustrialStatistic(Map<String, Object> episodeDetails, Map<String, Object> eventDetails) {

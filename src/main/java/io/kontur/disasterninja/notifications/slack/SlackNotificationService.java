@@ -30,7 +30,6 @@ public class SlackNotificationService extends NotificationService {
 
         try {
             String message = slackMessageFormatter.format(event, urbanPopulationProperties, analytics);
-            LOG.info("Slack message payload: {}", message);
             slackSender.send(message);
             LOG.info("Successfully sent slack notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
         } catch (Exception e) {
