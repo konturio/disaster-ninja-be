@@ -94,9 +94,10 @@ public class NotificationsProcessor {
             events.stream().limit(10).forEach(e ->
                     LOG.info("Fetched event id={}, version={}, updatedAt={}", e.getEventId(), e.getVersion(), e.getUpdatedAt()));
 
+            OffsetDateTime latestProcessed = feedLatest;
+
             for (EventApiEventDto event : events) {
-                if (event.getUpdatedAt().isBefore(feedLatest)
-                        || event.getUpdatedAt().isEqual(feedLatest)) {
+                if (!event.getUpdatedAt().isAfter(feedLatest)) {
                     LOG.info("No new events for feed {}. Latest processed: {}, current event: {}", feed, feedLatest, event.getUpdatedAt());
                     break;
                 }
@@ -115,8 +116,6 @@ public class NotificationsProcessor {
                                 LOG.error("Failed to obtain analytics for notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
                             }
                             notificationService.process(event, urbanPopulationProperties, analytics);
-                            feedLatest = event.getUpdatedAt();
-                            latestUpdatedDate.put(feed, feedLatest);
                         } else {
                             LOG.info("Event {} not applicable for service {}", event.getEventId(), notificationService.getClass().getSimpleName());
                         }
@@ -130,6 +129,14 @@ public class NotificationsProcessor {
                                 event.getEventId(), e.getMessage(), e);
                     }
                 }
+
+                if (event.getUpdatedAt().isAfter(latestProcessed)) {
+                    latestProcessed = event.getUpdatedAt();
+                }
+            }
+
+            if (latestProcessed.isAfter(feedLatest)) {
+                latestUpdatedDate.put(feed, latestProcessed);
             }
         } catch (RestClientException e) {
             LOG.warn("Received en error while obtaining events for notification: {}", e.getMessage());
