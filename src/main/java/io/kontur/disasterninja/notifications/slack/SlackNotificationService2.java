@@ -42,7 +42,7 @@ public class SlackNotificationService2 extends NotificationService {
             String message = slackMessageFormatter.format(event, urbanPopulationProperties, analytics);
             // Change slackWebHookUrl here if custom routing is needed
             slackSender.send(message, slackWebHookUrl);
-            LOG.info("Successfully sent second slack notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
+            LOG.info("Successfully sent second slack notification from feed {}. Event ID = '{}', name = '{}'", eventApiFeed, event.getEventId(), event.getName());
         } catch (Exception e) {
             LOG.error("Failed to process second slack notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
         }

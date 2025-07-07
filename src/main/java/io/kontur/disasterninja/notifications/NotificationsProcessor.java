@@ -22,6 +22,7 @@ import org.wololo.jts2geojson.GeoJSONWriter;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,7 +33,7 @@ import static java.util.Collections.emptyMap;
 public class NotificationsProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationsProcessor.class);
-    private static final Map<String, OffsetDateTime> latestUpdatedDate = new HashMap<>();
+    private static final Map<String, OffsetDateTime> latestUpdatedDate = new ConcurrentHashMap<>();
     private static final GeoJSONReader geoJSONReader = new GeoJSONReader();
     private static final GeoJSONWriter geoJSONWriter = new GeoJSONWriter();
     private static final List<String> acceptableTypes = Arrays.asList("FLOOD", "EARTHQUAKE", "CYCLONE", "VOLCANO",
@@ -79,6 +80,7 @@ public class NotificationsProcessor {
         }
         try {
             // modify parameters here for the second slack receiver if needed
+            LOG.info("Requesting latest events for feed {}", feed);
             List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, feed, 100);
 
             for (EventApiEventDto event : events) {
@@ -101,6 +103,7 @@ public class NotificationsProcessor {
                             }
                             notificationService.process(event, urbanPopulationProperties, analytics);
                             feedLatest = event.getUpdatedAt();
+                            latestUpdatedDate.put(feed, feedLatest);
                         }
                     } catch (RestClientException e) {
                         LOG.error("Notification service {} failed for event {}. {}",
