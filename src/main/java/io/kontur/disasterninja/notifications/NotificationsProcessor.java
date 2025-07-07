@@ -88,8 +88,11 @@ public class NotificationsProcessor {
         }
         try {
             // modify parameters here for the second slack receiver if needed
-            LOG.info("Requesting latest events for feed {}", feed);
+            LOG.info("Requesting latest events for feed {} types {}", feed, acceptableTypes);
             List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, feed, 100);
+
+            events.stream().limit(10).forEach(e ->
+                    LOG.info("Fetched event id={}, version={}, updatedAt={}", e.getEventId(), e.getVersion(), e.getUpdatedAt()));
 
             for (EventApiEventDto event : events) {
                 if (event.getUpdatedAt().isBefore(feedLatest)
@@ -114,6 +117,8 @@ public class NotificationsProcessor {
                             notificationService.process(event, urbanPopulationProperties, analytics);
                             feedLatest = event.getUpdatedAt();
                             latestUpdatedDate.put(feed, feedLatest);
+                        } else {
+                            LOG.info("Event {} not applicable for service {}", event.getEventId(), notificationService.getClass().getSimpleName());
                         }
                     } catch (RestClientException e) {
                         LOG.error("Notification service {} failed for event {}. {}",

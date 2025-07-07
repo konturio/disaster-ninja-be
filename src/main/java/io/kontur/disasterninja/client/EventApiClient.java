@@ -81,8 +81,12 @@ public class EventApiClient extends RestClientWithBearerAuth {
         if (!CollectionUtils.isEmpty(acceptableTypes)) {
             uriBuilder.queryParam("types", acceptableTypes);
         }
+
+        String requestUrl = uriBuilder.build(feedName, limit).toString();
+        LOG.info("GET {}", requestUrl);
+
         ResponseEntity<EventApiSearchEventResponse> response = restTemplate
-                .exchange(uriBuilder.build(feedName, limit).toString(), HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
+                .exchange(requestUrl, HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
                         new ParameterizedTypeReference<>() {
                         });
         if (!response.getStatusCode().is2xxSuccessful()) {
