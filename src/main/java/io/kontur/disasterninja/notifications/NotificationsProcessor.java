@@ -94,10 +94,12 @@ public class NotificationsProcessor {
             for (EventApiEventDto event : events) {
                 if (event.getUpdatedAt().isBefore(feedLatest)
                         || event.getUpdatedAt().isEqual(feedLatest)) {
+                    LOG.info("No new events for feed {}. Latest processed: {}, current event: {}", feed, feedLatest, event.getUpdatedAt());
                     break;
                 }
 
                 for (NotificationService notificationService : servicesForFeed(feed)) {
+                    LOG.info("Processing event {} for feed {} with service {}", event.getEventId(), feed, notificationService.getClass().getSimpleName());
                     try {
                         if (notificationService.isApplicable(event)) {
                             Geometry geometry = convertGeometry(event.getGeometries());
