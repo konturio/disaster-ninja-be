@@ -4,6 +4,7 @@ import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.notifications.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,9 @@ public class SlackNotificationService extends NotificationService {
 
     private final SlackMessageFormatter slackMessageFormatter;
     private final SlackSender slackSender;
+
+    @Value("${notifications.feed}")
+    private String eventApiFeed;
 
     public SlackNotificationService(SlackMessageFormatter slackMessageFormatter,
                                     SlackSender slackSender) {
@@ -35,5 +39,10 @@ public class SlackNotificationService extends NotificationService {
         } catch (Exception e) {
             LOG.error("Failed to process slack notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
         }
+    }
+
+    @Override
+    public String getEventApiFeed() {
+        return eventApiFeed;
     }
 }

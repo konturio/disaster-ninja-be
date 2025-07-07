@@ -18,6 +18,8 @@ public abstract class NotificationService {
 
     public abstract void process(EventApiEventDto event, Map<String, Object> urbanPopulationProperties, Map<String, Double> analytics);
 
+    public abstract String getEventApiFeed();
+
     private boolean isEventInPopulatedArea(EventApiEventDto event) {
         if (event.getEpisodes().get(0).getEpisodeDetails() == null) {
             return false;

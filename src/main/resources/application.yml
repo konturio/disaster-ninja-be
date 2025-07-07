@@ -45,6 +45,12 @@ notifications:
   enabled: false
   slack:
     enabled: false
+  slack2:
+    enabled: false
+  slackWebHook: ''
+  slackWebHook2: ''
+  feed: ''
+  feed2: ''
   email:
     enabled: false
 

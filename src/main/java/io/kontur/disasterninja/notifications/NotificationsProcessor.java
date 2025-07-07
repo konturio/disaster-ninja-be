@@ -32,7 +32,7 @@ import static java.util.Collections.emptyMap;
 public class NotificationsProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationsProcessor.class);
-    private static volatile OffsetDateTime latestUpdatedDate = null;
+    private static final Map<String, OffsetDateTime> latestUpdatedDate = new HashMap<>();
     private static final GeoJSONReader geoJSONReader = new GeoJSONReader();
     private static final GeoJSONWriter geoJSONWriter = new GeoJSONWriter();
     private static final List<String> acceptableTypes = Arrays.asList("FLOOD", "EARTHQUAKE", "CYCLONE", "VOLCANO",
@@ -46,6 +46,9 @@ public class NotificationsProcessor {
 
     @Value("${notifications.feed}")
     private String eventApiFeed;
+
+    @Value("${notifications.feed2:#{null}}")
+    private String eventApiFeed2;
 
     public NotificationsProcessor(EventApiClient eventApiClient,
                                   InsightsApiGraphqlClient insightsApiClient,
@@ -62,20 +65,29 @@ public class NotificationsProcessor {
 
     @Scheduled(fixedRate = 60000, initialDelay = 1000)
     public void run() {
-        if (latestUpdatedDate == null) {
-            initUpdateDate();
+        processFeed(eventApiFeed);
+        if (eventApiFeed2 != null) {
+            processFeed(eventApiFeed2);
+        }
+    }
+
+    private void processFeed(String feed) {
+        OffsetDateTime feedLatest = latestUpdatedDate.get(feed);
+        if (feedLatest == null) {
+            initUpdateDate(feed);
             return;
         }
         try {
-            List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, eventApiFeed, 100);
+            // modify parameters here for the second slack receiver if needed
+            List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, feed, 100);
 
             for (EventApiEventDto event : events) {
-                if (event.getUpdatedAt().isBefore(latestUpdatedDate)
-                        || event.getUpdatedAt().isEqual(latestUpdatedDate)) {
+                if (event.getUpdatedAt().isBefore(feedLatest)
+                        || event.getUpdatedAt().isEqual(feedLatest)) {
                     break;
                 }
 
-                for (NotificationService notificationService : notificationServices) {
+                for (NotificationService notificationService : servicesForFeed(feed)) {
                     try {
                         if (notificationService.isApplicable(event)) {
                             Geometry geometry = convertGeometry(event.getGeometries());
@@ -88,7 +100,7 @@ public class NotificationsProcessor {
                                 LOG.error("Failed to obtain analytics for notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
                             }
                             notificationService.process(event, urbanPopulationProperties, analytics);
-                            latestUpdatedDate = event.getUpdatedAt();
+                            feedLatest = event.getUpdatedAt();
                         }
                     } catch (RestClientException e) {
                         LOG.error("Notification service {} failed for event {}. {}",
@@ -108,11 +120,17 @@ public class NotificationsProcessor {
         }
     }
 
-    private void initUpdateDate() {
-        List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, eventApiFeed, 1);
+    private List<NotificationService> servicesForFeed(String feed) {
+        return notificationServices.stream()
+                .filter(s -> feed.equals(s.getEventApiFeed()))
+                .collect(Collectors.toList());
+    }
+
+    private void initUpdateDate(String feed) {
+        List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, feed, 1);
         if (events != null && events.size() > 0) {
             EventApiEventDto latestEvent = events.get(0);
-            latestUpdatedDate = latestEvent.getUpdatedAt();
+            latestUpdatedDate.put(feed, latestEvent.getUpdatedAt());
         }
     }
 

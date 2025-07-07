@@ -43,6 +43,9 @@ public class EmailNotificationService extends NotificationService {
     @Value("${notifications.emailNotificationsFrequencyMs}")
     private long emailNotificationsFrequencyMs;
 
+    @Value("${notifications.feed}")
+    private String eventApiFeed;
+
     @Value("${notifications.relevantLocationsLayer}")
     private String relevantLocationsLayer;
 
@@ -111,6 +114,11 @@ public class EmailNotificationService extends NotificationService {
             return true;
         notificationTimestamps.put(eventId, now);
         return false;
+    }
+
+    @Override
+    public String getEventApiFeed() {
+        return eventApiFeed;
     }
 
     /**
