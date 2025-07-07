@@ -159,6 +159,42 @@ public class EventApiConvertersTest {
     }
 
     @Test
+    public void eventDtoSeverityDataEdgeCasesTest() {
+        EventApiEventDto event = testEvent();
+
+        EventDto dto = EventDtoConverter.convert(event);
+        assertNull(dto.getMagnitude());
+        assertNull(dto.getCategory());
+
+        FeedEpisode episode = event.getEpisodes().get(0);
+        EventEpisodeListDto episodeDto = EventDtoConverter.convertEventEpisode(episode);
+        assertNull(episodeDto.getMagnitude());
+        assertNull(episodeDto.getCategory());
+
+        event.setSeverityData(new HashMap<>());
+        dto = EventDtoConverter.convert(event);
+        assertNull(dto.getMagnitude());
+        assertNull(dto.getCategory());
+
+        episode.setSeverityData(new HashMap<>());
+        episodeDto = EventDtoConverter.convertEventEpisode(episode);
+        assertNull(episodeDto.getMagnitude());
+        assertNull(episodeDto.getCategory());
+
+        event.getSeverityData().put("magnitude", null);
+        event.getSeverityData().put("categorySaffirSimpson", null);
+        dto = EventDtoConverter.convert(event);
+        assertEquals(0.0, dto.getMagnitude());
+        assertEquals(0, dto.getCategory());
+
+        episode.getSeverityData().put("magnitude", null);
+        episode.getSeverityData().put("categorySaffirSimpson", null);
+        episodeDto = EventDtoConverter.convertEventEpisode(episode);
+        assertEquals(0.0, episodeDto.getMagnitude());
+        assertEquals(0, episodeDto.getCategory());
+    }
+
+    @Test
     public void eventListDtoTestNulls() {
         EventApiEventDto event = testEvent();
         EventListDto dto = EventListEventDtoConverter.convert(event);
