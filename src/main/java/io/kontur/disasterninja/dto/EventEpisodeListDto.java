@@ -14,6 +14,8 @@ public class EventEpisodeListDto {
     private String name;
     private List<String> externalUrls;
     private Severity severity;
+    private Double magnitude;
+    private Integer category;
     private OffsetDateTime startedAt;
     private OffsetDateTime endedAt;
     private OffsetDateTime updatedAt;

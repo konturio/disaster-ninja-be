@@ -22,6 +22,15 @@ public class EventListEventDtoConverter {
         dto.setExternalUrls(eventUrls != null ? List.copyOf(eventUrls) : List.of());
 
         dto.setSeverity(event.getSeverity());
+        if (event.getSeverityData() != null) {
+            Map<String, Object> severityData = event.getSeverityData();
+            if (severityData.containsKey("magnitude")) {
+                dto.setMagnitude(convertDouble(severityData.get("magnitude")));
+            }
+            if (severityData.containsKey("categorySaffirSimpson")) {
+                dto.setCategory(convertInteger(severityData.get("categorySaffirSimpson")));
+            }
+        }
         Map<String, Object> eventDetails = event.getEventDetails();
         if (eventDetails != null) {
             if (eventDetails.containsKey("population")) {
@@ -59,6 +68,14 @@ public class EventListEventDtoConverter {
             return 0L;
         } else {
             return Double.parseDouble(String.valueOf(value));
+        }
+    }
+
+    protected static Integer convertInteger(Object value) {
+        if (value == null || "null".equals(String.valueOf(value))) {
+            return 0;
+        } else {
+            return (int) Math.round(Double.parseDouble(String.valueOf(value)));
         }
     }
 

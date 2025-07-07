@@ -45,6 +45,16 @@ public class EventDtoConverter {
         dto.setEventType(eventType);
         dto.setSeverity(event.getSeverity());
 
+        if (event.getSeverityData() != null) {
+            Map<String, Object> severityData = event.getSeverityData();
+            if (severityData.containsKey("magnitude")) {
+                dto.setMagnitude(convertDouble(severityData.get("magnitude")));
+            }
+            if (severityData.containsKey("categorySaffirSimpson")) {
+                dto.setCategory(convertInteger(severityData.get("categorySaffirSimpson")));
+            }
+        }
+
         if (event.getEventDetails() != null) {
             Map<String, Object> eventDetails = event.getEventDetails();
             if (eventDetails.containsKey("populatedAreaKm2")) {
@@ -75,6 +85,12 @@ public class EventDtoConverter {
                 .name(episode.getName())
                 .externalUrls(episode.getUrls())
                 .severity(episode.getSeverity())
+                .magnitude(episode.getSeverityData() != null && episode.getSeverityData().containsKey("magnitude")
+                        ? convertDouble(episode.getSeverityData().get("magnitude"))
+                        : null)
+                .category(episode.getSeverityData() != null && episode.getSeverityData().containsKey("categorySaffirSimpson")
+                        ? convertInteger(episode.getSeverityData().get("categorySaffirSimpson"))
+                        : null)
                 .location(episode.getLocation())
                 .startedAt(episode.getStartedAt())
                 .endedAt(episode.getEndedAt())

@@ -15,6 +15,8 @@ public class EventListDto {
     private String description;
     private String location;
     private Severity severity;
+    private Double magnitude;
+    private Integer category;
     private Long affectedPopulation;
     private Double settledArea;
     private Long osmGaps;

@@ -4,6 +4,7 @@ import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.dto.EventListDto;
 import io.kontur.disasterninja.dto.EventType;
 import io.kontur.disasterninja.dto.Severity;
+import io.kontur.disasterninja.dto.EventEpisodeListDto;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
 import io.kontur.disasterninja.service.converter.EventDtoConverter;
@@ -134,6 +135,27 @@ public class EventApiConvertersTest {
         event.setEpisodeCount(2);
         dto = EventDtoConverter.convert(event);
         assertEquals(dto.getEpisodeCount(), 2);
+    }
+
+    @Test
+    public void eventDtoSeverityDataTest() {
+        EventApiEventDto event = testEvent();
+        event.setSeverityData(new HashMap<>());
+        event.getSeverityData().put("magnitude", 5.6);
+        event.getSeverityData().put("categorySaffirSimpson", 3);
+
+        EventDto dto = EventDtoConverter.convert(event);
+        assertEquals(5.6, dto.getMagnitude());
+        assertEquals(3, dto.getCategory());
+
+        FeedEpisode episode = event.getEpisodes().get(0);
+        episode.setSeverityData(new HashMap<>());
+        episode.getSeverityData().put("magnitude", 4.5);
+        episode.getSeverityData().put("categorySaffirSimpson", 2);
+
+        EventEpisodeListDto episodeDto = EventDtoConverter.convertEventEpisode(episode);
+        assertEquals(4.5, episodeDto.getMagnitude());
+        assertEquals(2, episodeDto.getCategory());
     }
 
     @Test
