@@ -185,13 +185,13 @@ public class EventApiConvertersTest {
         event.getSeverityData().put("categorySaffirSimpson", null);
         dto = EventDtoConverter.convert(event);
         assertEquals(0.0, dto.getMagnitude());
-        assertNull(dto.getCategory());
+        assertEquals("", dto.getCategory());
 
         episode.getSeverityData().put("magnitude", null);
         episode.getSeverityData().put("categorySaffirSimpson", null);
         episodeDto = EventDtoConverter.convertEventEpisode(episode);
         assertEquals(0.0, episodeDto.getMagnitude());
-        assertNull(episodeDto.getCategory());
+        assertEquals("", episodeDto.getCategory());
     }
 
     @Test

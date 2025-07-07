@@ -81,7 +81,7 @@ public class EventListEventDtoConverter {
 
     protected static String convertCategory(Object value) {
         if (value == null || "null".equals(String.valueOf(value))) {
-            return null;
+            return "";
         } else {
             return String.valueOf(value);
         }
