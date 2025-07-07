@@ -76,18 +76,28 @@ public class NotificationsProcessor {
                 }
 
                 for (NotificationService notificationService : notificationServices) {
-                    if (notificationService.isApplicable(event)) {
-                        Geometry geometry = convertGeometry(event.getGeometries());
-                        Map<String, Object> urbanPopulationProperties = new HashMap<>();
-                        Map<String, Double> analytics = new HashMap<>();
-                        try {
-                            urbanPopulationProperties = obtainUrbanPopulation(geometry);
-                            analytics = obtainAnalytics(geometry);
-                        } catch (ExecutionException | InterruptedException e) {
-                            LOG.error("Failed to obtain analytics for notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
+                    try {
+                        if (notificationService.isApplicable(event)) {
+                            Geometry geometry = convertGeometry(event.getGeometries());
+                            Map<String, Object> urbanPopulationProperties = new HashMap<>();
+                            Map<String, Double> analytics = new HashMap<>();
+                            try {
+                                urbanPopulationProperties = obtainUrbanPopulation(geometry);
+                                analytics = obtainAnalytics(geometry);
+                            } catch (ExecutionException | InterruptedException e) {
+                                LOG.error("Failed to obtain analytics for notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
+                            }
+                            notificationService.process(event, urbanPopulationProperties, analytics);
+                            latestUpdatedDate = event.getUpdatedAt();
                         }
-                        notificationService.process(event, urbanPopulationProperties, analytics);
-                        latestUpdatedDate = event.getUpdatedAt();
+                    } catch (RestClientException e) {
+                        LOG.error("Notification service {} failed for event {}. {}",
+                                notificationService.getClass().getSimpleName(),
+                                event.getEventId(), e.getMessage(), e);
+                    } catch (Exception e) {
+                        LOG.error("Notification service {} failed for event {}. {}",
+                                notificationService.getClass().getSimpleName(),
+                                event.getEventId(), e.getMessage(), e);
                     }
                 }
             }
