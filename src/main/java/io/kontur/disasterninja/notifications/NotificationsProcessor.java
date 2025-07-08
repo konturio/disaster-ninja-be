@@ -5,6 +5,10 @@ import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
 import io.kontur.disasterninja.service.AnalyticsService;
+import io.kontur.disasterninja.notifications.email.EmailNotificationService;
+import io.kontur.disasterninja.notifications.slack.SlackMessageFormatter;
+import io.kontur.disasterninja.notifications.slack.SlackSender;
+import io.kontur.disasterninja.notifications.slack.SlackNotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +47,9 @@ public class NotificationsProcessor {
     private final InsightsApiGraphqlClient insightsApiClient;
     private final AnalyticsService analyticsService;
     private final NotificationsAnalyticsConfig notificationsAnalyticsConfig;
-    private final List<NotificationService> notificationServices;
+    private final EmailNotificationService emailNotificationService;
+    private final SlackMessageFormatter slackMessageFormatter;
+    private final SlackSender slackSender;
 
     @Value("${notifications.feed}")
     private String eventApiFeed;
@@ -51,17 +57,27 @@ public class NotificationsProcessor {
     @Value("${notifications.feed2:#{null}}")
     private String eventApiFeed2;
 
+    @Value("${notifications.slackWebHook:}")
+    private String slackWebHook;
+
+    @Value("${notifications.slackWebHook2:}")
+    private String slackWebHook2;
+
     public NotificationsProcessor(EventApiClient eventApiClient,
                                   InsightsApiGraphqlClient insightsApiClient,
                                   AnalyticsService analyticsService,
                                   NotificationsAnalyticsConfig notificationsAnalyticsConfig,
-                                  List<NotificationService> notificationServices) {
+                                  EmailNotificationService emailNotificationService,
+                                  SlackMessageFormatter slackMessageFormatter,
+                                  SlackSender slackSender) {
 
         this.eventApiClient = eventApiClient;
         this.insightsApiClient = insightsApiClient;
         this.analyticsService = analyticsService;
         this.notificationsAnalyticsConfig = notificationsAnalyticsConfig;
-        this.notificationServices = notificationServices;
+        this.emailNotificationService = emailNotificationService;
+        this.slackMessageFormatter = slackMessageFormatter;
+        this.slackSender = slackSender;
     }
 
     @Scheduled(fixedRate = 60000, initialDelay = 1000)
@@ -91,8 +107,8 @@ public class NotificationsProcessor {
                     feedServices.stream().map(s -> s.getClass().getSimpleName()).collect(Collectors.joining(", ")));
 
             for (EventApiEventDto event : events) {
-                if (event.getUpdatedAt().isBefore(feedLatest)
-                        || event.getUpdatedAt().isEqual(feedLatest)) {
+                if (feedLatest.isAfter(event.getUpdatedAt())
+                        || feedLatest.isEqual(event.getUpdatedAt())) {
                     LOG.info("No new events for feed {}. Latest processed: {}, current event: {}", feed, feedLatest, event.getUpdatedAt());
                     break;
                 }
@@ -138,13 +154,20 @@ public class NotificationsProcessor {
 
     private List<NotificationService> servicesForFeed(String feed) {
         List<NotificationService> result = new ArrayList<>();
-        for (NotificationService service : notificationServices) {
-            boolean match = feed.equals(service.getEventApiFeed());
-            LOG.info("Checking service {} for feed '{}': configured feed='{}', match={}",
-                    service.getClass().getSimpleName(), feed, service.getEventApiFeed(), match);
-            if (match) {
-                result.add(service);
-            }
+
+        if (feed.equals(eventApiFeed)) {
+            result.add(emailNotificationService);
+            // first slack receiver uses default parameters
+            result.add(new SlackNotificationService(slackMessageFormatter, slackSender, eventApiFeed, slackWebHook));
+        }
+
+        if (feed.equals(eventApiFeed2)) {
+            // customize formatter or request parameters here for the second slack receiver if needed
+            result.add(new SlackNotificationService(slackMessageFormatter, slackSender, eventApiFeed2, slackWebHook2));
+        }
+
+        for (NotificationService service : result) {
+            LOG.info("Initialized service {} for feed {}", service.getClass().getSimpleName(), feed);
         }
         return result;
     }

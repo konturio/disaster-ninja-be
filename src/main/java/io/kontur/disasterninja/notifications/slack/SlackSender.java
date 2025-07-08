@@ -3,7 +3,6 @@ package io.kontur.disasterninja.notifications.slack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-@ConditionalOnExpression("${notifications.slack.enabled:false} || ${notifications.slack2.enabled:false}")
 public class SlackSender {
 
     private final static Logger LOG = LoggerFactory.getLogger(SlackSender.class);

@@ -5,7 +5,6 @@ import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
 import io.kontur.disasterninja.notifications.MessageFormatter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -13,7 +12,6 @@ import java.util.Map;
 import static io.kontur.disasterninja.util.FormatUtil.formatNumber;
 
 @Component
-@ConditionalOnExpression("${notifications.slack.enabled:false} || ${notifications.slack2.enabled:false}")
 public class SlackMessageFormatter extends MessageFormatter {
 
     private static final String BODY = "{\"text\":\"><%s|%s>%s\", \"unfurl_links\":true, \"unfurl_media\": true}";
