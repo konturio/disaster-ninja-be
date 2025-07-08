@@ -115,8 +115,6 @@ public class NotificationsProcessor {
                                 LOG.error("Failed to obtain analytics for notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
                             }
                             notificationService.process(event, urbanPopulationProperties, analytics);
-                            feedLatest = event.getUpdatedAt();
-                            latestUpdatedDate.put(feed, feedLatest);
                         } else {
                             LOG.info("Event {} not applicable for service {}", event.getEventId(), notificationService.getClass().getSimpleName());
                         }
@@ -130,6 +128,10 @@ public class NotificationsProcessor {
                                 event.getEventId(), e.getMessage(), e);
                     }
                 }
+
+                // update last processed timestamp even if event is not applicable
+                feedLatest = event.getUpdatedAt();
+                latestUpdatedDate.put(feed, feedLatest);
             }
         } catch (RestClientException e) {
             LOG.warn("Received en error while obtaining events for notification: {}", e.getMessage());
