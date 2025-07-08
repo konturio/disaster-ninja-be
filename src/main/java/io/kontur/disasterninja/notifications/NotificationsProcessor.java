@@ -99,12 +99,8 @@ public class NotificationsProcessor {
             LOG.info("Requesting latest events for feed {} types {}", feed, acceptableTypes);
             List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, feed, 100);
 
-            events.stream().limit(10).forEach(e ->
-                    LOG.info("Fetched event id={}, version={}, updatedAt={}", e.getEventId(), e.getVersion(), e.getUpdatedAt()));
 
             List<NotificationService> feedServices = servicesForFeed(feed);
-            LOG.info("Services registered for feed {}: {}", feed,
-                    feedServices.stream().map(s -> s.getClass().getSimpleName()).collect(Collectors.joining(", ")));
 
             for (EventApiEventDto event : events) {
                 if (feedLatest.isAfter(event.getUpdatedAt())
@@ -114,7 +110,6 @@ public class NotificationsProcessor {
                 }
 
                 for (NotificationService notificationService : feedServices) {
-                    LOG.info("Processing event {} for feed {} with service {}", event.getEventId(), feed, notificationService.getClass().getSimpleName());
                     try {
                         if (notificationService.isApplicable(event)) {
                             Geometry geometry = convertGeometry(event.getGeometries());
@@ -127,8 +122,6 @@ public class NotificationsProcessor {
                                 LOG.error("Failed to obtain analytics for notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
                             }
                             notificationService.process(event, urbanPopulationProperties, analytics);
-                        } else {
-                            LOG.info("Event {} not applicable for service {}", event.getEventId(), notificationService.getClass().getSimpleName());
                         }
                     } catch (RestClientException e) {
                         LOG.error("Notification service {} failed for event {}. {}",
@@ -166,9 +159,6 @@ public class NotificationsProcessor {
             result.add(new SlackNotificationService(slackMessageFormatter, slackSender, eventApiFeed2, slackWebHook2));
         }
 
-        for (NotificationService service : result) {
-            LOG.info("Initialized service {} for feed {}", service.getClass().getSimpleName(), feed);
-        }
         return result;
     }
 

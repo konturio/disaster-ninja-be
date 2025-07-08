@@ -18,17 +18,6 @@ public abstract class NotificationService {
         boolean inPopulatedArea = isEventInPopulatedArea(event);
         boolean typeOk = isEventTypeAppropriate(event);
         boolean severityOk = isEventSeverityAppropriate(event);
-
-        if (!inPopulatedArea) {
-            LOG.info("Event {} is not in populated area or below population threshold", event.getEventId());
-        }
-        if (!typeOk) {
-            LOG.info("Event {} has unsupported type {}", event.getEventId(), event.getType());
-        }
-        if (!severityOk) {
-            LOG.info("Event {} filtered out due to severity", event.getEventId());
-        }
-
         return inPopulatedArea && typeOk && severityOk;
     }
 
