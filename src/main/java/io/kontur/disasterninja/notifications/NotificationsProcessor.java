@@ -8,14 +8,10 @@ import io.kontur.disasterninja.service.AnalyticsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.lang.Nullable;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
-import io.kontur.disasterninja.notifications.email.EmailNotificationService;
-import io.kontur.disasterninja.notifications.slack.SlackNotificationService;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
@@ -59,17 +55,13 @@ public class NotificationsProcessor {
                                   InsightsApiGraphqlClient insightsApiClient,
                                   AnalyticsService analyticsService,
                                   NotificationsAnalyticsConfig notificationsAnalyticsConfig,
-                                  @Nullable EmailNotificationService emailNotificationService,
-                                  @Nullable SlackNotificationService slackNotificationService,
-                                  @Nullable @Qualifier("slackNotificationService2") SlackNotificationService slackNotificationService2) {
+                                  List<NotificationService> notificationServices) {
 
         this.eventApiClient = eventApiClient;
         this.insightsApiClient = insightsApiClient;
         this.analyticsService = analyticsService;
         this.notificationsAnalyticsConfig = notificationsAnalyticsConfig;
-        this.notificationServices = Stream.of(emailNotificationService, slackNotificationService, slackNotificationService2)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        this.notificationServices = notificationServices;
     }
 
     @Scheduled(fixedRate = 60000, initialDelay = 1000)
@@ -94,6 +86,10 @@ public class NotificationsProcessor {
             events.stream().limit(10).forEach(e ->
                     LOG.info("Fetched event id={}, version={}, updatedAt={}", e.getEventId(), e.getVersion(), e.getUpdatedAt()));
 
+            List<NotificationService> feedServices = servicesForFeed(feed);
+            LOG.info("Services registered for feed {}: {}", feed,
+                    feedServices.stream().map(s -> s.getClass().getSimpleName()).collect(Collectors.joining(", ")));
+
             for (EventApiEventDto event : events) {
                 if (event.getUpdatedAt().isBefore(feedLatest)
                         || event.getUpdatedAt().isEqual(feedLatest)) {
@@ -101,7 +97,7 @@ public class NotificationsProcessor {
                     break;
                 }
 
-                for (NotificationService notificationService : servicesForFeed(feed)) {
+                for (NotificationService notificationService : feedServices) {
                     LOG.info("Processing event {} for feed {} with service {}", event.getEventId(), feed, notificationService.getClass().getSimpleName());
                     try {
                         if (notificationService.isApplicable(event)) {
@@ -141,9 +137,16 @@ public class NotificationsProcessor {
     }
 
     private List<NotificationService> servicesForFeed(String feed) {
-        return notificationServices.stream()
-                .filter(s -> feed.equals(s.getEventApiFeed()))
-                .collect(Collectors.toList());
+        List<NotificationService> result = new ArrayList<>();
+        for (NotificationService service : notificationServices) {
+            boolean match = feed.equals(service.getEventApiFeed());
+            LOG.info("Checking service {} for feed '{}': configured feed='{}', match={}",
+                    service.getClass().getSimpleName(), feed, service.getEventApiFeed(), match);
+            if (match) {
+                result.add(service);
+            }
+        }
+        return result;
     }
 
     private void initUpdateDate(String feed) {
