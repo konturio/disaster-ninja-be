@@ -2,16 +2,34 @@ package io.kontur.disasterninja.notifications;
 
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 public abstract class NotificationService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(NotificationService.class);
+
     private static final List<String> acceptableTypes = Arrays.asList("FLOOD", "EARTHQUAKE", "CYCLONE", "VOLCANO", "WILDFIRE");
 
     public boolean isApplicable(EventApiEventDto event) {
-        return isEventInPopulatedArea(event) && isEventTypeAppropriate(event) && isEventSeverityAppropriate(event);
+        boolean inPopulatedArea = isEventInPopulatedArea(event);
+        boolean typeOk = isEventTypeAppropriate(event);
+        boolean severityOk = isEventSeverityAppropriate(event);
+
+        if (!inPopulatedArea) {
+            LOG.info("Event {} is not in populated area or below population threshold", event.getEventId());
+        }
+        if (!typeOk) {
+            LOG.info("Event {} has unsupported type {}", event.getEventId(), event.getType());
+        }
+        if (!severityOk) {
+            LOG.info("Event {} filtered out due to severity", event.getEventId());
+        }
+
+        return inPopulatedArea && typeOk && severityOk;
     }
 
     public abstract void process(EventApiEventDto event, Map<String, Object> urbanPopulationProperties, Map<String, Double> analytics);
