@@ -6,6 +6,12 @@ import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.dto.EventEpisodeListDto;
 import io.kontur.disasterninja.dto.EventFeedDto;
 import io.kontur.disasterninja.dto.EventListDto;
+import io.kontur.disasterninja.dto.layer.LayerDetailsDto;
+import io.kontur.disasterninja.dto.layer.LayerSummaryDto;
+import io.kontur.disasterninja.domain.Layer;
+import io.kontur.disasterninja.domain.LayerSource;
+import io.kontur.disasterninja.service.layers.LocalLayerConfigService;
+import io.kontur.disasterninja.service.layers.providers.EventShapeLayerProvider;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.service.converter.EventDtoConverter;
 import io.kontur.disasterninja.service.converter.EventListEventDtoConverter;
@@ -29,9 +35,12 @@ public class EventApiService {
     private final EventApiClient client;
 
     private final int pageSize;
+    private final LocalLayerConfigService layerConfigService;
 
-    public EventApiService(EventApiClient client, @Value("${kontur.platform.event-api.pageSize}") int pageSize) {
+    public EventApiService(EventApiClient client, LocalLayerConfigService layerConfigService,
+                           @Value("${kontur.platform.event-api.pageSize}") int pageSize) {
         this.client = client;
+        this.layerConfigService = layerConfigService;
         this.pageSize = pageSize;
     }
 
@@ -73,7 +82,24 @@ public class EventApiService {
         if (event == null) {
             throw new WebApplicationException("Event " + eventId + " is not found", HttpStatus.NOT_FOUND);
         }
-        return EventDtoConverter.convert(event);
+        EventDto dto = EventDtoConverter.convert(event);
+
+        Layer layer = Layer.builder()
+                .eventType(dto.getEventType())
+                .id(EventShapeLayerProvider.EVENT_SHAPE_LAYER_ID)
+                .source(LayerSource.builder()
+                        .type(io.kontur.disasterninja.domain.enums.LayerType.GEOJSON)
+                        .data(dto.getGeojson())
+                        .build())
+                .eventIdRequiredForRetrieval(true)
+                .build();
+
+        layerConfigService.applyConfig(layer);
+        EventDto.AssociatedLayer associatedLayer = new EventDto.AssociatedLayer();
+        associatedLayer.setMapData(LayerDetailsDto.fromLayer(layer));
+        associatedLayer.setLayerInfo(LayerSummaryDto.fromLayer(layer));
+        dto.setAssociatedLayer(associatedLayer);
+        return dto;
     }
 
     public List<EventEpisodeListDto> getEventEpisodes(UUID eventId, String feed) {

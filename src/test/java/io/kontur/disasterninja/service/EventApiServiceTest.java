@@ -24,6 +24,8 @@ import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
+import io.kontur.disasterninja.service.layers.LocalLayerConfigService;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -54,11 +56,14 @@ class EventApiServiceTest {
     @Mock
     private KeycloakAuthorizationService authorizationService;
     private EventApiClient client = mock(EventApiClient.class);
-    private EventApiService service = new EventApiService(client, 1000);
+    private EventApiService service;
+    private LocalLayerConfigService layerConfigService;
 
     @BeforeEach
     public void before() {
         when(authorizationService.getAccessToken()).thenReturn(defaultAppToken);
+        layerConfigService = new LocalLayerConfigService(new org.springframework.core.io.ClassPathResource("/layers/layerconfig.yaml"), "", "dev");
+        service = new EventApiService(client, layerConfigService, 1000);
     }
 
     public void givenJwtTokenIs(String tokenValue) {
@@ -164,7 +169,7 @@ class EventApiServiceTest {
     @Test
     public void testGetEvents_GetWithoutAfterFilter() {
         //given
-        EventApiService localService = new EventApiService(client, 3);
+        EventApiService localService = new EventApiService(client, layerConfigService, 3);
         PodamFactory factory = new PodamFactoryImpl();
 
         EventApiClient.EventApiSearchEventResponse eventResponse = new EventApiClient.EventApiSearchEventResponse();
@@ -193,7 +198,7 @@ class EventApiServiceTest {
     @Test
     public void testGetEvents_Get4DayEventsInOneCall() {
         //given
-        EventApiService localService = new EventApiService(client, 3);
+        EventApiService localService = new EventApiService(client, layerConfigService, 3);
         PodamFactory factory = new PodamFactoryImpl();
         EventApiEventDto event1 = factory.manufacturePojo(EventApiEventDto.class);
         EventApiEventDto event2 = factory.manufacturePojo(EventApiEventDto.class);
@@ -220,7 +225,7 @@ class EventApiServiceTest {
     @Test
     public void testGetEvents_Get4DayEventsInTwoCalls() {
         //given
-        EventApiService localService = new EventApiService(client, 3);
+        EventApiService localService = new EventApiService(client, layerConfigService, 3);
         PodamFactory factory = new PodamFactoryImpl();
         EventApiEventDto event1 = factory.manufacturePojo(EventApiEventDto.class);
         EventApiEventDto event2 = factory.manufacturePojo(EventApiEventDto.class);
@@ -253,7 +258,7 @@ class EventApiServiceTest {
     @Test
     public void testGetEvents_Get4DayEventsInThreeCalls() {
         //given
-        EventApiService localService = new EventApiService(client, 3);
+        EventApiService localService = new EventApiService(client, layerConfigService, 3);
         PodamFactory factory = new PodamFactoryImpl();
 
         EventApiClient.EventApiSearchEventResponse eventResponse = new EventApiClient.EventApiSearchEventResponse();
