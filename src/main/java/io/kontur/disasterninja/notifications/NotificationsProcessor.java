@@ -5,6 +5,10 @@ import io.kontur.disasterninja.client.InsightsApiGraphqlClient;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.graphql.AnalyticsTabQuery;
 import io.kontur.disasterninja.service.AnalyticsService;
+import io.kontur.disasterninja.notifications.email.EmailNotificationService;
+import io.kontur.disasterninja.notifications.slack.SlackMessageFormatter;
+import io.kontur.disasterninja.notifications.slack.SlackSender;
+import io.kontur.disasterninja.notifications.slack.SlackNotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +26,7 @@ import org.wololo.jts2geojson.GeoJSONWriter;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,7 +37,7 @@ import static java.util.Collections.emptyMap;
 public class NotificationsProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationsProcessor.class);
-    private static volatile OffsetDateTime latestUpdatedDate = null;
+    private static final Map<String, OffsetDateTime> latestUpdatedDate = new ConcurrentHashMap<>();
     private static final GeoJSONReader geoJSONReader = new GeoJSONReader();
     private static final GeoJSONWriter geoJSONWriter = new GeoJSONWriter();
     private static final List<String> acceptableTypes = Arrays.asList("FLOOD", "EARTHQUAKE", "CYCLONE", "VOLCANO",
@@ -42,40 +47,69 @@ public class NotificationsProcessor {
     private final InsightsApiGraphqlClient insightsApiClient;
     private final AnalyticsService analyticsService;
     private final NotificationsAnalyticsConfig notificationsAnalyticsConfig;
-    private final List<NotificationService> notificationServices;
+    private final EmailNotificationService emailNotificationService;
+    private final SlackMessageFormatter slackMessageFormatter;
+    private final SlackSender slackSender;
 
     @Value("${notifications.feed}")
     private String eventApiFeed;
+
+    @Value("${notifications.feed2:#{null}}")
+    private String eventApiFeed2;
+
+    @Value("${notifications.slackWebHook:}")
+    private String slackWebHook;
+
+    @Value("${notifications.slackWebHook2:}")
+    private String slackWebHook2;
 
     public NotificationsProcessor(EventApiClient eventApiClient,
                                   InsightsApiGraphqlClient insightsApiClient,
                                   AnalyticsService analyticsService,
                                   NotificationsAnalyticsConfig notificationsAnalyticsConfig,
-                                  List<NotificationService> notificationServices) {
+                                  EmailNotificationService emailNotificationService,
+                                  SlackMessageFormatter slackMessageFormatter,
+                                  SlackSender slackSender) {
 
         this.eventApiClient = eventApiClient;
         this.insightsApiClient = insightsApiClient;
         this.analyticsService = analyticsService;
         this.notificationsAnalyticsConfig = notificationsAnalyticsConfig;
-        this.notificationServices = notificationServices;
+        this.emailNotificationService = emailNotificationService;
+        this.slackMessageFormatter = slackMessageFormatter;
+        this.slackSender = slackSender;
     }
 
     @Scheduled(fixedRate = 60000, initialDelay = 1000)
     public void run() {
-        if (latestUpdatedDate == null) {
-            initUpdateDate();
+        processFeed(eventApiFeed);
+        if (eventApiFeed2 != null) {
+            processFeed(eventApiFeed2);
+        }
+    }
+
+    private void processFeed(String feed) {
+        OffsetDateTime feedLatest = latestUpdatedDate.get(feed);
+        if (feedLatest == null) {
+            initUpdateDate(feed);
             return;
         }
         try {
-            List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, eventApiFeed, 100);
+            // modify parameters here for the second slack receiver if needed
+            LOG.info("Requesting latest events for feed {} types {}", feed, acceptableTypes);
+            List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, feed, 100);
+
+
+            List<NotificationService> feedServices = servicesForFeed(feed);
 
             for (EventApiEventDto event : events) {
-                if (event.getUpdatedAt().isBefore(latestUpdatedDate)
-                        || event.getUpdatedAt().isEqual(latestUpdatedDate)) {
+                if (feedLatest.isAfter(event.getUpdatedAt())
+                        || feedLatest.isEqual(event.getUpdatedAt())) {
+                    LOG.info("No new events for feed {}. Latest processed: {}, current event: {}", feed, feedLatest, event.getUpdatedAt());
                     break;
                 }
 
-                for (NotificationService notificationService : notificationServices) {
+                for (NotificationService notificationService : feedServices) {
                     try {
                         if (notificationService.isApplicable(event)) {
                             Geometry geometry = convertGeometry(event.getGeometries());
@@ -88,7 +122,6 @@ public class NotificationsProcessor {
                                 LOG.error("Failed to obtain analytics for notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
                             }
                             notificationService.process(event, urbanPopulationProperties, analytics);
-                            latestUpdatedDate = event.getUpdatedAt();
                         }
                     } catch (RestClientException e) {
                         LOG.error("Notification service {} failed for event {}. {}",
@@ -100,6 +133,10 @@ public class NotificationsProcessor {
                                 event.getEventId(), e.getMessage(), e);
                     }
                 }
+
+                // update last processed timestamp even if event is not applicable
+                feedLatest = event.getUpdatedAt();
+                latestUpdatedDate.put(feed, feedLatest);
             }
         } catch (RestClientException e) {
             LOG.warn("Received en error while obtaining events for notification: {}", e.getMessage());
@@ -108,11 +145,28 @@ public class NotificationsProcessor {
         }
     }
 
-    private void initUpdateDate() {
-        List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, eventApiFeed, 1);
+    private List<NotificationService> servicesForFeed(String feed) {
+        List<NotificationService> result = new ArrayList<>();
+
+        if (feed.equals(eventApiFeed)) {
+            result.add(emailNotificationService);
+            // first slack receiver uses default parameters
+            result.add(new SlackNotificationService(slackMessageFormatter, slackSender, eventApiFeed, slackWebHook));
+        }
+
+        if (feed.equals(eventApiFeed2)) {
+            // customize formatter or request parameters here for the second slack receiver if needed
+            result.add(new SlackNotificationService(slackMessageFormatter, slackSender, eventApiFeed2, slackWebHook2));
+        }
+
+        return result;
+    }
+
+    private void initUpdateDate(String feed) {
+        List<EventApiEventDto> events = eventApiClient.getLatestEvents(acceptableTypes, feed, 1);
         if (events != null && events.size() > 0) {
             EventApiEventDto latestEvent = events.get(0);
-            latestUpdatedDate = latestEvent.getUpdatedAt();
+            latestUpdatedDate.put(feed, latestEvent.getUpdatedAt());
         }
     }
 
