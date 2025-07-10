@@ -23,6 +23,7 @@ public class EventApiEventDto {
     private FeatureCollection geometries;
     private List<FeedEpisode> episodes = new ArrayList<>();
     private Map<String, Object> eventDetails = new HashMap<>();
+    private Map<String, Object> severityData = new HashMap<>();
     private List<String> urls;
     private String location;
     private List<Double> bbox = new ArrayList<>();

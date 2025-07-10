@@ -4,6 +4,7 @@ import io.kontur.disasterninja.dto.EventDto;
 import io.kontur.disasterninja.dto.EventListDto;
 import io.kontur.disasterninja.dto.EventType;
 import io.kontur.disasterninja.dto.Severity;
+import io.kontur.disasterninja.dto.EventEpisodeListDto;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
 import io.kontur.disasterninja.service.converter.EventDtoConverter;
@@ -134,6 +135,63 @@ public class EventApiConvertersTest {
         event.setEpisodeCount(2);
         dto = EventDtoConverter.convert(event);
         assertEquals(dto.getEpisodeCount(), 2);
+    }
+
+    @Test
+    public void eventDtoSeverityDataTest() {
+        EventApiEventDto event = testEvent();
+        event.setSeverityData(new HashMap<>());
+        event.getSeverityData().put("magnitude", 5.6);
+        event.getSeverityData().put("categorySaffirSimpson", "3");
+
+        EventDto dto = EventDtoConverter.convert(event);
+        assertEquals(5.6, dto.getMagnitude());
+        assertEquals("3", dto.getCategory());
+
+        FeedEpisode episode = event.getEpisodes().get(0);
+        episode.setSeverityData(new HashMap<>());
+        episode.getSeverityData().put("magnitude", 4.5);
+        episode.getSeverityData().put("categorySaffirSimpson", "2");
+
+        EventEpisodeListDto episodeDto = EventDtoConverter.convertEventEpisode(episode);
+        assertEquals(4.5, episodeDto.getMagnitude());
+        assertEquals("2", episodeDto.getCategory());
+    }
+
+    @Test
+    public void eventDtoSeverityDataEdgeCasesTest() {
+        EventApiEventDto event = testEvent();
+
+        EventDto dto = EventDtoConverter.convert(event);
+        assertNull(dto.getMagnitude());
+        assertNull(dto.getCategory());
+
+        FeedEpisode episode = event.getEpisodes().get(0);
+        EventEpisodeListDto episodeDto = EventDtoConverter.convertEventEpisode(episode);
+        assertNull(episodeDto.getMagnitude());
+        assertNull(episodeDto.getCategory());
+
+        event.setSeverityData(new HashMap<>());
+        dto = EventDtoConverter.convert(event);
+        assertNull(dto.getMagnitude());
+        assertNull(dto.getCategory());
+
+        episode.setSeverityData(new HashMap<>());
+        episodeDto = EventDtoConverter.convertEventEpisode(episode);
+        assertNull(episodeDto.getMagnitude());
+        assertNull(episodeDto.getCategory());
+
+        event.getSeverityData().put("magnitude", null);
+        event.getSeverityData().put("categorySaffirSimpson", null);
+        dto = EventDtoConverter.convert(event);
+        assertEquals(0.0, dto.getMagnitude());
+        assertEquals("", dto.getCategory());
+
+        episode.getSeverityData().put("magnitude", null);
+        episode.getSeverityData().put("categorySaffirSimpson", null);
+        episodeDto = EventDtoConverter.convertEventEpisode(episode);
+        assertEquals(0.0, episodeDto.getMagnitude());
+        assertEquals("", episodeDto.getCategory());
     }
 
     @Test

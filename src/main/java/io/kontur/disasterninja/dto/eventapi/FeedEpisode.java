@@ -24,6 +24,7 @@ public class FeedEpisode {
     private OffsetDateTime sourceUpdatedAt;
     private Set<UUID> observations = new HashSet<>();
     private Map<String, Object> episodeDetails;
+    private Map<String, Object> severityData = new HashMap<>();
     private FeatureCollection geometries;
     private List<String> urls;
 }

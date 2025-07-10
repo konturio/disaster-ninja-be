@@ -45,6 +45,9 @@ public class EventDtoConverter {
         dto.setEventType(eventType);
         dto.setSeverity(event.getSeverity());
 
+        dto.setMagnitude(extractMagnitude(event));
+        dto.setCategory(extractCategory(event));
+
         if (event.getEventDetails() != null) {
             Map<String, Object> eventDetails = event.getEventDetails();
             if (eventDetails.containsKey("populatedAreaKm2")) {
@@ -75,6 +78,8 @@ public class EventDtoConverter {
                 .name(episode.getName())
                 .externalUrls(episode.getUrls())
                 .severity(episode.getSeverity())
+                .magnitude(extractMagnitude(episode))
+                .category(extractCategory(episode))
                 .location(episode.getLocation())
                 .startedAt(episode.getStartedAt())
                 .endedAt(episode.getEndedAt())
@@ -82,6 +87,30 @@ public class EventDtoConverter {
                 .geojson(episode.getGeometries())
                 .build();
         return result;
+    }
+
+    private static Double extractMagnitude(EventApiEventDto event) {
+        return event.getSeverityData() != null && event.getSeverityData().containsKey("magnitude")
+                ? convertDouble(event.getSeverityData().get("magnitude"))
+                : null;
+    }
+
+    private static Double extractMagnitude(FeedEpisode episode) {
+        return episode.getSeverityData() != null && episode.getSeverityData().containsKey("magnitude")
+                ? convertDouble(episode.getSeverityData().get("magnitude"))
+                : null;
+    }
+
+    private static String extractCategory(EventApiEventDto event) {
+        return event.getSeverityData() != null && event.getSeverityData().containsKey("categorySaffirSimpson")
+                ? convertCategory(event.getSeverityData().get("categorySaffirSimpson"))
+                : null;
+    }
+
+    private static String extractCategory(FeedEpisode episode) {
+        return episode.getSeverityData() != null && episode.getSeverityData().containsKey("categorySaffirSimpson")
+                ? convertCategory(episode.getSeverityData().get("categorySaffirSimpson"))
+                : null;
     }
 
     private static FeatureCollection uniteGeometry(EventApiEventDto event) {
