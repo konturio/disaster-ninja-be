@@ -84,7 +84,7 @@ public class NotificationsProcessor {
     @Scheduled(fixedRate = 60000, initialDelay = 1000)
     public void run() {
         processFeed(eventApiFeed);
-        if (eventApiFeed2 != null) {
+        if (eventApiFeed2 != null && !"none".equalsIgnoreCase(eventApiFeed2)) {
             processFeed(eventApiFeed2);
         }
     }
