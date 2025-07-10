@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.domain.Layer;
 import io.kontur.disasterninja.domain.Legend;
+import io.kontur.disasterninja.domain.enums.LayerStepShape;
 import io.kontur.disasterninja.dto.AppLayerUpdateDto;
 import io.kontur.disasterninja.dto.LayersApiApplicationDto;
 import io.kontur.disasterninja.dto.layer.LayerCreateDto;
@@ -69,6 +70,20 @@ public class LayersApiServiceTest {
         //then
         verify(layersApiClient, times(1)).getCollection(id, null);
         assertLayer(layer);
+    }
+
+    @Test
+    public void getLayerHexagonStepShapeTest() throws JsonProcessingException {
+        //given
+        when(layersApiClient.getCollection(any(), any())).thenReturn(collectionHexagon());
+
+        //when
+        Layer layer = layersApiService.getLayer(null, id, null);
+
+        //then
+        verify(layersApiClient, times(1)).getCollection(id, null);
+        assertNotNull(layer.getLegend());
+        assertEquals(LayerStepShape.HEXAGON, layer.getLegend().getSteps().get(0).getStepShape());
     }
 
     @Test
@@ -197,6 +212,24 @@ public class LayersApiServiceTest {
                 "{\"paramName\":\"param name\",\"paramValue\":\"asd\",\"axis\":null,\"axisValue\":null," +
                 "\"stepName\":\"step name2\",\"stepShape\":\"hex\",\"style\":{\"prop\":\"value\"}," +
                 "\"sourceLayer\":\"source-layer\",\"stepIconFill\":\"\",\"stepIconStroke\":\"\"}]," +
+                "\"tooltip\": {\"type\": \"markdown\",\"paramName\": \"tooltipContent\"},\"colors\": " +
+                "[{\"id\":\"A1\",\"color\":\"rgb(232,232,157)\"}],\"axes\":{\"x\":{\"label\": \"xLabel\"}," +
+                "\"y\":{\"label\": \"yLabel\"}}}", ObjectNode.class));
+
+        return collection;
+    }
+
+    private Collection collectionHexagon() throws JsonProcessingException {
+        Collection collection = new Collection();
+        collection.setId(id);
+        collection.setTitle(title);
+        collection.setLegendStyle(new ObjectMapper().readValue("{\"name\":\"legendName\",\"type\":\"simple\"," +
+                "\"linkProperty\":null,\"steps\":[{\"paramName\":\"param name\",\"paramValue\":\"qwe\",\"axis\":null," +
+                "\"axisValue\":null,\"stepName\":\"step name\",\"stepShape\":\"hexagon\",\"style\":{\"prop\":\"value\"}," +
+                "\"sourceLayer\":\"users\",\"stepIconFill\":\"fill\",\"stepIconStroke\":\"stroke\"}," +
+                "{\"paramName\":\"param name\",\"paramValue\":\"asd\",\"axis\":null,\"axisValue\":null," +
+                "\"stepName\":\"step name2\",\"stepShape\":\"hexagon\",\"style\":{\"prop\":\"value\"}," +
+                "\"sourceLayer\":\"users\",\"stepIconFill\":\"\",\"stepIconStroke\":\"\"}]," +
                 "\"tooltip\": {\"type\": \"markdown\",\"paramName\": \"tooltipContent\"},\"colors\": " +
                 "[{\"id\":\"A1\",\"color\":\"rgb(232,232,157)\"}],\"axes\":{\"x\":{\"label\": \"xLabel\"}," +
                 "\"y\":{\"label\": \"yLabel\"}}}", ObjectNode.class));

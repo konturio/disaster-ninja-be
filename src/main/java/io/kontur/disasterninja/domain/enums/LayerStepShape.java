@@ -9,6 +9,7 @@ public enum LayerStepShape {
     SQUARE("square"),
     CIRCLE("circle"),
     HEX("hex"),
+    HEXAGON("hexagon"),
     ICON("icon");
 
     private final String value;
