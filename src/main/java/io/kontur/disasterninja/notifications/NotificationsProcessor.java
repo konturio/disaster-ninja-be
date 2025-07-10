@@ -9,6 +9,7 @@ import io.kontur.disasterninja.notifications.email.EmailNotificationService;
 import io.kontur.disasterninja.notifications.slack.SlackMessageFormatter;
 import io.kontur.disasterninja.notifications.slack.SlackSender;
 import io.kontur.disasterninja.notifications.slack.SlackNotificationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,7 +68,7 @@ public class NotificationsProcessor {
                                   InsightsApiGraphqlClient insightsApiClient,
                                   AnalyticsService analyticsService,
                                   NotificationsAnalyticsConfig notificationsAnalyticsConfig,
-                                  EmailNotificationService emailNotificationService,
+                                  @Autowired(required = false) EmailNotificationService emailNotificationService,
                                   SlackMessageFormatter slackMessageFormatter,
                                   SlackSender slackSender) {
 
@@ -83,7 +84,7 @@ public class NotificationsProcessor {
     @Scheduled(fixedRate = 60000, initialDelay = 1000)
     public void run() {
         processFeed(eventApiFeed);
-        if (eventApiFeed2 != null) {
+        if (eventApiFeed2 != null && !"".equalsIgnoreCase(eventApiFeed2) && !"none".equalsIgnoreCase(eventApiFeed2)) {
             processFeed(eventApiFeed2);
         }
     }
@@ -149,7 +150,9 @@ public class NotificationsProcessor {
         List<NotificationService> result = new ArrayList<>();
 
         if (feed.equals(eventApiFeed)) {
-            result.add(emailNotificationService);
+            if (emailNotificationService != null) {
+                result.add(emailNotificationService);
+            }
             // first slack receiver uses default parameters
             result.add(new SlackNotificationService(slackMessageFormatter, slackSender, eventApiFeed, slackWebHook));
         }
