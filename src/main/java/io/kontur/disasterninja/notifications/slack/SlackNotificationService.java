@@ -11,7 +11,7 @@ public class SlackNotificationService extends NotificationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SlackNotificationService.class);
 
-    private final SlackMessageFormatter slackMessageFormatter;
+    protected final SlackMessageFormatter slackMessageFormatter;
     private final SlackSender slackSender;
     private final String eventApiFeed;
     private final String slackWebHookUrl;
@@ -31,13 +31,17 @@ public class SlackNotificationService extends NotificationService {
         LOG.info("Found new event, sending slack notification. Event ID = '{}', name = '{}'", event.getEventId(), event.getName());
 
         try {
-            String message = slackMessageFormatter.format(event, urbanPopulationProperties, analytics);
+            String message = formatMessage(event, urbanPopulationProperties, analytics);
             // customize formatter if needed for a specific Slack receiver
             slackSender.send(message, slackWebHookUrl);
             LOG.info("Successfully sent slack notification from feed {}. Event ID = '{}', name = '{}'", eventApiFeed, event.getEventId(), event.getName());
         } catch (Exception e) {
             LOG.error("Failed to process slack notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
         }
+    }
+
+    protected String formatMessage(EventApiEventDto event, Map<String, Object> urbanPopulationProperties, Map<String, Double> analytics) {
+        return slackMessageFormatter.format(event, urbanPopulationProperties, analytics);
     }
 
     @Override

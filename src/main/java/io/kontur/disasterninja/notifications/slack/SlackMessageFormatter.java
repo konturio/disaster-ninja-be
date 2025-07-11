@@ -15,6 +15,7 @@ import static io.kontur.disasterninja.util.FormatUtil.formatNumber;
 public class SlackMessageFormatter extends MessageFormatter {
 
     private static final String BODY = "{\"text\":\"><%s|%s>%s\", \"unfurl_links\":true, \"unfurl_media\": true}";
+    private static final String BODY_WITHOUT_LINK = "{\"text\":\"%s%s\", \"unfurl_links\":true, \"unfurl_media\": true}";
     private static final String gdacsReportLinkPattern = "https://www.gdacs.org/report.aspx?eventtype=%s&eventid=%s";
 
     @Value("${notifications.alertUrlPattern:}")
@@ -22,6 +23,11 @@ public class SlackMessageFormatter extends MessageFormatter {
 
     public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
                          Map<String, Double> analytics) {
+        return format(event, urbanPopulationProperties, analytics, true);
+    }
+
+    public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
+                         Map<String, Double> analytics, boolean includeLink) {
         FeedEpisode latestEpisode = getLatestEpisode(event);
         Map<String, Object> episodeDetails = latestEpisode.getEpisodeDetails();
         Map<String, Object> eventDetails = event.getEventDetails();
@@ -39,7 +45,10 @@ public class SlackMessageFormatter extends MessageFormatter {
         String status = getEventStatus(event);
         String alertUrl = createAlertLink(event, latestEpisode);
         String title = colorCode + status + sanitizeEventName(event.getName());
-        return String.format(BODY, alertUrl, title, description);
+        if (includeLink) {
+            return String.format(BODY, alertUrl, title, description);
+        }
+        return String.format(BODY_WITHOUT_LINK, title, description);
     }
 
     static String sanitizeEventName(String name) {
