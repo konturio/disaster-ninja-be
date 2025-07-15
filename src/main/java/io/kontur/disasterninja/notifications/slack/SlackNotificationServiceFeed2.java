@@ -19,7 +19,7 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
     @Override
     protected String formatMessage(EventApiEventDto event, Map<String, Object> urbanPopulationProperties, Map<String, Double> analytics) {
-        return slackMessageFormatter.format(event, urbanPopulationProperties, analytics, false);
+        return slackMessageFormatter.format(event, urbanPopulationProperties, analytics, false, true);
     }
 
     @Override

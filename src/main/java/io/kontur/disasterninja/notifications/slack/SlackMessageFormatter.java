@@ -28,11 +28,19 @@ public class SlackMessageFormatter extends MessageFormatter {
 
     public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
                          Map<String, Double> analytics, boolean includeLink) {
+        return format(event, urbanPopulationProperties, analytics, includeLink, false);
+    }
+
+    public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
+                         Map<String, Double> analytics, boolean includeLink, boolean includeEventId) {
         FeedEpisode latestEpisode = getLatestEpisode(event);
         Map<String, Object> episodeDetails = latestEpisode.getEpisodeDetails();
         Map<String, Object> eventDetails = event.getEventDetails();
 
         StringBuilder description = new StringBuilder();
+        if (includeEventId) {
+            description.append("\n>event_id: ").append(event.getEventId());
+        }
         description.append(convertNotificationDescription(latestEpisode));
         description.append(convertUrbanStatistic(urbanPopulationProperties));
         description.append(convertPopulationStatistic(episodeDetails));
