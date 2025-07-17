@@ -16,6 +16,7 @@ public class SlackMessageFormatter extends MessageFormatter {
 
     private static final String BODY = "{\"text\":\"><%s|%s>%s\", \"unfurl_links\":true, \"unfurl_media\": true}";
     private static final String BODY_WITHOUT_LINK = "{\"text\":\"%s%s\", \"unfurl_links\":true, \"unfurl_media\": true}";
+    private static final String SIMPLE_BODY = "{\"text\":\"%s\", \"unfurl_links\":true, \"unfurl_media\": true}";
     private static final String gdacsReportLinkPattern = "https://www.gdacs.org/report.aspx?eventtype=%s&eventid=%s";
 
     @Value("${notifications.alertUrlPattern:}")
@@ -34,6 +35,21 @@ public class SlackMessageFormatter extends MessageFormatter {
     public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
                          Map<String, Double> analytics, boolean includeLink, boolean includeEventId) {
         FeedEpisode latestEpisode = getLatestEpisode(event);
+        String description = buildDescription(event, urbanPopulationProperties, analytics, includeEventId);
+
+        String colorCode = getMessageColorCode(event, latestEpisode, false);
+        String status = getEventStatus(event);
+        String alertUrl = createAlertLink(event, latestEpisode);
+        String title = colorCode + status + sanitizeEventName(event.getName());
+        if (includeLink) {
+            return String.format(BODY, alertUrl, title, description);
+        }
+        return String.format(BODY_WITHOUT_LINK, title, description);
+    }
+
+    public String buildDescription(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
+                                   Map<String, Double> analytics, boolean includeEventId) {
+        FeedEpisode latestEpisode = getLatestEpisode(event);
         Map<String, Object> episodeDetails = latestEpisode.getEpisodeDetails();
         Map<String, Object> eventDetails = event.getEventDetails();
 
@@ -49,14 +65,11 @@ public class SlackMessageFormatter extends MessageFormatter {
         description.append(convertFireStatistic(episodeDetails, eventDetails, event));
         description.append(convertOsmQuality(analytics));
 
-        String colorCode = getMessageColorCode(event, latestEpisode, false);
-        String status = getEventStatus(event);
-        String alertUrl = createAlertLink(event, latestEpisode);
-        String title = colorCode + status + sanitizeEventName(event.getName());
-        if (includeLink) {
-            return String.format(BODY, alertUrl, title, description);
-        }
-        return String.format(BODY_WITHOUT_LINK, title, description);
+        return description.toString();
+    }
+
+    public String wrapPlain(String text) {
+        return String.format(SIMPLE_BODY, text);
     }
 
     static String sanitizeEventName(String name) {
