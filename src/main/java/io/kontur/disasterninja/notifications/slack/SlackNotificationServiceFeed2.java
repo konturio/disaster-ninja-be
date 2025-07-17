@@ -26,8 +26,18 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
     @Override
     protected String formatMessage(EventApiEventDto event, Map<String, Object> urbanPopulationProperties, Map<String, Double> analytics) {
         String header = buildHeader(event);
-        String description = slackMessageFormatter.buildDescription(event, urbanPopulationProperties, analytics, true);
-        String text = header + description;
+        String eventIdLine = "event_id: " + event.getEventId();
+
+        String description = slackMessageFormatter.buildDescription(event, urbanPopulationProperties, analytics, false);
+        description = slackMessageFormatter.toPlain(description);
+
+        String color = slackMessageFormatter.getColorCode(event, true);
+        if (description.startsWith("\n")) {
+            description = description.substring(1);
+        }
+        description = color + description;
+
+        String text = header + "\n" + eventIdLine + "\n" + description;
         return slackMessageFormatter.wrapPlain(text);
     }
 

@@ -72,6 +72,16 @@ public class SlackMessageFormatter extends MessageFormatter {
         return String.format(SIMPLE_BODY, text);
     }
 
+    public String getColorCode(EventApiEventDto event, boolean unicode) {
+        FeedEpisode latest = getLatestEpisode(event);
+        return getMessageColorCode(event, latest, unicode);
+    }
+
+    String toPlain(String text) {
+        String noQuotes = text.replaceAll("(?m)^>\\s*", "");
+        return noQuotes.replaceAll(":[^\\s:]+:\\s*", "");
+    }
+
     static String sanitizeEventName(String name) {
         if (StringUtils.isBlank(name)) {
             return name;
