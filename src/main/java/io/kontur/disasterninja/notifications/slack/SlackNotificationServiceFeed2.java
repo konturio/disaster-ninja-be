@@ -54,12 +54,12 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
         }
 
         if (event.getStartedAt() != null) {
-            header.append("Event Time: ")
+            header.append("Event Start Date: ")
                   .append(event.getStartedAt().withOffsetSameInstant(UTC).format(DATE_FORMATTER))
                   .append("\n");
         }
 
-        header.append("Update Status: ")
+        header.append("Status: ")
               .append(event.getVersion() == 1 ? "New" : "Update");
 
         return header.toString();
