@@ -28,14 +28,18 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
         String header = buildHeader(event);
         String eventIdLine = "event_id: " + event.getEventId();
 
-        String description = slackMessageFormatter.buildDescription(event, urbanPopulationProperties, analytics, false);
-        description = slackMessageFormatter.removeEmoji(description);
+        String description = slackMessageFormatter.buildDescription(event, urbanPopulationProperties, analytics,
+                false, false);
 
-        String color = slackMessageFormatter.getColorCode(event, true);
         if (description.startsWith("\n")) {
             description = description.substring(1);
         }
-        description = color + description;
+        String color = slackMessageFormatter.getColorCode(event, true);
+        if (description.startsWith(">")) {
+            description = "> " + color + description.substring(1);
+        } else {
+            description = color + description;
+        }
 
         String text = header + "\n" + eventIdLine + "\n" + description;
         return slackMessageFormatter.wrapPlain(text);

@@ -29,13 +29,20 @@ public class SlackMessageFormatter extends MessageFormatter {
 
     public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
                          Map<String, Double> analytics, boolean includeLink) {
-        return format(event, urbanPopulationProperties, analytics, includeLink, false);
+        return format(event, urbanPopulationProperties, analytics, includeLink, false, true);
     }
 
     public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
-                         Map<String, Double> analytics, boolean includeLink, boolean includeEventId) {
+                         Map<String, Double> analytics, boolean includeLink,
+                         boolean includeEventId) {
+        return format(event, urbanPopulationProperties, analytics, includeLink, includeEventId, true);
+    }
+
+    public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
+                         Map<String, Double> analytics, boolean includeLink,
+                         boolean includeEventId, boolean includeEmoji) {
         FeedEpisode latestEpisode = getLatestEpisode(event);
-        String description = buildDescription(event, urbanPopulationProperties, analytics, includeEventId);
+        String description = buildDescription(event, urbanPopulationProperties, analytics, includeEventId, includeEmoji);
 
         String colorCode = getMessageColorCode(event, latestEpisode, false);
         String status = getEventStatus(event);
@@ -48,7 +55,8 @@ public class SlackMessageFormatter extends MessageFormatter {
     }
 
     public String buildDescription(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
-                                   Map<String, Double> analytics, boolean includeEventId) {
+                                   Map<String, Double> analytics, boolean includeEventId,
+                                   boolean includeEmoji) {
         FeedEpisode latestEpisode = getLatestEpisode(event);
         Map<String, Object> episodeDetails = latestEpisode.getEpisodeDetails();
         Map<String, Object> eventDetails = event.getEventDetails();
@@ -58,12 +66,12 @@ public class SlackMessageFormatter extends MessageFormatter {
             description.append("\n>event_id: ").append(event.getEventId());
         }
         description.append(convertNotificationDescription(latestEpisode));
-        description.append(convertUrbanStatistic(urbanPopulationProperties));
-        description.append(convertPopulationStatistic(episodeDetails));
-        description.append(convertIndustrialStatistic(episodeDetails, eventDetails));
-        description.append(convertForestStatistic(episodeDetails, eventDetails));
-        description.append(convertFireStatistic(episodeDetails, eventDetails, event));
-        description.append(convertOsmQuality(analytics));
+        description.append(convertUrbanStatistic(urbanPopulationProperties, includeEmoji));
+        description.append(convertPopulationStatistic(episodeDetails, includeEmoji));
+        description.append(convertIndustrialStatistic(episodeDetails, eventDetails, includeEmoji));
+        description.append(convertForestStatistic(episodeDetails, eventDetails, includeEmoji));
+        description.append(convertFireStatistic(episodeDetails, eventDetails, event, includeEmoji));
+        description.append(convertOsmQuality(analytics, includeEmoji));
 
         return description.toString();
     }
@@ -96,11 +104,12 @@ public class SlackMessageFormatter extends MessageFormatter {
         return "\\n>" + description;
     }
 
-    private String convertUrbanStatistic(Map<String, Object> urbanPopulationProperties) {
+    private String convertUrbanStatistic(Map<String, Object> urbanPopulationProperties, boolean emoji) {
         if (urbanPopulationProperties == null) {
             return "";
         }
-        String pattern = "\\n>:cityscape: Urban core: %s people on %s km².";
+        String pattern = emoji ? "\\n>:cityscape: Urban core: %s people on %s km²." :
+                "\\n>Urban core: %s people on %s km².";
         String population = formatNumber(urbanPopulationProperties.get("population"));
         String area = formatNumber(urbanPopulationProperties.get("areaKm2"));
         if ("0".equals(population) && "0".equals(area)) {
@@ -109,28 +118,34 @@ public class SlackMessageFormatter extends MessageFormatter {
         return String.format(pattern, population, area);
     }
 
-    private String convertPopulationStatistic(Map<String, Object> episodeDetails) {
+    private String convertPopulationStatistic(Map<String, Object> episodeDetails, boolean emoji) {
         String population = formatNumber(episodeDetails.get("population"));
         String area = formatNumber(episodeDetails.get("populatedAreaKm2"));
         if ("0".equals(population) && "0".equals(area)) {
             return "";
         }
         if (!"0".equals(population) && "0".equals(area)) {
-            return String.format("\\n>:family-div: Total population: %s people.", population);
+            return String.format(emoji ? "\\n>:family-div: Total population: %s people." :
+                    "\\n>Total population: %s people.", population);
         }
-        return String.format("\\n>:family-div: Total population: %s people on %s km².", population, area);
+        return String.format(emoji ? "\\n>:family-div: Total population: %s people on %s km²." :
+                "\\n>Total population: %s people on %s km².", population, area);
     }
 
-    private String convertIndustrialStatistic(Map<String, Object> episodeDetails, Map<String, Object> eventDetails) {
-        String patternEpisode = "\\n>:factory: Industrial area: %s km²";
+    private String convertIndustrialStatistic(Map<String, Object> episodeDetails, Map<String, Object> eventDetails,
+                                              boolean emoji) {
+        String patternEpisode = emoji ? "\\n>:factory: Industrial area: %s km²" :
+                "\\n>Industrial area: %s km²";
         String patternEvent = " (currently), %s km² (from beginning)";
         String episodeValue = formatNumber(episodeDetails.get("industrialAreaKm2"));
         String eventValue = formatNumber(eventDetails.get("industrialAreaKm2"));
         return convertStatistic(patternEpisode, patternEvent, episodeValue, eventValue);
     }
 
-    private String convertForestStatistic(Map<String, Object> episodeDetails, Map<String, Object> eventDetails) {
-        String patternEpisode = "\\n>:deciduous_tree: Forest area: %s km²";
+    private String convertForestStatistic(Map<String, Object> episodeDetails, Map<String, Object> eventDetails,
+                                          boolean emoji) {
+        String patternEpisode = emoji ? "\\n>:deciduous_tree: Forest area: %s km²" :
+                "\\n>Forest area: %s km²";
         String patternEvent = " (currently), %s km² (from beginning)";
         String episodeValue = formatNumber(episodeDetails.get("forestAreaKm2"));
         String eventValue = formatNumber(eventDetails.get("forestAreaKm2"));
@@ -138,23 +153,24 @@ public class SlackMessageFormatter extends MessageFormatter {
     }
 
     private String convertFireStatistic(Map<String, Object> episodeDetails, Map<String, Object> eventDetails,
-                                        EventApiEventDto event) {
+                                        EventApiEventDto event, boolean emoji) {
         if (!"WILDFIRE".equals(event.getType())) {
             return "";
         }
-        String patternEpisode = "\\n>:sparkles: Wildfire days in last year: %s";
+        String patternEpisode = emoji ? "\\n>:sparkles: Wildfire days in last year: %s" :
+                "\\n>Wildfire days in last year: %s";
         String patternEvent = " (episode), %s (event)";
         String episodeValue = formatNumber(episodeDetails.get("hotspotDaysPerYearMax"));
         String eventValue = formatNumber(eventDetails.get("hotspotDaysPerYearMax"));
         return convertStatistic(patternEpisode, patternEvent, episodeValue, eventValue);
     }
 
-    private String convertOsmQuality(Map<String, Double> analytics) {
+    private String convertOsmQuality(Map<String, Double> analytics, boolean emoji) {
         StringBuilder result = new StringBuilder();
 
-        result.append(convertOsmGapsValues(analytics));
-        result.append(convertNoBuildingsValues(analytics));
-        result.append(convertNoRoadsValue(analytics));
+        result.append(convertOsmGapsValues(analytics, emoji));
+        result.append(convertNoBuildingsValues(analytics, emoji));
+        result.append(convertNoRoadsValue(analytics, emoji));
 
         if (StringUtils.isNotBlank(result)) {
             return "\\n>OpenStreetMap gaps:" + result;
@@ -162,8 +178,9 @@ public class SlackMessageFormatter extends MessageFormatter {
         return "";
     }
 
-    private String convertOsmGapsValues(Map<String, Double> analytics) {
-        String osmObjects = "\\n>:world_map: %s km² (%s%%) of populated area needs a map for %s people.";
+    private String convertOsmGapsValues(Map<String, Double> analytics, boolean emoji) {
+        String osmObjects = emoji ? "\\n>:world_map: %s km² (%s%%) of populated area needs a map for %s people." :
+                "\\n>%s km² (%s%%) of populated area needs a map for %s people.";
         String osmGapsArea = formatNumber(analytics.get("osmGapsArea"));
         String osmGapsPercentage = formatNumber(analytics.get("osmGapsPercentage"));
         String osmGapsPopulation = formatNumber(analytics.get("osmGapsPopulation"));
@@ -173,8 +190,9 @@ public class SlackMessageFormatter extends MessageFormatter {
         return "";
     }
 
-    private String convertNoBuildingsValues(Map<String, Double> analytics) {
-        String osmBuildings = "\\n>:house_buildings: Buildings map gaps: %s km² for %s people.";
+    private String convertNoBuildingsValues(Map<String, Double> analytics, boolean emoji) {
+        String osmBuildings = emoji ? "\\n>:house_buildings: Buildings map gaps: %s km² for %s people." :
+                "\\n>Buildings map gaps: %s km² for %s people.";
         String noBuildingsArea = formatNumber(analytics.get("noBuildingsArea"));
         String noBuildingsPopulation = formatNumber(analytics.get("noBuildingsPopulation"));
         if (!"0".equals(noBuildingsArea) && !"0".equals(noBuildingsPopulation)) {
@@ -183,8 +201,9 @@ public class SlackMessageFormatter extends MessageFormatter {
         return "";
     }
 
-    private String convertNoRoadsValue(Map<String, Double> analytics) {
-        String osmRoads = "\\n>:motorway: Roads map gaps: %s km² for %s people.";
+    private String convertNoRoadsValue(Map<String, Double> analytics, boolean emoji) {
+        String osmRoads = emoji ? "\\n>:motorway: Roads map gaps: %s km² for %s people." :
+                "\\n>Roads map gaps: %s km² for %s people.";
         String noRoadsArea = formatNumber(analytics.get("noRoadsArea"));
         String noRoadsPopulation = formatNumber(analytics.get("noRoadsPopulation"));
         if (!"0".equals(noRoadsArea) && !"0".equals(noRoadsPopulation)) {
