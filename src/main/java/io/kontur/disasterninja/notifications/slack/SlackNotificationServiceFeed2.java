@@ -29,7 +29,7 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
         String eventIdLine = "event_id: " + event.getEventId();
 
         String description = slackMessageFormatter.buildDescription(event, urbanPopulationProperties, analytics, false);
-        description = slackMessageFormatter.toPlain(description);
+        description = slackMessageFormatter.removeEmoji(description);
 
         String color = slackMessageFormatter.getColorCode(event, true);
         if (description.startsWith("\n")) {
@@ -47,10 +47,7 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
               .append(StringUtils.capitalize(String.valueOf(event.getType()).toLowerCase()))
               .append("\n");
 
-        String category = extractCategory(event);
-        if (StringUtils.isNotBlank(category)) {
-            header.append("Category: ").append(category).append("\n");
-        }
+        // TODO: get severityData and add Category line
 
         if (StringUtils.isNotBlank(event.getLocation())) {
             header.append("Location: ").append(event.getLocation()).append("\n");
@@ -66,17 +63,6 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
               .append(event.getVersion() == 1 ? "New" : "Update");
 
         return header.toString();
-    }
-
-    private String extractCategory(EventApiEventDto event) {
-        if (event.getSeverityData() == null) {
-            return "";
-        }
-        Object value = event.getSeverityData().get("severitytext");
-        if (value == null) {
-            value = event.getSeverityData().get("severityText");
-        }
-        return value != null ? String.valueOf(value) : "";
     }
 
     @Override

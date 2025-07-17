@@ -77,9 +77,8 @@ public class SlackMessageFormatter extends MessageFormatter {
         return getMessageColorCode(event, latest, unicode);
     }
 
-    String toPlain(String text) {
-        String noQuotes = text.replaceAll("(?m)^>\\s*", "");
-        return noQuotes.replaceAll(":[^\\s:]+:\\s*", "");
+    String removeEmoji(String text) {
+        return text.replaceAll(":[^:]+?:", "");
     }
 
     static String sanitizeEventName(String name) {
