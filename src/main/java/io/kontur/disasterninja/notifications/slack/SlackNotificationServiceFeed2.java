@@ -2,7 +2,6 @@ package io.kontur.disasterninja.notifications.slack;
 
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -26,9 +25,16 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
     @Override
     protected String formatMessage(EventApiEventDto event, Map<String, Object> urbanPopulationProperties, Map<String, Double> analytics) {
+        String header = buildHeader(event);
+        String description = slackMessageFormatter.buildDescription(event, urbanPopulationProperties, analytics, true);
+        String text = header + description;
+        return slackMessageFormatter.wrapPlain(text);
+    }
+
+    private String buildHeader(EventApiEventDto event) {
         StringBuilder header = new StringBuilder();
         header.append("Event Type: ")
-              .append(WordUtils.capitalizeFully(String.valueOf(event.getType())))
+              .append(StringUtils.capitalize(String.valueOf(event.getType()).toLowerCase()))
               .append("\n");
 
         String category = extractCategory(event);
@@ -41,19 +47,15 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
         }
 
         if (event.getStartedAt() != null) {
-            header.append("Event Time Date: ")
+            header.append("Event Time: ")
                   .append(event.getStartedAt().withOffsetSameInstant(UTC).format(DATE_FORMATTER))
                   .append("\n");
         }
 
         header.append("Update Status: ")
-              .append(event.getVersion() == 1 ? "New" : "Update")
-              .append("\n");
-        header.append("event_id: ").append(event.getEventId());
+              .append(event.getVersion() == 1 ? "New" : "Update");
 
-        String description = slackMessageFormatter.buildDescription(event, urbanPopulationProperties, analytics, false);
-        String text = header.append(description).toString();
-        return slackMessageFormatter.wrapPlain(text);
+        return header.toString();
     }
 
     private String extractCategory(EventApiEventDto event) {
@@ -72,5 +74,4 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
         return true;
     }
 
-    // use inherited getEventApiFeed()
 }
