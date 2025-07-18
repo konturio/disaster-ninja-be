@@ -8,10 +8,6 @@ import java.util.Map;
 
 import static java.time.ZoneOffset.UTC;
 
-/**
- * Slack notification service for feed2 that ignores applicability checks and
- * omits event links in the message.
- */
 public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm 'UTC'");
@@ -30,14 +26,9 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
         String color = slackMessageFormatter.getColorCode(event, true);
         String status = slackMessageFormatter.getStatus(event);
-        String firstLine = "> " + color + status + SlackMessageFormatter.sanitizeEventName(event.getName());
-
+        String title = "> " + color + status + SlackMessageFormatter.sanitizeEventName(event.getName());
         String description = slackMessageFormatter.buildDescription(event, urbanPopulationProperties, analytics, false);
-        if (description.startsWith("\n")) {
-            description = description.substring(1);
-        }
-
-        String text = header + "\n" + eventIdLine + "\n" + firstLine + "\n" + description;
+        String text = header + "\n" + eventIdLine + "\n" + title + description;
         return slackMessageFormatter.wrapPlain(text);
     }
 
