@@ -75,6 +75,14 @@ public class SlackMessageFormatter extends MessageFormatter {
         return getMessageColorCode(event, latest, unicode);
     }
 
+    /**
+     * Expose event status so other services can reuse the same logic for
+     * determining whether the event is an update or a new one.
+     */
+    public String getStatus(EventApiEventDto event) {
+        return getEventStatus(event);
+    }
+
     static String sanitizeEventName(String name) {
         if (StringUtils.isBlank(name)) {
             return name;

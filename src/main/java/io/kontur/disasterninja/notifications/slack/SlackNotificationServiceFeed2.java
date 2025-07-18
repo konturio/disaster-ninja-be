@@ -29,7 +29,7 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
         String eventIdLine = "event_id: " + event.getEventId();
 
         String color = slackMessageFormatter.getColorCode(event, true);
-        String status = event.getVersion() == 1 ? "" : "[Update] ";
+        String status = slackMessageFormatter.getStatus(event);
         String firstLine = "> " + color + status + SlackMessageFormatter.sanitizeEventName(event.getName());
 
         String description = slackMessageFormatter.buildDescription(event, urbanPopulationProperties, analytics, false);
