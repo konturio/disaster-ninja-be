@@ -9,6 +9,7 @@ import io.kontur.disasterninja.notifications.email.EmailNotificationService;
 import io.kontur.disasterninja.notifications.slack.SlackMessageFormatter;
 import io.kontur.disasterninja.notifications.slack.SlackSender;
 import io.kontur.disasterninja.notifications.slack.SlackNotificationService;
+import io.kontur.disasterninja.notifications.slack.SlackNotificationServiceFeed2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,8 +159,8 @@ public class NotificationsProcessor {
         }
 
         if (feed.equals(eventApiFeed2)) {
-            // customize formatter or request parameters here for the second slack receiver if needed
-            result.add(new SlackNotificationService(slackMessageFormatter, slackSender, eventApiFeed2, slackWebHook2));
+            // second Slack receiver sends all events without filters and without links
+            result.add(new SlackNotificationServiceFeed2(slackMessageFormatter, slackSender, eventApiFeed2, slackWebHook2));
         }
 
         return result;
