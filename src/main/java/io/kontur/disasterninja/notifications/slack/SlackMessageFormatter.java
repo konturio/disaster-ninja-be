@@ -29,20 +29,14 @@ public class SlackMessageFormatter extends MessageFormatter {
 
     public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
                          Map<String, Double> analytics, boolean includeLink) {
-        return format(event, urbanPopulationProperties, analytics, includeLink, false, true);
+        return format(event, urbanPopulationProperties, analytics, includeLink, true);
     }
 
     public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
                          Map<String, Double> analytics, boolean includeLink,
-                         boolean includeEventId) {
-        return format(event, urbanPopulationProperties, analytics, includeLink, includeEventId, true);
-    }
-
-    public String format(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
-                         Map<String, Double> analytics, boolean includeLink,
-                         boolean includeEventId, boolean includeEmoji) {
+                         boolean includeEmoji) {
         FeedEpisode latestEpisode = getLatestEpisode(event);
-        String description = buildDescription(event, urbanPopulationProperties, analytics, includeEventId, includeEmoji);
+        String description = buildDescription(event, urbanPopulationProperties, analytics, includeEmoji);
 
         String colorCode = getMessageColorCode(event, latestEpisode, false);
         String status = getEventStatus(event);
@@ -55,16 +49,12 @@ public class SlackMessageFormatter extends MessageFormatter {
     }
 
     public String buildDescription(EventApiEventDto event, Map<String, Object> urbanPopulationProperties,
-                                   Map<String, Double> analytics, boolean includeEventId,
-                                   boolean includeEmoji) {
+                                   Map<String, Double> analytics, boolean includeEmoji) {
         FeedEpisode latestEpisode = getLatestEpisode(event);
         Map<String, Object> episodeDetails = latestEpisode.getEpisodeDetails();
         Map<String, Object> eventDetails = event.getEventDetails();
 
         StringBuilder description = new StringBuilder();
-        if (includeEventId) {
-            description.append("\n>event_id: ").append(event.getEventId());
-        }
         description.append(convertNotificationDescription(latestEpisode));
         description.append(convertUrbanStatistic(urbanPopulationProperties, includeEmoji));
         description.append(convertPopulationStatistic(episodeDetails, includeEmoji));
@@ -83,10 +73,6 @@ public class SlackMessageFormatter extends MessageFormatter {
     public String getColorCode(EventApiEventDto event, boolean unicode) {
         FeedEpisode latest = getLatestEpisode(event);
         return getMessageColorCode(event, latest, unicode);
-    }
-
-    String removeEmoji(String text) {
-        return text.replaceAll(":[^:]+?:", "");
     }
 
     static String sanitizeEventName(String name) {
