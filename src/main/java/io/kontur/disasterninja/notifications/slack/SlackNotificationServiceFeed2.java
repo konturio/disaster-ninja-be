@@ -6,6 +6,8 @@ import io.kontur.disasterninja.notifications.NotificationsProcessor;
 import org.apache.commons.lang3.StringUtils;
 import org.locationtech.jts.geom.Geometry;
 import org.wololo.geojson.FeatureCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -14,6 +16,7 @@ import static java.time.ZoneOffset.UTC;
 
 public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SlackNotificationServiceFeed2.class);
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm 'UTC'");
     private final Geometry usBoundary;
 
@@ -67,11 +70,19 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
     public boolean isApplicable(EventApiEventDto event) {
         Geometry eventGeometry = convertGeometry(event.getGeometries());
 
-        if (eventGeometry == null || usBoundary == null) {
+        if (eventGeometry == null) {
+            LOG.warn("Event geometry is null for event {}", event.getName());
             return false;
         }
 
-        return usBoundary.intersects(eventGeometry);
+        if (usBoundary == null) {
+            LOG.warn("US boundary is null - all events will be filtered out");
+            return false;
+        }
+
+        boolean intersects = usBoundary.intersects(eventGeometry);
+        LOG.info("Event '{}' intersects US boundary: {}", event.getName(), intersects);
+        return intersects;
     }
 
     private Geometry convertGeometry(FeatureCollection shape) {
