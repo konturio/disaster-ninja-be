@@ -1,10 +1,16 @@
 package io.kontur.disasterninja.notifications.slack;
 
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
+import io.kontur.disasterninja.service.converter.GeometryConverter;
 import org.apache.commons.lang3.StringUtils;
+import org.locationtech.jts.geom.Geometry;
+import org.wololo.geojson.Feature;
+import org.wololo.geojson.FeatureCollection;
+import org.wololo.geojson.GeometryCollection;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.Arrays;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -12,11 +18,15 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm 'UTC'");
 
+    private final Geometry usBoundary;
+
     public SlackNotificationServiceFeed2(SlackMessageFormatter slackMessageFormatter,
                                          SlackSender slackSender,
                                          String eventApiFeed,
-                                         String slackWebHookUrl) {
+                                         String slackWebHookUrl,
+                                         Geometry usBoundary) {
         super(slackMessageFormatter, slackSender, eventApiFeed, slackWebHookUrl);
+        this.usBoundary = usBoundary;
     }
 
     @Override
@@ -58,7 +68,29 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
     @Override
     public boolean isApplicable(EventApiEventDto event) {
-        return true;
+        if (!super.isApplicable(event)) {
+            return false;
+        }
+
+        Geometry eventGeometry = convertGeometry(event.getGeometries());
+
+        if (eventGeometry == null || usBoundary == null) {
+            return false;
+        }
+
+        return usBoundary.intersects(eventGeometry);
+    }
+
+    private Geometry convertGeometry(FeatureCollection shape) {
+        if (shape == null) {
+            return null;
+        }
+        org.wololo.geojson.Geometry[] geometries = Arrays.stream(shape.getFeatures())
+                .map(Feature::getGeometry)
+                .toArray(org.wololo.geojson.Geometry[]::new);
+        org.wololo.geojson.Geometry geo = new GeometryCollection(geometries);
+        return GeometryConverter.getJtsGeometry(GeometryTransformer.geoJsonWriter.write(
+                GeometryTransformer.geoJsonReader.read(geo).union()));
     }
 
 }
