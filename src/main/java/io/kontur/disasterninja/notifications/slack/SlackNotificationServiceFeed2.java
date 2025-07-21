@@ -71,7 +71,6 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
         Geometry eventGeometry = convertGeometry(event.getGeometries());
 
         if (eventGeometry == null) {
-            LOG.warn("Event geometry is null for event {}", event.getName());
             return false;
         }
 
@@ -80,9 +79,7 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
             return false;
         }
 
-        boolean intersects = usBoundary.intersects(eventGeometry);
-        LOG.info("Event '{}' intersects US boundary: {}", event.getName(), intersects);
-        return intersects;
+        return usBoundary.intersects(eventGeometry);
     }
 
     private Geometry convertGeometry(FeatureCollection shape) {
