@@ -11,7 +11,6 @@ import io.kontur.disasterninja.notifications.slack.SlackSender;
 import io.kontur.disasterninja.notifications.slack.SlackNotificationService;
 import io.kontur.disasterninja.notifications.slack.SlackNotificationServiceFeed2;
 import io.kontur.disasterninja.client.LayersApiClient;
-import io.kontur.disasterninja.service.GeometryTransformer;
 import io.kontur.disasterninja.service.converter.GeometryConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
@@ -56,7 +55,6 @@ public class NotificationsProcessor {
     private final SlackMessageFormatter slackMessageFormatter;
     private final SlackSender slackSender;
     private final LayersApiClient layersApiClient;
-    private final GeometryTransformer geometryTransformer;
     private final org.locationtech.jts.geom.Geometry usBoundary;
 
     @Value("${notifications.feed}")
@@ -78,8 +76,7 @@ public class NotificationsProcessor {
                                   @Autowired(required = false) EmailNotificationService emailNotificationService,
                                   SlackMessageFormatter slackMessageFormatter,
                                   SlackSender slackSender,
-                                  LayersApiClient layersApiClient,
-                                  GeometryTransformer geometryTransformer) {
+                                  LayersApiClient layersApiClient) {
 
         this.eventApiClient = eventApiClient;
         this.insightsApiClient = insightsApiClient;
@@ -89,8 +86,7 @@ public class NotificationsProcessor {
         this.slackMessageFormatter = slackMessageFormatter;
         this.slackSender = slackSender;
         this.layersApiClient = layersApiClient;
-        this.geometryTransformer = geometryTransformer;
-        this.usBoundary = loadUsBoundary();
+        this.usBoundary = loadUsBoundary("usa");
     }
 
     @Scheduled(fixedRate = 60000, initialDelay = 1000)
@@ -209,7 +205,7 @@ public class NotificationsProcessor {
                         value -> Optional.ofNullable(value.result()).orElse(0.0)));
     }
 
-    private Geometry convertGeometry(FeatureCollection shape) {
+    public static Geometry convertGeometry(FeatureCollection shape) {
         if (shape == null) {
             return null;
         }
@@ -220,21 +216,16 @@ public class NotificationsProcessor {
         return geoJSONWriter.write(geoJSONReader.read(geometryCollection).union());
     }
 
-    private org.locationtech.jts.geom.Geometry loadUsBoundary() {
+    private org.locationtech.jts.geom.Geometry loadUsBoundary(String iso3Code) {
         try {
-            FeatureCollection fc = layersApiClient.getCountryBoundary("usa");
+            FeatureCollection fc = layersApiClient.getCountryBoundary(iso3Code);
             if (fc == null || fc.getFeatures() == null || fc.getFeatures().length == 0) {
                 return null;
             }
-            org.wololo.geojson.Geometry[] geometries = Stream.of(fc.getFeatures())
-                    .map(Feature::getGeometry)
-                    .toArray(org.wololo.geojson.Geometry[]::new);
-            GeometryCollection collection = new GeometryCollection(geometries);
-            org.wololo.geojson.Geometry geo = geoJSONWriter.write(
-                    geoJSONReader.read(collection).union());
+            org.wololo.geojson.Geometry geo = convertGeometry(fc);
             return GeometryConverter.getJtsGeometry(geo);
         } catch (Exception e) {
-            LOG.error("Failed to load US boundary: {}", e.getMessage(), e);
+            LOG.error("Failed to load {} boundary: {}", iso3Code.toUpperCase(), e.getMessage(), e);
             return null;
         }
     }

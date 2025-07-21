@@ -2,15 +2,13 @@ package io.kontur.disasterninja.notifications.slack;
 
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.service.converter.GeometryConverter;
+import io.kontur.disasterninja.notifications.NotificationsProcessor;
 import org.apache.commons.lang3.StringUtils;
 import org.locationtech.jts.geom.Geometry;
-import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
-import org.wololo.geojson.GeometryCollection;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.Arrays;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -85,12 +83,8 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
         if (shape == null) {
             return null;
         }
-        org.wololo.geojson.Geometry[] geometries = Arrays.stream(shape.getFeatures())
-                .map(Feature::getGeometry)
-                .toArray(org.wololo.geojson.Geometry[]::new);
-        org.wololo.geojson.Geometry geo = new GeometryCollection(geometries);
-        return GeometryConverter.getJtsGeometry(GeometryTransformer.geoJsonWriter.write(
-                GeometryTransformer.geoJsonReader.read(geo).union()));
+        org.wololo.geojson.Geometry geo = NotificationsProcessor.convertGeometry(shape);
+        return GeometryConverter.getJtsGeometry(geo);
     }
 
 }
