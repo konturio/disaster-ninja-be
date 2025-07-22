@@ -5,6 +5,7 @@ import io.kontur.disasterninja.service.converter.GeometryConverter;
 import io.kontur.disasterninja.notifications.NotificationsProcessor;
 import org.apache.commons.lang3.StringUtils;
 import org.locationtech.jts.geom.Geometry;
+import io.kontur.disasterninja.client.LayersApiClient;
 import org.wololo.geojson.FeatureCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,15 +19,18 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SlackNotificationServiceFeed2.class);
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm 'UTC'");
-    private final Geometry usBoundary;
+    private Geometry usBoundary;
+    private final LayersApiClient layersApiClient;
 
     public SlackNotificationServiceFeed2(SlackMessageFormatter slackMessageFormatter,
                                          SlackSender slackSender,
                                          String eventApiFeed,
                                          String slackWebHookUrl,
-                                         Geometry usBoundary) {
+                                         Geometry usBoundary,
+                                         LayersApiClient layersApiClient) {
         super(slackMessageFormatter, slackSender, eventApiFeed, slackWebHookUrl);
         this.usBoundary = usBoundary;
+        this.layersApiClient = layersApiClient;
     }
 
     @Override
@@ -79,8 +83,12 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
         }
 
         if (usBoundary == null) {
-            LOG.warn("US boundary is null - all events will be filtered out");
-            return false;
+            LOG.warn("US boundary is null - attempting reload");
+            usBoundary = loadUsBoundary("usa");
+            if (usBoundary == null) {
+                LOG.warn("US boundary is still null - event will be skipped");
+                return false;
+            }
         }
 
         return usBoundary.intersects(eventGeometry);
@@ -92,6 +100,20 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
         }
         org.wololo.geojson.Geometry geo = NotificationsProcessor.convertGeometry(shape);
         return GeometryConverter.getJtsGeometry(geo);
+    }
+
+    private Geometry loadUsBoundary(String iso3Code) {
+        try {
+            FeatureCollection fc = layersApiClient.getCountryBoundary(iso3Code);
+            if (fc == null || fc.getFeatures() == null || fc.getFeatures().length == 0) {
+                return null;
+            }
+            org.wololo.geojson.Geometry geo = NotificationsProcessor.convertGeometry(fc);
+            return GeometryConverter.getJtsGeometry(geo);
+        } catch (Exception e) {
+            LOG.error("Failed to load {} boundary: {}", iso3Code.toUpperCase(), e.getMessage(), e);
+            return null;
+        }
     }
 
 }
