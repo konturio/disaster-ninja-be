@@ -48,7 +48,11 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
               .append(StringUtils.capitalize(String.valueOf(event.getType()).toLowerCase()))
               .append("\n");
 
-        // TODO: get severityData and add Category line
+        Map<String, Object> severityData = event.getSeverityData();
+        if (severityData != null && !severityData.isEmpty()) {
+            String category = severityData.toString().replace("{", "").replace("}", "");
+            header.append("Category: ").append(category).append("\n");
+        }
 
         if (StringUtils.isNotBlank(event.getLocation())) {
             header.append("Location: ").append(event.getLocation()).append("\n");
