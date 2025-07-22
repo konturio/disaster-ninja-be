@@ -16,7 +16,6 @@ query BivariateMatrix($polygon: GeoJSON, $importantLayers: [[String]]) {
                     name
                     label
                     emoji
-                    maxZoom
                     description
                     layerSpatialRes
                     layerTemporalExt

@@ -69,9 +69,6 @@ type Indicator {
   label: String
   emoji: String
   maxZoom: Int
-  description: String
-  coverage: String
-  updateFrequency: String
   layerSpatialRes: String
   layerTemporalExt: String
   category: [String]
@@ -217,8 +214,6 @@ type Quotient {
   emoji: String
   maxZoom: Int
   description: String
-  coverage: String
-  updateFrequency: String
   layerSpatialRes: String
   layerTemporalExt: String
   category: [String]
