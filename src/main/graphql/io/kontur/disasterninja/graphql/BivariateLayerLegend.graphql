@@ -18,6 +18,9 @@ query BivariateLayerLegend($polygon: GeoJSON) {
                         emoji,
                         maxZoom,
                         description,
+                        layerSpatialRes,
+                        layerTemporalExt,
+                        category,
                         copyrights,
                         direction,
                         unit {
@@ -40,6 +43,9 @@ query BivariateLayerLegend($polygon: GeoJSON) {
                         emoji,
                         maxZoom,
                         description,
+                        layerSpatialRes,
+                        layerTemporalExt,
+                        category,
                         copyrights,
                         direction,
                         unit {
@@ -68,6 +74,9 @@ query BivariateLayerLegend($polygon: GeoJSON) {
                 name,
                 label,
                 emoji,
+                layerSpatialRes,
+                layerTemporalExt,
+                category,
                 direction,
                 copyrights,
                 unit {

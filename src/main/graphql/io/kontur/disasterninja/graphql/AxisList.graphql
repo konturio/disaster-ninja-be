@@ -20,6 +20,9 @@ query AxisList {
                 emoji
                 maxZoom
                 description
+                layerSpatialRes
+                layerTemporalExt
+                category
                 copyrights
                 direction
                 unit {
