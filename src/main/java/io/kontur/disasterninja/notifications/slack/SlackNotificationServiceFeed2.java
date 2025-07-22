@@ -1,7 +1,13 @@
 package io.kontur.disasterninja.notifications.slack;
 
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
+import io.kontur.disasterninja.service.converter.GeometryConverter;
+import io.kontur.disasterninja.notifications.NotificationsProcessor;
 import org.apache.commons.lang3.StringUtils;
+import org.locationtech.jts.geom.Geometry;
+import org.wololo.geojson.FeatureCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -10,13 +16,17 @@ import static java.time.ZoneOffset.UTC;
 
 public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SlackNotificationServiceFeed2.class);
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm 'UTC'");
+    private final Geometry usBoundary;
 
     public SlackNotificationServiceFeed2(SlackMessageFormatter slackMessageFormatter,
                                          SlackSender slackSender,
                                          String eventApiFeed,
-                                         String slackWebHookUrl) {
+                                         String slackWebHookUrl,
+                                         Geometry usBoundary) {
         super(slackMessageFormatter, slackSender, eventApiFeed, slackWebHookUrl);
+        this.usBoundary = usBoundary;
     }
 
     @Override
@@ -58,7 +68,26 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
     @Override
     public boolean isApplicable(EventApiEventDto event) {
-        return true;
+        Geometry eventGeometry = convertGeometry(event.getGeometries());
+
+        if (eventGeometry == null) {
+            return false;
+        }
+
+        if (usBoundary == null) {
+            LOG.warn("US boundary is null - all events will be filtered out");
+            return false;
+        }
+
+        return usBoundary.intersects(eventGeometry);
+    }
+
+    private Geometry convertGeometry(FeatureCollection shape) {
+        if (shape == null) {
+            return null;
+        }
+        org.wololo.geojson.Geometry geo = NotificationsProcessor.convertGeometry(shape);
+        return GeometryConverter.getJtsGeometry(geo);
     }
 
 }

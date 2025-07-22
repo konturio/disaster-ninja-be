@@ -36,6 +36,7 @@ public class LayersApiClient extends RestClientWithBearerAuth {
     private static final String LAYERS_FEATURES_SEARCH_URI = COLLECTIONS_URI + "/%s/items/search";
     private static final String COLLECTION_BY_ID_URL = COLLECTIONS_URI + "/%s";
     private static final String UPDATE_FEATURES_URL = COLLECTIONS_URI + "/%s/items";
+    private static final String COLLECTION_ITEMS_URL = COLLECTIONS_URI + "/%s/items";
 
     private final RestTemplate layersApiRestTemplate;
     @Value("${kontur.platform.layersApi.pageSize}")
@@ -232,6 +233,19 @@ public class LayersApiClient extends RestClientWithBearerAuth {
         }
 
         return result;
+    }
+
+    public FeatureCollection getCountryBoundary(String iso3Code) {
+        String url = UriComponentsBuilder.fromUriString(String.format(COLLECTION_ITEMS_URL, "konturBoundaries"))
+                .queryParam("iso3countrycode", iso3Code)
+                .encode()
+                .toUriString();
+        ResponseEntity<FeatureCollection> response = layersApiRestTemplate
+                .exchange(url, HttpMethod.GET,
+                        httpEntityWithUserBearerAuthIfPresentAndNoCacheHeader(null),
+                        new ParameterizedTypeReference<>() {
+                        });
+        return response.getBody();
     }
 
     @Getter
