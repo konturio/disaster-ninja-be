@@ -19,7 +19,8 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SlackNotificationServiceFeed2.class);
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm 'UTC'");
-    private Geometry usBoundary;
+    private volatile Geometry usBoundary;
+    private final LayersApiClient layersApiClient;
     private final LayersApiClient layersApiClient;
 
     public SlackNotificationServiceFeed2(SlackMessageFormatter slackMessageFormatter,
