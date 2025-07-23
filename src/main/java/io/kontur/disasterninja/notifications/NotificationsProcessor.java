@@ -168,7 +168,7 @@ public class NotificationsProcessor {
         if (feed.equals(eventApiFeed2)) {
             // second Slack receiver sends all events without filters and without links
             result.add(new SlackNotificationServiceFeed2(slackMessageFormatter, slackSender,
-                    eventApiFeed2, slackWebHook2, usBoundary));
+                    eventApiFeed2, slackWebHook2, usBoundary, layersApiClient));
         }
 
         return result;

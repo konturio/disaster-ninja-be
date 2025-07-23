@@ -20,6 +20,9 @@ public class BivariateLegendQuotient {
     private String emoji;
     private Integer maxZoom;
     private String description;
+    private String layerSpatialRes;
+    private String layerTemporalExt;
+    private List<String> category;
     private List<String> copyrights;
     private List<List<String>> direction;
     private Unit unit;

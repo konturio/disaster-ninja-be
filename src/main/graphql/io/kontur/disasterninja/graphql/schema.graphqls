@@ -69,6 +69,9 @@ type Indicator {
   label: String
   emoji: String
   maxZoom: Int
+  layerSpatialRes: String
+  layerTemporalExt: String
+  category: [String]
   copyrights: [String]
   direction: [[String]]
   unit: Unit
@@ -211,6 +214,9 @@ type Quotient {
   emoji: String
   maxZoom: Int
   description: String
+  layerSpatialRes: String
+  layerTemporalExt: String
+  category: [String]
   copyrights: [String]
   direction: [[String]]
   unit: Unit
