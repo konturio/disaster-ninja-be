@@ -54,6 +54,7 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
         Map<String, Object> severityData = event.getSeverityData();
         if (severityData != null && !severityData.isEmpty()) {
+            // TODO: add pretty formatting: float values too long like burnedAreaKm2=75.05311507254001
             String category = severityData.toString().replace("{", "").replace("}", "");
             header.append("Category: ").append(category).append("\n");
         }
@@ -102,6 +103,7 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
         return GeometryConverter.getJtsGeometry(geo);
     }
 
+    // TODO this method duplicates the loadUsBoundary logic from NotificationsProcessor.java (lines 219-231)
     private Geometry loadUsBoundary(String iso3Code) {
         try {
             FeatureCollection fc = layersApiClient.getCountryBoundary(iso3Code);
