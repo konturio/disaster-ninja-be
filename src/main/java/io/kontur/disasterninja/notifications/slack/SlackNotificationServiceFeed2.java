@@ -1,6 +1,8 @@
 package io.kontur.disasterninja.notifications.slack;
 
+import io.kontur.disasterninja.dto.Severity;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
+import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
 import io.kontur.disasterninja.service.converter.GeometryConverter;
 import io.kontur.disasterninja.notifications.NotificationsProcessor;
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -46,6 +50,22 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
         return slackMessageFormatter.wrapPlain(text);
     }
 
+    public static String severityDataToCategory(Map<String, Object> severityData) {
+        Set<String> allowedKeys = Set.of(
+            "depthKm", "magnitude", "windSpeedKph", "categorySaffirSimpson",
+            "burnedAreaKm2", "containedAreaPct", "depth", "maxpga"
+        );
+
+        StringBuilder result = new StringBuilder();
+        for (Map.Entry<String, Object> entry : severityData.entrySet()) {
+            if (allowedKeys.contains(entry.getKey())) {
+                if (result.length() > 0) result.append(", ");
+                result.append(entry.getKey()).append("=").append(entry.getValue());
+            }
+        }
+        return result.toString();
+    }
+
     private String buildHeader(EventApiEventDto event) {
         StringBuilder header = new StringBuilder();
         header.append("Event Type: ")
@@ -54,8 +74,7 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
         Map<String, Object> severityData = event.getSeverityData();
         if (severityData != null && !severityData.isEmpty()) {
-            // TODO: add pretty formatting: float values too long like burnedAreaKm2=75.05311507254001
-            String category = severityData.toString().replace("{", "").replace("}", "");
+            String category = severityDataToCategory(severityData);
             header.append("Category: ").append(category).append("\n");
         }
 
@@ -92,7 +111,53 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
             }
         }
 
-        return usBoundary.intersects(eventGeometry);
+        if (!usBoundary.intersects(eventGeometry)) {
+            return false;
+        }
+
+        String type = event.getType();
+        Map<String, Object> severityData = event.getSeverityData() == null ? Collections.emptyMap() : event.getSeverityData();
+        Map<String, Object> eventDetails = event.getEventDetails() == null ? Collections.emptyMap() : event.getEventDetails();
+        Map<String, Object> episodeDetails = Collections.emptyMap();
+        if (event.getEpisodes() != null && !event.getEpisodes().isEmpty()) {
+            FeedEpisode episode = event.getEpisodes().get(0);
+            if (episode.getEpisodeDetails() != null) {
+                episodeDetails = episode.getEpisodeDetails();
+            }
+        }
+
+        switch (type) {
+            case "CYCLONE":
+                Double category = toDouble(severityData.get("categorySaffirSimpson"));
+                return category != null && category >= 3;
+            case "EARTHQUAKE":
+                Double magnitude = toDouble(severityData.get("magnitude"));
+                Double pga = toDouble(severityData.get("maxpga"));
+                return (magnitude != null && magnitude >= 7.5) || (pga != null && pga >= .4);
+            case "WILDFIRE":
+                Double km2 = toDouble(severityData.get("burnedAreaKm2"));
+                return km2 != null && km2 * 247.105 >= 15000;  // fire area is ≥ 15,000 acres
+            case "FLOOD":
+                if (episodeDetails == null) {
+                    return false;
+                }
+                Double population = toDouble(episodeDetails.get("population"));
+                Severity s = event.getSeverity();
+                return s != null && (s == Severity.MODERATE || s == Severity.SEVERE || s == Severity.EXTREME) && population != null && population > 0;
+            default:
+                return false;
+        }
+    }
+
+    private static Double toDouble(Object value) {
+        if (value == null || "null".equals(String.valueOf(value))) {
+            return null;
+        }
+        try {
+            return Double.parseDouble(String.valueOf(value));
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private Geometry convertGeometry(FeatureCollection shape) {
