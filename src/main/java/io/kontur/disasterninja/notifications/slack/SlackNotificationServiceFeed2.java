@@ -1,17 +1,19 @@
 package io.kontur.disasterninja.notifications.slack;
 
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
+import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
 import io.kontur.disasterninja.service.converter.GeometryConverter;
-import io.kontur.disasterninja.notifications.NotificationsProcessor;
 import org.apache.commons.lang3.StringUtils;
 import org.locationtech.jts.geom.Geometry;
 import io.kontur.disasterninja.client.LayersApiClient;
-import org.wololo.geojson.FeatureCollection;
+import io.kontur.disasterninja.util.CountryBoundaryUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -46,6 +48,22 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
         return slackMessageFormatter.wrapPlain(text);
     }
 
+    public static String severityDataToCategory(Map<String, Object> severityData) {
+        Set<String> allowedKeys = Set.of(
+            "depthKm", "magnitude", "windSpeedKph", "categorySaffirSimpson",
+            "burnedAreaKm2", "containedAreaPct", "depth", "maxpga"
+        );
+
+        StringBuilder result = new StringBuilder();
+        for (Map.Entry<String, Object> entry : severityData.entrySet()) {
+            if (allowedKeys.contains(entry.getKey())) {
+                if (result.length() > 0) result.append(", ");
+                result.append(entry.getKey()).append("=").append(entry.getValue());
+            }
+        }
+        return result.toString();
+    }
+
     private String buildHeader(EventApiEventDto event) {
         StringBuilder header = new StringBuilder();
         header.append("Event Type: ")
@@ -54,8 +72,7 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
         Map<String, Object> severityData = event.getSeverityData();
         if (severityData != null && !severityData.isEmpty()) {
-            // TODO: add pretty formatting: float values too long like burnedAreaKm2=75.05311507254001
-            String category = severityData.toString().replace("{", "").replace("}", "");
+            String category = severityDataToCategory(severityData);
             header.append("Category: ").append(category).append("\n");
         }
 
@@ -77,7 +94,7 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
     @Override
     public boolean isApplicable(EventApiEventDto event) {
-        Geometry eventGeometry = convertGeometry(event.getGeometries());
+        Geometry eventGeometry = GeometryConverter.convertGeometry(event.getGeometries());
 
         if (eventGeometry == null) {
             return false;
@@ -85,35 +102,58 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
         if (usBoundary == null) {
             LOG.warn("US boundary is null - attempting reload");
-            usBoundary = loadUsBoundary("usa");
+            usBoundary = CountryBoundaryUtil.loadCountryBoundary(layersApiClient, "usa");
             if (usBoundary == null) {
                 LOG.warn("US boundary is still null - event will be skipped");
                 return false;
             }
         }
 
-        return usBoundary.intersects(eventGeometry);
+        if (!usBoundary.intersects(eventGeometry)) {
+            return false;
+        }
+
+        String type = event.getType();
+        Map<String, Object> severityData = event.getSeverityData() == null ? Collections.emptyMap() : event.getSeverityData();
+        Map<String, Object> eventDetails = event.getEventDetails() == null ? Collections.emptyMap() : event.getEventDetails();
+        Map<String, Object> episodeDetails = Collections.emptyMap();
+        if (event.getEpisodes() != null && !event.getEpisodes().isEmpty()) {
+            FeedEpisode episode = event.getEpisodes().get(0);
+            if (episode.getEpisodeDetails() != null) {
+                episodeDetails = episode.getEpisodeDetails();
+            }
+        }
+
+        switch (type) {
+            case "CYCLONE":
+                Double category = toDouble(severityData.get("categorySaffirSimpson"));
+                return category != null && category >= 3;
+            case "EARTHQUAKE":
+                Double magnitude = toDouble(severityData.get("magnitude"));
+                Double pga = toDouble(severityData.get("maxpga"));
+                return (magnitude != null && magnitude >= 7.5) || (pga != null && pga >= .4);
+            case "WILDFIRE":
+                Double km2 = toDouble(severityData.get("burnedAreaKm2"));
+                return km2 != null && km2 * 247.105 >= 15000;  // fire area is ≥ 15,000 acres
+            case "FLOOD":
+                if (episodeDetails.isEmpty()) {
+                    return false;
+                }
+                Double population = toDouble(episodeDetails.get("population"));
+                // no need to filter by severity as events are requested with param severities=EXTREME,SEVERE,MODERATE (all should trigger a notification)
+                return population != null && population > 0;
+            default:
+                return false;
+        }
     }
 
-    private Geometry convertGeometry(FeatureCollection shape) {
-        if (shape == null) {
+    private static Double toDouble(Object value) {
+        if (value == null || "null".equals(String.valueOf(value))) {
             return null;
         }
-        org.wololo.geojson.Geometry geo = NotificationsProcessor.convertGeometry(shape);
-        return GeometryConverter.getJtsGeometry(geo);
-    }
-
-    // TODO this method duplicates the loadUsBoundary logic from NotificationsProcessor.java (lines 219-231)
-    private Geometry loadUsBoundary(String iso3Code) {
         try {
-            FeatureCollection fc = layersApiClient.getCountryBoundary(iso3Code);
-            if (fc == null || fc.getFeatures() == null || fc.getFeatures().length == 0) {
-                return null;
-            }
-            org.wololo.geojson.Geometry geo = NotificationsProcessor.convertGeometry(fc);
-            return GeometryConverter.getJtsGeometry(geo);
-        } catch (Exception e) {
-            LOG.error("Failed to load {} boundary: {}", iso3Code.toUpperCase(), e.getMessage(), e);
+            return Double.parseDouble(String.valueOf(value));
+        } catch (NumberFormatException e) {
             return null;
         }
     }

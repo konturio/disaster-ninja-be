@@ -12,6 +12,7 @@ import io.kontur.disasterninja.notifications.slack.SlackNotificationService;
 import io.kontur.disasterninja.notifications.slack.SlackNotificationServiceFeed2;
 import io.kontur.disasterninja.client.LayersApiClient;
 import io.kontur.disasterninja.service.converter.GeometryConverter;
+import io.kontur.disasterninja.util.CountryBoundaryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,16 +24,12 @@ import org.springframework.web.client.RestClientException;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
-import org.wololo.geojson.GeometryCollection;
-import org.wololo.jts2geojson.GeoJSONReader;
-import org.wololo.jts2geojson.GeoJSONWriter;
 
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Collections.emptyMap;
 
@@ -42,8 +39,6 @@ public class NotificationsProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationsProcessor.class);
     private static final Map<String, OffsetDateTime> latestUpdatedDate = new ConcurrentHashMap<>();
-    private static final GeoJSONReader geoJSONReader = new GeoJSONReader();
-    private static final GeoJSONWriter geoJSONWriter = new GeoJSONWriter();
     private static final List<String> acceptableTypes = Arrays.asList("FLOOD", "EARTHQUAKE", "CYCLONE", "VOLCANO",
             "WILDFIRE");
 
@@ -86,7 +81,7 @@ public class NotificationsProcessor {
         this.slackMessageFormatter = slackMessageFormatter;
         this.slackSender = slackSender;
         this.layersApiClient = layersApiClient;
-        this.usBoundary = loadUsBoundary("usa");
+        this.usBoundary = CountryBoundaryUtil.loadCountryBoundary(layersApiClient, "usa");
     }
 
     @Scheduled(fixedRate = 60000, initialDelay = 1000)
@@ -121,12 +116,13 @@ public class NotificationsProcessor {
                 for (NotificationService notificationService : feedServices) {
                     try {
                         if (notificationService.isApplicable(event)) {
-                            Geometry geometry = convertGeometry(event.getGeometries());
+                            org.locationtech.jts.geom.Geometry geometry = GeometryConverter.convertGeometry(event.getGeometries());
+                            org.wololo.geojson.Geometry geoJson = GeometryConverter.toGeoJson(geometry);
                             Map<String, Object> urbanPopulationProperties = new HashMap<>();
                             Map<String, Double> analytics = new HashMap<>();
                             try {
-                                urbanPopulationProperties = obtainUrbanPopulation(geometry);
-                                analytics = obtainAnalytics(geometry);
+                                urbanPopulationProperties = obtainUrbanPopulation(geoJson);
+                                analytics = obtainAnalytics(geoJson);
                             } catch (ExecutionException | InterruptedException e) {
                                 LOG.error("Failed to obtain analytics for notification. Event ID = '{}', name = '{}'. {}", event.getEventId(), event.getName(), e.getMessage(), e);
                             }
@@ -183,7 +179,7 @@ public class NotificationsProcessor {
     }
 
     private Map<String, Object> obtainUrbanPopulation(
-            Geometry geometry) throws ExecutionException, InterruptedException {
+            org.wololo.geojson.Geometry geometry) throws ExecutionException, InterruptedException {
         Feature[] features = insightsApiClient.humanitarianImpactQuery(geometry)
                 .get()
                 .getFeatures();
@@ -197,37 +193,12 @@ public class NotificationsProcessor {
                 .orElseGet(Collections::emptyMap);
     }
 
-    private Map<String, Double> obtainAnalytics(Geometry geometry) {
+    private Map<String, Double> obtainAnalytics(org.wololo.geojson.Geometry geometry) {
         List<AnalyticsTabQuery.Function> functionsResults = analyticsService.calculateRawAnalytics(geometry,
                 notificationsAnalyticsConfig.getFunctions());
         return functionsResults.stream()
                 .collect(Collectors.toMap(AnalyticsTabQuery.Function::id,
                         value -> Optional.ofNullable(value.result()).orElse(0.0)));
-    }
-
-    public static Geometry convertGeometry(FeatureCollection shape) {
-        if (shape == null) {
-            return null;
-        }
-        org.wololo.geojson.Geometry[] geometries = Stream.of(shape.getFeatures())
-                .map(Feature::getGeometry)
-                .toArray(org.wololo.geojson.Geometry[]::new);
-        GeometryCollection geometryCollection = new GeometryCollection(geometries);
-        return geoJSONWriter.write(geoJSONReader.read(geometryCollection).union());
-    }
-
-    private org.locationtech.jts.geom.Geometry loadUsBoundary(String iso3Code) {
-        try {
-            FeatureCollection fc = layersApiClient.getCountryBoundary(iso3Code);
-            if (fc == null || fc.getFeatures() == null || fc.getFeatures().length == 0) {
-                return null;
-            }
-            org.wololo.geojson.Geometry geo = convertGeometry(fc);
-            return GeometryConverter.getJtsGeometry(geo);
-        } catch (Exception e) {
-            LOG.error("Failed to load {} boundary: {}", iso3Code.toUpperCase(), e.getMessage(), e);
-            return null;
-        }
     }
 
 }
