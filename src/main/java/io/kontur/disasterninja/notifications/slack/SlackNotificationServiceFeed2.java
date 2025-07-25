@@ -4,11 +4,10 @@ import io.kontur.disasterninja.dto.Severity;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
 import io.kontur.disasterninja.service.converter.GeometryConverter;
-import io.kontur.disasterninja.notifications.NotificationsProcessor;
 import org.apache.commons.lang3.StringUtils;
 import org.locationtech.jts.geom.Geometry;
 import io.kontur.disasterninja.client.LayersApiClient;
-import org.wololo.geojson.FeatureCollection;
+import io.kontur.disasterninja.util.CountryBoundaryUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +95,7 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
     @Override
     public boolean isApplicable(EventApiEventDto event) {
-        Geometry eventGeometry = convertGeometry(event.getGeometries());
+        Geometry eventGeometry = GeometryConverter.convertGeometry(event.getGeometries());
 
         if (eventGeometry == null) {
             return false;
@@ -104,7 +103,7 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
 
         if (usBoundary == null) {
             LOG.warn("US boundary is null - attempting reload");
-            usBoundary = loadUsBoundary("usa");
+            usBoundary = CountryBoundaryUtil.loadCountryBoundary(layersApiClient, "usa");
             if (usBoundary == null) {
                 LOG.warn("US boundary is still null - event will be skipped");
                 return false;
@@ -138,7 +137,7 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
                 Double km2 = toDouble(severityData.get("burnedAreaKm2"));
                 return km2 != null && km2 * 247.105 >= 15000;  // fire area is ≥ 15,000 acres
             case "FLOOD":
-                if (episodeDetails == null) {
+                if (episodeDetails.isEmpty()) {
                     return false;
                 }
                 Double population = toDouble(episodeDetails.get("population"));
@@ -156,29 +155,6 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
         try {
             return Double.parseDouble(String.valueOf(value));
         } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    private Geometry convertGeometry(FeatureCollection shape) {
-        if (shape == null) {
-            return null;
-        }
-        org.wololo.geojson.Geometry geo = NotificationsProcessor.convertGeometry(shape);
-        return GeometryConverter.getJtsGeometry(geo);
-    }
-
-    // TODO this method duplicates the loadUsBoundary logic from NotificationsProcessor.java (lines 219-231)
-    private Geometry loadUsBoundary(String iso3Code) {
-        try {
-            FeatureCollection fc = layersApiClient.getCountryBoundary(iso3Code);
-            if (fc == null || fc.getFeatures() == null || fc.getFeatures().length == 0) {
-                return null;
-            }
-            org.wololo.geojson.Geometry geo = NotificationsProcessor.convertGeometry(fc);
-            return GeometryConverter.getJtsGeometry(geo);
-        } catch (Exception e) {
-            LOG.error("Failed to load {} boundary: {}", iso3Code.toUpperCase(), e.getMessage(), e);
             return null;
         }
     }

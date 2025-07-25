@@ -3,6 +3,11 @@ package io.kontur.disasterninja.service.converter;
 import io.kontur.disasterninja.controller.exception.WebApplicationException;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
+import org.wololo.geojson.Feature;
+import org.wololo.geojson.FeatureCollection;
+import org.wololo.geojson.GeometryCollection;
+import org.wololo.jts2geojson.GeoJSONWriter;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -16,6 +21,7 @@ public class GeometryConverter {
     private static final Logger LOG = LoggerFactory.getLogger(GeometryConverter.class);
 
     private static final GeoJSONReader reader = new GeoJSONReader();
+    private static final GeoJSONWriter writer = new GeoJSONWriter();
     private static final PreparedGeometryFactory preparedGeometryFactory = new PreparedGeometryFactory();
 
     public static PreparedGeometry getPreparedGeometryFromRequest(Geometry geoJson) {
@@ -42,5 +48,23 @@ public class GeometryConverter {
             return null;
         }
         return reader.read(geoJson);
+    }
+
+    public static org.locationtech.jts.geom.Geometry convertGeometry(FeatureCollection shape) {
+        if (shape == null) {
+            return null;
+        }
+        org.wololo.geojson.Geometry[] geometries = Stream.of(shape.getFeatures())
+                .map(Feature::getGeometry)
+                .toArray(org.wololo.geojson.Geometry[]::new);
+        GeometryCollection geometryCollection = new GeometryCollection(geometries);
+        return reader.read(geometryCollection).union();
+    }
+
+    public static Geometry toGeoJson(org.locationtech.jts.geom.Geometry geometry) {
+        if (geometry == null) {
+            return null;
+        }
+        return writer.write(geometry);
     }
 }
