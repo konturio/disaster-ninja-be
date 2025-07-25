@@ -2,6 +2,7 @@ package io.kontur.disasterninja.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.kontur.disasterninja.dto.EventFeedDto;
+import io.kontur.disasterninja.dto.GeometryFilterType;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.service.KeycloakAuthorizationService;
 import io.micrometer.core.annotation.Timed;
@@ -47,10 +48,14 @@ public class EventApiClient extends RestClientWithBearerAuth {
         return Optional.ofNullable(response.getBody()).orElseGet(List::of);
     }
 
-    public Optional<EventApiSearchEventResponse> getEvents(String eventApiFeed, OffsetDateTime after, List<BigDecimal> bbox, int pageSize, SortOrder sortOrder) {
+    public Optional<EventApiSearchEventResponse> getEvents(String eventApiFeed, OffsetDateTime after,
+                                                          List<BigDecimal> bbox, int pageSize,
+                                                          SortOrder sortOrder, GeometryFilterType geometryFilterType) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(EVENT_API_EVENT_LIST_URI);
         uriBuilder.queryParam("episodeFilterType", "NONE");
         uriBuilder.queryParam("sortOrder", Objects.requireNonNullElse(sortOrder, "ASC"));
+        uriBuilder.queryParam("geometryFilterType",
+                Objects.requireNonNullElse(geometryFilterType, GeometryFilterType.ALL));
 
         if (after != null) {
             uriBuilder.queryParam("after", after.atZoneSameInstant(ZoneOffset.UTC).format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
@@ -97,7 +102,8 @@ public class EventApiClient extends RestClientWithBearerAuth {
     }
 
     @Timed(value = "events.getEvent", histogram = true)
-    public EventApiEventDto getEvent(UUID eventId, String eventApiFeed, boolean includeEpisodes) {
+    public EventApiEventDto getEvent(UUID eventId, String eventApiFeed, boolean includeEpisodes,
+                                     GeometryFilterType geometryFilterType) {
         if (eventId == null) {
             return null;
         }
@@ -107,6 +113,8 @@ public class EventApiClient extends RestClientWithBearerAuth {
         } else {
             uriBuilder.queryParam("episodeFilterType", "NONE");
         }
+        uriBuilder.queryParam("geometryFilterType",
+                Objects.requireNonNullElse(geometryFilterType, GeometryFilterType.ALL));
         ResponseEntity<EventApiEventDto> response = restTemplate
                 .exchange(uriBuilder.build(eventApiFeed, eventId).toString(), HttpMethod.GET, httpEntityWithUserOrDefaultBearerAuth(null),
                         new ParameterizedTypeReference<>() {
