@@ -1,6 +1,5 @@
 package io.kontur.disasterninja.notifications.slack;
 
-import io.kontur.disasterninja.dto.Severity;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import io.kontur.disasterninja.dto.eventapi.FeedEpisode;
 import io.kontur.disasterninja.service.converter.GeometryConverter;
@@ -141,8 +140,8 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
                     return false;
                 }
                 Double population = toDouble(episodeDetails.get("population"));
-                Severity s = event.getSeverity();
-                return s != null && (s == Severity.MODERATE || s == Severity.SEVERE || s == Severity.EXTREME) && population != null && population > 0;
+                // no need to filter by severity as events are requested with param severities=EXTREME,SEVERE,MODERATE (all should trigger a notification)
+                return population != null && population > 0;
             default:
                 return false;
         }
