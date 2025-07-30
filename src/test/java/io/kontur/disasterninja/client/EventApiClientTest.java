@@ -1,5 +1,6 @@
 package io.kontur.disasterninja.client;
 
+import io.kontur.disasterninja.dto.GeometryFilterType;
 import io.kontur.disasterninja.dto.eventapi.EventApiEventDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,8 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
                         matchesRegex(Pattern.compile(
                                 "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&limit=1000" +
-                                        "&episodeFilterType=NONE&sortOrder=ASC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.\\d+Z"))))
+                                        "&episodeFilterType=NONE&sortOrder=ASC&geometryFilterType=ALL" +
+                                        "&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.\\d+Z"))))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
                 .andRespond(r -> {
@@ -76,7 +78,8 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
                         matchesRegex(Pattern.compile(
                                 "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&limit=1000" +
-                                        "&episodeFilterType=NONE&sortOrder=ASC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:00:00Z"))))
+                                        "&episodeFilterType=NONE&sortOrder=ASC&geometryFilterType=ALL" +
+                                        "&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:00:00Z"))))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
                 .andRespond(r -> {
@@ -104,7 +107,8 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
                         matchesRegex(Pattern.compile(
                                 "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&limit=1000" +
-                                        "&episodeFilterType=NONE&sortOrder=DESC&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.\\d+Z" +
+                                        "&episodeFilterType=NONE&sortOrder=DESC&geometryFilterType=ALL" +
+                                        "&after=\\d{4}-\\d{2}-\\d{2}[tT]\\d{2}:\\d{2}:\\d{2}.\\d+Z" +
                                         "&bbox=1.1&bbox=2.2&bbox=3.3&bbox=4.4"))))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
@@ -133,7 +137,8 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         server.expect(ExpectedCount.times(2), r -> assertThat(r.getURI().toString(),
                         matchesRegex(Pattern.compile(
                                 "/v1/\\?feed=testFeedName&severities=EXTREME,SEVERE,MODERATE&limit=1000" +
-                                        "&episodeFilterType=NONE&sortOrder=ASC&bbox=1.1&bbox=2.2&bbox=3.3&bbox=4.4"))))
+                                        "&episodeFilterType=NONE&sortOrder=ASC&geometryFilterType=ALL" +
+                                        "&bbox=1.1&bbox=2.2&bbox=3.3&bbox=4.4"))))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + getUserToken()))
                 .andRespond(r -> {
@@ -184,14 +189,14 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         //given
         givenJwtTokenIs("JwtTestToken");
         server.expect(ExpectedCount.once(),
-                        requestTo("/v1/event?feed=testFeedName&eventId=1ec05e2b-7d18-490c-ac9f-c33609fdc7a7&episodeFilterType=ANY"))
+                        requestTo("/v1/event?feed=testFeedName&eventId=1ec05e2b-7d18-490c-ac9f-c33609fdc7a7&episodeFilterType=ANY&geometryFilterType=ALL"))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header("Authorization", "Bearer " + getUserToken()))
                 .andRespond(withSuccess(readFile(this, "EventApiClientTest.testGetEvent.response.json"),
                         MediaType.APPLICATION_JSON));
         //when
         EventApiEventDto event = client.getEvent(UUID.fromString("1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"),
-                "testFeedName", true);
+                "testFeedName", true, GeometryFilterType.ALL);
 
         //then
         verify(securityContext, times(1)).getAuthentication();
@@ -204,14 +209,14 @@ class EventApiClientTest extends TestDependingOnUserAuth {
         //given
         givenJwtTokenIs("JwtTestToken");
         server.expect(ExpectedCount.once(),
-                        requestTo("/v1/event?feed=testFeedName&eventId=1ec05e2b-7d18-490c-ac9f-c33609fdc7a7&episodeFilterType=NONE"))
+                        requestTo("/v1/event?feed=testFeedName&eventId=1ec05e2b-7d18-490c-ac9f-c33609fdc7a7&episodeFilterType=NONE&geometryFilterType=ALL"))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header("Authorization", "Bearer " + getUserToken()))
                 .andRespond(withSuccess(readFile(this, "EventApiClientTest.testGetEvent.response.json"),
                         MediaType.APPLICATION_JSON));
         //when
         EventApiEventDto event = client.getEvent(UUID.fromString("1ec05e2b-7d18-490c-ac9f-c33609fdc7a7"),
-                "testFeedName", false);
+                "testFeedName", false, GeometryFilterType.ALL);
 
         //then
         verify(securityContext, times(1)).getAuthentication();

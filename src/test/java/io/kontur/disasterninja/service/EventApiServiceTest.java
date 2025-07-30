@@ -122,8 +122,10 @@ class EventApiServiceTest {
         EventApiClient.EventApiSearchEventResponse eventResponse = new EventApiClient.EventApiSearchEventResponse();
         eventResponse.setData(List.of(moreRecentEvent, oldEvent, mostPopulatedEvent));
         eventResponse.setPageMetadata(new EventApiClient.PageMetadata());
-        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(1000), eq(EventApiClient.SortOrder.ASC))).thenReturn(Optional.of(eventResponse));
-        when(client.getEvents(eq("feed"), isNull(), isNull(), eq(1000), eq(EventApiClient.SortOrder.DESC))).thenReturn(Optional.of(eventResponse));
+        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(1000),
+                eq(EventApiClient.SortOrder.ASC), eq(GeometryFilterType.ALL))).thenReturn(Optional.of(eventResponse));
+        when(client.getEvents(eq("feed"), isNull(), isNull(), eq(1000),
+                eq(EventApiClient.SortOrder.DESC), eq(GeometryFilterType.ALL))).thenReturn(Optional.of(eventResponse));
 
         //when
         List<EventListDto> events = service.getEvents("feed", null);
@@ -148,11 +150,13 @@ class EventApiServiceTest {
         eventResponse.setData(Collections.emptyList());
         eventResponse.setPageMetadata(new EventApiClient.PageMetadata());
 
-        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(1000), eq(EventApiClient.SortOrder.ASC))).thenReturn(Optional.of(eventResponse));
+        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(1000),
+                eq(EventApiClient.SortOrder.ASC), eq(GeometryFilterType.ALL))).thenReturn(Optional.of(eventResponse));
 
         EventApiClient.EventApiSearchEventResponse eventResponse2 = new EventApiClient.EventApiSearchEventResponse();
         eventResponse2.setPageMetadata(new EventApiClient.PageMetadata());
-        when(client.getEvents(eq("feed"), isNull(), isNull(), eq(1000), eq(EventApiClient.SortOrder.DESC))).thenReturn(Optional.of(eventResponse2));
+        when(client.getEvents(eq("feed"), isNull(), isNull(), eq(1000),
+                eq(EventApiClient.SortOrder.DESC), eq(GeometryFilterType.ALL))).thenReturn(Optional.of(eventResponse2));
 
         //when
         List<EventListDto> events = service.getEvents("feed", null);
@@ -174,13 +178,15 @@ class EventApiServiceTest {
         pageMetadata.setNextAfterValue(now);
         eventResponse.setPageMetadata(pageMetadata);
 
-        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(3), eq(EventApiClient.SortOrder.ASC))).thenReturn(Optional.of(eventResponse));
+        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(3),
+                eq(EventApiClient.SortOrder.ASC), eq(GeometryFilterType.ALL))).thenReturn(Optional.of(eventResponse));
 
         EventApiClient.EventApiSearchEventResponse eventResponse2 = new EventApiClient.EventApiSearchEventResponse();
         eventResponse2.setData(List.of(factory.manufacturePojo(EventApiEventDto.class)));
         EventApiClient.PageMetadata pageMetadata2 = new EventApiClient.PageMetadata();
         eventResponse2.setPageMetadata(pageMetadata2);
-        when(client.getEvents(eq("feed"), isNull(), isNull(), eq(3), eq(EventApiClient.SortOrder.DESC))).thenReturn(Optional.of(eventResponse2));
+        when(client.getEvents(eq("feed"), isNull(), isNull(), eq(3),
+                eq(EventApiClient.SortOrder.DESC), eq(GeometryFilterType.ALL))).thenReturn(Optional.of(eventResponse2));
         when(client.getEvents(eq("feed"), eq(now), isNull(), eq(3), any())).thenThrow(new RuntimeException("wrong way"));
 
         //when
@@ -206,8 +212,9 @@ class EventApiServiceTest {
         pageMetadata.setNextAfterValue(now);
         eventResponse.setPageMetadata(pageMetadata);
 
-        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(3), eq(EventApiClient.SortOrder.ASC))).thenReturn(Optional.of(eventResponse));
-        when(client.getEvents(eq("feed"), eq(now), isNull(), eq(3), eq(EventApiClient.SortOrder.ASC))).thenReturn(Optional.empty());
+        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(3),
+                eq(EventApiClient.SortOrder.ASC), eq(GeometryFilterType.ALL))).thenReturn(Optional.of(eventResponse));
+        when(client.getEvents(eq("feed"), eq(now), isNull(), eq(3), eq(EventApiClient.SortOrder.ASC), eq(GeometryFilterType.ALL))).thenReturn(Optional.empty());
         when(client.getEvents(eq("feed"), isNull(), isNull(), eq(3), any())).thenThrow(new RuntimeException("wrong way"));
 
         //when
@@ -234,13 +241,14 @@ class EventApiServiceTest {
         eventResponse.setPageMetadata(pageMetadata);
 
         OffsetDateTime hourTrimmedDate = OffsetDateTime.now().minusDays(4).truncatedTo(ChronoUnit.HOURS);
-        when(client.getEvents(eq("feed"), argThat(date -> date.isEqual(hourTrimmedDate)), isNull(), eq(3), eq(EventApiClient.SortOrder.ASC))).thenReturn(Optional.of(eventResponse));
+        when(client.getEvents(eq("feed"), argThat(date -> date.isEqual(hourTrimmedDate)), isNull(), eq(3),
+                eq(EventApiClient.SortOrder.ASC), eq(GeometryFilterType.ALL))).thenReturn(Optional.of(eventResponse));
 
         EventApiClient.EventApiSearchEventResponse eventResponse2 = new EventApiClient.EventApiSearchEventResponse();
         eventResponse2.setData(List.of(factory.manufacturePojo(EventApiEventDto.class)));
         EventApiClient.PageMetadata pageMetadata2 = new EventApiClient.PageMetadata();
         eventResponse2.setPageMetadata(pageMetadata2);
-        when(client.getEvents(eq("feed"), eq(now), isNull(), eq(3), eq(EventApiClient.SortOrder.ASC))).thenReturn(Optional.of(eventResponse2));
+        when(client.getEvents(eq("feed"), eq(now), isNull(), eq(3), eq(EventApiClient.SortOrder.ASC), eq(GeometryFilterType.ALL))).thenReturn(Optional.of(eventResponse2));
         when(client.getEvents(eq("feed"), isNull(), isNull(), eq(3), any())).thenThrow(new RuntimeException("wrong way"));
 
         //when
@@ -266,7 +274,8 @@ class EventApiServiceTest {
         pageMetadata.setNextAfterValue(now);
         eventResponse.setPageMetadata(pageMetadata);
 
-        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(3), eq(EventApiClient.SortOrder.ASC))).thenReturn(Optional.of(eventResponse));
+        when(client.getEvents(eq("feed"), any(OffsetDateTime.class), isNull(), eq(3),
+                eq(EventApiClient.SortOrder.ASC), eq(GeometryFilterType.ALL))).thenReturn(Optional.of(eventResponse));
 
         EventApiClient.EventApiSearchEventResponse eventResponse2 = new EventApiClient.EventApiSearchEventResponse();
         EventApiEventDto event4 = factory.manufacturePojo(EventApiEventDto.class);
@@ -277,13 +286,13 @@ class EventApiServiceTest {
         OffsetDateTime now2 = OffsetDateTime.now();
         pageMetadata2.setNextAfterValue(now2);
         eventResponse2.setPageMetadata(pageMetadata2);
-        when(client.getEvents(eq("feed"), eq(now), isNull(), eq(3), eq(EventApiClient.SortOrder.ASC))).thenReturn(Optional.of(eventResponse2));
+        when(client.getEvents(eq("feed"), eq(now), isNull(), eq(3), eq(EventApiClient.SortOrder.ASC), eq(GeometryFilterType.ALL))).thenReturn(Optional.of(eventResponse2));
 
         EventApiClient.EventApiSearchEventResponse eventResponse3 = new EventApiClient.EventApiSearchEventResponse();
         eventResponse3.setData(List.of(factory.manufacturePojo(EventApiEventDto.class)));
         EventApiClient.PageMetadata pageMetadata3 = new EventApiClient.PageMetadata();
         eventResponse3.setPageMetadata(pageMetadata3);
-        when(client.getEvents(eq("feed"), eq(now2), isNull(), eq(3), eq(EventApiClient.SortOrder.ASC))).thenReturn(Optional.of(eventResponse3));
+        when(client.getEvents(eq("feed"), eq(now2), isNull(), eq(3), eq(EventApiClient.SortOrder.ASC), eq(GeometryFilterType.ALL))).thenReturn(Optional.of(eventResponse3));
         when(client.getEvents(eq("feed"), isNull(), isNull(), eq(3), any())).thenThrow(new RuntimeException("wrong way"));
 
         //when
@@ -305,11 +314,11 @@ class EventApiServiceTest {
         event.getEventDetails().put("populatedAreaKm2", "123234");
 
         UUID eventId = UUID.randomUUID();
-        when(client.getEvent(eventId, null, false)).thenReturn(event);
+        when(client.getEvent(eventId, null, false, GeometryFilterType.ALL)).thenReturn(event);
         //when
         EventDto result = service.getEvent(eventId, null);
         //then
-        verify(client, times(1)).getEvent(eventId, null, false);
+        verify(client, times(1)).getEvent(eventId, null, false, GeometryFilterType.ALL);
         //some EventDto fields
         assertEquals(event.getProperName(), result.getEventName());
         assertEquals(event.getLocation(), result.getLocation());
@@ -327,11 +336,11 @@ class EventApiServiceTest {
 
 
         UUID eventId = UUID.fromString("f4919979-3668-48f1-91af-94b3c5bffe2a");
-        when(client.getEvent(eventId, null, true)).thenReturn(event);
+        when(client.getEvent(eventId, null, true, GeometryFilterType.ALL)).thenReturn(event);
         //when
         List<EventEpisodeListDto> result = service.getEventEpisodes(eventId, null);
         //then
-        verify(client, times(1)).getEvent(eventId, null, true);
+        verify(client, times(1)).getEvent(eventId, null, true, GeometryFilterType.ALL);
         //some EventDto fields
         assertEquals(5, result.size());
         assertEquals("Thermal anomaly in United States, California, San Diego County. Burnt area 2.518 km²",
