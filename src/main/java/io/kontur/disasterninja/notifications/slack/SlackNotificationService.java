@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SlackNotificationService extends NotificationService {
@@ -19,7 +20,7 @@ public class SlackNotificationService extends NotificationService {
      * sending duplicate Slack notifications for the same event within a
      * configurable time window.
      */
-    private static final Map<String, Instant> LAST_SENT = new ConcurrentHashMap<>();
+    private static final Map<UUID, Instant> LAST_SENT = new ConcurrentHashMap<>();
 
     private static final Duration RESEND_INTERVAL = Duration.ofDays(1);
 
