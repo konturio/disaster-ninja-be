@@ -64,6 +64,11 @@ public class SlackNotificationServiceFeed2 extends SlackNotificationService {
         return result.toString();
     }
 
+    @Override
+    protected boolean isDeduplicationEnabled() {
+        return false;
+    }
+
     private String buildHeader(EventApiEventDto event) {
         StringBuilder header = new StringBuilder();
         header.append("Event Type: ")
